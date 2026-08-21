@@ -23,6 +23,12 @@ import {
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
@@ -31,6 +37,7 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
+import { sanitizeGrantApplicationHtml } from '@/features/grants/utils/sanitizeGrantApplicationHtml';
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { XVerificationModal } from '@/features/social/components/XVerificationModal';
@@ -42,8 +49,11 @@ import {
 } from '@/features/social/utils/x-verification';
 
 import { userApplicationQuery } from '../../queries/user-application';
-import { type Grant } from '../../types';
-import { grantApplicationSchema } from '../../utils/grantApplicationSchema';
+import { type Grant, type GrantQuestion } from '../../types';
+import {
+  grantApplicationSchema,
+  normalizeGrantQuestionLinkAnswer,
+} from '../../utils/grantApplicationSchema';
 import {
   AGENTIC_ENGINEERING_GRANT_COPY,
   extractLumaEventSlug,
@@ -85,6 +95,11 @@ export const ApplicationModal = ({
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
   const [acknowledgementAccepted, setAcknowledgementAccepted] = useState(false);
   const [acknowledgementError, setAcknowledgementError] = useState('');
+  const [feedbackAcknowledgementAccepted, setFeedbackAcknowledgementAccepted] =
+    useState(false);
+  const [feedbackAcknowledgementError, setFeedbackAcknowledgementError] =
+    useState('');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const verificationModal = useDisclosure();
   const [verificationStatus, setVerificationStatus] = useState<
     'loading' | 'error'
@@ -158,7 +173,7 @@ export const ApplicationModal = ({
       telegram: extractSocialUsername('telegram', user?.telegram || '') || '',
       answers:
         Array.isArray(questions) && questions.length > 0
-          ? questions.map((q) => ({
+          ? questions.map((q: GrantQuestion) => ({
               question: q.question,
               answer:
                 (
@@ -301,12 +316,25 @@ export const ApplicationModal = ({
   const queryClient = useQueryClient();
 
   const validateAcknowledgement = () => {
-    if (!grantApplication && !acknowledgementAccepted) {
-      setAcknowledgementError('Acknowledgement required');
-      return false;
+    if (grantApplication) {
+      setAcknowledgementError('');
+      setFeedbackAcknowledgementError('');
+      return true;
     }
-    setAcknowledgementError('');
-    return true;
+    let isValid = true;
+    if (!acknowledgementAccepted) {
+      setAcknowledgementError('Acknowledgement required');
+      isValid = false;
+    } else {
+      setAcknowledgementError('');
+    }
+    if (!feedbackAcknowledgementAccepted) {
+      setFeedbackAcknowledgementError('Acknowledgement required');
+      isValid = false;
+    } else {
+      setFeedbackAcknowledgementError('');
+    }
+    return isValid;
   };
 
   const submitApplication = async (data: FormData) => {
@@ -345,7 +373,20 @@ export const ApplicationModal = ({
         ask: fixedAsk || ask || null,
         twitter,
         github,
-        answers: answers || [],
+        answers:
+          answers?.map((answer, index) => {
+            const question = questions?.[index];
+            return {
+              ...answer,
+              question: question?.question ?? answer.question,
+              optional: question?.optional,
+              type: question?.type,
+              answer:
+                question?.type === 'link' && answer.answer
+                  ? normalizeGrantQuestionLinkAnswer(answer.answer)
+                  : answer.answer,
+            };
+          }) || [],
         telegram: telegram || user?.telegram || '',
         ...(isST && {
           lumaLink,
@@ -420,7 +461,8 @@ export const ApplicationModal = ({
         ...(isST ? [] : ['github' as keyof FormData]),
         ...(isST ? ['lumaLink' as const, 'expenseBreakdown' as const] : []),
         ...(questions?.map(
-          (_: any, index: number) => `answers.${index}.answer` as const,
+          (_: GrantQuestion, index: number) =>
+            `answers.${index}.answer` as const,
         ) || []),
       ],
       2: [
@@ -429,7 +471,7 @@ export const ApplicationModal = ({
       ],
     };
 
-    form.trigger(fieldsToValidate[activeStep]).then((isValid) => {
+    form.trigger(fieldsToValidate[activeStep] as any).then((isValid) => {
       if (isValid) {
         const nextStep = activeStep + 1;
         setActiveStep(nextStep);
@@ -461,8 +503,34 @@ export const ApplicationModal = ({
     .match(/superteam|solana/);
 
   const date = dayjs().format('YYYY-MM-DD');
+  const telegramPreviewValue = form.getValues('telegram') || '';
+  const twitterPreviewValue = form.getValues('twitter') || '';
+  const githubPreviewValue = form.getValues('github') || '';
+  const lumaPreviewValue = form.getValues('lumaLink') || '';
+  const telegramPreviewHref = telegramPreviewValue.startsWith('http')
+    ? telegramPreviewValue
+    : `https://t.me/${telegramPreviewValue.replace('@', '')}`;
+  const twitterPreviewHref = twitterPreviewValue.startsWith('http')
+    ? twitterPreviewValue
+    : `https://x.com/${twitterPreviewValue.replace('@', '')}`;
+  const githubPreviewHref = githubPreviewValue.startsWith('http')
+    ? githubPreviewValue
+    : `https://github.com/${githubPreviewValue}`;
+  const lumaPreviewHref = lumaPreviewValue.startsWith('http')
+    ? lumaPreviewValue
+    : `https://lu.ma/${lumaPreviewValue}`;
+
   return (
-    <div className="p-6 pb-0">
+    <div
+      className={cn(
+        'p-6 pb-0',
+        'max-sm:[&_input]:text-base',
+        'max-sm:[&_.ProseMirror]:px-3!',
+        'max-sm:[&_.ProseMirror]:py-0!',
+        'max-sm:[&_.ProseMirror]:text-base!',
+        'max-sm:[&_.ProseMirror_*]:text-base!',
+      )}
+    >
       <DialogTitle className="text-lg tracking-normal text-slate-700 sm:text-xl">
         {applicationCopy?.title ?? 'Grant Application'}
         <p className="mt-1 text-sm font-normal text-slate-500">
@@ -859,17 +927,76 @@ export const ApplicationModal = ({
                   />
                 )}
 
-                {questions?.map((question: any, index: number) => (
-                  <FormFieldWrapper
-                    key={question.order}
-                    control={form.control}
-                    name={`answers.${index}.answer`}
-                    label={question.question}
-                    isRequired
-                    isRichEditor
-                    isPro={isProGrant}
-                  />
-                ))}
+                {questions?.map((question: GrantQuestion, index: number) => {
+                  if (question.type === 'link') {
+                    return (
+                      <FormField
+                        key={question.order ?? index}
+                        control={form.control}
+                        name={`answers.${index}.answer`}
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col gap-2">
+                            <div className="min-w-0">
+                              <FormLabel
+                                isRequired={!question.optional}
+                                className="[overflow-wrap:anywhere]"
+                              >
+                                {question.question}
+                              </FormLabel>
+                            </div>
+                            <div>
+                              <FormControl>
+                                <div className="flex h-9 items-center">
+                                  <div className="flex h-full items-center justify-center rounded-l-md border border-r-0 border-slate-300 bg-slate-50 px-3 text-xs font-medium text-slate-600 shadow-xs md:justify-start md:text-sm">
+                                    https://
+                                  </div>
+                                  <Input
+                                    className={cn(
+                                      'h-full rounded-l-none',
+                                      isProGrant &&
+                                        'focus-visible:ring-zinc-400',
+                                    )}
+                                    placeholder="Add a link..."
+                                    value={
+                                      field.value?.replace(
+                                        /^https?:\/\//i,
+                                        '',
+                                      ) || ''
+                                    }
+                                    onChange={(e) => {
+                                      const value =
+                                        e.currentTarget.value.replace(
+                                          /^https?:\/\//i,
+                                          '',
+                                        );
+                                      field.onChange(
+                                        value ? `https://${value}` : '',
+                                      );
+                                    }}
+                                    autoComplete="off"
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage className="pt-1" />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                    );
+                  }
+
+                  return (
+                    <FormFieldWrapper
+                      key={question.order ?? index}
+                      control={form.control}
+                      name={`answers.${index}.answer`}
+                      label={question.question}
+                      isRequired={!question.optional}
+                      isRichEditor
+                      isPro={isProGrant}
+                    />
+                  );
+                })}
               </div>
             )}
             {activeStep === 2 && (
@@ -914,9 +1041,8 @@ export const ApplicationModal = ({
                     isPro={isProGrant}
                   />
                 )}
-
                 {!grantApplication && (
-                  <div className="flex flex-col gap-2">
+                  <div className="mt-2 flex flex-col gap-2">
                     <div className="flex items-start space-x-2">
                       <Checkbox
                         id="acknowledgement"
@@ -946,10 +1072,305 @@ export const ApplicationModal = ({
                     {acknowledgementError && (
                       <FormMessage>{acknowledgementError}</FormMessage>
                     )}
+                    <div className="flex items-start space-x-2">
+                      <Checkbox
+                        id="feedback-acknowledgement"
+                        className={cn(
+                          'mt-1',
+                          isProGrant
+                            ? 'border-zinc-400 data-[state=checked]:border-zinc-800 data-[state=checked]:bg-zinc-800'
+                            : 'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple',
+                        )}
+                        checked={feedbackAcknowledgementAccepted}
+                        onCheckedChange={(checked) => {
+                          setFeedbackAcknowledgementAccepted(
+                            checked as boolean,
+                          );
+                          if (checked) {
+                            setFeedbackAcknowledgementError('');
+                          }
+                        }}
+                      />
+                      <label
+                        htmlFor="feedback-acknowledgement"
+                        className="text-xs text-slate-500"
+                      >
+                        I understand that sponsors will not be able to send
+                        individual feedback to applicants. I have factored this
+                        in before applying to avoid disappointment.
+                        <span className="text-red-500">*</span>
+                      </label>
+                    </div>
+                    {feedbackAcknowledgementError && (
+                      <FormMessage>{feedbackAcknowledgementError}</FormMessage>
+                    )}
                   </div>
                 )}
               </div>
             )}
+            <Sheet open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+              <SheetContent
+                side="right"
+                className="z-[100] w-full overflow-y-auto bg-white sm:max-w-xl"
+              >
+                <SheetHeader className="mb-6">
+                  <SheetTitle>Application Preview</SheetTitle>
+                </SheetHeader>
+                <div className="mb-5 flex flex-col gap-5 text-sm">
+                  <div>
+                    <h3 className="mb-2 font-semibold text-slate-800">
+                      Basics
+                    </h3>
+                    <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-slate-50 p-4">
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Project Title:
+                        </span>
+                        <p className="mt-1">{form.getValues('projectTitle')}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          One-Liner:
+                        </span>
+                        <p className="mt-1">
+                          {form.getValues('projectOneLiner')}
+                        </p>
+                      </div>
+                      {!isAgenticEngineering && form.getValues('ask') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Ask Amount:
+                          </span>
+                          <p className="mt-1">
+                            {form.getValues('ask')} {tokenLabel}
+                          </p>
+                        </div>
+                      )}
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Wallet Address:
+                        </span>
+                        <p className="mt-1 break-all">
+                          {form.getValues('walletAddress')}
+                        </p>
+                      </div>
+                      {telegramPreviewValue && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Telegram:
+                          </span>
+                          <p className="mt-1">
+                            <a
+                              href={telegramPreviewHref}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-brand-purple hover:underline"
+                            >
+                              {telegramPreviewValue}
+                            </a>
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="mb-2 font-semibold text-slate-800">
+                      Details
+                    </h3>
+                    <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-slate-50 p-4">
+                      <div>
+                        <span className="font-medium text-slate-500">
+                          Project Details:
+                        </span>
+                        <div
+                          className="prose prose-sm mt-1 max-w-none"
+                          dangerouslySetInnerHTML={{
+                            __html: sanitizeGrantApplicationHtml(
+                              form.getValues('projectDetails') || '',
+                            ),
+                          }}
+                        />
+                      </div>
+                      {!isST && form.getValues('projectTimeline') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Deadline:
+                          </span>
+                          <p className="mt-1">
+                            {form.getValues('projectTimeline')}
+                          </p>
+                        </div>
+                      )}
+                      {form.getValues('proofOfWork') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Proof of Work:
+                          </span>
+                          <div
+                            className="prose prose-sm mt-1 max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('proofOfWork') || '',
+                              ),
+                            }}
+                          />
+                        </div>
+                      )}
+                      <div className="flex gap-4">
+                        {twitterPreviewValue && (
+                          <div>
+                            <span className="font-medium text-slate-500">
+                              Twitter:
+                            </span>
+                            <p className="mt-1">
+                              <a
+                                href={twitterPreviewHref}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-brand-purple hover:underline"
+                              >
+                                {twitterPreviewValue}
+                              </a>
+                            </p>
+                          </div>
+                        )}
+                        {!isST && githubPreviewValue && (
+                          <div>
+                            <span className="font-medium text-slate-500">
+                              Github:
+                            </span>
+                            <p className="mt-1">
+                              <a
+                                href={githubPreviewHref}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-brand-purple hover:underline"
+                              >
+                                {githubPreviewValue}
+                              </a>
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      {isST && lumaPreviewValue && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Luma Event:
+                          </span>
+                          <p className="mt-1">
+                            <a
+                              href={lumaPreviewHref}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-brand-purple hover:underline"
+                            >
+                              {getLumaDisplayValue(lumaPreviewValue)}
+                            </a>
+                          </p>
+                        </div>
+                      )}
+                      {isST && form.getValues('expenseBreakdown') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            Expense Breakdown:
+                          </span>
+                          <div
+                            className="prose prose-sm mt-1 max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('expenseBreakdown') || '',
+                              ),
+                            }}
+                          />
+                        </div>
+                      )}
+                      {(questions?.length ?? 0) > 0 &&
+                        questions?.map((q, i) => {
+                          const answerValue =
+                            form.getValues(`answers.${i}.answer`) || '';
+                          const answerHref = answerValue.startsWith('http')
+                            ? answerValue
+                            : `https://${answerValue}`;
+
+                          return (
+                            <div key={i}>
+                              <span className="font-medium text-slate-500">
+                                {q.question}
+                              </span>
+                              {q.type === 'link' ? (
+                                <p className="mt-1">
+                                  {answerValue ? (
+                                    <a
+                                      href={answerHref}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-brand-purple hover:underline"
+                                    >
+                                      {answerValue}
+                                    </a>
+                                  ) : (
+                                    '-'
+                                  )}
+                                </p>
+                              ) : (
+                                <div
+                                  className="prose prose-sm mt-1 max-w-none"
+                                  dangerouslySetInnerHTML={{
+                                    __html:
+                                      sanitizeGrantApplicationHtml(answerValue),
+                                  }}
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="mb-2 font-semibold text-slate-800">
+                      {isST ? 'Outcomes' : 'Milestones'}
+                    </h3>
+                    <div className="flex flex-col gap-3 rounded-md border border-slate-200 bg-slate-50 p-4">
+                      {form.getValues('milestones') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            {isST
+                              ? 'Expected Outcomes:'
+                              : 'Goals and Milestones:'}
+                          </span>
+                          <div
+                            className="prose prose-sm mt-1 max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('milestones') || '',
+                              ),
+                            }}
+                          />
+                        </div>
+                      )}
+                      {!isST && form.getValues('kpi') && (
+                        <div>
+                          <span className="font-medium text-slate-500">
+                            KPI:
+                          </span>
+                          <div
+                            className="prose prose-sm mt-1 max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: sanitizeGrantApplicationHtml(
+                                form.getValues('kpi') || '',
+                              ),
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+
             <div className="mt-8 flex gap-2">
               {activeStep > 0 && (
                 <Button
@@ -962,32 +1383,46 @@ export const ApplicationModal = ({
                 </Button>
               )}
               {activeStep === steps.length - 1 ? (
-                <Button
-                  className={cn(
-                    'ph-no-capture w-full',
-                    isNotEligibleForPro
-                      ? 'bg-zinc-300 text-zinc-700 disabled:opacity-100'
-                      : isProGrant && 'bg-zinc-800 hover:bg-black',
-                  )}
-                  disabled={isLoading || (isPro && !isUserPro)}
-                  type="submit"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      <span>Applying...</span>
-                    </>
-                  ) : isNotEligibleForPro ? (
-                    <span className="flex items-center gap-2">
-                      <Lock className="h-4 w-4" />
-                      <span>Not Eligible</span>
-                    </span>
-                  ) : grantApplication ? (
-                    <span>Update</span>
-                  ) : (
-                    'Apply'
-                  )}
-                </Button>
+                <>
+                  <Button
+                    className={cn(
+                      'ph-no-capture w-full',
+                      isProGrant &&
+                        'border-zinc-800 text-zinc-800 hover:bg-zinc-100',
+                    )}
+                    onClick={() => setIsPreviewOpen(true)}
+                    variant="outline"
+                    type="button"
+                  >
+                    Preview
+                  </Button>
+                  <Button
+                    className={cn(
+                      'ph-no-capture w-full',
+                      isNotEligibleForPro
+                        ? 'bg-zinc-300 text-zinc-700 disabled:opacity-100'
+                        : isProGrant && 'bg-zinc-800 hover:bg-black',
+                    )}
+                    disabled={isLoading || (isPro && !isUserPro)}
+                    type="submit"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <span>Applying...</span>
+                      </>
+                    ) : isNotEligibleForPro ? (
+                      <span className="flex items-center gap-2">
+                        <Lock className="h-4 w-4" />
+                        <span>Not Eligible</span>
+                      </span>
+                    ) : grantApplication ? (
+                      <span>Update</span>
+                    ) : (
+                      'Apply'
+                    )}
+                  </Button>
+                </>
               ) : (
                 <Button
                   className={cn(

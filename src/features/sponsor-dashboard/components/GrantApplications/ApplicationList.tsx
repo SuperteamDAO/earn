@@ -13,6 +13,7 @@ import {
 } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantApplicationAtom } from '../../atoms';
@@ -20,6 +21,7 @@ import { labelMenuOptionsGrants } from '../../constants';
 import { type GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils/statusColorMap';
 import { MultiSelectFilter } from './MultiSelectFilter';
+import { SelectLabel } from './SelectLabel';
 
 interface Props {
   applications: GrantApplicationWithUser[] | undefined;
@@ -33,6 +35,7 @@ interface Props {
     filters: Set<GrantApplicationStatus | SubmissionLabels>,
   ) => void;
   isToggleDisabled: boolean;
+  grantSlug: string | undefined;
 }
 
 export const ApplicationList = ({
@@ -45,6 +48,7 @@ export const ApplicationList = ({
   selectedFilters,
   onFilterChange,
   isToggleDisabled,
+  grantSlug,
 }: Props) => {
   const debouncedSetSearchTextRef = useRef<
     ReturnType<typeof debounce> | undefined
@@ -123,7 +127,12 @@ export const ApplicationList = ({
             color: labelColor,
             border: labelBorder,
           } = colorMap[applicationLabel];
-          const chapter = application?.user.people?.chapter;
+          const isEligibleMember = isEligiblePeopleType(
+            application?.user.people?.type,
+          );
+          const chapter = isEligibleMember
+            ? application?.user.people?.chapter
+            : null;
           return (
             <div
               key={application?.id}
@@ -183,8 +192,7 @@ export const ApplicationList = ({
                   >
                     {applicationLabelUi || applicationLabel}
                   </StatusPill>
-                ) : applicationStatus !== 'Pending' ||
-                  applicationLabel === 'Unreviewed' ? (
+                ) : applicationStatus !== 'Pending' ? (
                   <StatusPill
                     className="ml-auto w-fit text-[0.625rem]"
                     color={statusColor}
@@ -193,6 +201,11 @@ export const ApplicationList = ({
                   >
                     {applicationStatus}
                   </StatusPill>
+                ) : grantSlug ? (
+                  <SelectLabel
+                    grantSlug={grantSlug}
+                    application={application}
+                  />
                 ) : (
                   <StatusPill
                     className="ml-auto w-fit text-[0.625rem]"

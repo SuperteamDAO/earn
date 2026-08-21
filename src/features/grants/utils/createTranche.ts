@@ -3,6 +3,7 @@ import { prisma } from '@/prisma';
 
 import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
+import { sanitizeGrantApplicationHtml } from './sanitizeGrantApplicationHtml';
 import { isAgenticEngineeringGrant } from './stGrant';
 import { validateWalletAddressOwnership } from './validateWalletAddressOwnership';
 
@@ -10,6 +11,8 @@ const CLOUDINARY_HOST = 'res.cloudinary.com';
 const MAX_EVENT_PICTURES = 5;
 const MAX_EVENT_RECEIPTS = 10;
 const MAX_AGENTIC_RECEIPTS = 3;
+export const TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE =
+  'Not authorized to request a tranche for this application';
 
 const parseHttpUrl = (value: string): URL | null => {
   try {
@@ -169,8 +172,44 @@ const normalizeSpecificHostUrl = (
   ).toString();
 };
 
+const normalizeGenericUrl = (
+  value: unknown,
+  {
+    label,
+    required,
+  }: {
+    label: string;
+    required: boolean;
+  },
+): string | undefined => {
+  if (value === undefined || value === null || value === '') {
+    if (required) {
+      throw new Error(`${label} is required.`);
+    }
+    return undefined;
+  }
+
+  if (typeof value !== 'string') {
+    throw new Error(`${label} must be a valid URL.`);
+  }
+
+  const trimmed = value.trim();
+  const urlCandidate =
+    trimmed.startsWith('http://') || trimmed.startsWith('https://')
+      ? trimmed
+      : `https://${trimmed}`;
+  const parsed = parseHttpUrl(urlCandidate);
+
+  if (!parsed || !parsed.hostname.includes('.')) {
+    throw new Error(`${label} must be a valid URL.`);
+  }
+
+  return parsed.toString();
+};
+
 type CreateTrancheProps = {
   applicationId: string;
+  requesterUserId?: string;
   helpWanted?: string;
   update?: string;
   walletAddress?: string;
@@ -186,6 +225,7 @@ type CreateTrancheProps = {
 
 export async function createTranche({
   applicationId,
+  requesterUserId,
   helpWanted,
   update,
   walletAddress,
@@ -208,6 +248,13 @@ export async function createTranche({
       user: true,
     },
   });
+
+  if (requesterUserId && application.userId !== requesterUserId) {
+    logger.warn(
+      `User ${requesterUserId} is not authorized to request a tranche for application ${applicationId}`,
+    );
+    throw new Error(TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE);
+  }
 
   if (application.user.isKYCVerified !== true) {
     const errorMessage = `User is not verified for application ${applicationId}`;
@@ -290,11 +337,9 @@ export async function createTranche({
     socialPost,
     requiresEventProof,
   );
-  const normalizedColosseumLink = normalizeSpecificHostUrl(colosseumLink, {
-    label: 'Colosseum link',
+  const normalizedColosseumLink = normalizeGenericUrl(colosseumLink, {
+    label: 'Project URL',
     required: requiresAgenticFinalProof,
-    host: 'arena.colosseum.org',
-    minPathSegments: 1,
   });
   const normalizedGithubRepo = normalizeSpecificHostUrl(githubRepo, {
     label: 'GitHub repo',
@@ -376,8 +421,8 @@ export async function createTranche({
       applicationId,
       ask: trancheAmount,
       status: isFirstTranche ? 'Approved' : 'Pending',
-      helpWanted,
-      update,
+      helpWanted: sanitizeGrantApplicationHtml(helpWanted),
+      update: sanitizeGrantApplicationHtml(update),
       walletAddress,
       grantId: application.grantId,
       trancheNumber: existingTranches + 1,

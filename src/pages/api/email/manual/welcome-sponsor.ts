@@ -6,7 +6,7 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { WelcomeSponsorTemplate } from '@/features/emails/components/welcomeSponsorTemplate';
-import { pratikEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
+import { senderEmail, replyToEmail } from '@/features/emails/utils/fromEmails';
 import { resend } from '@/features/emails/utils/resend';
 
 export default async function handler(
@@ -44,18 +44,18 @@ export default async function handler(
   try {
     logger.debug(`Sending welcome email to: ${normalizedEmail}`);
     await resend.emails.send({
-      from: pratikEmail,
+      from: senderEmail,
       to: [normalizedEmail],
       subject: 'Welcome!',
       react: WelcomeSponsorTemplate(),
       replyTo: replyToEmail,
     });
 
-    logger.info(`Welcome email sent successfully to: ${normalizedEmail}`);
+    logger.info('Welcome sponsor email sent successfully');
     return res.status(200).json({ message: 'Ok' });
   } catch (error: any) {
     logger.error(
-      `Error occurred while sending welcome email to ${normalizedEmail}: ${safeStringify(error)}`,
+      `Error occurred while sending welcome sponsor email: ${safeStringify(error)}`,
     );
     return res.status(500).json({ error: 'Something went wrong.' });
   }

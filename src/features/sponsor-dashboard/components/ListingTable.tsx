@@ -217,6 +217,10 @@ export const ListingTable = ({
                 listing?.type === 'grant'
                   ? `${getURL()}earn/grants/${listing.slug}`
                   : `${getURL()}earn/listing/${listing.slug}`;
+              const viewListingLink =
+                !listing.isPublished && listing.type !== 'grant'
+                  ? `${listingLink}?preview=1`
+                  : listingLink;
 
               const listingSubmissionLink =
                 listing.type === 'grant'
@@ -391,7 +395,7 @@ export const ListingTable = ({
                       <DropdownMenuContent align="end" className="max-w-60">
                         <DropdownMenuItem
                           className="cursor-pointer text-sm font-medium text-slate-500"
-                          onClick={() => window.open(listingLink, '_blank')}
+                          onClick={() => window.open(viewListingLink, '_blank')}
                         >
                           <ExternalLink className="mr-2 h-4 w-4" />
                           View {listingLabel}

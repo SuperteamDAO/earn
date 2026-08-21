@@ -7,6 +7,10 @@ import { safeStringify } from '@/utils/safeStringify';
 import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
+import {
+  sanitizeGrantApplicationAnswers,
+  sanitizeGrantApplicationHtml,
+} from '@/features/grants/utils/sanitizeGrantApplicationHtml';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 
@@ -34,6 +38,15 @@ export async function updateSubmission(
   }
 
   const validatedData = validationResult.data;
+  const submissionTelegram =
+    listing.type === 'project' ? validatedData.telegram || null : null;
+
+  if (validatedData.telegram && !user.telegram) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { telegram: validatedData.telegram },
+    });
+  }
 
   const existingSubmission = await prisma.submission.findFirst({
     where:
@@ -60,9 +73,11 @@ export async function updateSubmission(
   const formattedData = {
     link: validatedData.link || '',
     tweet: validatedData.tweet || '',
-    otherInfo: validatedData.otherInfo || '',
-    eligibilityAnswers: validatedData.eligibilityAnswers || [],
+    otherInfo: sanitizeGrantApplicationHtml(validatedData.otherInfo),
+    eligibilityAnswers:
+      sanitizeGrantApplicationAnswers(validatedData.eligibilityAnswers) || [],
     ask: validatedData.ask || 0,
+    telegram: submissionTelegram,
   };
 
   return prisma.submission.update({
@@ -89,6 +104,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     const { listing, user } = await validateSubmissionRequest(
       userId as string,
       listingId,
+      { skipLocationCooldown: true },
     );
 
     if (listing.isPro && !user.isPro) {

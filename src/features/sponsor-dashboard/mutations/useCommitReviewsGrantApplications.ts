@@ -4,6 +4,8 @@ import { useAtom } from 'jotai';
 import { api } from '@/lib/api';
 
 import { type GrantApplicationAi } from '@/features/grants/types';
+import { formatGrantApplicationAiReviewNotes } from '@/features/grants/utils/formatGrantApplicationAiReviewNotes';
+import { convertTextToNotesHTML } from '@/features/sponsor-dashboard/utils/convertTextToNotesHTML';
 
 import { selectedGrantApplicationAtom } from '../atoms';
 import { type GrantApplicationWithUser } from '../types';
@@ -53,11 +55,9 @@ export const useCommitReviewsGrantApplications = (
             ...prevAppl,
             label: aiReview?.predictedLabel || prevAppl.label,
             notes:
-              aiReview?.shortNote
-                .split(/(?<=[.!?])\s+/)
-                .filter((sentence) => sentence.trim().length > 0)
-                .map((sentence) => `• ${sentence.trim()}`)
-                .join('\n') || prevAppl.notes,
+              convertTextToNotesHTML(
+                formatGrantApplicationAiReviewNotes(aiReview),
+              ) || prevAppl.notes,
             ai: commitedAi,
           };
         }

@@ -9,6 +9,24 @@ import { selectedGrantApplicationAtom } from '../atoms';
 import { type GrantApplicationsReturn } from '../queries/applications';
 import { type GrantApplicationWithUser } from '../types';
 
+type RejectGrantApplicationsInput =
+  | string[]
+  | {
+      applicationIds: string[];
+      customNote?: string;
+      skipCooldown?: boolean;
+    };
+
+const parseRejectGrantApplicationsInput = (
+  input: RejectGrantApplicationsInput,
+) => {
+  if (Array.isArray(input)) {
+    return { applicationIds: input };
+  }
+
+  return input;
+};
+
 export const useRejectGrantApplications = (slug: string) => {
   const queryClient = useQueryClient();
   const [selectedApplication, setSelectedApplication] = useAtom(
@@ -54,7 +72,10 @@ export const useRejectGrantApplications = (slug: string) => {
   };
 
   return useMutation({
-    mutationFn: async (applicationIds: string[]) => {
+    mutationFn: async (input: RejectGrantApplicationsInput) => {
+      const { applicationIds, customNote, skipCooldown } =
+        parseRejectGrantApplicationsInput(input);
+      const reviewerNote = customNote?.trim();
       const batchSize = 10;
       for (let i = 0; i < applicationIds.length; i += batchSize) {
         const batch = applicationIds.slice(i, i + batchSize);
@@ -63,12 +84,17 @@ export const useRejectGrantApplications = (slug: string) => {
           {
             data: batch.map((id) => ({ id })),
             applicationStatus: 'Rejected',
+            ...(reviewerNote ? { customNote: reviewerNote } : {}),
+            ...(skipCooldown ? { skipCooldown } : {}),
           },
         );
       }
       return applicationIds;
     },
-    onMutate: async (applicationIds) => {
+    onMutate: async (input) => {
+      const { applicationIds, skipCooldown } =
+        parseRejectGrantApplicationsInput(input);
+
       await queryClient.cancelQueries({
         queryKey: ['sponsor-applications', slug],
       });
@@ -89,6 +115,7 @@ export const useRejectGrantApplications = (slug: string) => {
               ? {
                   ...application,
                   applicationStatus: GrantApplicationStatus.Rejected,
+                  isCooldownSkipped: !!skipCooldown,
                   label:
                     application.label === 'Unreviewed' ||
                     application.label === 'Pending'
@@ -120,7 +147,9 @@ export const useRejectGrantApplications = (slug: string) => {
 
       return { previousApplications };
     },
-    onError: (_, applicationIds, context) => {
+    onError: (_, input, context) => {
+      const { applicationIds } = parseRejectGrantApplicationsInput(input);
+
       if (context?.previousApplications) {
         queryClient.setQueryData<GrantApplicationsReturn>(
           ['sponsor-applications', slug],

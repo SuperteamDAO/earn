@@ -1,4 +1,5 @@
 import type { NextApiResponse } from 'next';
+import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -8,13 +9,27 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
+const updateGrantSchema = z
+  .object({
+    isPublished: z.boolean().optional(),
+    isPaused: z.boolean().optional(),
+  })
+  .strict();
+
 async function grant(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const params = req.query;
   const id = params.id as string;
 
-  const { isPublished } = req.body;
-
   logger.debug(`Request body: ${safeStringify(req.body)}`);
+
+  const parsed = updateGrantSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      error: 'Invalid request body',
+      details: parsed.error.flatten(),
+    });
+  }
+  const { isPublished, isPaused } = parsed.data;
 
   try {
     const userSponsorId = req.userSponsorId;
@@ -27,7 +42,7 @@ async function grant(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.debug(`Updating grant with ID: ${id}`);
     const result = await prisma.grants.update({
       where: { id },
-      data: { isPublished },
+      data: { isPublished, isPaused },
     });
 
     logger.info(`Grant with ID: ${id} updated successfully`);

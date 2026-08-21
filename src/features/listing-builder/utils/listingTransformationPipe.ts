@@ -1,7 +1,6 @@
 import { franc } from 'franc';
 
 import logger from '@/lib/logger';
-import { isInKindReward } from '@/lib/rewards/inKind';
 import { prisma } from '@/prisma';
 import { type BountiesUncheckedUpdateInput } from '@/prisma/models/Bounties';
 import { type SponsorsModel } from '@/prisma/models/Sponsors';
@@ -98,7 +97,6 @@ export const transformToPrismaData = async ({
     sponsor,
     validatedListing,
   });
-  const isInKind = isInKindReward(token);
 
   const calculateRewardAmount = (
     data: ListingFormData,
@@ -119,7 +117,7 @@ export const transformToPrismaData = async ({
   const nextToken = token ?? undefined;
   const tokenChanged = prevToken !== nextToken;
 
-  if (!isVerifying && !isInKind) {
+  if (!isVerifying) {
     if (!isEditing) {
       if (validatedListing.token && amount > 0) {
         const token = await getTokenBySymbol(validatedListing.token, {
@@ -159,35 +157,24 @@ export const transformToPrismaData = async ({
     }
   }
 
-  const pricingData: Pick<
-    BountiesUncheckedUpdateInput,
-    'usdValue' | 'tokenUsdAtPublish'
-  > = isInKind
-    ? {
-        usdValue: null,
-        tokenUsdAtPublish: null,
-      }
-    : {
-        ...(includeUsdValue ? { usdValue } : {}),
-        ...(typeof tokenUsdAtPublish === 'number' ? { tokenUsdAtPublish } : {}),
-      };
-
-  let autoIsFeatured = false;
-  let shouldRemoveFeatured = false;
+  let isFeaturedUpdate: boolean | undefined;
   try {
-    const meetsThreshold =
+    const isEligibleForAutoFeature =
       isAutoFeatureUsdThresholdMet(usdValue) &&
       hasMoreThan72HoursLeft(deadline) &&
       compensationType === 'fixed' &&
-      type !== 'hackathon';
+      type !== 'hackathon' &&
+      !isPrivate;
 
-    if (meetsThreshold) {
+    if (isEligibleForAutoFeature) {
       const liveFeaturedCount = await countLiveFeaturedListings();
-      autoIsFeatured = liveFeaturedCount < 2;
+      if (liveFeaturedCount < 2) {
+        isFeaturedUpdate = true;
+      }
     }
 
-    if (isEditing && listing.isFeatured && !meetsThreshold) {
-      shouldRemoveFeatured = true;
+    if (isEditing && listing.isFeatured && !isEligibleForAutoFeature) {
+      isFeaturedUpdate = false;
     }
   } catch (error) {
     logger.error('Auto-feature evaluation failed', { error });
@@ -195,9 +182,10 @@ export const transformToPrismaData = async ({
 
   const baseData: BountiesUncheckedUpdateInput = {
     title,
-    ...pricingData,
-    ...(autoIsFeatured ? { isFeatured: true } : {}),
-    ...(shouldRemoveFeatured ? { isFeatured: false } : {}),
+    ...(includeUsdValue ? { usdValue } : {}),
+    ...(typeof isFeaturedUpdate === 'boolean'
+      ? { isFeatured: isFeaturedUpdate }
+      : {}),
     skills,
     slug,
     deadline: new Date(deadline),
@@ -233,6 +221,7 @@ export const transformToPrismaData = async ({
 
     return {
       ...baseData,
+      ...(typeof tokenUsdAtPublish === 'number' ? { tokenUsdAtPublish } : {}),
       maxBonusSpots: maxBonusSpots || 0,
       // Preserve immutable fields from existing listing
       isWinnersAnnounced: listing.isWinnersAnnounced,
@@ -254,6 +243,7 @@ export const transformToPrismaData = async ({
 
     return {
       ...baseData,
+      ...(typeof tokenUsdAtPublish === 'number' ? { tokenUsdAtPublish } : {}),
       maxBonusSpots,
       // Set initial state for new publication
       status: isVerifying ? 'VERIFYING' : 'OPEN',

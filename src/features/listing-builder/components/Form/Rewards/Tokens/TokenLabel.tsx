@@ -2,7 +2,6 @@ import { type ClassValue } from 'clsx';
 import { useWatch } from 'react-hook-form';
 
 import { type Token, useToken } from '@/constants/tokenList';
-import { getRewardTokenDisplayName } from '@/lib/rewards/inKind';
 import { cn } from '@/utils/cn';
 
 import { useListingForm } from '../../../../hooks';
@@ -53,7 +52,6 @@ export function TokenLabel({
   const searchSymbol = symbol || formToken;
   const resolvedToken = useToken(searchSymbol);
   const token = preToken || resolvedToken;
-  const displayedTokenLabel = getRewardTokenDisplayName(token?.tokenSymbol);
 
   if (!token) return null;
   return (
@@ -61,7 +59,7 @@ export function TokenLabel({
       {showIcon && (
         <img
           src={token.icon}
-          alt={displayedTokenLabel}
+          alt={token.tokenSymbol}
           className={cn('mr-1 block h-4 w-4', classNames?.icon)}
         />
       )}
@@ -77,7 +75,7 @@ export function TokenLabel({
       )}
       {showSymbol && (
         <span className={cn('ml-2 text-sm', classNames?.symbol)}>
-          {displayedTokenLabel}
+          {token.tokenSymbol}
         </span>
       )}
       {postfix && (

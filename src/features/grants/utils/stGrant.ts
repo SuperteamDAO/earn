@@ -1,7 +1,5 @@
 import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 
-import type { Grant } from '../types';
-
 type ApplicationCopy = {
   title: string;
   subtitle: string;
@@ -126,8 +124,6 @@ type TrancheCopy = {
 
 export const LUMA_PREFIX = 'https://lu.ma/';
 export const LUMA_LABEL = 'lu.ma/';
-export const COLOSSEUM_ARENA_PREFIX = 'https://arena.colosseum.org/';
-export const COLOSSEUM_ARENA_LABEL = 'arena.colosseum.org/';
 export const GITHUB_REPO_PREFIX = 'https://github.com/';
 export const GITHUB_REPO_LABEL = 'github.com/';
 export const AGENTIC_ENGINEERING_FIXED_ASK = 200;
@@ -209,21 +205,6 @@ function extractHostedPath(
   }
 }
 
-export function extractArenaColosseumPath(input: string): string | null {
-  return extractHostedPath(input, {
-    prefix: COLOSSEUM_ARENA_PREFIX,
-    hosts: ['arena.colosseum.org'],
-  });
-}
-
-export function getArenaColosseumDisplayValue(value: string): string {
-  if (!value) return '';
-  if (value.startsWith(COLOSSEUM_ARENA_PREFIX)) {
-    return value.slice(COLOSSEUM_ARENA_PREFIX.length).replace(/^\/+/, '');
-  }
-  return value.replace(/^\/+/, '');
-}
-
 export function extractGithubRepoPath(input: string): string | null {
   return extractHostedPath(input, {
     prefix: GITHUB_REPO_PREFIX,
@@ -239,10 +220,6 @@ export function getGithubRepoDisplayValue(value: string): string {
   }
   return value.replace(/^\/+/, '');
 }
-
-export const isSTGrant = (grant: Grant | null | undefined): boolean => {
-  return grant?.isST === true;
-};
 
 export const isAgenticEngineeringGrant = (
   grant: { title?: string | null } | null | undefined,
@@ -473,11 +450,11 @@ export const AGENTIC_ENGINEERING_GRANT_COPY: {
     subtitle:
       'Submit the final proofs for your Agentic Engineering grant to unlock the second tranche.',
     description:
-      'Share your Colosseum project link, GitHub repository, AI subscription receipt, payout wallet, and anything else that will help the sponsor review the final tranche.',
+      'Share your project URL, GitHub repository, AI subscription receipt, payout wallet, and anything else that will help the sponsor review the final tranche.',
     colosseumLink: {
-      label: "Link to your project's Colosseum profile",
-      description: 'Paste the path after the Colosseum Arena host.',
-      placeholder: 'projects/explore/your-project',
+      label: "Link to your project's URL",
+      description: 'URL that showcases your project',
+      placeholder: 'https://your-project-url.com',
     },
     githubRepo: {
       label: 'Link to the Github Repo',
@@ -488,7 +465,7 @@ export const AGENTIC_ENGINEERING_GRANT_COPY: {
     aiReceipt: {
       label: 'Upload your AI Subscription Receipt',
       description:
-        'The receipt should mention your name or entity. Upload up to 3 PDFs or PNGs.',
+        'The receipt should mention your name or entity, and total to at least $200. Upload up to 3 PDFs or PNGs.',
     },
     walletAddress: {
       label: 'Solana Wallet Address',

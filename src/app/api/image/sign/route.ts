@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const signedParams = generateSignedUploadParams(source);
+    const signedParams = generateSignedUploadParams(source, undefined, userId);
 
     logger.info(`Image upload signature generated for user ${userId}`, {
       source,

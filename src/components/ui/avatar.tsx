@@ -1,7 +1,6 @@
 'use client';
 
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
 import { cn } from '@/utils/cn';
@@ -48,33 +47,6 @@ function AvatarFallback({
   );
 }
 
-const avatarBadgeVariants = cva(
-  'bg-background absolute flex size-4 items-stretch justify-stretch rounded-full *:grow *:rounded-full',
-  {
-    variants: {
-      position: {
-        bottomLeft: 'bottom-0 -left-1',
-        bottomRight: '-right-1 bottom-0',
-        topLeft: 'top-0 -left-1',
-        topRight: 'top-0 -right-1',
-      },
-    },
-    defaultVariants: {
-      position: 'bottomLeft',
-    },
-  },
-);
-
-export interface AvatarBadgeProps
-  extends
-    React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof avatarBadgeVariants> {
-  children?:
-    | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-    | null
-    | never[];
-}
-
 type AvatarGroupContextValue = {
   count?: number;
   limit?: number;
@@ -109,7 +81,7 @@ function useAvatarGroupContext() {
   return React.useContext(AvatarGroupContext);
 }
 
-export interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   limit?: number;
 }
 

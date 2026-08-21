@@ -15,7 +15,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
-import { type Grant } from '@/features/grants/types';
+import { type Grant, type GrantQuestion } from '@/features/grants/types';
 import {
   AGENTIC_ENGINEERING_GRANT_COPY,
   isAgenticEngineeringGrant,
@@ -58,6 +58,14 @@ export const TrancheDetails = ({
     : isAgenticEngineering
       ? AGENTIC_ENGINEERING_GRANT_COPY.tranche
       : null;
+
+  const getAnswerQuestion = (answer: any): GrantQuestion | undefined =>
+    grant?.questions?.find((question) => question.question === answer.question);
+
+  const isLinkAnswer = (answer: any) => {
+    const grantQuestion = getAnswerQuestion(answer);
+    return answer.type === 'link' || grantQuestion?.type === 'link';
+  };
 
   const formattedCreatedAt = dayjs(selectedTranche?.createdAt).format(
     'DD MMM YYYY',
@@ -400,14 +408,19 @@ export const TrancheDetails = ({
 
               {Array.isArray(selectedTranche?.GrantApplication?.answers) &&
                 selectedTranche?.GrantApplication?.answers.map(
-                  (answer: any, answerIndex: number) => (
-                    <InfoBox
-                      key={answerIndex}
-                      label={answer.question}
-                      content={answer.answer}
-                      isHtml
-                    />
-                  ),
+                  (answer: any, answerIndex: number) => {
+                    const grantQuestion = getAnswerQuestion(answer);
+                    const isOptional =
+                      answer.optional ?? grantQuestion?.optional;
+                    return (
+                      <InfoBox
+                        key={answerIndex}
+                        label={`${answer.question}${isOptional ? ' (Optional)' : ''}`}
+                        content={answer.answer}
+                        isHtml={!isLinkAnswer(answer)}
+                      />
+                    );
+                  },
                 )}
             </ScrollArea>
           </div>

@@ -31,7 +31,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { isInKindReward } from '@/lib/rewards/inKind';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
@@ -67,7 +66,16 @@ export function RewardsSheet() {
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const isBoostFromUrl = params?.get('boost') === 'true';
   const isEditing = useAtomValue(isEditingAtom);
+
+  useEffect(() => {
+    const shouldOpenBoost = params?.get('boost') === 'true';
+    if (shouldOpenBoost) {
+      setOpen(true);
+      setPanel('boost');
+    }
+  }, [params]);
 
   useEffect(() => {
     if (!open) {
@@ -87,8 +95,6 @@ export function RewardsSheet() {
     control: form.control,
     name: 'token',
   });
-  const isInKind = isInKindReward(token);
-  const isBoostFromUrl = params?.get('boost') === 'true' && !isInKind;
   const compensationType = useWatch({
     control: form.control,
     name: 'compensationType',
@@ -110,14 +116,6 @@ export function RewardsSheet() {
     name: 'isPublished',
   });
 
-  useEffect(() => {
-    const shouldOpenBoost = params?.get('boost') === 'true';
-    if (shouldOpenBoost && !isInKind) {
-      setOpen(true);
-      setPanel('boost');
-    }
-  }, [isInKind, params]);
-
   const { data: tokenUsdValueData } = useQuery(
     tokenUsdValueQuery(token as string | undefined),
   );
@@ -126,13 +124,14 @@ export function RewardsSheet() {
 
   const currentUsdValue = useMemo(() => {
     if (type !== 'project') {
-      return tokenUsdValue * (rewardAmount || 0);
+      return (tokenUsdValue || 1) * (rewardAmount || 0);
     } else {
       if (compensationType === 'fixed') {
-        return tokenUsdValue * (rewardAmount || 0);
+        return (tokenUsdValue || 1) * (rewardAmount || 0);
       } else if (compensationType === 'range') {
         return (
-          tokenUsdValue * (((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2)
+          (tokenUsdValue || 1) *
+          (((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2)
         );
       } else if (compensationType === 'variable') {
         return 1000;

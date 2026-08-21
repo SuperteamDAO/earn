@@ -2,11 +2,14 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { plainTextFromHtmlTurndown } from '@/utils/plainTextFromHtml';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+
+const MAX_NOTES_LENGTH = 2000;
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
@@ -22,6 +25,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   if (!id || notes === undefined) {
     logger.warn('Missing parameters: id and notes are required');
     return res.status(400).json({ error: 'id and notes are required' });
+  }
+
+  const notesTextLength =
+    typeof notes === 'string'
+      ? plainTextFromHtmlTurndown.turndown(notes).length
+      : 0;
+
+  if (typeof notes !== 'string' || notesTextLength > MAX_NOTES_LENGTH) {
+    logger.warn(`Invalid notes length for application with ID ${id}`);
+    return res.status(400).json({
+      error: `notes must be a string of ${MAX_NOTES_LENGTH} characters or fewer`,
+    });
   }
 
   try {

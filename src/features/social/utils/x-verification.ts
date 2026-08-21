@@ -6,6 +6,9 @@ import { twitterUsernameRegex } from './regex';
 
 const TWITTER_HOSTS = ['twitter.com', 'x.com'];
 
+export const INVALID_X_STATUS_LINK_MESSAGE =
+  'Invalid format. Please add a link with the format https://x.com/<your_handle>/status/<id>.';
+
 /**
  * Normalizes a Twitter handle
  * @param handle - Raw handle that may include @
@@ -69,6 +72,36 @@ export function extractXHandle(url: string): string | null {
  */
 export function isXUrl(url: string): boolean {
   return extractXHandle(url) !== null;
+}
+
+export function isXInternalStatusUrl(url: string): boolean {
+  if (!url || typeof url !== 'string') {
+    return false;
+  }
+
+  try {
+    const trimmedUrl = url.trim();
+    const urlWithProtocol = trimmedUrl.startsWith('http')
+      ? trimmedUrl
+      : `https://${trimmedUrl}`;
+    const parsedUrl = new URL(urlWithProtocol);
+    const hostname = parsedUrl.hostname.toLowerCase().replace(/^www\./, '');
+
+    if (hostname !== 'x.com') {
+      return false;
+    }
+
+    const pathSegments = parsedUrl.pathname.split('/').filter(Boolean);
+    const statusId = pathSegments[2];
+    return (
+      pathSegments[0]?.toLowerCase() === 'i' &&
+      pathSegments[1]?.toLowerCase() === 'status' &&
+      typeof statusId === 'string' &&
+      /^\d+$/.test(statusId)
+    );
+  } catch {
+    return false;
+  }
 }
 
 /**

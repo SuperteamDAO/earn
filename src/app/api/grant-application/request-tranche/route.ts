@@ -6,7 +6,10 @@ import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
-import { createTranche } from '@/features/grants/utils/createTranche';
+import {
+  createTranche,
+  TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE,
+} from '@/features/grants/utils/createTranche';
 import {
   WALLET_ADDRESS_CONFLICT_CODE,
   WALLET_ADDRESS_CONFLICT_MESSAGE,
@@ -63,6 +66,7 @@ export async function POST(request: Request) {
         async () => {
           await createTranche({
             applicationId,
+            requesterUserId: userId,
             helpWanted,
             update: projectUpdate,
             walletAddress,
@@ -104,6 +108,15 @@ export async function POST(request: Request) {
             message: WALLET_ADDRESS_CONFLICT_MESSAGE,
           },
           { status: 409 },
+        );
+      }
+      if (error.message === TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE) {
+        return NextResponse.json(
+          {
+            error: TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE,
+            message: TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE,
+          },
+          { status: 403 },
         );
       }
       return NextResponse.json(

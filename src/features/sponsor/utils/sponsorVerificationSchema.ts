@@ -12,7 +12,3 @@ export const sponsorVerificationSchema = z.object({
   }),
   listingId: z.string(),
 });
-
-export type SponsorVerificationSchema = z.infer<
-  typeof sponsorVerificationSchema
->;

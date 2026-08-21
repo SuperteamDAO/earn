@@ -22,6 +22,7 @@ type UserWithChapter = PrismaUserWithoutKYC & {
   people?: {
     id: string;
     chapterId?: string | null;
+    type?: string | null;
     chapter?: {
       id: string;
       name: string;

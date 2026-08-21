@@ -10,7 +10,6 @@ export const buildFeaturedAvailabilityWhere = (): BountiesWhereInput => {
     isArchived: false,
     isPrivate: false,
     hackathonprize: false,
-    region: 'Global',
     isWinnersAnnounced: false,
     AND: [
       {

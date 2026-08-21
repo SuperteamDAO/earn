@@ -67,7 +67,7 @@ export function ExtraInfoSection({
           <p className="text-slate-500">{Hackathon.description}</p>
           <a
             className="flex items-center font-medium text-slate-500"
-            href={`/earn/hackathon/${Hackathon.name?.toLowerCase()}`}
+            href={`/earn/hackathon/${Hackathon.slug}`}
             target="_blank"
             rel="noopener noreferrer"
           >

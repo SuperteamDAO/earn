@@ -1,11 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { type SubmissionWithUser } from '@/interface/submission';
+import { type ListingWinner } from '@/interface/submission';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { convertDatesToISO, safeStringify } from '@/utils/safeStringify';
+import { safeStringify } from '@/utils/safeStringify';
 
-export async function getWinningSubmissionsByListingId(listingId: string) {
+export async function getWinningSubmissionsByListingId(
+  listingId: string,
+): Promise<ListingWinner[]> {
   if (!listingId) {
     throw new Error('Missing required query parameters: listingId');
   }
@@ -16,9 +18,14 @@ export async function getWinningSubmissionsByListingId(listingId: string) {
       isActive: true,
       isArchived: false,
       isWinner: true,
+      listing: {
+        isWinnersAnnounced: true,
+      },
     },
     orderBy: { updatedAt: 'desc' },
-    include: {
+    select: {
+      id: true,
+      winnerPosition: true,
       user: {
         select: {
           id: true,
@@ -37,7 +44,7 @@ export async function getWinningSubmissionsByListingId(listingId: string) {
     return Number(a.winnerPosition) - Number(b.winnerPosition);
   });
 
-  return convertDatesToISO(result) as unknown as SubmissionWithUser[];
+  return result;
 }
 
 export default async function submission(

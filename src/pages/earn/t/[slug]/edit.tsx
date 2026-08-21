@@ -46,6 +46,7 @@ import { cn } from '@/utils/cn';
 import { SocialInputAll } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { AddProject } from '@/features/talent/components/AddProject';
+import { UpdateLocationConfirmModal } from '@/features/talent/components/UpdateLocationConfirmModal';
 import {
   CommunityList,
   IndustryList,
@@ -99,6 +100,8 @@ export default function EditProfilePage({
   const [pow, setPow] = useState<PoW[]>([]);
   const [selectedProject, setSelectedProject] = useState<number | null>(null);
   const [skillsRefreshKey, setSkillsRefreshKey] = useState<number>(0);
+  const [pendingProfileSubmit, setPendingProfileSubmit] =
+    useState<ProfileFormData | null>(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -229,6 +232,17 @@ export default function EditProfilePage({
       return;
     }
 
+    const previousLocation = user?.location || '';
+    const nextLocation = data.location || '';
+    if (previousLocation && previousLocation !== nextLocation) {
+      setPendingProfileSubmit(data);
+      return;
+    }
+
+    return submitProfile(data);
+  };
+
+  const submitProfile = async (data: ProfileFormData) => {
     setIsLoading(true);
     posthog.capture('confirm_edit profile');
     try {
@@ -335,6 +349,16 @@ export default function EditProfilePage({
         />
       }
     >
+      <UpdateLocationConfirmModal
+        isOpen={!!pendingProfileSubmit}
+        newRegion={pendingProfileSubmit?.location || ''}
+        onCancel={() => setPendingProfileSubmit(null)}
+        onConfirm={() => {
+          const data = pendingProfileSubmit;
+          setPendingProfileSubmit(null);
+          if (data) void submitProfile(data);
+        }}
+      />
       <div className="bg-white">
         <div className="mx-auto max-w-[600px] p-3 md:p-5">
           <Form {...form}>

@@ -37,6 +37,7 @@ export function SelectSponsor({
   const [selectedSponsor, setSelectedSponsor] = useState<SponsorOption | null>(
     null,
   );
+  const [isSwitchingSponsor, setIsSwitchingSponsor] = useState(false);
   const setHackathonSponsor = useSetAtom(hackathonSponsorAtom);
 
   useEffect(() => {
@@ -67,30 +68,37 @@ export function SelectSponsor({
 
   const updateSponsor = async (sponsorId: string) => {
     try {
+      setIsSwitchingSponsor(true);
       await updateUser.mutateAsync({ currentSponsorId: sponsorId });
+      return true;
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      setIsSwitchingSponsor(false);
+      return false;
     }
   };
 
   const handleChange = async (option?: any) => {
+    if (!option || isSwitchingSponsor) return;
+
     if (type === 'hackathon') {
       setHackathonSponsor(option.value);
       setSelectedSponsor(option);
     } else {
-      await updateSponsor(option.value);
-      // Redirect to the listings index after a sponsor switch so page-level data
-      // doesn't stay bound to the previously selected sponsor.
-      if (
-        router.asPath.startsWith('/earn/dashboard/') &&
-        router.asPath !== '/earn/dashboard/listings'
-      ) {
-        router.push('/earn/dashboard/listings/');
+      setSelectedSponsor(option);
+      const didSwitch = await updateSponsor(option.value);
+      if (!didSwitch) return;
+
+      if (router.asPath.startsWith('/earn/dashboard/')) {
+        window.location.assign('/earn/dashboard/listings/');
+        return;
       }
+
+      window.location.reload();
     }
   };
 
-  const SingleValue = ({ children, ...props }: any) => {
+  const SingleValue = (props: any) => {
     const { data, selectProps } = props;
 
     if (selectProps.menuIsOpen) {
@@ -148,6 +156,7 @@ export function SelectSponsor({
       placeholder="Select Sponsor"
       loadOptions={loadSponsors}
       defaultOptions
+      isDisabled={isSwitchingSponsor}
       isClearable={false}
       isSearchable={true}
       autoFocus={false}

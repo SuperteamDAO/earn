@@ -12,7 +12,6 @@ import { TokenIcon } from '@/components/ui/token-icon';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { type ParentSkills } from '@/interface/skills';
-import { getRewardTokenDisplayName } from '@/lib/rewards/inKind';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -20,7 +19,7 @@ import { cleanRewardPrizes } from '@/utils/rank';
 
 import { RelatedListings } from '@/features/home/components/RelatedListings';
 
-import type { Listing } from '../../types';
+import type { PublicListing } from '../../types';
 import { isDeadlineOver } from '../../utils/deadline';
 import { ApprovalStages } from '../Submission/ApprovalStages';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
@@ -71,7 +70,7 @@ export function RightSideBar({
   submissionNumber,
   isSubmissionNumberLoading = false,
 }: {
-  listing: Listing;
+  listing: PublicListing;
   skills?: ParentSkills[];
   isTemplate?: boolean;
   submissionNumber?: number;
@@ -110,19 +109,18 @@ export function RightSideBar({
   }, [submissionNumber]);
 
   const isProject = type === 'project';
-  const tokenLabel = getRewardTokenDisplayName(token);
 
   const router = useRouter();
 
   const largestDigits = useMemo(() => {
     const consideringDigitsArray = cleanRewardPrizes(rewards).map(
-      (c) => formatNumberWithSuffix(c, 2, true) + tokenLabel,
+      (c) => formatNumberWithSuffix(c, 2, true) + (token || '') + '',
     );
     consideringDigitsArray.push(
-      formatNumberWithSuffix(rewardAmount || 0, 2, true) + tokenLabel,
+      formatNumberWithSuffix(rewardAmount || 0, 2, true) + (token || '') + '',
     );
     return digitsInLargestString(consideringDigitsArray);
-  }, [rewards, rewardAmount, tokenLabel]);
+  }, [rewards, token, rewardAmount]);
 
   const showUsdSymbolOnly = useMemo(() => {
     if (listing?.Hackathon?.slug === 'mobius') return true;
@@ -202,7 +200,7 @@ export function RightSideBar({
                           widthPrize={widthOfPrize}
                           totalReward={rewardAmount ?? 0}
                           maxBonusSpots={maxBonusSpots ?? 0}
-                          token={!showUsdSymbolOnly ? tokenLabel : 'USD'}
+                          token={!showUsdSymbolOnly ? token || '' : 'USD'}
                           rewards={rewards}
                           showUsdSymbol={showUsdSymbolOnly}
                         />

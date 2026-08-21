@@ -34,20 +34,6 @@ function filterInDevSkills(skills: string[]) {
   return skills.filter((s) => devSkills.includes(s));
 }
 
-function subskillContainQuery(subskills: string[], alias: string) {
-  return subskills.map(
-    (subskill) =>
-      `JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE('${subskill}'))`,
-  );
-}
-
-function skillContainQuery(skills: string[], alias: string) {
-  return skills.map(
-    (subskill) =>
-      `JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].skills'), JSON_QUOTE('${subskill}'))`,
-  );
-}
-
 export async function GET(
   _: Request,
   props: { params: Promise<{ id: string }> },
@@ -104,6 +90,22 @@ export async function GET(
       flattenSkills(scoutBounty.skills as any),
     );
     const region = scoutBounty.region.toString();
+    const insertQueryParams: unknown[] = [];
+    const bindParam = (value: unknown) => {
+      insertQueryParams.push(value);
+      return '?';
+    };
+    const bindLikeParam = (value: string) => bindParam(`%${value}%`);
+    const subskillContainQuery = (subskills: string[], alias: string) =>
+      subskills.map(
+        (subskill) =>
+          `JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].subskills'), JSON_QUOTE(${bindParam(subskill)}))`,
+      );
+    const skillContainQuery = (skills: string[], alias: string) =>
+      skills.map(
+        (skill) =>
+          `JSON_CONTAINS(JSON_EXTRACT(${alias}.skills, '$[*].skills'), JSON_QUOTE(${bindParam(skill)}))`,
+      );
 
     logger.debug('Fetching previous scouts');
     const prevScouts = await prisma.scouts.findMany({
@@ -139,7 +141,7 @@ export async function GET(
       });
     }
 
-    const sumMatchingSubSkillsQuery = `
+    const sumMatchingSubSkillsQuery = () => `
       SUM(
         ${
           subskills.length > 0
@@ -157,7 +159,7 @@ export async function GET(
 	    ) AS matchingSubSkills
     `;
 
-    const sumMatchingSkillsQuery = `
+    const sumMatchingSkillsQuery = () => `
       SUM(
         ${
           devSkills.length > 0
@@ -190,7 +192,7 @@ export async function GET(
         ${allSkills
           .map(
             ({ skill, type }) => `
-          IF(JSON_CONTAINS(JSON_EXTRACT(ANY_VALUE(${alias}.skills), '$[*].${type}'), JSON_QUOTE('${skill}')), '${skill}', NULL)
+          IF(JSON_CONTAINS(JSON_EXTRACT(ANY_VALUE(${alias}.skills), '$[*].${type}'), JSON_QUOTE(${bindParam(skill)})), ${bindParam(skill)}, NULL)
         `,
           )
           .join(', ')}
@@ -220,8 +222,8 @@ export async function GET(
       SELECT
         u.id as userId,
         SUM(s.rewardInUSD) as dollarsEarned
-        ${sumMatchingSkills ? ',' + sumMatchingSubSkillsQuery : ''}
-        ${sumMatchingSkills ? ',' + sumMatchingSkillsQuery : ''}
+        ${sumMatchingSkills ? ',' + sumMatchingSubSkillsQuery() : ''}
+        ${sumMatchingSkills ? ',' + sumMatchingSkillsQuery() : ''}
         ${arrayMatchingSkills ? ',' + arrayMatchingSkillsCaseConditionQuery(subskills, devSkills, 'bs') : ''}
         FROM
           User u
@@ -234,16 +236,16 @@ export async function GET(
           AND (
             ${matchingWhereClause(subskills, devSkills, 'bs').join('\n  OR  ')}
 	        )
-          ${region !== 'Global' ? `AND u.location LIKE '%${region}%'` : ''}
+          ${region !== 'Global' ? `AND u.location LIKE ${bindLikeParam(region)}` : ''}
         GROUP BY
           u.id
     `;
 
     const subskillPoWLikeQuery = (subskills: string[], alias: string) =>
-      subskills.map((s) => `${alias}.subSkills LIKE CONCAT('%','${s}','%')`);
+      subskills.map((s) => `${alias}.subSkills LIKE ${bindLikeParam(s)}`);
 
     const skillPoWLikeQuery = (skills: string[], alias: string) =>
-      skills.map((s) => `${alias}.skills LIKE CONCAT('%','${s}','%')`);
+      skills.map((s) => `${alias}.skills LIKE ${bindLikeParam(s)}`);
 
     const sumSubSkillsContainProjectQuery = (subskillWhere: string[]) =>
       ` 
@@ -271,7 +273,7 @@ export async function GET(
       ) as matchedProjectSkills
     `;
 
-    const matchingSkillsPoWQuery = `
+    const matchingSkillsPoWQuery = () => `
 		    SELECT
 		      u.id as userId,
           ${sumSubSkillsContainProjectQuery(subskillPoWLikeQuery(subskills, 'p'))},
@@ -291,10 +293,10 @@ export async function GET(
 		      AND t1.dollarsEarned > 0
           AND es.category = 'scoutInvite'
 		    GROUP BY
-		      u.id, t1.dollarsEarned
+			      u.id, t1.dollarsEarned
     `;
 
-    const minMaxSubmissionsQuery = `
+    const minMaxSubmissionsQuery = () => `
       SELECT 
 			  COALESCE(MAX(t.dollarsEarned),0) as maxDollarsEarned,
 			  COALESCE(MIN(t.dollarsEarned),0) as minDollarsEarned,
@@ -307,18 +309,18 @@ export async function GET(
 		  ) as t
     `;
 
-    const minMaxPowQuery = `
+    const minMaxPowQuery = () => `
       SELECT
 		    MAX(t.matchedProjectSubSkills) as maxMatchedProjectSubSkills,
 		    MIN(t.matchedProjectSubSkills) as minMatchedProjectSubSkills,
 		    MAX(t.matchedProjectSkills) as maxMatchedProjectSkills,
 		    MIN(t.matchedProjectSkills) as minMatchedProjectSkills
 		  FROM (
-        ${matchingSkillsPoWQuery}
+        ${matchingSkillsPoWQuery()}
 		  ) as t
     `;
 
-    const normalizeQuery = `
+    const normalizeQuery = () => `
       SELECT
         u.id as userId,
         t1.dollarsEarned as dollarsEarned,
@@ -364,13 +366,13 @@ export async function GET(
         ${userWithMatchingSubmissionsQuery(true, true)}
       ) t1 ON u.id = t1.userId
       LEFT JOIN (
-        ${matchingSkillsPoWQuery}
+        ${matchingSkillsPoWQuery()}
       ) t2 ON u.id = t2.userId
       CROSS JOIN (
-        ${minMaxSubmissionsQuery}
+        ${minMaxSubmissionsQuery()}
       ) t3
       CROSS JOIN (
-        ${minMaxPowQuery}
+        ${minMaxPowQuery()}
       ) t4
     `;
 
@@ -440,7 +442,7 @@ export async function GET(
       SELECT
       	UUID() AS id,
 	      t.userId as userId,
-	      '${scoutBounty.id}' as listingId,
+	      ${bindParam(scoutBounty.id)} as listingId,
 	      t.dollarsEarned as dollarsEarned,
 	      ((
           ${weights
@@ -463,7 +465,7 @@ END)
 	      false as invited,
 	      CURRENT_TIMESTAMP AS createdAt
       FROM (
-        ${normalizeQuery}
+        ${normalizeQuery()}
       ) as t
       WHERE matchedSkillsArray IS NOT NULL
       ORDER BY score desc
@@ -486,7 +488,7 @@ END)
     `;
 
     logger.debug('Executing insert query for new scouts');
-    await prisma.$executeRawUnsafe(insertQuery);
+    await prisma.$executeRawUnsafe(insertQuery, ...insertQueryParams);
 
     if (prevScouts.length > 0) {
       const invitedScouts = prevScouts
@@ -618,7 +620,7 @@ END)
     );
     return NextResponse.json(
       {
-        error: error.message,
+        error: 'Unable to generate scouts',
         message: `Error occurred while generating scouts for bounty with id=${id}.`,
       },
       { status: 400 },

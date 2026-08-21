@@ -9,6 +9,10 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
+import {
+  findUsedPaymentTxIds,
+  normalizePaymentTxId,
+} from '@/features/sponsor-dashboard/utils/paymentReplayCheck';
 import { validatePayment } from '@/features/sponsor-dashboard/utils/paymentRPCValidation';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
@@ -71,6 +75,28 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const { listing, user, winnerPosition } = currentSubmission;
+    const txIds = paymentDetails
+      .map((payment: { txId?: string }) => payment.txId)
+      .filter((txId: string | undefined): txId is string => !!txId)
+      .map(normalizePaymentTxId);
+    const duplicateTxIds = txIds.filter(
+      (txId, index) => txIds.indexOf(txId) !== index,
+    );
+    if (duplicateTxIds.length > 0) {
+      const uniqueDuplicateTxIds = [...new Set(duplicateTxIds)];
+      return res.status(400).json({
+        error: `Duplicate transaction IDs found: ${uniqueDuplicateTxIds.join(', ')}`,
+        message: `Duplicate transaction IDs found: ${uniqueDuplicateTxIds.join(', ')}`,
+      });
+    }
+
+    const alreadyUsedTxIds = await findUsedPaymentTxIds(txIds);
+    if (alreadyUsedTxIds.length > 0) {
+      return res.status(400).json({
+        error: `Transaction IDs already used: ${alreadyUsedTxIds.join(', ')}`,
+        message: `Transaction IDs already used: ${alreadyUsedTxIds.join(', ')}`,
+      });
+    }
 
     const isProject = listing.type === 'project';
     if (!isProject) {

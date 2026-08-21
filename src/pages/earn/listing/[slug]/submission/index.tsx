@@ -2,13 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 
-import type { SubmissionWithUser } from '@/interface/submission';
+import type { ListingPageSubmission } from '@/interface/submission';
 import { ListingPageLayout } from '@/layouts/Listing';
 import { api } from '@/lib/api';
 import { getSubmissionsData } from '@/pages/api/listings/submissions/[slug]';
 
 import { SubmissionList } from '@/features/listings/components/SubmissionsPage/SubmissionList';
-import { type Listing } from '@/features/listings/types';
+import { type PublicListingDetails } from '@/features/listings/types';
 
 const SubmissionPage = ({
   slug,
@@ -16,14 +16,16 @@ const SubmissionPage = ({
   submission: initialSubmission,
 }: {
   slug: string;
-  bounty: Listing;
-  submission: SubmissionWithUser[];
+  bounty: PublicListingDetails | null;
+  submission: ListingPageSubmission[];
 }) => {
   const { data: submissions = initialSubmission, refetch } = useQuery({
     queryKey: ['listing-submissions', slug],
     queryFn: async () => {
-      const res = await api.get(`/api/listings/submissions/${slug}`);
-      return res.data.submission as SubmissionWithUser[];
+      const res = await api.get<{ submission: ListingPageSubmission[] }>(
+        `/api/listings/submissions/${slug}`,
+      );
+      return res.data.submission;
     },
     initialData: initialSubmission,
     staleTime: 1000 * 60,

@@ -21,6 +21,7 @@ export const getGrantBySlug = async (slug: string) => {
       isFeatured: true,
       isActive: true,
       isArchived: true,
+      isPaused: true,
       createdAt: true,
       updatedAt: true,
       skills: true,
@@ -88,7 +89,7 @@ export const getGrantBySlug = async (slug: string) => {
     (sum, application) => sum + (application.approvedAmountInUSD || 0),
     0,
   );
-  const { GrantApplication, _count, ...grantData } = grant;
+  const { GrantApplication: _GrantApplication, _count, ...grantData } = grant;
 
   return {
     ...grantData,

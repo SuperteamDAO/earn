@@ -94,7 +94,9 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to send message');
+        throw new Error(
+          result.error || result.message || 'Failed to send message',
+        );
       }
 
       toast.success('Message sent');
@@ -154,7 +156,7 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
                       Email
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Your email" {...field} />
+                      <Input type="email" placeholder="Your email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

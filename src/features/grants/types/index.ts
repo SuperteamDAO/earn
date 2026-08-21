@@ -3,6 +3,13 @@ import type { User } from '@/interface/user';
 
 import { type References } from '@/features/listings/types';
 
+export type GrantQuestion = {
+  order: number;
+  question: string;
+  optional?: boolean;
+  type?: 'text' | 'link';
+};
+
 interface Grant {
   id: string;
   title: string;
@@ -31,11 +38,12 @@ interface Grant {
   isFeatured?: boolean;
   isActive?: boolean;
   isArchived?: boolean;
+  isPaused?: boolean;
   createdAt?: string;
   updatedAt?: string;
   minReward?: number;
   maxReward?: number;
-  questions?: any;
+  questions?: GrantQuestion[];
   pocSocials?: string;
   status: string;
   region: string;
@@ -46,6 +54,7 @@ interface Grant {
   historicalApplications: number;
   avgResponseTime?: string;
   airtableId?: string;
+  emailSalutation?: string | null;
   isNative?: boolean;
   ai?: GrantsAi;
   isPro?: boolean;
@@ -73,10 +82,34 @@ export interface GrantsAi {
 
 type EvaluationResult = {
   predictedLabel: SubmissionLabels;
+  recommendation?: 'Accept' | 'Reject' | 'Needs_Review';
+  confidence?: 'low' | 'medium' | 'high';
   reasoning: string;
+  decisionReason?: string;
+  risks?: string[];
+  colosseum?: {
+    enabled: boolean;
+    summary: string;
+    error?: string;
+  };
+  solanaTechnical?: {
+    isSolanaTechnical: boolean;
+    capabilityAreas: string[];
+    technicalCoherence: 'low' | 'medium' | 'high' | 'not_applicable';
+    missingImplementationDetails: string[];
+    reviewerRisks: string[];
+    summary: string;
+  };
   totalCostInUSD: number;
   totalTimeinMs: number;
   shortNote: string;
+  scores?: {
+    pow: number;
+    activity: number;
+    core: number;
+    feasibility: number;
+    impact: number;
+  };
 };
 
 export interface GrantApplicationAi {

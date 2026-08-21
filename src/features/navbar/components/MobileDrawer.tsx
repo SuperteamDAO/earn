@@ -168,11 +168,11 @@ export const MobileDrawer = ({
             <NavItem
               key={hackathon.slug}
               label={
-                <div className="relateive flex -translate-x-1 items-center gap-2">
+                <div className="relateive flex translate-x-1.75 items-center gap-2">
                   <ExternalImage
                     src={hackathon.logo}
                     alt={hackathon.label}
-                    className="h-5 p-1"
+                    className="h-5 scale-200 p-1"
                   />
                 </div>
               }

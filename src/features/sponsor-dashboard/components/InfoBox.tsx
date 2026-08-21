@@ -2,6 +2,8 @@ import parse, { type HTMLReactParserOptions } from 'html-react-parser';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 
+import { sanitizeGrantApplicationHtml } from '@/features/grants/utils/sanitizeGrantApplicationHtml';
+
 import styles from '@/styles/info-box.module.css';
 
 const options: HTMLReactParserOptions = {
@@ -9,7 +11,11 @@ const options: HTMLReactParserOptions = {
     if (name === 'p' && (!children || children.length === 0)) {
       return <br />;
     }
-    return { name, children, attribs };
+    if (name === 'a' && attribs) {
+      attribs.target = '_blank';
+      attribs.rel = 'noopener noreferrer';
+    }
+    return undefined;
   },
 };
 
@@ -30,7 +36,7 @@ export const InfoBox = ({
       <div
         className={`h-full w-full text-sm font-medium break-words whitespace-normal text-slate-600 ${styles.richtext}`}
       >
-        {parse(content || '-', options)}
+        {parse(sanitizeGrantApplicationHtml(content || '-') || '-', options)}
       </div>
     ) : (
       <div className="break-words whitespace-normal">

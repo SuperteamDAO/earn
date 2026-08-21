@@ -73,6 +73,7 @@ interface SocialInputProps {
   isVerified?: boolean;
   onVerify?: () => void;
   isPro?: boolean;
+  readOnly?: boolean;
 }
 export const SocialInput = ({
   control,
@@ -90,6 +91,7 @@ export const SocialInput = ({
   isVerified = false,
   onVerify,
   isPro = false,
+  readOnly = false,
 }: SocialInputProps) => {
   const social = useMemo(
     () => socials.find((s) => s.name === socialName),
@@ -156,11 +158,15 @@ export const SocialInput = ({
                           (needsVerification || isVerified) &&
                           'pr-10',
                         isPro && 'focus-visible:ring-zinc-400',
+                        readOnly &&
+                          'cursor-not-allowed bg-slate-50 text-slate-600',
                         classNames?.input,
                       )}
                       placeholder={placeholder}
                       value={displayValue}
+                      readOnly={readOnly}
                       onChange={(e) => {
+                        if (readOnly) return;
                         const value = e.currentTarget.value;
                         const linkedUsernameValue =
                           linkedUsernames.safeParse(socialName);
