@@ -2,6 +2,7 @@ import '../styles/globals.css';
 import '../styles/st-globals.css';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { HydrationBoundary } from '@tanstack/react-query';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
@@ -129,7 +130,9 @@ function App({ Component, pageProps }: AppProps) {
       <div className={fontVariables}>
         <Providers>
           <TopLoader />
-          <Component {...pageProps} key={router.asPath} />
+          <HydrationBoundary state={pageProps.dehydratedState}>
+            <Component {...pageProps} key={router.asPath} />
+          </HydrationBoundary>
           <Toaster position="bottom-right" richColors />
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
         </Providers>
