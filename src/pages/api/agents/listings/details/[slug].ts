@@ -70,16 +70,23 @@ async function getAgentListingDetailsBySlug(slug: string): Promise<any> {
 
 async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
   const params = req.query;
-  const slug = params.slug as string;
+  const rawSlug = params.slug;
+  const slug =
+    typeof rawSlug === 'string'
+      ? rawSlug.trim()
+      : Array.isArray(rawSlug)
+        ? rawSlug[0]?.trim()
+        : '';
 
   logger.debug(`Request query: ${safeStringify(params)}`);
 
-  if (!slug) {
+  if (!slug || slug.length === 0) {
     logger.warn('Missing required query parameters: slug');
     return res.status(400).json({
       error: 'Missing required query parameters: slug',
     });
   }
+
 
   try {
     const result = await getAgentListingDetailsBySlug(slug);
