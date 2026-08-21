@@ -357,10 +357,15 @@ export const ApplicationsTab = ({ slug }: Props) => {
     }
   };
 
-  const handleRejectGrant = (applicationId: string, customNote?: string) => {
+  const handleRejectGrant = (
+    applicationId: string,
+    customNote?: string,
+    skipCooldown?: boolean,
+  ) => {
     rejectGrantApplications.mutate({
       applicationIds: [applicationId],
       customNote,
+      skipCooldown,
     });
   };
 
@@ -396,6 +401,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
                   (application) => application.applicationStatus === 'Pending',
                 ).length === 0
               }
+              grantSlug={slug}
             />
           </div>
 

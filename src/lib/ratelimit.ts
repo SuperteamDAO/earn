@@ -22,6 +22,13 @@ export const agentRegisterRateLimiter = new Ratelimit({
   prefix: 'ratelimit:agent_register',
 });
 
+export const userCreateRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(60, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:user_create',
+});
+
 export const agentSubmitRateLimiter = new Ratelimit({
   redis: redis,
   limiter: Ratelimit.fixedWindow(60, '1 h'),
@@ -43,9 +50,37 @@ export const agentClaimRateLimiter = new Ratelimit({
   prefix: 'ratelimit:agent_claim',
 });
 
+export const ogMetadataRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(60, '1 m'),
+  analytics: true,
+  prefix: 'ratelimit:og_metadata',
+});
+
 export const supportEmailRateLimiter = new Ratelimit({
   redis: redis,
   limiter: Ratelimit.fixedWindow(5, '1 h'),
   analytics: true,
   prefix: 'ratelimit:support_email',
+});
+
+export const emailValidateRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.slidingWindow(10, '1 m'),
+  analytics: true,
+  prefix: 'ratelimit:email_validate',
+});
+
+export const emailValidateHourlyRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(100, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:email_validate_hourly',
+});
+
+export const reportListingRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(5, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:report_listing',
 });

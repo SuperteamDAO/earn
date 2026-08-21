@@ -7,8 +7,14 @@ import {
   twitterUsernameSchema,
 } from '@/features/social/utils/schema';
 
+const noHtmlDelimiters = (value: string) => !/[<>]/.test(value);
+const noHtmlMessage = 'HTML characters are not allowed';
+
 export const sponsorBaseSchema = z.object({
-  name: z.string().min(1, 'Company name is required'),
+  name: z
+    .string()
+    .min(1, 'Company name is required')
+    .refine(noHtmlDelimiters, noHtmlMessage),
   slug: z
     .string()
     .min(1, 'Company username is required')
@@ -20,7 +26,8 @@ export const sponsorBaseSchema = z.object({
   bio: z
     .string()
     .min(1, 'Company bio is required')
-    .max(180, 'Bio must be less than 180 characters'),
+    .max(180, 'Bio must be less than 180 characters')
+    .refine(noHtmlDelimiters, noHtmlMessage),
   logo: z.string().min(1, 'Company logo is required'),
   industry: z.string().min(1, 'At least one industry must be selected'),
   url: z
@@ -28,7 +35,10 @@ export const sponsorBaseSchema = z.object({
     .min(1, 'Company URL is required')
     .regex(URL_REGEX, 'Invalid URL'),
   twitter: twitterUsernameSchema,
-  entityName: z.string().min(1, 'Entity name is required'),
+  entityName: z
+    .string()
+    .min(1, 'Entity name is required')
+    .refine(noHtmlDelimiters, noHtmlMessage),
 });
 
 export const userSponsorDetailsSchema = z.object({

@@ -157,22 +157,24 @@ export const transformToPrismaData = async ({
     }
   }
 
-  let autoIsFeatured = false;
-  let shouldRemoveFeatured = false;
+  let isFeaturedUpdate: boolean | undefined;
   try {
-    const meetsThreshold =
+    const isEligibleForAutoFeature =
       isAutoFeatureUsdThresholdMet(usdValue) &&
       hasMoreThan72HoursLeft(deadline) &&
       compensationType === 'fixed' &&
-      type !== 'hackathon';
+      type !== 'hackathon' &&
+      !isPrivate;
 
-    if (meetsThreshold) {
+    if (isEligibleForAutoFeature) {
       const liveFeaturedCount = await countLiveFeaturedListings();
-      autoIsFeatured = liveFeaturedCount < 2;
+      if (liveFeaturedCount < 2) {
+        isFeaturedUpdate = true;
+      }
     }
 
-    if (isEditing && listing.isFeatured && !meetsThreshold) {
-      shouldRemoveFeatured = true;
+    if (isEditing && listing.isFeatured && !isEligibleForAutoFeature) {
+      isFeaturedUpdate = false;
     }
   } catch (error) {
     logger.error('Auto-feature evaluation failed', { error });
@@ -181,8 +183,9 @@ export const transformToPrismaData = async ({
   const baseData: BountiesUncheckedUpdateInput = {
     title,
     ...(includeUsdValue ? { usdValue } : {}),
-    ...(autoIsFeatured ? { isFeatured: true } : {}),
-    ...(shouldRemoveFeatured ? { isFeatured: false } : {}),
+    ...(typeof isFeaturedUpdate === 'boolean'
+      ? { isFeatured: isFeaturedUpdate }
+      : {}),
     skills,
     slug,
     deadline: new Date(deadline),

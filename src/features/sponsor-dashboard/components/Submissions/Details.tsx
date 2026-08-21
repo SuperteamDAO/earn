@@ -9,11 +9,37 @@ import { type Listing } from '@/features/listings/types';
 import { selectedSubmissionAtom } from '../../atoms';
 import { InfoBox } from '../InfoBox';
 import { Notes } from './Notes';
+import { TweetStats } from './TweetStats';
 
 interface Props {
   bounty: Listing | undefined;
   isHackathonPage?: boolean;
 }
+
+const isTweetStatusUrl = (url: string | undefined | null): boolean => {
+  if (!url || typeof url !== 'string') return false;
+  try {
+    const trimmed = url.trim();
+    const urlWithProtocol = trimmed.startsWith('http')
+      ? trimmed
+      : `https://${trimmed}`;
+    const parsed = new URL(urlWithProtocol);
+    const host = parsed.hostname.toLowerCase();
+    if (!host.includes('twitter.com') && !host.includes('x.com')) {
+      return false;
+    }
+    const segments = parsed.pathname.split('/').filter(Boolean);
+    const statusIndex = segments.indexOf('status');
+    const statusId = segments[statusIndex + 1];
+    return (
+      statusIndex !== -1 &&
+      typeof statusId === 'string' &&
+      /^\d+$/.test(statusId)
+    );
+  } catch {
+    return false;
+  }
+};
 
 export const Details = ({ bounty, isHackathonPage }: Props) => {
   const selectedSubmission = useAtomValue(selectedSubmissionAtom);
@@ -38,6 +64,9 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
                   : '-'
               }
             />
+            {isTweetStatusUrl(selectedSubmission?.link) && (
+              <TweetStats submissionId={selectedSubmission!.id} type="link" />
+            )}
             <InfoBox
               label="Tweet Link"
               content={
@@ -46,6 +75,9 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
                   : '-'
               }
             />
+            {isTweetStatusUrl(selectedSubmission?.tweet) && (
+              <TweetStats submissionId={selectedSubmission!.id} type="tweet" />
+            )}
           </>
         )}
         {bounty?.compensationType !== 'fixed' && (

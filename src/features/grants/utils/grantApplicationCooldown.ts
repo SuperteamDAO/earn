@@ -1,8 +1,8 @@
 import { dayjs } from '@/utils/dayjs';
 
-export const GRANT_APPLICATION_COOLDOWN_DAYS = 30;
+const GRANT_APPLICATION_COOLDOWN_DAYS = 30;
 
-export const getGrantApplicationCooldownEndsAt = (
+const getGrantApplicationCooldownEndsAt = (
   decidedAt: Date | string | null | undefined,
 ) => {
   if (!decidedAt) return null;

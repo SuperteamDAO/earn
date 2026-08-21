@@ -15,8 +15,15 @@ import {
 } from '@/features/agents/utils/agentTokens';
 import { generateUniqueRandomUsername } from '@/features/talent/utils/generateUniqueRandomUsername';
 
+const noHtmlDelimiters = (value: string) => !/[<>]/.test(value);
+
 const schema = z.object({
-  name: z.string().min(2).max(80),
+  name: z
+    .string()
+    .trim()
+    .min(2)
+    .max(80)
+    .refine(noHtmlDelimiters, 'Name cannot contain HTML characters'),
 });
 
 function getRequestIp(req: NextApiRequest): string {

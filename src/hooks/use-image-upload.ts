@@ -160,6 +160,10 @@ export function useImageUpload({
         formData.append('folder', signedParams.folder);
         formData.append('api_key', signedParams.apiKey);
 
+        if (signedParams.context) {
+          formData.append('context', signedParams.context);
+        }
+
         if (signedParams.publicId) {
           formData.append('public_id', signedParams.publicId);
         }

@@ -39,6 +39,7 @@ const UpdateGrantApplicationSchema = z.object({
     .max(MAX_RECORDS, `Only max ${MAX_RECORDS} records allowed in data`),
   applicationStatus: z.string(),
   customNote: z.string().trim().min(1).max(5000).optional(),
+  skipCooldown: z.boolean().optional(),
 });
 
 const checkAndUpdateKYCStatus = async (
@@ -116,7 +117,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
   }
 
-  const { data, applicationStatus, customNote } = validationResult.data;
+  const { data, applicationStatus, customNote, skipCooldown } =
+    validationResult.data;
 
   try {
     const currentApplications = await prisma.grantApplication.findMany({
@@ -211,6 +213,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       applicationStatus,
       decidedAt: new Date().toISOString(),
       decidedBy: userId,
+      isCooldownSkipped: applicationStatus === 'Rejected' && !!skipCooldown,
     };
 
     const updatedData: {
@@ -221,6 +224,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       approvedAmountInUSD?: number;
       totalTranches?: number;
       label?: SubmissionLabels;
+      isCooldownSkipped?: boolean;
     }[] = [];
 
     await Promise.all(

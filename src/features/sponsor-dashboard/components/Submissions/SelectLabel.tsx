@@ -21,13 +21,21 @@ import { colorMap } from '../../utils/statusColorMap';
 interface Props {
   listingSlug: string;
   type: BountyType | 'grant' | undefined;
+  submission: SubmissionWithUser | undefined;
 }
 
-export const SelectLabel = ({ listingSlug, type }: Props) => {
+export const SelectLabel = ({
+  listingSlug,
+  type,
+  submission: propSubmission,
+}: Props) => {
   const queryClient = useQueryClient();
-  const [selectedSubmission, setSelectedSubmission] = useAtom(
+  const [selectedSubmissionAtomValue, setSelectedSubmission] = useAtom(
     selectedSubmissionAtom,
   );
+
+  const targetSubmission = propSubmission || selectedSubmissionAtomValue;
+
   const setLabelsUpdating = useSetAtom(isStateUpdatingAtom);
 
   const selectLabel = async (
@@ -39,9 +47,9 @@ export const SelectLabel = ({ listingSlug, type }: Props) => {
   };
 
   let bg, color, border;
-  if (selectedSubmission) {
+  if (targetSubmission) {
     ({ bg, color, border } =
-      colorMap[selectedSubmission?.label as SubmissionLabels]);
+      colorMap[targetSubmission?.label as SubmissionLabels]);
   }
 
   const { mutate: updateLabel } = useMutation({
@@ -85,51 +93,57 @@ export const SelectLabel = ({ listingSlug, type }: Props) => {
   });
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild className="min-w-[110px]">
-        <button
-          className={cn(
-            'flex w-full items-center justify-between rounded-lg border border-slate-200 bg-transparent px-2 py-1 text-xs font-medium text-slate-500 capitalize transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200',
-            color,
-            bg,
-            border,
-          )}
-        >
-          {labelMenuOptions(type).find(
-            (option) => option.value === selectedSubmission?.label,
-          )?.label || 'Select Option'}
-          <ChevronDown className="ml-2 size-3" />
-        </button>
-      </DropdownMenuTrigger>
+    <div onClick={(e) => e.stopPropagation()}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild className="min-w-[110px]">
+          <button
+            className={cn(
+              'flex w-full items-center justify-between rounded-lg border border-slate-200 bg-transparent px-2 py-1 text-xs font-medium text-slate-500 capitalize transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200',
+              color,
+              bg,
+              border,
+            )}
+          >
+            {labelMenuOptions(type).find(
+              (option) => option.value === targetSubmission?.label,
+            )?.label || 'Select Option'}
+            <ChevronDown className="ml-2 size-3" />
+          </button>
+        </DropdownMenuTrigger>
 
-      <DropdownMenuContent
-        sideOffset={-1}
-        className="w-full min-w-[110px] rounded-t-none px-0 pt-1.5"
-      >
-        {labelMenuOptions(type)
-          .filter((option) => !option.hidden)
-          .map((option) => (
-            <DropdownMenuItem
-              key={option.value}
-              className="cursor-pointer px-1.5 py-1 text-center text-[0.7rem]"
-              onClick={() =>
-                selectLabel(
-                  option.value as SubmissionLabels,
-                  selectedSubmission?.id,
-                )
-              }
-            >
-              <StatusPill
-                color={colorMap[option.value as SubmissionLabels].color}
-                backgroundColor={colorMap[option.value as SubmissionLabels].bg}
-                borderColor={colorMap[option.value as SubmissionLabels].border}
-                className="w-fit text-[10px]"
+        <DropdownMenuContent
+          sideOffset={-1}
+          className="w-full min-w-[110px] rounded-t-none px-0 pt-1.5"
+        >
+          {labelMenuOptions(type)
+            .filter((option) => !option.hidden)
+            .map((option) => (
+              <DropdownMenuItem
+                key={option.value}
+                className="cursor-pointer px-1.5 py-1 text-center text-[0.7rem]"
+                onClick={() =>
+                  selectLabel(
+                    option.value as SubmissionLabels,
+                    targetSubmission?.id,
+                  )
+                }
               >
-                {option.label}
-              </StatusPill>
-            </DropdownMenuItem>
-          ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+                <StatusPill
+                  color={colorMap[option.value as SubmissionLabels].color}
+                  backgroundColor={
+                    colorMap[option.value as SubmissionLabels].bg
+                  }
+                  borderColor={
+                    colorMap[option.value as SubmissionLabels].border
+                  }
+                  className="w-fit text-[10px]"
+                >
+                  {option.label}
+                </StatusPill>
+              </DropdownMenuItem>
+            ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 };

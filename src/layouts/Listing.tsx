@@ -22,12 +22,12 @@ import { ListingHeader } from '@/features/listings/components/ListingPage/Listin
 import { RightSideBar } from '@/features/listings/components/ListingPage/RightSideBar';
 import { SubmissionActionButton } from '@/features/listings/components/Submission/SubmissionActionButton';
 import { submissionCountQuery } from '@/features/listings/queries/submission-count';
-import { type Listing } from '@/features/listings/types';
+import { type PublicListing } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
 import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
 
 interface ListingPageProps {
-  listing: Listing | null;
+  listing: PublicListing | null;
   children: React.ReactNode;
   maxW?: '7xl' | '6xl' | '5xl' | '4xl' | '3xl' | '2xl' | 'xl' | 'lg' | 'md';
   isTemplate?: boolean;
@@ -74,10 +74,9 @@ export function ListingPageLayout({
     }
   }, [initialListing, submissionNumber, setBountySnackbar]);
 
-  const encodedTitle = encodeURIComponent(initialListing?.title || '');
   const ogImage = new URL(`${getURL()}api/dynamic-og/listing/`);
 
-  ogImage.searchParams.set('title', encodedTitle);
+  ogImage.searchParams.set('title', initialListing?.title || '');
   ogImage.searchParams.set(
     'reward',
     initialListing?.rewardAmount?.toString() || '',

@@ -18,6 +18,10 @@ import { validateSession } from '@/features/auth/utils/getSponsorSession';
 import type { ListingFormData } from '@/features/listing-builder/types';
 import { getValidSlug } from '@/features/listing-builder/utils/getValidSlug';
 import { validateDraftPermissions } from '@/features/listing-builder/utils/isListingDraftable';
+import {
+  getValidListingRegion,
+  isChapterSponsorEditingRegionToGlobal,
+} from '@/features/listing-builder/utils/validateListingRegion';
 
 async function transformToPrismaData(
   formData: Partial<ListingFormData>,
@@ -129,6 +133,17 @@ export async function POST(request: Request) {
     }
     logger.debug(`Request body: ${safeStringify(body)}`);
 
+    if (body.region) {
+      const validRegion = await getValidListingRegion(body.region);
+      if (!validRegion) {
+        return NextResponse.json(
+          { error: 'Invalid region selected' },
+          { status: 400 },
+        );
+      }
+      body.region = validRegion;
+    }
+
     let listing: ListingWithSponsor | undefined;
     if (body.id) {
       const result = await validateListingSponsorAuth(userSponsorId, body.id);
@@ -136,6 +151,21 @@ export async function POST(request: Request) {
         return result.error;
       }
       listing = result.listing;
+    }
+
+    if (
+      listing &&
+      body.region &&
+      isChapterSponsorEditingRegionToGlobal({
+        currentRegion: listing.region,
+        nextRegion: body.region,
+        hasChapter: !!listing.sponsor.chapter,
+      })
+    ) {
+      return NextResponse.json(
+        { error: 'Chapter sponsors cannot edit a listing region to Global' },
+        { status: 400 },
+      );
     }
 
     const isDraftNotAllowed = validateDraftPermissions(listing);

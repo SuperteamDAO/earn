@@ -38,6 +38,7 @@ interface Grant {
   isFeatured?: boolean;
   isActive?: boolean;
   isArchived?: boolean;
+  isPaused?: boolean;
   createdAt?: string;
   updatedAt?: string;
   minReward?: number;
@@ -81,10 +82,34 @@ export interface GrantsAi {
 
 type EvaluationResult = {
   predictedLabel: SubmissionLabels;
+  recommendation?: 'Accept' | 'Reject' | 'Needs_Review';
+  confidence?: 'low' | 'medium' | 'high';
   reasoning: string;
+  decisionReason?: string;
+  risks?: string[];
+  colosseum?: {
+    enabled: boolean;
+    summary: string;
+    error?: string;
+  };
+  solanaTechnical?: {
+    isSolanaTechnical: boolean;
+    capabilityAreas: string[];
+    technicalCoherence: 'low' | 'medium' | 'high' | 'not_applicable';
+    missingImplementationDetails: string[];
+    reviewerRisks: string[];
+    summary: string;
+  };
   totalCostInUSD: number;
   totalTimeinMs: number;
   shortNote: string;
+  scores?: {
+    pow: number;
+    activity: number;
+    core: number;
+    feasibility: number;
+    impact: number;
+  };
 };
 
 export interface GrantApplicationAi {

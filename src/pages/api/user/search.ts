@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -40,8 +41,16 @@ export default async function searchUser(
       }
     }
 
-    let takeNum = Number(take) || MAX_COMMENT_SUGGESTIONS;
-    if (takeNum > MAX_COMMENT_SUGGESTIONS) takeNum = MAX_COMMENT_SUGGESTIONS;
+    const takeResult = parseBoundedIntegerParam(take, {
+      defaultValue: MAX_COMMENT_SUGGESTIONS,
+      maxValue: MAX_COMMENT_SUGGESTIONS,
+      minValue: 1,
+      name: 'take',
+    });
+    if (!takeResult.ok) {
+      return res.status(400).json({ error: takeResult.error });
+    }
+    const takeNum = takeResult.value;
     logger.debug(`Query parameter: ${query}, Take number: ${takeNum}`);
 
     const users = await prisma.user.findMany({

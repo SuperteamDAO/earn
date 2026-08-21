@@ -31,33 +31,6 @@ export const sanitizeCustomEmailBody = (html: string) =>
     ALLOWED_ATTR: EMAIL_ALLOWED_ATTR,
   }).trim();
 
-export const validateCustomEmailBody = (html: string) => {
-  const sanitized = sanitizeCustomEmailBody(html);
-
-  if (!getCustomEmailPlainText(sanitized)) {
-    return {
-      isValid: false,
-      sanitized,
-      error: 'Email body cannot be empty.',
-    };
-  }
-
-  if (normalizeHtml(sanitized) !== normalizeHtml(html)) {
-    return {
-      isValid: false,
-      sanitized,
-      error:
-        'Email body contains unsupported or unsafe HTML. Please remove scripts, embeds, or unsupported formatting.',
-    };
-  }
-
-  return {
-    isValid: true,
-    sanitized,
-    error: null,
-  };
-};
-
 export const validateCustomEmailNote = ({
   noteHtml,
   fullEmailHtml,

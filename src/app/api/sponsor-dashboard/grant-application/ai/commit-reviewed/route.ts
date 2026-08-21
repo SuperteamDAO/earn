@@ -8,6 +8,8 @@ import { safeStringify } from '@/utils/safeStringify';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
 import { type GrantApplicationAi } from '@/features/grants/types';
+import { formatGrantApplicationAiReviewNotes } from '@/features/grants/utils/formatGrantApplicationAiReviewNotes';
+import { convertTextToNotesHTML } from '@/features/sponsor-dashboard/utils/convertTextToNotesHTML';
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -82,12 +84,9 @@ export async function POST(request: NextRequest) {
           },
           data: {
             label: aiReview?.predictedLabel,
-            notes: aiReview?.shortNote
-              .replace('* ', '')
-              .split(/(?<=[.!?])\s+/)
-              .filter((sentence) => sentence.trim().length > 0)
-              .map((sentence) => `• ${sentence.trim()}`)
-              .join('\n'),
+            notes: convertTextToNotesHTML(
+              formatGrantApplicationAiReviewNotes(aiReview),
+            ),
             ai: commitedAi,
           },
         });

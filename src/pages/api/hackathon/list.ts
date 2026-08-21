@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
@@ -11,7 +12,16 @@ async function hackathons(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
 
   const searchString = params.searchString as string;
-  const take = params.take ? parseInt(params.take as string, 10) : 30;
+  const takeResult = parseBoundedIntegerParam(params.take, {
+    defaultValue: 30,
+    maxValue: 100,
+    minValue: 1,
+    name: 'take',
+  });
+  if (!takeResult.ok) {
+    return res.status(400).json({ error: takeResult.error });
+  }
+  const take = takeResult.value;
   let finalHackathons = [];
   try {
     const user = await prisma.user.findUnique({

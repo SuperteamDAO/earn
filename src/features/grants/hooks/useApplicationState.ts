@@ -24,7 +24,8 @@ export const useApplicationState = (
 
     if (application.applicationStatus === 'Rejected') {
       setApplicationState(
-        isGrantApplicationInCooldown(application.decidedAt)
+        !application.isCooldownSkipped &&
+          isGrantApplicationInCooldown(application.decidedAt)
           ? 'COOLDOWN'
           : 'ALLOW NEW',
       );

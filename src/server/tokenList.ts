@@ -9,6 +9,7 @@ export interface Token {
   decimals: number;
   sortOrder: number;
   isActive: boolean;
+  isVerifiedOnJupiter: boolean;
 }
 
 export interface JupiterToken {
@@ -43,6 +44,7 @@ const tokenSelect = {
   decimals: true,
   sortOrder: true,
   isActive: true,
+  isVerifiedOnJupiter: true,
 } as const;
 
 const SAME_APP_HOSTS = new Set([
@@ -222,6 +224,7 @@ export async function addVerifiedJupiterToken(
       icon: jupiterToken.icon || DEFAULT_TOKEN_ICON,
       decimals: jupiterToken.decimals,
       isActive: true,
+      isVerifiedOnJupiter: true,
     },
     create: {
       tokenName: jupiterToken.name,
@@ -231,6 +234,7 @@ export async function addVerifiedJupiterToken(
       decimals: jupiterToken.decimals,
       sortOrder: (maxSortOrderToken?.sortOrder ?? 0) + 1,
       isActive: true,
+      isVerifiedOnJupiter: true,
     },
     select: tokenSelect,
   });
@@ -293,12 +297,22 @@ export async function getTokenByMintAddress(
 
 export async function getTokenIcon(
   symbol?: string | null,
+  options?: {
+    format?: 'png';
+  },
 ): Promise<string | null> {
   const token = await getTokenBySymbol(symbol, { includeInactive: true });
-  return token?.icon ?? null;
-}
+  const icon = token?.icon;
 
-export async function isActiveTokenSymbol(tokenSymbol?: string | null) {
-  const token = await getTokenBySymbol(tokenSymbol);
-  return Boolean(token);
+  if (!icon || options?.format !== 'png') {
+    return icon ?? null;
+  }
+
+  if (!icon.startsWith(`${TOKEN_ICON_PROXY_PATH}?`)) {
+    return icon;
+  }
+
+  const proxyUrl = new URL(icon, 'https://superteam.fun');
+  proxyUrl.searchParams.set('format', 'png');
+  return `${proxyUrl.pathname}${proxyUrl.search}`;
 }

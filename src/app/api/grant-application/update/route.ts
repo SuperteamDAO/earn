@@ -11,6 +11,11 @@ import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import {
+  sanitizeGrantApplicationAnswers,
+  sanitizeGrantApplicationHtml,
+  sanitizeGrantApplicationText,
+} from '@/features/grants/utils/sanitizeGrantApplicationHtml';
+import {
   getGrantFixedAsk,
   isAgenticEngineeringGrant,
   isUserEligibleForST,
@@ -91,27 +96,33 @@ async function updateGrantApplication(
     prevApplication.applicationStatus !== 'Pending' ||
     prevApplication.label === 'Spam'
   ) {
-    throw new Error('Grant application can only be edited while pending review');
+    throw new Error(
+      'Grant application can only be edited while pending review',
+    );
   }
 
   const formattedData = {
     userId,
     grantId,
-    projectTitle: validatedData.projectTitle,
-    projectOneLiner: validatedData.projectOneLiner,
-    projectDetails: validatedData.projectDetails,
+    projectTitle: sanitizeGrantApplicationText(validatedData.projectTitle),
+    projectOneLiner: sanitizeGrantApplicationText(
+      validatedData.projectOneLiner,
+    ),
+    projectDetails: sanitizeGrantApplicationHtml(validatedData.projectDetails),
     projectTimeline: dayjs(validatedData.projectTimeline).format('D MMMM YYYY'),
-    proofOfWork: validatedData.proofOfWork || '',
-    milestones: validatedData.milestones,
-    kpi: validatedData.kpi || '',
+    proofOfWork: sanitizeGrantApplicationHtml(validatedData.proofOfWork) || '',
+    milestones: sanitizeGrantApplicationHtml(validatedData.milestones),
+    kpi: sanitizeGrantApplicationHtml(validatedData.kpi) || '',
     walletAddress: validatedData.walletAddress,
     ask: fixedAsk ?? validatedData.ask,
     twitter: validatedData.twitter,
     github: validatedData.github,
-    answers: validatedData.answers || [],
+    answers: sanitizeGrantApplicationAnswers(validatedData.answers) || [],
     ...(isST && {
       lumaLink: validatedData.lumaLink,
-      expenseBreakdown: validatedData.expenseBreakdown,
+      expenseBreakdown: sanitizeGrantApplicationHtml(
+        validatedData.expenseBreakdown,
+      ),
     }),
   };
 
@@ -179,7 +190,7 @@ export async function POST(request: NextRequest) {
     const { grant, user } = await validateGrantRequest(
       userId as string,
       grantId,
-      { skipLocationCooldown: true },
+      { skipLocationCooldown: true, allowPaused: true },
     );
 
     if (grant.isST) {

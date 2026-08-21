@@ -4,7 +4,7 @@ import type { ChapterRegionData } from '@/interface/chapter';
 
 import { userRegionEligibilty } from './region';
 
-export const LOCATION_COOLDOWN_DAYS = 21;
+const LOCATION_COOLDOWN_DAYS = 21;
 
 interface LocationCooldownInput {
   locationUpdatedAt: Date | string | null | undefined;

@@ -7,6 +7,7 @@ import { type GrantApplicationInclude } from '@/prisma/models';
 import { type CommentFindManyArgs } from '@/prisma/models/Comment';
 import { type PoWGetPayload, type PoWInclude } from '@/prisma/models/PoW';
 import { type SubmissionInclude } from '@/prisma/models/Submission';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
@@ -19,14 +20,27 @@ export default async function handler(
   res: NextApiResponse,
 ): Promise<void> {
   logger.debug(`Request query: ${safeStringify(req.query)}`);
-  const {
-    timePeriod,
-    take = 15,
-    skip = 0,
-    isWinner,
-    filter,
-    userId,
-  } = req.query;
+  const { timePeriod, isWinner, filter, userId } = req.query;
+  const takeResult = parseBoundedIntegerParam(req.query.take, {
+    defaultValue: 15,
+    maxValue: 30,
+    name: 'take',
+  });
+  const skipResult = parseBoundedIntegerParam(req.query.skip, {
+    defaultValue: 0,
+    maxValue: 1000,
+    name: 'skip',
+  });
+
+  if (!takeResult.ok) {
+    return res.status(400).json({ error: takeResult.error });
+  }
+  if (!skipResult.ok) {
+    return res.status(400).json({ error: skipResult.error });
+  }
+
+  const take = takeResult.value;
+  const skip = skipResult.value;
 
   const profileUserId = typeof userId === 'string' ? userId : null;
 
@@ -45,7 +59,7 @@ export default async function handler(
 
   const highlightType = req.query.highlightType as FeedPostType;
   let highlightId = req.query.highlightId as string | undefined;
-  if (Number(skip) !== 0) highlightId = undefined;
+  if (skip !== 0) highlightId = undefined;
   const takeOnlyType = req.query.takeOnlyType as FeedPostType | undefined;
 
   try {
@@ -182,8 +196,8 @@ export default async function handler(
               ...profileSubmissionFilter,
               listing: profileUserId ? {} : { isPrivate: false },
             },
-            skip: parseInt(skip as string, 10),
-            take: parseInt(take as string, 10),
+            skip,
+            take,
             orderBy:
               highlightType === 'submission'
                 ? [
@@ -263,8 +277,8 @@ export default async function handler(
                 },
                 ...(userId ? { userId: userId as string } : {}),
               },
-              skip: parseInt(skip as string, 10),
-              take: parseInt(take as string, 10),
+              skip,
+              take,
               orderBy:
                 filter === 'popular'
                   ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
@@ -341,8 +355,8 @@ export default async function handler(
               ...(userId ? { userId: userId as string } : {}),
               grant: userId ? {} : { isPrivate: false },
             },
-            skip: parseInt(skip as string, 10),
-            take: parseInt(take as string, 10),
+            skip,
+            take,
             orderBy:
               filter === 'popular'
                 ? [{ likeCount: 'desc' }, { decidedAt: 'desc' }]
