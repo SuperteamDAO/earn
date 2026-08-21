@@ -102,6 +102,7 @@ function ListingDetails({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { preview, slug } = context.query;
+  const { res } = context;
   let listingData: PublicListingDetails | null;
   try {
     let canViewAllUnpublished = false;
@@ -153,6 +154,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 
     await Promise.all(prefetchPromises);
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   }
   return {
     props: {

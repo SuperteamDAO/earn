@@ -128,6 +128,7 @@ const RegionsPage = ({ slug, st, countryData }: RegionsPageProps) => {
 };
 
 export async function getServerSideProps(context: NextPageContext) {
+  const { res } = context;
   const { slug } = context.query;
   const slugString = (slug as string)?.toLowerCase() || '';
 
@@ -165,6 +166,7 @@ export async function getServerSideProps(context: NextPageContext) {
     : null;
 
   if (st) {
+    res?.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
     return {
       props: { slug, st },
     };
@@ -173,6 +175,7 @@ export async function getServerSideProps(context: NextPageContext) {
   const country = countries.find((item) => slugify(item.name) === slugString);
 
   if (country) {
+    res?.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
     return {
       props: {
         slug,
