@@ -266,9 +266,10 @@ export async function createTranche({
   const isAgenticEngineering = isAgenticEngineeringGrant(application.grant);
   const requiresEventProof = isST && !isFirstTranche;
 
-  const existingTranches = application.GrantTranche.filter(
+  const activeTranches = application.GrantTranche.filter(
     (tranche) => tranche.status !== 'Rejected',
-  ).length;
+  );
+  const existingTranches = activeTranches.length;
   const requiresAgenticFinalProof =
     isAgenticEngineering && !isFirstTranche && existingTranches === 1;
   const maxTranches = 4;
@@ -304,12 +305,8 @@ export async function createTranche({
   }
 
   if (existingTranches > 0) {
-    const previousTranche = application.GrantTranche[existingTranches - 1];
-    if (
-      previousTranche &&
-      previousTranche.status !== 'Paid' &&
-      previousTranche.status !== 'Rejected'
-    ) {
+    const previousTranche = activeTranches[existingTranches - 1];
+    if (previousTranche && previousTranche.status !== 'Paid') {
       const errorMessage = `Previous tranche (ID: ${previousTranche.id}) must be paid before requesting a new tranche for application ${applicationId}`;
       logger.error(errorMessage);
       throw new Error(errorMessage);
