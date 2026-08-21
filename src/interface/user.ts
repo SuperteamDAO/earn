@@ -22,6 +22,7 @@ interface User {
   isTalentFilled?: boolean;
   bio?: string;
   location?: string;
+  locationUpdatedAt?: string | Date | null;
   photo?: string;
   experience?: string;
   cryptoExperience?: string;

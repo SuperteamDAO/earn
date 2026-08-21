@@ -22,6 +22,7 @@ const responseSchema = z.object({
 });
 
 export type TTokenGenerateResponse = z.infer<typeof responseSchema>;
+const AI_GENERATION_TIMEOUT_MS = 15000;
 
 export async function POST(request: Request) {
   try {
@@ -93,6 +94,7 @@ export async function POST(request: Request) {
         prompt,
         schema: responseSchema as any,
         system: 'Your role is to extract the token mentioned in the listings.',
+        abortSignal: AbortSignal.timeout(AI_GENERATION_TIMEOUT_MS),
       });
       object = result.object;
       logger.info(
@@ -112,6 +114,7 @@ export async function POST(request: Request) {
           schema: responseSchema as any,
           system:
             'Your role is to extract the token mentioned in the listings.',
+          abortSignal: AbortSignal.timeout(AI_GENERATION_TIMEOUT_MS),
         });
         object = result.object;
         logger.info(
@@ -125,14 +128,13 @@ export async function POST(request: Request) {
           'Fallback error:',
           safeStringify(fallbackModelError),
         );
-        throw fallbackModelError;
+        object = { token: null };
       }
     }
 
     return NextResponse.json(object, { status: 200 });
   } catch (error) {
     logger.error('Error generating token:', safeStringify(error));
-    console.log(error);
     return NextResponse.json(
       { error: 'Failed to generate token' },
       { status: 500 },

@@ -6,12 +6,12 @@ export default function MenuButtons() {
   return (
     <div className="flex items-center gap-6">
       <Link
-        href="/earn/grants"
+        href="/hackathon"
         target="_blank"
         rel="noopener noreferrer"
         className="font-secondary text-[14px] font-bold text-white"
       >
-        Instagrants
+        Hackathon
       </Link>
       <Link
         href="/member-perks"

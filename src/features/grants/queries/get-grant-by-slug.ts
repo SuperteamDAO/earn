@@ -13,7 +13,6 @@ export const getGrantBySlug = async (slug: string) => {
       minReward: true,
       maxReward: true,
       totalPaid: true,
-      totalApproved: true,
       historicalApplications: true,
       link: true,
       sponsorId: true,
@@ -22,6 +21,7 @@ export const getGrantBySlug = async (slug: string) => {
       isFeatured: true,
       isActive: true,
       isArchived: true,
+      isPaused: true,
       createdAt: true,
       updatedAt: true,
       skills: true,
@@ -61,6 +61,21 @@ export const getGrantBySlug = async (slug: string) => {
           },
         },
       },
+      GrantApplication: {
+        where: {
+          OR: [
+            {
+              applicationStatus: 'Approved',
+            },
+            {
+              applicationStatus: 'Completed',
+            },
+          ],
+        },
+        select: {
+          approvedAmountInUSD: true,
+        },
+      },
     },
   });
 
@@ -70,9 +85,17 @@ export const getGrantBySlug = async (slug: string) => {
 
   const totalApplications =
     grant._count.GrantApplication + (grant.historicalApplications ?? 0);
+  const approvedAmountTotal = grant.GrantApplication.reduce(
+    (sum, application) => sum + (application.approvedAmountInUSD || 0),
+    0,
+  );
+  const { GrantApplication: _GrantApplication, _count, ...grantData } = grant;
 
   return {
-    ...grant,
+    ...grantData,
+    approvedAmountTotal,
+    createdAt: grantData.createdAt.toISOString(),
+    updatedAt: grantData.updatedAt.toISOString(),
     totalApplications,
   };
 };

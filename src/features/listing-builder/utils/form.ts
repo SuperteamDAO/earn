@@ -83,6 +83,8 @@ export const getListingDefaults = ({
     }
   }
 
+  defaults['title'] ??= '';
+  defaults['slug'] ??= '';
   defaults['type'] = type;
   if (type === 'hackathon') {
     const currentHackathon = hackathons?.find((s) => s.id === hackathonId);

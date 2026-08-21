@@ -10,6 +10,8 @@ interface InviteAcceptanceResult {
   redirectUrl?: string;
 }
 
+const DUPLICATE_ACCEPT_GRACE_MS = 90 * 1000;
+
 export async function handleInviteAcceptance(
   userId: string,
   inviteToken?: string,
@@ -21,7 +23,10 @@ export async function handleInviteAcceptance(
 
     if (!user) {
       logger.warn(`User not found for ID: ${userId}`);
-      return { success: false, message: 'User not found' };
+      return {
+        success: false,
+        message: 'User not found',
+      };
     }
 
     let invite;
@@ -37,6 +42,34 @@ export async function handleInviteAcceptance(
     }
 
     if (!invite || (invite.expires && invite.expires < new Date())) {
+      if (inviteToken) {
+        const acceptedRecently = await prisma.userSponsors.findFirst({
+          where: {
+            userId,
+            createdAt: {
+              gte: new Date(Date.now() - DUPLICATE_ACCEPT_GRACE_MS),
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        });
+
+        if (
+          acceptedRecently &&
+          user.currentSponsorId === acceptedRecently.sponsorId
+        ) {
+          logger.info(
+            `Invite appears already consumed for user ${userId}; returning idempotent success`,
+          );
+          return {
+            success: true,
+            message: 'Invitation already accepted',
+            redirectUrl: '/earn/dashboard/listings/',
+          };
+        }
+      }
+
       logger.info(
         'User does not have a valid invite, redirecting to onboarding',
       );
@@ -72,8 +105,9 @@ export async function handleInviteAcceptance(
         `User ${userId} is already a member of sponsor ${invite.sponsorId}`,
       );
       return {
-        success: false,
-        message: 'You are already a member of this sponsor',
+        success: true,
+        message: 'Invitation already accepted',
+        redirectUrl: '/earn/dashboard/listings/',
       };
     }
 

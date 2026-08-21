@@ -3,15 +3,23 @@ import { z } from 'zod';
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type User } from '@/interface/user';
 
+import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { tweetLinkRegex } from '@/features/social/utils/regex';
 import { telegramUsernameSchema } from '@/features/social/utils/schema';
 import {
   extractXHandle,
+  INVALID_X_STATUS_LINK_MESSAGE,
   isHandleVerified,
+  isXInternalStatusUrl,
   isXUrl,
 } from '@/features/social/utils/x-verification';
 
 import { type Listing } from '../types';
+
+const projectTelegramSchema = z.preprocess((value) => {
+  if (typeof value !== 'string') return value;
+  return extractSocialUsername('telegram', value) || value;
+}, telegramUsernameSchema);
 
 const submissionSchema = (
   listing: Listing,
@@ -28,7 +36,13 @@ const submissionSchema = (
       tweet: z
         .union([
           z.literal(''),
-          z.string().regex(tweetLinkRegex, 'Invalid tweet link'),
+          z
+            .string()
+            .refine(
+              (value) =>
+                tweetLinkRegex.test(value) || isXInternalStatusUrl(value),
+              'Invalid tweet link',
+            ),
         ])
         .optional(),
       otherInfo: z.string().optional(),
@@ -53,25 +67,16 @@ const submissionSchema = (
           z.object({
             question: z.string(),
             answer: z.string(),
-            optional: z.boolean().optional().nullable(),
           }),
         )
         .optional(),
       telegram:
-        !user?.telegram && listing?.type === 'project'
-          ? telegramUsernameSchema
+        listing?.type === 'project'
+          ? projectTelegramSchema
           : z.string().nullable().optional(),
     })
     .superRefine((data, ctx) => {
       const isAgent = options?.isAgent === true;
-      const requiresTelegram = listing.type === 'project' && !user?.telegram;
-      if (requiresTelegram && !data.telegram) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['telegram'],
-          message: 'Telegram is required',
-        });
-      }
 
       if (listing.type !== 'project' && !data.link) {
         ctx.addIssue({
@@ -81,7 +86,32 @@ const submissionSchema = (
         });
       }
 
-      if (!isAgent && data.tweet && isXUrl(data.tweet)) {
+      if (listing.type === 'bounty' && data.tweet) {
+        if (isXInternalStatusUrl(data.tweet)) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['tweet'],
+            message: INVALID_X_STATUS_LINK_MESSAGE,
+          });
+        }
+      }
+
+      if (listing.type === 'bounty' && data.link) {
+        if (isXInternalStatusUrl(data.link)) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['link'],
+            message: INVALID_X_STATUS_LINK_MESSAGE,
+          });
+        }
+      }
+
+      if (
+        !isAgent &&
+        data.tweet &&
+        isXUrl(data.tweet) &&
+        !isXInternalStatusUrl(data.tweet)
+      ) {
         const handle = extractXHandle(data.tweet);
         if (handle) {
           const verifiedHandles = user?.linkedTwitter || [];
@@ -95,7 +125,12 @@ const submissionSchema = (
         }
       }
 
-      if (!isAgent && data.link && isXUrl(data.link)) {
+      if (
+        !isAgent &&
+        data.link &&
+        isXUrl(data.link) &&
+        !isXInternalStatusUrl(data.link)
+      ) {
         const handle = extractXHandle(data.link);
         if (handle) {
           const verifiedHandles = user?.linkedTwitter || [];
@@ -149,9 +184,13 @@ const submissionSchema = (
           });
         } else {
           listing?.eligibility?.forEach((question, index) => {
-            const answer = data.eligibilityAnswers?.[index]?.answer;
-            const optional = data.eligibilityAnswers?.[index]?.optional;
-            if (!optional && (!answer || answer.trim() === '')) {
+            const byQuestion = data.eligibilityAnswers?.find(
+              (entry) => entry.question === question.question,
+            );
+            const byIndex = data.eligibilityAnswers?.[index];
+            const answer = (byQuestion?.answer ?? byIndex?.answer)?.trim();
+            const optional = Boolean(question.optional);
+            if (!optional && !answer) {
               ctx.addIssue({
                 code: 'custom',
                 path: ['eligibilityAnswers', index, 'answer'],

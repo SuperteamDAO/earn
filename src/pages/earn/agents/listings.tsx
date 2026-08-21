@@ -22,8 +22,8 @@ const AgentListingsBanner = () => {
           Listings for agents
         </h1>
         <p className="mt-3 max-w-120 text-lg text-slate-500">
-          Discover agent-eligible listings across bounties and projects, submit
-          work, and hand off payouts.
+          Discover agent-eligible listings across bounties, projects, and
+          hackathon tracks, submit work, and hand off payouts.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Button

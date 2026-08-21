@@ -29,6 +29,10 @@ import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
 import { isDeadlineOver } from '../../utils/deadline';
 import {
+  getLocationCooldown,
+  locationCooldownTooltip,
+} from '../../utils/locationCooldown';
+import {
   getRegionTooltipLabel,
   userRegionEligibilty,
 } from '../../utils/region';
@@ -55,6 +59,8 @@ const InfoWrapper = ({
   isEditMode,
   isAuthenticated,
   isPro,
+  isLocationCooldown,
+  locationCooldownLabel,
 }: {
   children: React.ReactNode;
   isUserEligibleByRegion: boolean;
@@ -68,6 +74,8 @@ const InfoWrapper = ({
   isEditMode: boolean;
   isAuthenticated: boolean;
   isPro: boolean;
+  isLocationCooldown: boolean;
+  locationCooldownLabel: string;
 }) => {
   const { user } = useUser();
   return (
@@ -75,7 +83,8 @@ const InfoWrapper = ({
       disabled={
         !isAuthenticated ||
         (isAuthenticated && user?.id && !user?.isTalentFilled) ||
-        (hasHackathonStarted &&
+        (!isLocationCooldown &&
+          hasHackathonStarted &&
           (isUserEligibleByRegion || pastDeadline) &&
           !(
             creditBalance === 0 &&
@@ -88,12 +97,14 @@ const InfoWrapper = ({
       content={
         !isUserEligibleByRegion
           ? regionTooltipLabel
-          : !hasHackathonStarted
-            ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
-            : creditBalance === 0 && (isProject || isBounty) && !isPro
-              ? "You don't have enough credits to" +
-                (isProject ? ' apply' : ' submit')
-              : null
+          : isLocationCooldown
+            ? locationCooldownLabel
+            : !hasHackathonStarted
+              ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
+              : creditBalance === 0 && (isProject || isBounty) && !isPro
+                ? "You don't have enough credits to" +
+                  (isProject ? ' apply' : ' submit')
+                : null
       }
       contentProps={{ className: 'rounded-md z-50' }}
       triggerClassName="w-full"
@@ -138,6 +149,17 @@ export const SubmissionActionButton = ({
     userLocation: user?.location,
     chapters,
   });
+
+  const locationCooldown = getLocationCooldown({
+    locationUpdatedAt: user?.locationUpdatedAt ?? null,
+    listingRegion: region,
+    userLocation: user?.location,
+    chapters,
+  });
+  const isLocationCooldown = locationCooldown.inCooldown;
+  const locationCooldownLabel = isLocationCooldown
+    ? locationCooldownTooltip(locationCooldown.daysRemaining)
+    : '';
 
   const { data: submission, isLoading: isUserSubmissionLoading } = useQuery({
     ...userSubmissionQuery(id!, user?.id),
@@ -213,16 +235,13 @@ export const SubmissionActionButton = ({
   let isSubmitDisabled = false;
 
   function getButtonState() {
-    if (listing.agentAccess === 'AGENT_ONLY') {
-      return 'agent_only';
-    }
-
-    if (
+    const isWinnerKycFlow =
       isWinnersAnnounced &&
       isFndnPaying &&
       submission?.isWinner &&
-      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs.utc('2025-08-06'))
-    ) {
+      dayjs(listing.winnersAnnouncedAt).isAfter(dayjs.utc('2025-08-06'));
+
+    if (isWinnerKycFlow) {
       if (!submission?.isKYCVerified) {
         return 'kyc';
       }
@@ -232,6 +251,10 @@ export const SubmissionActionButton = ({
       if (submission?.isKYCVerified && submission.isPaid) {
         return 'paid';
       }
+    }
+
+    if (listing.agentAccess === 'AGENT_ONLY') {
+      return 'agent_only';
     }
 
     if (isSubmitted && !pastDeadline && submissionStatus === 'Rejected')
@@ -347,6 +370,13 @@ export const SubmissionActionButton = ({
         btnLoadingText = 'Checking Submission..';
       }
       break;
+  }
+
+  if (isLocationCooldown && buttonState === 'submit') {
+    buttonText = 'Ineligible';
+    buttonBG = 'bg-brand-purple-400';
+    isBtnDisabled = true;
+    isSubmitDisabled = true;
   }
 
   const isNotEligibleForPro =
@@ -489,6 +519,8 @@ export const SubmissionActionButton = ({
             isEditMode={isEditMode}
             isAuthenticated={isAuthenticated}
             isPro={isPro ?? false}
+            isLocationCooldown={isLocationCooldown}
+            locationCooldownLabel={locationCooldownLabel}
           >
             <AuthWrapper
               showCompleteProfileModal

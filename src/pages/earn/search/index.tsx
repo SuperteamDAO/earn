@@ -95,6 +95,7 @@ const SearchPage = ({ initialQuery = '' }: SearchProps) => {
             }
             canonical="https://superteam.fun/earn/search/"
             og={ASSET_URL + `/og/og.png`}
+            noIndex
           />
           <JsonLd data={[generateWebSiteSchema()]} />
         </>

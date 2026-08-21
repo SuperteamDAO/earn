@@ -17,6 +17,12 @@ import { addGrantWinBonusCredit } from '@/features/credits/utils/allocateCredits
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
+import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
+import { validateCustomEmailNote } from '@/features/sponsor-dashboard/utils/customEmailSanitizer';
+import {
+  getGrantApprovedEmailBody,
+  getGrantRejectedEmailBody,
+} from '@/features/sponsor-dashboard/utils/grantEmailCopy';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
 const MAX_RECORDS = 10;
@@ -32,6 +38,8 @@ const UpdateGrantApplicationSchema = z.object({
     .min(1, 'Data array cannot be empty')
     .max(MAX_RECORDS, `Only max ${MAX_RECORDS} records allowed in data`),
   applicationStatus: z.string(),
+  customNote: z.string().trim().min(1).max(5000).optional(),
+  skipCooldown: z.boolean().optional(),
 });
 
 const checkAndUpdateKYCStatus = async (
@@ -49,8 +57,31 @@ const checkAndUpdateKYCStatus = async (
         const grantApplication =
           await prisma.grantApplication.findUniqueOrThrow({
             where: { id: grantApplicationId },
-            select: { walletAddress: true },
+            select: {
+              applicationStatus: true,
+              walletAddress: true,
+              grant: {
+                select: {
+                  id: true,
+                  airtableId: true,
+                  isNative: true,
+                },
+              },
+            },
           });
+
+        const isEligibleForAutoFirstTranche =
+          grantApplication.grant.id !== COINDCX_GRANT_ID &&
+          !!grantApplication.grant.airtableId &&
+          grantApplication.grant.isNative &&
+          grantApplication.applicationStatus === 'Approved';
+
+        if (!isEligibleForAutoFirstTranche) {
+          logger.info(
+            `Skipping automatic first tranche creation for application ${grantApplicationId} because the grant is not eligible for Airtable-backed tranche sync.`,
+          );
+          return;
+        }
 
         await createTranche({
           applicationId: grantApplicationId,
@@ -86,7 +117,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
   }
 
-  const { data, applicationStatus } = validationResult.data;
+  const { data, applicationStatus, customNote, skipCooldown } =
+    validationResult.data;
 
   try {
     const currentApplications = await prisma.grantApplication.findMany({
@@ -97,6 +129,11 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
       include: {
         grant: true,
+        user: {
+          select: {
+            firstName: true,
+          },
+        },
       },
     });
 
@@ -109,8 +146,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
     const grantId = currentApplications[0]?.grant.id;
+    if (!grantId) {
+      logger.warn('Could not determine grant ID from current applications');
+      return res
+        .status(404)
+        .json({ error: 'All records should have same and valid grant ID' });
+    }
+
     if (
-      grantId &&
       !currentApplications.every(
         (application) => application.grant.id === grantId,
       )
@@ -121,23 +164,58 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         .json({ error: 'All records should have same and valid grant ID' });
     }
 
-    currentApplications.forEach(async (currentApplicant) => {
-      const { error } = await checkGrantSponsorAuth(
-        req.userSponsorId,
-        currentApplicant.grantId,
-      );
-      if (error) {
-        return res.status(error.status).json({ error: error.message });
+    const { error: authError } = await checkGrantSponsorAuth(
+      req.userSponsorId,
+      grantId,
+    );
+    if (authError) {
+      return res.status(authError.status).json({ error: authError.message });
+    }
+
+    const isApproved = applicationStatus === 'Approved';
+    let sanitizedCustomNote: string | undefined;
+    if (customNote) {
+      for (const [index, application] of currentApplications.entries()) {
+        const approvedAmount = data[index]?.approvedAmount ?? undefined;
+        const fullEmailHtml = isApproved
+          ? getGrantApprovedEmailBody({
+              granteeName: application.user?.firstName,
+              grantTitle: application.grant.title,
+              projectTitle: application.projectTitle,
+              approvedAmount: approvedAmount ?? undefined,
+              token: application.grant.token || 'USDC',
+              salutation: application.grant.emailSalutation,
+              reviewerNote: customNote,
+            })
+          : getGrantRejectedEmailBody({
+              granteeName: application.user?.firstName,
+              grantTitle: application.grant.title,
+              projectTitle: application.projectTitle,
+              salutation: application.grant.emailSalutation,
+              reviewerNote: customNote,
+            });
+        const noteValidation = validateCustomEmailNote({
+          noteHtml: customNote,
+          fullEmailHtml,
+        });
+        if (!noteValidation.isValid) {
+          logger.warn('Invalid custom note:', noteValidation.error);
+          return res.status(400).json({
+            error: 'Invalid custom note',
+            details: noteValidation.error,
+          });
+        }
+        sanitizedCustomNote = noteValidation.sanitized;
       }
-    });
+    }
 
     const commonUpdateField = {
       applicationStatus,
       decidedAt: new Date().toISOString(),
       decidedBy: userId,
+      isCooldownSkipped: applicationStatus === 'Rejected' && !!skipCooldown,
     };
 
-    const isApproved = applicationStatus === 'Approved';
     const updatedData: {
       applicationStatus: string;
       decidedAt: string;
@@ -146,6 +224,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       approvedAmountInUSD?: number;
       totalTranches?: number;
       label?: SubmissionLabels;
+      isCooldownSkipped?: boolean;
     }[] = [];
 
     await Promise.all(
@@ -226,24 +305,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     );
 
     if (isApproved) {
-      const totalIncrementAmountInUSD = updatedData.reduce(
-        (acc, currentApplicant) => {
-          if (currentApplicant.approvedAmountInUSD !== undefined) {
-            return acc + currentApplicant.approvedAmountInUSD;
-          }
-          return acc;
-        },
-        0,
-      );
-      await prisma.grants.update({
-        where: { id: grantId },
-        data: {
-          totalApproved: {
-            increment: totalIncrementAmountInUSD,
-          },
-        },
-      });
-
       await Promise.all(
         result.map((application) =>
           addGrantWinBonusCredit(application.userId, application.id),
@@ -268,20 +329,27 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     if (result[0]?.grant.isNative === true) {
-      result.forEach(async (r) => {
-        await queueEmail({
-          type: isApproved ? 'grantApproved' : 'grantRejected',
-          id: r.id,
-          userId: r.userId,
-          triggeredBy: userId,
-        });
-      });
+      await Promise.all(
+        result.map((r) =>
+          queueEmail({
+            type: isApproved ? 'grantApproved' : 'grantRejected',
+            id: r.id,
+            userId: r.userId,
+            triggeredBy: userId,
+            otherInfo: sanitizedCustomNote
+              ? {
+                  customEmailNote: sanitizedCustomNote,
+                }
+              : undefined,
+          }),
+        ),
+      );
     }
 
     if (result[0]?.grant.airtableId) {
       console.log('is an airtable grant');
       try {
-        const config = airtableConfig(process.env.AIRTABLE_GRANTS_API_TOKEN!);
+        const config = airtableConfig(process.env.AIRTABLE_API_TOKEN!);
         const url = airtableUrl(
           process.env.AIRTABLE_GRANTS_BASE_ID!,
           process.env.AIRTABLE_GRANTS_TABLE_NAME!,

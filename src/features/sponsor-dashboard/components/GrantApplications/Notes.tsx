@@ -2,9 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Textarea } from '@/components/ui/textarea';
 import { api } from '@/lib/api';
 import { Wand } from '@/svg/wand';
 import { cn } from '@/utils/cn';
@@ -13,8 +12,21 @@ import { type GrantApplicationAi } from '@/features/grants/types';
 
 import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
 import { type GrantApplicationsReturn } from '../../queries/applications';
+import {
+  convertTextToNotesHTML,
+  getTextCharacterCount,
+} from '../../utils/convertTextToNotesHTML';
+import { NotesRichEditor } from '../NotesRichEditor';
 
-const MAX_CHARACTERS = 1000;
+const MAX_CHARACTERS = 2000;
+
+const isHtmlNote = (value?: string | null) =>
+  /<\/?[a-z][\s\S]*>/i.test(value || '');
+
+const normalizeNotesForEditor = (value?: string | null) => {
+  if (!value || isHtmlNote(value)) return value;
+  return convertTextToNotesHTML(value);
+};
 
 type Props = {
   slug: string | undefined;
@@ -25,16 +37,16 @@ export const Notes = ({ slug }: Props) => {
     selectedGrantApplicationAtom,
   );
   const setNotesUpdating = useSetAtom(isStateUpdatingAtom);
-  const [notes, setNotes] = useState(selectedApplication?.notes);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    setNotes(selectedApplication?.notes);
-  }, [selectedApplication]);
+  const [notes, setNotes] = useState(() =>
+    normalizeNotesForEditor(selectedApplication?.notes),
+  );
   const queryClient = useQueryClient();
   const applicationId = useMemo(
     () => selectedApplication?.id,
     [selectedApplication],
+  );
+  const previousApplicationIdRef = useRef<string | undefined>(
+    selectedApplication?.id,
   );
 
   const { mutate: updateNotes, isPending: isSaving } = useMutation({
@@ -78,17 +90,32 @@ export const Notes = ({ slug }: Props) => {
     },
   });
 
-  const debouncedUpdateNotes = useMemo(
-    () => debounce((content: string) => updateNotes(content), 1000),
-    [updateNotes],
-  );
+  const debouncedUpdateNotesRef = useRef<
+    ReturnType<typeof debounce> | undefined
+  >(undefined);
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    let value = e.target.value;
-    if (value !== '' && notes === '') {
-      value = '• ' + value;
+  useEffect(() => {
+    debouncedUpdateNotesRef.current = debounce(
+      (content: string) => updateNotes(content),
+      1000,
+    );
+
+    return () => {
+      debouncedUpdateNotesRef.current?.cancel();
+    };
+  }, [applicationId, updateNotes]);
+
+  useEffect(() => {
+    if (previousApplicationIdRef.current !== selectedApplication?.id) {
+      previousApplicationIdRef.current = selectedApplication?.id;
+      setNotes(normalizeNotesForEditor(selectedApplication?.notes));
     }
-    if (value.length <= MAX_CHARACTERS) {
+  }, [selectedApplication?.id, selectedApplication?.notes]);
+
+  const handleChange = (value: string) => {
+    const textLength = getTextCharacterCount(value);
+
+    if (textLength <= MAX_CHARACTERS) {
       if (selectedApplication) {
         setSelectedApplication({
           ...selectedApplication,
@@ -96,36 +123,8 @@ export const Notes = ({ slug }: Props) => {
         });
       }
       setNotes(value);
-      debouncedUpdateNotes(value);
+      debouncedUpdateNotesRef.current?.(value);
       setNotesUpdating(true);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-      e.stopPropagation();
-    }
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const cursorPosition = e.currentTarget.selectionStart;
-      const textBeforeCursor = notes?.slice(0, cursorPosition) || '';
-      const textAfterCursor = notes?.slice(cursorPosition) || '';
-      const newNotes = `${textBeforeCursor}\n• ${textAfterCursor}`;
-      setNotes(newNotes);
-
-      const newCursorPosition = cursorPosition + 3;
-      requestAnimationFrame(() => {
-        if (textareaRef.current) {
-          textareaRef.current.selectionStart = newCursorPosition;
-          textareaRef.current.selectionEnd = newCursorPosition;
-        }
-      });
-    } else if (e.key === 'Backspace') {
-      const lines = notes?.split('\n') || [];
-      if (lines[lines.length - 1] === '• ' && lines.length > 1) {
-        e.preventDefault();
-        setNotes(notes?.slice(0, -3));
-      }
     }
   };
 
@@ -135,10 +134,10 @@ export const Notes = ({ slug }: Props) => {
   );
 
   return (
-    <div className="flex w-full flex-col items-start rounded-xl border border-slate-200 px-4 py-5">
+    <div className="flex h-full min-h-0 w-full flex-col items-start rounded-xl border border-slate-200 py-5 pr-1 pl-4">
       <div
         className={cn(
-          'mb-2 flex w-full items-center justify-between text-slate-400',
+          'mb-2 flex w-full items-center justify-between pr-3 text-slate-400',
           isAiCommited && 'text-slate-600',
         )}
       >
@@ -152,18 +151,22 @@ export const Notes = ({ slug }: Props) => {
           <span className="text-[10px]">Auto-saved</span>
         )}
       </div>
-      <Textarea
-        ref={textareaRef}
-        className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300 scrollbar-thumb-rounded-md resize-none !border-0 px-1.5 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
-        key={applicationId}
-        onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        placeholder="• Start typing notes here"
-        rows={20}
-        value={notes || ''}
-      />
+      <div
+        key={applicationId + (selectedApplication?.label || 'label')}
+        className="min-h-0 w-full flex-1"
+      >
+        <NotesRichEditor
+          className="h-full min-h-0 w-full resize-none !border-0 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
+          key={applicationId + (selectedApplication?.label || 'label')}
+          id={applicationId + (selectedApplication?.label || 'label')}
+          onChange={handleChange}
+          placeholder="• Start typing notes here"
+          value={notes || ''}
+          maxLength={MAX_CHARACTERS}
+        />
+      </div>
       <p className="mt-1 w-full text-right text-xs text-slate-400">
-        {notes?.length || 0}/{MAX_CHARACTERS}
+        {notes ? getTextCharacterCount(notes) : 0}/{MAX_CHARACTERS}
       </p>
     </div>
   );

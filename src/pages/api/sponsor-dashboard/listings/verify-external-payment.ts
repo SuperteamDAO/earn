@@ -13,6 +13,10 @@ import {
   type VerifyPaymentsFormData,
 } from '@/features/sponsor-dashboard/types';
 import {
+  findUsedPaymentTxIds,
+  normalizePaymentTxId,
+} from '@/features/sponsor-dashboard/utils/paymentReplayCheck';
+import {
   validatePayment,
   type ValidationResult,
 } from '@/features/sponsor-dashboard/utils/paymentRPCValidation';
@@ -21,6 +25,8 @@ import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 async function wait(ms: number) {
   return await new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+const PROJECT_PAYMENT_OVERPAY_TOLERANCE_PERCENT = 0.005; // 0.5%
 
 export const config = {
   maxDuration: 300,
@@ -87,7 +93,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const validationResults: ValidatePaymentResult[] = [];
 
-    const txIds = paymentLinks.map((link) => link.txId).filter(Boolean);
+    const txIds = paymentLinks
+      .map((link) => link.txId)
+      .filter(Boolean)
+      .map(normalizePaymentTxId);
     const duplicateTxIds = txIds.filter(
       (txId, index) => txIds.indexOf(txId) !== index,
     );
@@ -97,15 +106,17 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    const allExistingTxIds = submissions
-      .flatMap((sub) =>
-        ((sub.paymentDetails as any[]) || []).map((payment) => payment.txId),
-      )
-      .filter(Boolean);
+    // Check globally across ALL submissions (paid and unpaid) to prevent
+    // transaction replay attacks where a txId from a paid submission is reused
+    // for a different winner.
+    if (txIds.length === 0) {
+      return res
+        .status(400)
+        .json({ error: 'No valid transaction IDs provided' });
+    }
 
-    const alreadyUsedTxIds = txIds.filter((txId) =>
-      allExistingTxIds.includes(txId),
-    );
+    const alreadyUsedTxIds = await findUsedPaymentTxIds(txIds);
+
     if (alreadyUsedTxIds.length > 0) {
       return res.status(400).json({
         error: `Transaction IDs already used: ${alreadyUsedTxIds.join(', ')}`,
@@ -193,7 +204,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             throw new Error('Invalid payment amount');
           }
 
-          if (actualPaidAmount > remainingAmount) {
+          const maxAllowedAmount =
+            remainingAmount * (1 + PROJECT_PAYMENT_OVERPAY_TOLERANCE_PERCENT);
+          if (actualPaidAmount > maxAllowedAmount) {
             throw new Error(
               `Payment amount (${actualPaidAmount}) exceeds remaining amount (${remainingAmount})`,
             );

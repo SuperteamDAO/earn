@@ -8,8 +8,8 @@ const Countdown = dynamic(() => import('react-countdown'), { ssr: false });
 import MdTimer from '@/components/icons/MdTimer';
 import TbBriefcase2 from '@/components/icons/TbBriefcase2';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
-import { useTokenLookup } from '@/constants/tokenList';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { type ParentSkills } from '@/interface/skills';
 import { cn } from '@/utils/cn';
@@ -19,7 +19,7 @@ import { cleanRewardPrizes } from '@/utils/rank';
 
 import { RelatedListings } from '@/features/home/components/RelatedListings';
 
-import type { Listing } from '../../types';
+import type { PublicListing } from '../../types';
 import { isDeadlineOver } from '../../utils/deadline';
 import { ApprovalStages } from '../Submission/ApprovalStages';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
@@ -70,13 +70,12 @@ export function RightSideBar({
   submissionNumber,
   isSubmissionNumberLoading = false,
 }: {
-  listing: Listing;
+  listing: PublicListing;
   skills?: ParentSkills[];
   isTemplate?: boolean;
   submissionNumber?: number;
   isSubmissionNumberLoading?: boolean;
 }) {
-  const { getIcon } = useTokenLookup();
   const {
     token,
     type,
@@ -166,10 +165,10 @@ export function RightSideBar({
                         )}
                       >
                         {!showUsdSymbolOnly && (
-                          <img
+                          <TokenIcon
                             className="h-8 w-8 rounded-full"
                             alt="token icon"
-                            src={getIcon(token)}
+                            symbol={token}
                           />
                         )}
                         <CompensationAmount

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { useTokenLookup } from '@/constants/tokenList';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { type TrackProps } from '@/interface/hackathon';
 
 export const TrackBox = ({
@@ -10,8 +10,6 @@ export const TrackBox = ({
   rewardAmount,
   slug,
 }: TrackProps) => {
-  const { getIcon } = useTokenLookup();
-
   return (
     <Link
       href={`/earn/listing/${slug}`}
@@ -33,10 +31,10 @@ export const TrackBox = ({
         </div>
       </div>
       <div className="flex items-center justify-end gap-1">
-        <img
+        <TokenIcon
           className="h-4 w-4 rounded-full md:h-6 md:w-6"
-          alt={token}
-          src={getIcon(token)}
+          alt={token ?? 'token'}
+          symbol={token}
         />
         <span className="text-sm font-semibold text-slate-700 md:text-base">
           {rewardAmount?.toLocaleString('en-us')}

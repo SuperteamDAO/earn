@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import { type Grant } from '../types';
+import { isGrantApplicationInCooldown } from '../utils/grantApplicationCooldown';
+import { isAgenticEngineeringGrant } from '../utils/stGrant';
 
 export const useApplicationState = (
   application: GrantApplicationWithTranchesAndUser | undefined,
@@ -14,34 +16,19 @@ export const useApplicationState = (
   );
   const tranches = application?.totalTranches ?? 0;
 
-  const isST =
-    grant.isNative &&
-    grant.airtableId &&
-    !grant.title.toLowerCase().includes('coindcx');
-
-  const isInCooldownPeriod = () => {
-    if (
-      !application ||
-      application.applicationStatus !== 'Rejected' ||
-      !grant.title.toLowerCase().includes('coindcx')
-    ) {
-      return false;
-    }
-
-    const decidedAt = application.decidedAt;
-    if (!decidedAt) return false;
-
-    const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
-    const timeSinceDecision = Date.now() - new Date(decidedAt).getTime();
-
-    return timeSinceDecision < thirtyDaysInMs;
-  };
+  const hasSpecialTranches =
+    (grant.isNative && grant.airtableId) || isAgenticEngineeringGrant(grant);
 
   useEffect(() => {
     if (!application) return;
 
-    if (isInCooldownPeriod()) {
-      setApplicationState('COOLDOWN');
+    if (application.applicationStatus === 'Rejected') {
+      setApplicationState(
+        !application.isCooldownSkipped &&
+          isGrantApplicationInCooldown(application.decidedAt)
+          ? 'COOLDOWN'
+          : 'ALLOW NEW',
+      );
       return;
     }
 
@@ -60,7 +47,7 @@ export const useApplicationState = (
       );
       const trancheNumber = validTranches.length;
 
-      if (isST) {
+      if (hasSpecialTranches) {
         if (!application.user.isKYCVerified) {
           setApplicationState('KYC PENDING');
         } else if (application.user.isKYCVerified) {
@@ -106,7 +93,13 @@ export const useApplicationState = (
         setApplicationState('APPLIED');
       }
     }
-  }, [application, grant.id, grant.isNative, isST, setApplicationState]);
+  }, [
+    application,
+    grant.id,
+    grant.isNative,
+    hasSpecialTranches,
+    setApplicationState,
+  ]);
 
   const getButtonConfig = () => {
     switch (applicationState) {
@@ -128,7 +121,7 @@ export const useApplicationState = (
 
       case 'COOLDOWN':
         return {
-          text: 'Reapply Later',
+          text: 'Cooldown period',
           bg: 'bg-gray-500',
           isDisabled: true,
           loadingText: null,

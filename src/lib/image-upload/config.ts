@@ -39,6 +39,13 @@ export const UPLOAD_CONFIGS: Record<ImageSource, UploadConfig> = {
     quality: 85,
     eager: 'c_limit,w_1200,q_auto,f_webp',
   },
+  'grant-agentic-receipts': {
+    folder: `grant-agentic-receipts${devSuffix}`,
+    maxWidth: 1920,
+    maxHeight: 1080,
+    quality: 85,
+    eager: 'c_limit,w_1200,q_auto,f_webp',
+  },
 };
 
 export const CLOUDINARY_CONFIG = {

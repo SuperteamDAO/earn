@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
-import { useTokenLookup } from '@/constants/tokenList';
+import { TokenIcon } from '@/components/ui/token-icon';
 
 import { grantAmount } from '../utils/grantAmount';
 
@@ -12,12 +12,13 @@ interface GrantAmountProps {
 }
 
 const GrantAmount = ({ token, minReward, maxReward }: GrantAmountProps) => {
-  const { getIcon } = useTokenLookup();
-  const tokenIcon = getIcon(token);
-
   return (
     <div className="-mt-2 flex items-center">
-      <img className="mr-1 h-4 w-4 rounded-full" alt={token} src={tokenIcon} />
+      <TokenIcon
+        className="mr-1 h-4 w-4 rounded-full"
+        alt={token ?? 'token'}
+        symbol={token}
+      />
       <div className="flex items-baseline gap-1">
         <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
           {grantAmount({

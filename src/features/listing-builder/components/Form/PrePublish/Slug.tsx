@@ -1,4 +1,5 @@
 import { useIsFetching, useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useAtomValue } from 'jotai';
 import { CheckIcon, Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useRef } from 'react';
@@ -46,25 +47,42 @@ export function Slug() {
 
   const queryEnabled = useMemo(
     () =>
-      form.formState.errors.slug === undefined && !isEditing && !!debouncedSlug,
-    [form.formState.errors.slug, isEditing, debouncedSlug],
+      form.formState.errors.slug === undefined &&
+      !isEditing &&
+      !!debouncedSlug &&
+      !!listingId,
+    [form.formState.errors.slug, isEditing, debouncedSlug, listingId],
   );
 
   const slugCheckQueryResult = useMemo(() => {
     return slugCheckQuery({ slug: debouncedSlug, check: true, id: listingId });
   }, [debouncedSlug, listingId]);
-  const { isError: isSlugCheckError, isFetching: slugCheckFetching } = useQuery(
-    {
-      ...slugCheckQueryResult,
-      enabled: queryEnabled,
-      retry: false,
-      retryOnMount: false,
-      refetchOnWindowFocus: false,
-    },
-  );
+  const {
+    data: slugCheckData,
+    error: slugCheckError,
+    isError: isSlugCheckError,
+    isFetching: slugCheckFetching,
+  } = useQuery({
+    ...slugCheckQueryResult,
+    enabled: queryEnabled,
+    retry: false,
+    retryOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+
+  const isSlugTaken = useMemo(() => {
+    if (slugCheckData?.data.slugExists) return true;
+    if (!axios.isAxiosError(slugCheckError)) return false;
+
+    return (
+      slugCheckError.response?.status === 400 &&
+      slugCheckError.response?.data?.slugExists === true
+    );
+  }, [slugCheckData, slugCheckError]);
+  const isSlugAvailable = slugCheckData?.data.slugExists === false;
 
   useEffect(() => {
-    if (isSlugCheckError) {
+    if (isSlugTaken) {
       if (slug === '') return;
       form.setError('slug', {
         message: 'Slug already exists. Please try another.',
@@ -72,7 +90,7 @@ export function Slug() {
       });
       form.setFocus('slug');
     }
-  }, [isSlugCheckError]);
+  }, [isSlugTaken]);
 
   const prevDebouncedSlugRef = useRef<string | undefined>(undefined);
   useEffect(() => {
@@ -136,6 +154,7 @@ export function Slug() {
                   <Loader2 className="absolute top-1.5 right-2 animate-spin text-slate-300" />
                 ) : (
                   form.formState.errors.slug === undefined &&
+                  isSlugAvailable &&
                   !isSlugCheckError &&
                   !isEditing && (
                     <span className="text-background absolute top-2 right-2 flex h-5 w-5 scale-75 items-center rounded-full bg-emerald-500 p-1">

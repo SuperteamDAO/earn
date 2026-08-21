@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -12,14 +13,15 @@ export default async function searchUser(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  logger.info(`Request query ${safeStringify(req.query)}`);
-
   if (req.method !== 'GET') {
     logger.warn(`Method not allowed: ${req.method}`);
     return res.status(405).end(`Method Not Allowed`);
   }
 
   const { query, take } = req.query;
+  logger.info(
+    `User search requested; queryLength=${typeof query === 'string' ? query.length : 0}, take=${typeof take === 'string' ? take : 'default'}`,
+  );
   if (!query) {
     logger.warn('Query parameter is required');
     return res.status(400).json({ error: 'Query is required' });
@@ -39,8 +41,16 @@ export default async function searchUser(
       }
     }
 
-    let takeNum = Number(take) || MAX_COMMENT_SUGGESTIONS;
-    if (takeNum > MAX_COMMENT_SUGGESTIONS) takeNum = MAX_COMMENT_SUGGESTIONS;
+    const takeResult = parseBoundedIntegerParam(take, {
+      defaultValue: MAX_COMMENT_SUGGESTIONS,
+      maxValue: MAX_COMMENT_SUGGESTIONS,
+      minValue: 1,
+      name: 'take',
+    });
+    if (!takeResult.ok) {
+      return res.status(400).json({ error: takeResult.error });
+    }
+    const takeNum = takeResult.value;
     logger.debug(`Query parameter: ${query}, Take number: ${takeNum}`);
 
     const users = await prisma.user.findMany({

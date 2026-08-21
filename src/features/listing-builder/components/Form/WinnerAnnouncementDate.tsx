@@ -45,8 +45,9 @@ export function WinnerAnnouncementDate() {
 
   useEffect(() => {
     if (!deadline) return;
+    if (form.getValues('commitmentDate')) return;
     handleQuickSelect(14, false);
-  }, [deadline]);
+  }, [deadline, form]);
 
   return (
     <FormField

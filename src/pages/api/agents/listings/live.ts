@@ -5,6 +5,7 @@ import { prisma } from '@/prisma';
 import { type EnumBountyTypeFilter } from '@/prisma/commonInputTypes';
 import { type BountyType } from '@/prisma/enums';
 import { type BountiesFindManyArgs } from '@/prisma/models/Bounties';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 
 import { type NextApiRequestWithAgent } from '@/features/auth/types';
 import { withAgentAuth } from '@/features/auth/utils/withAgentAuth';
@@ -14,7 +15,15 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
   const params = req.query;
 
   const type = params.type as EnumBountyTypeFilter | BountyType | undefined;
-  const take = params.take ? parseInt(params.take as string, 10) : 10;
+  const takeResult = parseBoundedIntegerParam(params.take, {
+    defaultValue: 10,
+    maxValue: 50,
+    name: 'take',
+  });
+  if (!takeResult.ok) {
+    return res.status(400).json({ error: takeResult.error });
+  }
+  const take = takeResult.value;
   const deadline = params.deadline as string;
   const exclusiveSponsorId = params.exclusiveSponsorId as string | undefined;
   let excludeIds = params['excludeIds[]'];
@@ -33,7 +42,7 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       isArchived: false,
       status: 'OPEN',
       deadline: { gte: deadline },
-      type: type || { in: ['bounty', 'project'] },
+      type: type || { in: ['bounty', 'project', 'hackathon'] },
       agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
       sponsor: {
         isVerified: true,

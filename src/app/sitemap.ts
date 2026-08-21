@@ -99,18 +99,6 @@ function getStaticRoutes(now: Date): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/earn/feed/`,
-      lastModified: now,
-      changeFrequency: 'hourly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/earn/search/`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
       url: `${baseUrl}/earn/agents/`,
       lastModified: now,
       changeFrequency: 'weekly',
@@ -261,6 +249,13 @@ async function getTalentProfilesCount(): Promise<number> {
       },
       isTalentFilled: true,
       private: false,
+      TalentRankings: {
+        some: {
+          totalEarnedInUSD: {
+            gt: 0,
+          },
+        },
+      },
     },
   });
 }
@@ -605,6 +600,13 @@ export default async function sitemap(props: {
           },
           isTalentFilled: true,
           private: false,
+          TalentRankings: {
+            some: {
+              totalEarnedInUSD: {
+                gt: 0,
+              },
+            },
+          },
         },
         select: {
           username: true,

@@ -72,6 +72,7 @@ interface TalentProps {
     totalWinnings: number;
   };
   bgIndex: number;
+  shouldNoIndex: boolean;
 }
 
 const getWorkPreferenceText = (workPrefernce?: string): string | null => {
@@ -164,7 +165,7 @@ const ProfileActionButton = memo(function ProfileActionButton({
   );
 });
 
-function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
+function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
   const [activeTab, setActiveTab] = useState<'activity' | 'projects'>(
     'activity',
   );
@@ -392,7 +393,7 @@ function TalentProfile({ talent, stats, bgIndex }: TalentProps) {
                 />
               </>
             )}
-            {talent.private && (
+            {(talent.private || shouldNoIndex) && (
               <>
                 <meta name="robots" content="noindex, nofollow" />
                 <meta name="googlebot" content="noindex, nofollow" />
@@ -744,6 +745,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const username = Array.isArray(slug) ? slug[0] : (slug as string);
 
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
     const [talent, submissionStats, grantStats] = await Promise.all([
       prisma.user.findUnique({
         where: { username },
@@ -806,6 +810,27 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const stats = { participations, wins, totalWinnings };
 
+    const isOnLeaderboard = totalWinnings > 0;
+    const hasRecentActivity = isOnLeaderboard
+      ? false
+      : await Promise.all([
+          prisma.submission.findFirst({
+            where: {
+              userId: talent.id,
+              createdAt: { gte: threeMonthsAgo },
+            },
+            select: { id: true },
+          }),
+          prisma.grantApplication.findFirst({
+            where: {
+              userId: talent.id,
+              createdAt: { gte: threeMonthsAgo },
+            },
+            select: { id: true },
+          }),
+        ]).then(([submission, grantApp]) => !!submission || !!grantApp);
+    const shouldNoIndex = !isOnLeaderboard && !hasRecentActivity;
+
     const bgIndex = talent?.id ? hashStringToInt(talent.id) % 5 : 0;
     const bgNum = bgIndex + 1;
 
@@ -817,7 +842,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 
     return {
-      props: { talent, stats, bgIndex },
+      props: { talent, stats, bgIndex, shouldNoIndex },
     };
   } catch (error) {
     console.error(error);

@@ -94,6 +94,8 @@ const HeaderSub = ({
   region: string | undefined;
   isPro: boolean | undefined;
 }) => {
+  const isFrontierHackathon = Hackathon?.slug === 'frontier';
+
   return (
     <div className="flex flex-wrap items-center gap-1 md:gap-2">
       <Link
@@ -117,7 +119,10 @@ const HeaderSub = ({
         <div className="flex items-center">
           <Link href={`/earn/hackathon/${Hackathon?.slug}`}>
             <img
-              className="h-[1rem]"
+              className={cn(
+                'w-auto object-contain',
+                isFrontierHackathon ? 'h-2.5' : 'h-4',
+              )}
               alt={type}
               src={Hackathon?.logo || Hackathon?.altLogo || ''}
             />
@@ -268,7 +273,12 @@ export function ListingHeader({
           >
             <div className="flex gap-1">
               <div className="hidden md:flex">
-                <ListingTitle title={title} />
+                <p
+                  aria-hidden="true"
+                  className="text-lg font-semibold tracking-tight text-slate-700 sm:text-xl"
+                >
+                  {title}
+                </p>
               </div>
             </div>
             <div className="hidden md:flex">

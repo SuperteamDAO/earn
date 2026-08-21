@@ -2,6 +2,7 @@ import { countries } from '@/constants/country';
 import { prisma } from '@/prisma';
 
 export type ChapterRegion = {
+  id: string;
   name: string;
   region: string;
   displayValue: string;
@@ -38,7 +39,9 @@ export async function getChapterRegions(): Promise<ChapterRegion[]> {
   }
 
   const chapters = await prisma.chapter.findMany({
+    where: { active: true },
     select: {
+      id: true,
       name: true,
       region: true,
       displayValue: true,
@@ -54,6 +57,7 @@ export async function getChapterRegions(): Promise<ChapterRegion[]> {
   });
 
   cachedChapterRegions = chapters.map((chapter) => ({
+    id: chapter.id,
     name: chapter.name,
     region: chapter.region,
     displayValue: chapter.displayValue || chapter.region,
@@ -122,6 +126,14 @@ export async function getRegionNameForLocation(
 ): Promise<string> {
   const chapter = await findChapterByLocation(location);
   return chapter?.region || 'Global';
+}
+
+export function getAirtablePaymentsRegionName(regionName: string): string {
+  if (normalize(regionName) === 'united arab emirates') {
+    return 'UAE';
+  }
+
+  return regionName;
 }
 
 function getMultiCountryRegionsContainingCountry(

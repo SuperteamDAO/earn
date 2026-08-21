@@ -34,9 +34,7 @@ export async function syncGrantApplicationWithAirtable(
     `Starting syncGrantApplicationWithAirtable for Application ID: ${applicationId}`,
   );
 
-  const grantsAirtableConfig = airtableConfig(
-    process.env.AIRTABLE_GRANTS_API_TOKEN!,
-  );
+  const grantsAirtableConfig = airtableConfig(process.env.AIRTABLE_API_TOKEN!);
   const grantsAirtableURL = airtableUrl(
     process.env.AIRTABLE_GRANTS_BASE_ID!,
     process.env.AIRTABLE_GRANTS_TABLE_NAME!,

@@ -85,6 +85,7 @@ interface FeedSidebarContentProps {
 const FeedSidebarContent = ({ recentEarners }: FeedSidebarContentProps) => (
   <>
     <VibeCard />
+    {/* <SidebarBanner /> */}
     <LiveListings>
       <SectionHeader title="LIVE LISTINGS" href="/earn" />
     </LiveListings>
@@ -133,6 +134,7 @@ const NonSponsorSidebarContent = ({
         TVE={totals?.totalInUSD}
       />
     </div>
+    {/* <SidebarBanner /> */}
     <HowItWorks />
     {currentPath !== '/earn/bookmarks' && !!bookmarks?.length && (
       <YourBookmarks>

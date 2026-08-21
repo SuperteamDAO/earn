@@ -4,7 +4,9 @@ import { type BountyTemplateWithSponsor } from '@/app/api/sponsor-dashboard/temp
 import { api } from '@/lib/api';
 import { type BountyType } from '@/prisma/enums';
 
-const fetchListingTemplates = async (type: string) => {
+const fetchListingTemplates = async (type: BountyType) => {
+  if (type === 'hackathon') return [];
+
   const { data } = await api.get<BountyTemplateWithSponsor[]>(
     '/api/sponsor-dashboard/templates/',
     {
@@ -17,5 +19,6 @@ const fetchListingTemplates = async (type: string) => {
 export const listingTemplatesQuery = (type: BountyType) =>
   queryOptions({
     queryKey: ['listingTemplates', type],
+    enabled: type !== 'hackathon',
     queryFn: () => fetchListingTemplates(type),
   });

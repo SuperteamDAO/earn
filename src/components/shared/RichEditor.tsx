@@ -83,12 +83,21 @@ export const RichEditor: React.FC<RichEditorProps> = ({
     return null;
   }
 
+  const focusEditor = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as Node;
+
+    if (editor.view.dom.contains(target)) return;
+
+    event.preventDefault();
+    editor.chain().focus('end').run();
+  };
+
   return (
     <div className="relative w-full">
       <FloatingToolbar editor={editor} editorClassname={`editor-${id}`} />
       <div
         className={cn(
-          'w-full overflow-y-auto rounded-md border py-2 shadow-xs **:text-xs! sm:**:text-sm!',
+          'flex w-full flex-col overflow-y-auto rounded-md border py-2 shadow-xs **:text-xs! sm:**:text-sm!',
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-xs',
           'sm:[&_.ProseMirror_p.is-editor-empty:first-child::before]:text-sm',
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:!text-muted-foreground',
@@ -106,8 +115,12 @@ export const RichEditor: React.FC<RichEditorProps> = ({
           styles.resetDes,
         )}
         ref={editorRef}
+        onMouseDown={focusEditor}
       >
-        <EditorContent editor={editor} className="mt-0 text-xs sm:text-sm" />
+        <EditorContent
+          editor={editor}
+          className="mt-0 flex-1 text-xs sm:text-sm [&_.ProseMirror]:min-h-full"
+        />
       </div>
     </div>
   );

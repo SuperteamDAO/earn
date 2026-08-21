@@ -20,13 +20,17 @@ import { HomeTalentBanner } from './TalentBanner';
 
 interface BannerCarouselProps {
   readonly totalUsers?: number | null;
+  readonly totalSponsors?: number | null;
 }
 
 /**
  * an optimized carousel that renders a static version first for performance,
  * and then progressively enhances to the full interactive version on the client.
  */
-export function BannerCarousel({ totalUsers }: BannerCarouselProps) {
+export function BannerCarousel({
+  totalUsers,
+  totalSponsors,
+}: BannerCarouselProps) {
   const plugin = useRef(
     Autoplay({
       delay: 4000,
@@ -68,7 +72,10 @@ export function BannerCarousel({ totalUsers }: BannerCarouselProps) {
           <HomeTalentBanner totalUsers={totalUsers} />
         </CarouselItem>
         <CarouselItem>
-          <HomeSponsorBanner totalUsers={totalUsers} />
+          <HomeSponsorBanner
+            totalUsers={totalUsers}
+            totalSponsors={totalSponsors}
+          />
         </CarouselItem>
       </CarouselContent>
       <CarouselDots

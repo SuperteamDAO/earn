@@ -104,33 +104,35 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
         />
       </div>
 
-      <div className="w-full bg-slate-200" />
+      <div className="mb-2 h-px w-full bg-slate-200" />
 
-      <div className="flex gap-1.5 overflow-x-auto py-2">
-        <CategoryPill
-          key="all"
-          phEvent="all_navpill"
-          isActive={activeName === 'All'}
-          onClick={() => handleNameChange('All', 'all_navpill')}
-        >
-          All
-        </CategoryPill>
-        {HACKATHONS?.map((hackathon) => (
+      <div className="relative -mx-2 mb-1">
+        <div className="hide-scrollbar flex gap-1.5 overflow-x-auto px-2 py-1">
           <CategoryPill
-            key={hackathon.slug}
-            phEvent={`${hackathon.slug}_navpill`}
-            isActive={activeName === hackathon.label}
-            onClick={() =>
-              handleNameChange(hackathon.label, `${hackathon.slug}_navpill`)
-            }
+            key="all"
+            phEvent="all_navpill"
+            isActive={activeName === 'All'}
+            onClick={() => handleNameChange('All', 'all_navpill')}
           >
-            <ExternalImage
-              src={hackathon.logo}
-              alt={hackathon.label}
-              className="h-full object-contain"
-            />
+            All
           </CategoryPill>
-        ))}
+          {HACKATHONS?.map((hackathon) => (
+            <CategoryPill
+              key={hackathon.slug}
+              phEvent={`${hackathon.slug}_navpill`}
+              isActive={activeName === hackathon.label}
+              onClick={() =>
+                handleNameChange(hackathon.label, `${hackathon.slug}_navpill`)
+              }
+            >
+              <ExternalImage
+                src={hackathon.logo}
+                alt={hackathon.label}
+                className="h-3 w-auto object-contain"
+              />
+            </CategoryPill>
+          ))}
+        </div>
       </div>
 
       <AnimateChangeInHeight disableOnHeightZero>

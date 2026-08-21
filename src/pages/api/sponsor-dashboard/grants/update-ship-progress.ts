@@ -1,12 +1,14 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   if (req.method !== 'PUT') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -20,8 +22,36 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
+    const currentApplication = await prisma.grantApplication.findUnique({
+      where: { id },
+      select: {
+        grantId: true,
+        applicationStatus: true,
+      },
+    });
+
+    if (!currentApplication) {
+      logger.warn(`Grant application with ID ${id} not found`);
+      return res.status(404).json({ error: 'Grant application not found' });
+    }
+
+    const { error } = await checkGrantSponsorAuth(
+      req.userSponsorId,
+      currentApplication.grantId,
+    );
+
+    if (error) {
+      return res.status(error.status).json({ error: error.message });
+    }
+
+    if (currentApplication.applicationStatus !== 'Approved') {
+      return res
+        .status(400)
+        .json({ error: 'Only approved grant applications can be completed' });
+    }
+
     const result = await prisma.grantApplication.update({
-      where: { id, applicationStatus: 'Approved' },
+      where: { id },
       data: {
         applicationStatus: 'Completed',
       },

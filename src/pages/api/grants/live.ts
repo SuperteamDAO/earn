@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { getChapterRegions } from '@/utils/chapterRegion';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -21,7 +22,15 @@ export default async function grants(
     logger.debug('Fetching grants from database');
 
     const params = req.query;
-    const take = params.take ? parseInt(params.take as string, 10) : 100;
+    const takeResult = parseBoundedIntegerParam(params.take, {
+      defaultValue: 100,
+      maxValue: 100,
+      name: 'take',
+    });
+    if (!takeResult.ok) {
+      return res.status(400).json({ error: takeResult.error });
+    }
+    const take = takeResult.value;
     let excludeIds = params['excludeIds[]'];
     if (typeof excludeIds === 'string') {
       excludeIds = [excludeIds];
@@ -72,11 +81,19 @@ export default async function grants(
       select: grantsSelect,
     });
 
-    const grantsWithTotalApplications = grants.map((grant) => ({
-      ...grant,
-      totalApplications:
-        grant._count.GrantApplication + grant.historicalApplications,
-    }));
+    const grantsWithTotalApplications = grants.map((grant) => {
+      const { GrantApplication, _count, ...grantData } = grant;
+
+      return {
+        ...grantData,
+        approvedAmountTotal: GrantApplication.reduce(
+          (sum, application) => sum + (application.approvedAmountInUSD || 0),
+          0,
+        ),
+        totalApplications:
+          _count.GrantApplication + grant.historicalApplications,
+      };
+    });
 
     logger.info(`Fetched ${grants.length} grants successfully`);
     return res.status(200).json(grantsWithTotalApplications);

@@ -10,10 +10,25 @@ import { safeStringify } from '@/utils/safeStringify';
 import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
+import { isGrantApplicationInCooldown } from '@/features/grants/utils/grantApplicationCooldown';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
-import { isUserEligibleForST } from '@/features/grants/utils/stGrant';
+import {
+  sanitizeGrantApplicationAnswers,
+  sanitizeGrantApplicationHtml,
+  sanitizeGrantApplicationText,
+} from '@/features/grants/utils/sanitizeGrantApplicationHtml';
+import {
+  getGrantFixedAsk,
+  isAgenticEngineeringGrant,
+  isUserEligibleForST,
+} from '@/features/grants/utils/stGrant';
 import { syncGrantApplicationWithAirtable } from '@/features/grants/utils/syncGrantApplicationWithAirtable';
 import { validateGrantRequest } from '@/features/grants/utils/validateGrantRequest';
+import { validateWalletAddressOwnership } from '@/features/grants/utils/validateWalletAddressOwnership';
+import {
+  WALLET_ADDRESS_CONFLICT_CODE,
+  WALLET_ADDRESS_CONFLICT_MESSAGE,
+} from '@/features/grants/utils/walletAddressOwnership.constants';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 export const maxDuration = 300;
@@ -29,6 +44,8 @@ async function createGrantApplication(
   });
 
   const isST = grant.isST === true;
+  const isAgenticEngineering = isAgenticEngineeringGrant(grant);
+  const fixedAsk = getGrantFixedAsk(grant);
 
   const validationResult = grantApplicationSchema(
     grant.minReward,
@@ -37,6 +54,7 @@ async function createGrantApplication(
     grant.questions,
     user as any,
     isST,
+    isAgenticEngineering,
   ).safeParse({
     ...data,
     twitter:
@@ -55,6 +73,12 @@ async function createGrantApplication(
 
   const validatedData = validationResult.data;
 
+  await validateWalletAddressOwnership({
+    grant,
+    userId,
+    walletAddress: validatedData.walletAddress,
+  });
+
   if (validatedData.telegram && !user.telegram) {
     await prisma.user.update({
       where: { id: userId },
@@ -65,21 +89,25 @@ async function createGrantApplication(
   const formattedData = {
     userId,
     grantId,
-    projectTitle: validatedData.projectTitle,
-    projectOneLiner: validatedData.projectOneLiner,
-    projectDetails: validatedData.projectDetails,
+    projectTitle: sanitizeGrantApplicationText(validatedData.projectTitle),
+    projectOneLiner: sanitizeGrantApplicationText(
+      validatedData.projectOneLiner,
+    ),
+    projectDetails: sanitizeGrantApplicationHtml(validatedData.projectDetails),
     projectTimeline: dayjs(validatedData.projectTimeline).format('D MMMM YYYY'),
-    proofOfWork: validatedData.proofOfWork || '',
-    milestones: validatedData.milestones,
-    kpi: validatedData.kpi || '',
+    proofOfWork: sanitizeGrantApplicationHtml(validatedData.proofOfWork) || '',
+    milestones: sanitizeGrantApplicationHtml(validatedData.milestones),
+    kpi: sanitizeGrantApplicationHtml(validatedData.kpi) || '',
     walletAddress: validatedData.walletAddress,
-    ask: validatedData.ask,
+    ask: fixedAsk ?? validatedData.ask,
     twitter: validatedData.twitter,
     github: validatedData.github,
-    answers: validatedData.answers || [],
+    answers: sanitizeGrantApplicationAnswers(validatedData.answers) || [],
     ...(isST && {
       lumaLink: validatedData.lumaLink,
-      expenseBreakdown: validatedData.expenseBreakdown,
+      expenseBreakdown: sanitizeGrantApplicationHtml(
+        validatedData.expenseBreakdown,
+      ),
     }),
   };
 
@@ -173,38 +201,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (grant.title.toLowerCase().includes('coindcx')) {
-      const rejectedApplication = await prisma.grantApplication.findFirst({
-        where: {
-          grantId,
-          userId,
-          applicationStatus: 'Rejected',
-          decidedAt: { gte: dayjs().subtract(30, 'day').toDate() },
-        },
-        orderBy: { decidedAt: 'desc' },
+    const rejectedApplication = await prisma.grantApplication.findFirst({
+      where: {
+        grantId,
+        userId,
+        applicationStatus: 'Rejected',
+        isCooldownSkipped: false,
+        decidedAt: { gte: dayjs().subtract(30, 'day').toDate() },
+      },
+      orderBy: { decidedAt: 'desc' },
+    });
+
+    if (
+      rejectedApplication?.decidedAt &&
+      isGrantApplicationInCooldown(rejectedApplication.decidedAt)
+    ) {
+      logger.debug(`User in grant application cooldown period`, {
+        grantId,
+        userId,
       });
-
-      if (rejectedApplication?.decidedAt) {
-        const remainingDays = Math.ceil(
-          (30 * 24 * 60 * 60 * 1000 -
-            new Date(rejectedApplication.decidedAt).getTime()) /
-            (24 * 60 * 60 * 1000),
-        );
-
-        if (remainingDays > 0) {
-          logger.debug(`User in cooldown period`, {
-            grantId,
-            userId,
-            remainingDays,
-          });
-          return NextResponse.json(
-            {
-              error: `You must wait 30 days before reapplying for this grant.`,
-            },
-            { status: 429 },
-          );
-        }
-      }
+      return NextResponse.json(
+        {
+          error: `You must wait 30 days before reapplying for this grant.`,
+        },
+        { status: 429 },
+      );
     }
 
     const result = await createGrantApplication(
@@ -272,6 +293,17 @@ export async function POST(request: NextRequest) {
     console.error(
       `User ${userId} unable to apply for grant: ${safeStringify(error)}`,
     );
+
+    if (error.message === WALLET_ADDRESS_CONFLICT_MESSAGE) {
+      return NextResponse.json(
+        {
+          code: WALLET_ADDRESS_CONFLICT_CODE,
+          error: WALLET_ADDRESS_CONFLICT_MESSAGE,
+          message: WALLET_ADDRESS_CONFLICT_MESSAGE,
+        },
+        { status: 409 },
+      );
+    }
 
     let statusCode = 403;
     try {

@@ -10,6 +10,7 @@ export interface Token {
   decimals: number;
   sortOrder?: number;
   isActive?: boolean;
+  isVerifiedOnJupiter: boolean;
 }
 
 type TokenListApiResponse = {
@@ -31,15 +32,30 @@ const notifyListeners = () => {
 
 export let tokenList: Token[] = [];
 
-export const setTokenList = (tokens: Token[]) => {
+const setTokenList = (tokens: Token[]) => {
   tokenListState = tokens;
   tokenList = tokens;
   notifyListeners();
 };
 
-export const getTokenListSnapshot = () => tokenListState;
+export const addTokenToList = (token: Token) => {
+  const existingTokenIndex = tokenListState.findIndex(
+    (currentToken) => currentToken.mintAddress === token.mintAddress,
+  );
 
-export const subscribeToTokenList = (listener: () => void) => {
+  if (existingTokenIndex >= 0) {
+    const nextTokens = [...tokenListState];
+    nextTokens[existingTokenIndex] = token;
+    setTokenList(nextTokens);
+    return;
+  }
+
+  setTokenList([...tokenListState, token]);
+};
+
+const getTokenListSnapshot = () => tokenListState;
+
+const subscribeToTokenList = (listener: () => void) => {
   listeners.add(listener);
   return () => listeners.delete(listener);
 };
@@ -55,6 +71,7 @@ export async function loadTokenList(force = false): Promise<Token[]> {
 
   tokenListPromise = fetch('/api/tokens', {
     credentials: 'same-origin',
+    cache: 'no-store',
   })
     .then(async (response) => {
       if (!response.ok) {
@@ -73,11 +90,8 @@ export async function loadTokenList(force = false): Promise<Token[]> {
   return tokenListPromise;
 }
 
-export const getTokenBySymbolSync = (symbol?: string | null) =>
+const getTokenBySymbolSync = (symbol?: string | null) =>
   tokenListState.find((token) => token.tokenSymbol === symbol);
-
-export const getTokenByMintAddressSync = (mintAddress?: string | null) =>
-  tokenListState.find((token) => token.mintAddress === mintAddress);
 
 export async function getTokenBySymbol(symbol?: string | null) {
   if (!symbol) return undefined;
@@ -87,18 +101,6 @@ export async function getTokenBySymbol(symbol?: string | null) {
   const tokens = await loadTokenList();
   return tokens.find((token) => token.tokenSymbol === symbol);
 }
-
-export async function getTokenByMintAddress(mintAddress?: string | null) {
-  if (!mintAddress) return undefined;
-  const existingToken = getTokenByMintAddressSync(mintAddress);
-  if (existingToken) return existingToken;
-
-  const tokens = await loadTokenList();
-  return tokens.find((token) => token.mintAddress === mintAddress);
-}
-
-export const getTokenIcon = (symbol: string): string =>
-  getTokenBySymbolSync(symbol)?.icon ?? DEFAULT_TOKEN_ICON;
 
 export function useTokenList(): Token[] {
   const tokens = useSyncExternalStore(
@@ -138,9 +140,6 @@ export function useTokenLookup() {
       DEFAULT_TOKEN_ICON,
   };
 }
-
-export const useTokenIcon = (symbol?: string | null) =>
-  useToken(symbol)?.icon ?? DEFAULT_TOKEN_ICON;
 
 export function TokenListProvider({ children }: { children: ReactNode }) {
   useTokenList();

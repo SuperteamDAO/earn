@@ -7,6 +7,7 @@ import { JsonLd } from '@/components/shared/JsonLd';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import {
@@ -20,7 +21,6 @@ import { SponsorStageBanner } from '@/features/home/components/SponsorStage/Spon
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
-import { ProIntroDialog } from '@/features/pro/components/ProIntroDialog';
 
 const GrantsSection = dynamic(() =>
   import('@/features/grants/components/GrantsSection').then(
@@ -32,14 +32,6 @@ const HomeSideBar = dynamic(() =>
   import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
 );
 
-const InstallPWAModal = dynamic(
-  () =>
-    import('@/components/modals/InstallPWAModal').then(
-      (mod) => mod.InstallPWAModal,
-    ),
-  { ssr: false },
-);
-
 const HomepagePop = dynamic(
   () =>
     import('@/features/conversion-popups/components/HomepagePop').then(
@@ -48,21 +40,19 @@ const HomepagePop = dynamic(
   { ssr: false },
 );
 
-const TalentAnnouncements = dynamic(
-  () =>
-    import('@/features/announcements/components/TalentAnnouncements').then(
-      (mod) => mod.TalentAnnouncements,
-    ),
-  { ssr: false },
-);
-
 interface HomePageProps {
   readonly potentialSession: boolean;
+  readonly totalUsers: number;
+  readonly totalSponsors: number;
 }
 
-export default function HomePage({ potentialSession }: HomePageProps) {
+export default function HomePage({
+  potentialSession,
+  totalUsers,
+  totalSponsors,
+}: HomePageProps) {
   const { authenticated } = usePrivy();
-  const { data: totalUsers } = useQuery(userCountQuery);
+  useQuery({ ...userCountQuery, initialData: { totalUsers } });
   const { user } = useUser();
   const isLg = useBreakpoint('lg');
 
@@ -113,7 +103,10 @@ export default function HomePage({ potentialSession }: HomePageProps) {
                       )}
                     </>
                   ) : (
-                    <BannerCarousel totalUsers={totalUsers?.totalUsers} />
+                    <BannerCarousel
+                      totalUsers={totalUsers}
+                      totalSponsors={totalSponsors}
+                    />
                   )}
                 </div>
                 <div className="w-full">
@@ -134,11 +127,8 @@ export default function HomePage({ potentialSession }: HomePageProps) {
           </div>
         </div>
       </div>
-      <InstallPWAModal />
       <HomepagePop />
-      <TalentAnnouncements />
       <ProListingsAnnouncement />
-      {authenticated && <ProIntroDialog />}
     </Default>
   );
 }
@@ -150,5 +140,15 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
 
   const cookieExists = /(^|;)\s*user-id-hint=/.test(cookies);
 
-  return { props: { potentialSession: cookieExists } };
+  const [userCount, sponsorCount] = await Promise.all([
+    prisma.user.count(),
+    prisma.sponsors.count(),
+  ]);
+
+  const totalUsers = Math.ceil((userCount - 289) / 10) * 10;
+  const totalSponsors = Math.ceil(sponsorCount / 10) * 10;
+
+  return {
+    props: { potentialSession: cookieExists, totalUsers, totalSponsors },
+  };
 };

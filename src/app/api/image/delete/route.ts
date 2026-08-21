@@ -5,7 +5,10 @@ import {
   deleteImage,
   deleteRequestSchema,
   extractPublicIdFromUrl,
+  getImageOwnerId,
+  type GrantImageSource,
   ImageUploadError,
+  isGrantImageSource,
   UPLOAD_CONFIGS,
 } from '@/lib/image-upload';
 import logger from '@/lib/logger';
@@ -23,10 +26,47 @@ function escapeLikePattern(str: string): string {
 
 function validatePublicIdFolder(
   publicId: string,
-  source: 'user' | 'sponsor' | 'description',
+  source: keyof typeof UPLOAD_CONFIGS,
 ): boolean {
   const config = UPLOAD_CONFIGS[source];
   return publicId.startsWith(config.folder + '/');
+}
+
+function jsonContainsPublicId(value: unknown, publicId: string): boolean {
+  if (!Array.isArray(value)) return false;
+
+  return value.some((item) => {
+    if (typeof item !== 'string') return false;
+    return extractPublicIdFromUrl(item) === publicId;
+  });
+}
+
+async function isLegacyGrantImageOwnedByUser(
+  publicId: string,
+  source: GrantImageSource,
+  userId: string,
+): Promise<boolean> {
+  const tranches = await prisma.grantTranche.findMany({
+    where: {
+      GrantApplication: { userId },
+    },
+    select: {
+      eventPictures: true,
+      eventReceipts: true,
+      aiReceipts: true,
+    },
+  });
+
+  const fieldBySource = {
+    'grant-event-pictures': 'eventPictures',
+    'grant-event-receipts': 'eventReceipts',
+    'grant-agentic-receipts': 'aiReceipts',
+  } as const;
+  const field = fieldBySource[source];
+
+  return tranches.some((tranche) =>
+    jsonContainsPublicId(tranche[field], publicId),
+  );
 }
 
 export async function DELETE(request: NextRequest) {
@@ -66,6 +106,16 @@ export async function DELETE(request: NextRequest) {
 
     const { publicId, source } = validationResult.data;
 
+    if (!validatePublicIdFolder(publicId, source)) {
+      logger.warn(
+        `Public ID ${publicId} does not match expected folder for source ${source}`,
+      );
+      return NextResponse.json(
+        { error: 'Invalid public ID for the specified source' },
+        { status: 400 },
+      );
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -91,16 +141,6 @@ export async function DELETE(request: NextRequest) {
     }
 
     if (source === 'description') {
-      if (!validatePublicIdFolder(publicId, source)) {
-        logger.warn(
-          `Public ID ${publicId} does not match expected folder for source ${source}`,
-        );
-        return NextResponse.json(
-          { error: 'Invalid public ID for the specified source' },
-          { status: 400 },
-        );
-      }
-
       if (!user.currentSponsorId && user.UserSponsors.length === 0) {
         logger.warn(
           `User ${userId} attempted to delete description image without sponsor access`,
@@ -141,19 +181,15 @@ export async function DELETE(request: NextRequest) {
         );
       }
     } else if (source === 'user') {
-      if (!user.photo) {
-        logger.info(
-          `User ${userId} attempted to delete user image but has no photo set - treating as successful no-op`,
-        );
-        return NextResponse.json({
-          message: 'No profile photo to delete',
-        });
-      }
+      const isPersistedPhoto =
+        !!user.photo && extractPublicIdFromUrl(user.photo) === publicId;
+      const isOwnedUpload =
+        !isPersistedPhoto && (await getImageOwnerId(publicId)) === userId;
 
-      const userPhotoPublicId = extractPublicIdFromUrl(user.photo);
-      if (userPhotoPublicId !== publicId) {
+      if (!isPersistedPhoto && !isOwnedUpload) {
         logger.warn(
-          `User ${userId} attempted to delete image ${publicId} but their photo is ${userPhotoPublicId}`,
+          `User ${userId} attempted to delete a profile image they do not own`,
+          { publicId },
         );
         return NextResponse.json(
           {
@@ -164,31 +200,16 @@ export async function DELETE(request: NextRequest) {
         );
       }
     } else if (source === 'sponsor') {
-      if (!user.currentSponsorId) {
-        logger.warn(
-          `User ${userId} attempted to delete sponsor image without current sponsor`,
-        );
-        return NextResponse.json(
-          { error: 'You do not have a current sponsor' },
-          { status: 403 },
-        );
-      }
+      const isPersistedSponsorLogo =
+        !!user.currentSponsor?.logo &&
+        extractPublicIdFromUrl(user.currentSponsor.logo) === publicId;
+      const isOwnedUpload =
+        !isPersistedSponsorLogo && (await getImageOwnerId(publicId)) === userId;
 
-      if (!user.currentSponsor?.logo) {
-        logger.info(
-          `User ${userId} attempted to delete sponsor logo but sponsor has no logo - treating as successful no-op`,
-        );
-        return NextResponse.json({
-          message: 'No sponsor logo to delete',
-        });
-      }
-
-      const sponsorLogoPublicId = extractPublicIdFromUrl(
-        user.currentSponsor.logo,
-      );
-      if (sponsorLogoPublicId !== publicId) {
+      if (!isPersistedSponsorLogo && !isOwnedUpload) {
         logger.warn(
-          `User ${userId} attempted to delete image ${publicId} but sponsor logo is ${sponsorLogoPublicId}`,
+          `User ${userId} attempted to delete a sponsor image they do not own`,
+          { publicId },
         );
         return NextResponse.json(
           {
@@ -199,11 +220,13 @@ export async function DELETE(request: NextRequest) {
         );
       }
 
-      const hasAccess = user.UserSponsors.some(
-        (us) =>
-          us.sponsorId === user.currentSponsorId &&
-          (us.role === 'ADMIN' || us.role === 'MEMBER'),
-      );
+      const hasAccess =
+        !isPersistedSponsorLogo ||
+        user.UserSponsors.some(
+          (us) =>
+            us.sponsorId === user.currentSponsorId &&
+            (us.role === 'ADMIN' || us.role === 'MEMBER'),
+        );
 
       if (!hasAccess) {
         logger.warn(
@@ -214,6 +237,33 @@ export async function DELETE(request: NextRequest) {
           { status: 403 },
         );
       }
+    } else if (isGrantImageSource(source)) {
+      const isLegacyOwner = await isLegacyGrantImageOwnedByUser(
+        publicId,
+        source,
+        userId,
+      );
+      const isMetadataOwner =
+        !isLegacyOwner && (await getImageOwnerId(publicId)) === userId;
+
+      if (!isMetadataOwner && !isLegacyOwner) {
+        logger.warn(
+          `User ${userId} attempted to delete a grant image they do not own`,
+          { publicId, source },
+        );
+        return NextResponse.json(
+          { error: 'You do not have permission to delete this grant image' },
+          { status: 403 },
+        );
+      }
+    } else {
+      // Keep this default-deny guard even though Zod currently makes the branch
+      // unreachable. It prevents future schema additions from silently gaining
+      // delete access without an explicit authorization policy.
+      logger.error('Image source has no deletion authorization policy', {
+        source,
+      });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     logger.info(`Deleting image with public ID: ${publicId}`);

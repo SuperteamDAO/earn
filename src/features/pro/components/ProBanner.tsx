@@ -31,9 +31,9 @@ const plex = IBM_Plex_Serif({
 const EligibleUser = () => {
   return (
     <div className="z-20 w-72">
-      <p className="text-2xl font-medium text-white md:text-3xl md:font-semibold">
+      <h1 className="text-2xl font-medium text-white md:text-3xl md:font-semibold">
         You&apos;re now eligible for Earn Pro
-      </p>
+      </h1>
       <p className="mt-4 text-base text-zinc-400">
         Upgrade to Earn Pro to get access to exclusive opportunities and perks
       </p>
@@ -49,9 +49,9 @@ const EligibleUser = () => {
 const NotProUser = ({ totalEarnings }: { totalEarnings: number }) => {
   return (
     <div className="z-20 w-72">
-      <p className="text-2xl font-medium text-white md:text-3xl md:font-semibold">
+      <h1 className="text-2xl font-medium text-white md:text-3xl md:font-semibold">
         You’re very close to being eligible
-      </p>
+      </h1>
       <p className="mt-4 text-base text-zinc-400">
         You need to earn $
         {(1000 - totalEarnings).toLocaleString('en-US', {
@@ -86,9 +86,9 @@ const NotProUser = ({ totalEarnings }: { totalEarnings: number }) => {
 const NotLoggedInUser = () => {
   return (
     <div className="z-20 w-72">
-      <p className="text-2xl font-medium text-white md:text-3xl md:font-semibold">
+      <h1 className="text-2xl font-medium text-white md:text-3xl md:font-semibold">
         You’re very close to being eligible
-      </p>
+      </h1>
       <p className="mt-4 text-base text-zinc-400">Sign in to see your status</p>
       <AuthWrapper className="mt-5 w-full sm:w-auto">
         <Button className="ph-no-capture h-9 w-auto bg-white px-9 py-1 text-sm font-semibold text-zinc-900 hover:bg-white/90 sm:w-auto md:h-10 md:py-3">
@@ -102,13 +102,13 @@ const NotLoggedInUser = () => {
 const ProUser = ({ name }: { name: string }) => {
   return (
     <div className="z-20 w-80">
-      <p className="text-3xl text-white">
+      <h1 className="text-3xl text-white">
         An elite club for the{' '}
         <span className={cn(plex.className, 'font-4xl text-white italic')}>
           top 1%
         </span>{' '}
         in Solana
-      </p>
+      </h1>
       <p className="mt-4 text-base text-zinc-400">
         Welcome to the club, {name}
       </p>

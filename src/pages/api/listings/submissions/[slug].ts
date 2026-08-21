@@ -1,8 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import { type ListingPageSubmission } from '@/interface/submission';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { convertDatesToISO, safeStringify } from '@/utils/safeStringify';
+
+import { publicListingDetailsSelect } from '@/features/listings/constants/publicListingDetails';
+import { type PublicListingDetails } from '@/features/listings/types';
 
 const sortSubmissions = (
   a: { readonly winnerPosition: number | null; readonly createdAt: Date },
@@ -28,41 +32,30 @@ const sortSubmissions = (
 export async function getSubmissionsData(
   slug: string,
   isWinner: boolean = false,
-) {
+): Promise<{
+  bounty: PublicListingDetails | null;
+  submission: ListingPageSubmission[];
+}> {
   const bounty = await prisma.bounties.findFirst({
     where: {
       slug,
       isActive: true,
+      isPublished: true,
+      isArchived: false,
     },
-    include: {
-      sponsor: {
-        select: {
-          name: true,
-          logo: true,
-          isVerified: true,
-        },
-      },
-      poc: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-        },
-      },
-      Hackathon: {
-        select: {
-          altLogo: true,
-        },
-      },
-    },
+    select: publicListingDetailsSelect,
   });
 
   if (!bounty) {
     return { bounty: null, submission: [] };
   }
 
+  const publicBounty = convertDatesToISO(
+    bounty,
+  ) as unknown as PublicListingDetails;
+
   if (bounty.isWinnersAnnounced === false) {
-    return { bounty, submission: [] };
+    return { bounty: publicBounty, submission: [] };
   }
 
   const submission = await prisma.submission.findMany({
@@ -76,8 +69,6 @@ export async function getSubmissionsData(
       isWinner: true,
       winnerPosition: true,
       like: true,
-      likeCount: true,
-      rewardInUSD: true,
       createdAt: true,
       user: {
         select: {
@@ -93,7 +84,23 @@ export async function getSubmissionsData(
 
   submission.sort(sortSubmissions);
 
-  return { bounty, submission };
+  const publicSubmissions: ListingPageSubmission[] = submission.map(
+    ({ createdAt: _, ...item }) => ({
+      ...item,
+      link: item.link ?? undefined,
+      winnerPosition: item.winnerPosition ?? undefined,
+      like: item.like ?? undefined,
+      user: {
+        id: item.user.id,
+        firstName: item.user.firstName ?? undefined,
+        lastName: item.user.lastName ?? undefined,
+        photo: item.user.photo ?? undefined,
+        username: item.user.username ?? undefined,
+      },
+    }),
+  );
+
+  return { bounty: publicBounty, submission: publicSubmissions };
 }
 
 export default async function user(req: NextApiRequest, res: NextApiResponse) {
@@ -117,10 +124,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     logger.info(
       `Successfully fetched bounty and submissions for slug: ${slug}`,
     );
-    return res.status(200).json({
-      bounty,
-      submission,
-    });
+    return res.status(200).json({ submission });
   } catch (error: any) {
     logger.error(
       `Error occurred while fetching bounty with slug=${slug}: ${safeStringify(error)}`,

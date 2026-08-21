@@ -2,14 +2,10 @@ import { franc } from 'franc';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { type InputJsonValue } from '@/prisma/internal/prismaNamespace';
-import {
-  type BountiesModel,
-  type BountiesUncheckedCreateInput,
-} from '@/prisma/models/Bounties';
+import { type BountiesUncheckedCreateInput } from '@/prisma/models/Bounties';
 import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { safeStringify } from '@/utils/safeStringify';
@@ -22,6 +18,10 @@ import { validateSession } from '@/features/auth/utils/getSponsorSession';
 import type { ListingFormData } from '@/features/listing-builder/types';
 import { getValidSlug } from '@/features/listing-builder/utils/getValidSlug';
 import { validateDraftPermissions } from '@/features/listing-builder/utils/isListingDraftable';
+import {
+  getValidListingRegion,
+  isChapterSponsorEditingRegionToGlobal,
+} from '@/features/listing-builder/utils/validateListingRegion';
 
 async function transformToPrismaData(
   formData: Partial<ListingFormData>,
@@ -103,22 +103,6 @@ async function saveListing(
     : await prisma.bounties.create({ data });
 }
 
-async function handleDiscordNotification(result: BountiesModel): Promise<void> {
-  if (result.status !== 'VERIFYING') {
-    return;
-  }
-
-  try {
-    logger.info('Updating Discord Verification message', { id: result.id });
-    await earncognitoClient.post(`/telegram/verify-listing`, {
-      listingId: result.id,
-    });
-    logger.info('Updated Discord Verification message', { id: result.id });
-  } catch (err) {
-    logger.error('Failed to update Verification Message to discord', err);
-  }
-}
-
 export async function POST(request: Request) {
   try {
     const sessionResult = await validateSession(await headers());
@@ -149,6 +133,17 @@ export async function POST(request: Request) {
     }
     logger.debug(`Request body: ${safeStringify(body)}`);
 
+    if (body.region) {
+      const validRegion = await getValidListingRegion(body.region);
+      if (!validRegion) {
+        return NextResponse.json(
+          { error: 'Invalid region selected' },
+          { status: 400 },
+        );
+      }
+      body.region = validRegion;
+    }
+
     let listing: ListingWithSponsor | undefined;
     if (body.id) {
       const result = await validateListingSponsorAuth(userSponsorId, body.id);
@@ -156,6 +151,21 @@ export async function POST(request: Request) {
         return result.error;
       }
       listing = result.listing;
+    }
+
+    if (
+      listing &&
+      body.region &&
+      isChapterSponsorEditingRegionToGlobal({
+        currentRegion: listing.region,
+        nextRegion: body.region,
+        hasChapter: !!listing.sponsor.chapter,
+      })
+    ) {
+      return NextResponse.json(
+        { error: 'Chapter sponsors cannot edit a listing region to Global' },
+        { status: 400 },
+      );
     }
 
     const isDraftNotAllowed = validateDraftPermissions(listing);
@@ -172,8 +182,6 @@ export async function POST(request: Request) {
 
     const result = await saveListing(body.id || undefined, prismaData);
     logger.debug(`Draft saved successfully: ${result.id}`);
-
-    await handleDiscordNotification(result);
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {

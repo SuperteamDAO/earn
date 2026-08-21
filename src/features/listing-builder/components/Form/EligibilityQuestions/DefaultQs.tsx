@@ -1,6 +1,7 @@
 import { Baseline, Link2 } from 'lucide-react';
 import { useWatch } from 'react-hook-form';
 
+import FaTelegram from '@/components/icons/FaTelegram';
 import { Tooltip } from '@/components/ui/tooltip';
 
 import { useListingForm } from '@/features/listing-builder/hooks';
@@ -67,6 +68,14 @@ export function DefaultEligibilityQuestions() {
               />
             }
             label="Compensation Quote"
+            required
+          />
+        )}
+        {type === 'project' && (
+          <DefaultQuestionField
+            TOOLTIP_CONTENT={TOOLTIP_CONTENT}
+            icon={<FaTelegram className="h-4 w-4 text-slate-400" />}
+            label="Telegram Username"
             required
           />
         )}

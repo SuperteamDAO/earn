@@ -39,7 +39,9 @@ import { SocialInput } from '@/features/social/components/SocialInput';
 import { XVerificationModal } from '@/features/social/components/XVerificationModal';
 import {
   extractXHandle,
+  INVALID_X_STATUS_LINK_MESSAGE,
   isHandleVerified,
+  isXInternalStatusUrl,
   isXUrl,
 } from '@/features/social/utils/x-verification';
 
@@ -117,12 +119,12 @@ export const SubmissionDrawer = ({
       submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0, user),
     ),
     defaultValues: {
+      telegram: user?.telegram || '',
       eligibilityAnswers:
         Array.isArray(listing.eligibility) && listing.eligibility.length > 0
           ? listing.eligibility.map((q) => ({
               question: q.question,
               answer: '',
-              optional: q.optional,
             }))
           : [],
     },
@@ -133,8 +135,16 @@ export const SubmissionDrawer = ({
 
   const tweetValue = form.watch('tweet');
   const linkValue = form.watch('link');
+  const hasInvalidTweetStatusFormat =
+    isBounty && !!tweetValue && isXInternalStatusUrl(tweetValue);
+  const hasInvalidLinkStatusFormat =
+    isBounty && !!linkValue && isXInternalStatusUrl(linkValue);
 
   const needsXVerification = useMemo(() => {
+    if (hasInvalidTweetStatusFormat) {
+      return false;
+    }
+
     if (!tweetValue || !isXUrl(tweetValue)) {
       return false;
     }
@@ -146,9 +156,13 @@ export const SubmissionDrawer = ({
 
     const verifiedHandles = user?.linkedTwitter || [];
     return !isHandleVerified(handle, verifiedHandles);
-  }, [tweetValue, user?.linkedTwitter]);
+  }, [hasInvalidTweetStatusFormat, tweetValue, user?.linkedTwitter]);
 
   const needsLinkVerification = useMemo(() => {
+    if (hasInvalidLinkStatusFormat) {
+      return false;
+    }
+
     if (!linkValue || !isXUrl(linkValue)) {
       return false;
     }
@@ -160,7 +174,7 @@ export const SubmissionDrawer = ({
 
     const verifiedHandles = user?.linkedTwitter || [];
     return !isHandleVerified(handle, verifiedHandles);
-  }, [linkValue, user?.linkedTwitter]);
+  }, [hasInvalidLinkStatusFormat, linkValue, user?.linkedTwitter]);
 
   const isTweetVerified = useMemo(() => {
     if (!tweetValue || !isXUrl(tweetValue)) {
@@ -201,7 +215,12 @@ export const SubmissionDrawer = ({
   }, [chapters, region]);
 
   useEffect(() => {
-    if (needsXVerification) {
+    if (hasInvalidTweetStatusFormat) {
+      form.setError('tweet', {
+        type: 'manual',
+        message: INVALID_X_STATUS_LINK_MESSAGE,
+      });
+    } else if (needsXVerification) {
       form.setError('tweet', {
         type: 'manual',
         message: 'We need to verify that you own this X account',
@@ -210,7 +229,12 @@ export const SubmissionDrawer = ({
       form.clearErrors('tweet');
     }
 
-    if (needsLinkVerification) {
+    if (hasInvalidLinkStatusFormat) {
+      form.setError('link', {
+        type: 'manual',
+        message: INVALID_X_STATUS_LINK_MESSAGE,
+      });
+    } else if (needsLinkVerification) {
       form.setError('link', {
         type: 'manual',
         message: 'We need to verify that you own this X account',
@@ -218,7 +242,13 @@ export const SubmissionDrawer = ({
     } else {
       form.clearErrors('link');
     }
-  }, [needsXVerification, needsLinkVerification, form]);
+  }, [
+    hasInvalidTweetStatusFormat,
+    hasInvalidLinkStatusFormat,
+    needsXVerification,
+    needsLinkVerification,
+    form,
+  ]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -237,6 +267,7 @@ export const SubmissionDrawer = ({
       tweet: '',
       otherInfo: '',
       ask: null,
+      telegram: user?.telegram || '',
       eligibilityAnswers: Array.isArray(listing.eligibility)
         ? listing.eligibility.map((q) => ({
             question: q.question,
@@ -257,7 +288,7 @@ export const SubmissionDrawer = ({
             params: { id },
           });
 
-          const { link, tweet, otherInfo, eligibilityAnswers, ask } =
+          const { link, tweet, otherInfo, eligibilityAnswers, ask, telegram } =
             response.data;
 
           const reconciledAnswers =
@@ -267,7 +298,6 @@ export const SubmissionDrawer = ({
                     ? (eligibilityAnswers as Array<{
                         question: string;
                         answer: string;
-                        optional?: boolean;
                       }>)
                     : [];
 
@@ -279,7 +309,6 @@ export const SubmissionDrawer = ({
                     return {
                       question: currentQuestion.question,
                       answer: matchByText.answer || '',
-                      optional: currentQuestion.optional,
                     };
                   }
 
@@ -288,14 +317,12 @@ export const SubmissionDrawer = ({
                     return {
                       question: currentQuestion.question,
                       answer: matchByIndex.answer,
-                      optional: currentQuestion.optional,
                     };
                   }
 
                   return {
                     question: currentQuestion.question,
                     answer: '',
-                    optional: currentQuestion.optional,
                   };
                 })
               : [];
@@ -305,6 +332,7 @@ export const SubmissionDrawer = ({
             tweet,
             otherInfo,
             ask,
+            telegram: telegram || user?.telegram || '',
             eligibilityAnswers: reconciledAnswers,
           });
         } catch (error) {
@@ -315,7 +343,7 @@ export const SubmissionDrawer = ({
     };
 
     fetchData();
-  }, [id, editMode, form.reset, listing.eligibility]);
+  }, [id, editMode, form.reset, listing.eligibility, user?.telegram]);
 
   const isDisabled = useMemo(
     () =>
@@ -327,6 +355,8 @@ export const SubmissionDrawer = ({
         (isFndnPaying && !editMode && !kycAcknowledged) ||
         isLoading ||
         form.formState.isSubmitting ||
+        hasInvalidTweetStatusFormat ||
+        hasInvalidLinkStatusFormat ||
         needsXVerification ||
         needsLinkVerification ||
         (isPro && !user?.isPro),
@@ -343,6 +373,8 @@ export const SubmissionDrawer = ({
       kycAcknowledged,
       isLoading,
       form.formState.isSubmitting,
+      hasInvalidTweetStatusFormat,
+      hasInvalidLinkStatusFormat,
       needsXVerification,
       needsLinkVerification,
       isPro,
@@ -757,16 +789,15 @@ export const SubmissionDrawer = ({
                         isPro={isPro}
                       />
                     )}
-                    {isProject && !user?.telegram && !editMode && (
+                    {isProject && (
                       <SocialInput
                         name="telegram"
                         socialName={'telegram'}
-                        placeholder=""
+                        placeholder="Telegram username"
                         required
                         formLabel="Your Telegram username"
                         control={form.control}
                         height="h-9"
-                        showIcon={false}
                         isPro={isPro}
                       />
                     )}

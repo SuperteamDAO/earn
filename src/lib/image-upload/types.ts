@@ -1,9 +1,24 @@
-export type ImageSource =
-  | 'user'
-  | 'sponsor'
-  | 'description'
-  | 'grant-event-pictures'
-  | 'grant-event-receipts';
+export const GRANT_IMAGE_SOURCES = [
+  'grant-event-pictures',
+  'grant-event-receipts',
+  'grant-agentic-receipts',
+] as const;
+
+export const IMAGE_SOURCES = [
+  'user',
+  'sponsor',
+  'description',
+  ...GRANT_IMAGE_SOURCES,
+] as const;
+
+export type ImageSource = (typeof IMAGE_SOURCES)[number];
+export type GrantImageSource = (typeof GRANT_IMAGE_SOURCES)[number];
+
+export function isGrantImageSource(
+  source: ImageSource,
+): source is GrantImageSource {
+  return GRANT_IMAGE_SOURCES.some((grantSource) => grantSource === source);
+}
 export type ImageFormat = 'jpeg' | 'png' | 'webp';
 
 export interface UploadResult {
@@ -22,6 +37,7 @@ export interface SignedUploadParams {
   apiKey: string;
   folder: string;
   publicId?: string;
+  context?: string;
   eager?: string;
 }
 

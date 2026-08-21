@@ -235,7 +235,12 @@ const SponsorPage = ({ sponsor, stats }: Props) => {
             sponsor={sSlug}
             customEmptySection={customEmptySection}
           />
-          <GrantsSection hideWhenEmpty type="sponsor" sponsor={sSlug} />
+          <GrantsSection
+            hideWhenEmpty
+            hideCategoryPills
+            type="sponsor"
+            sponsor={sSlug}
+          />
         </div>
       </div>
     </Default>

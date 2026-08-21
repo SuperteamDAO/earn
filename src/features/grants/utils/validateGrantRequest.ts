@@ -1,9 +1,14 @@
 import { prisma } from '@/prisma';
 import { getChapterRegions } from '@/utils/chapterRegion';
 
+import { getLocationCooldown } from '@/features/listings/utils/locationCooldown';
 import { userRegionEligibilty } from '@/features/listings/utils/region';
 
-export async function validateGrantRequest(userId: string, grantId: string) {
+export async function validateGrantRequest(
+  userId: string,
+  grantId: string,
+  options?: { skipLocationCooldown?: boolean; allowPaused?: boolean },
+) {
   const grant = await prisma.grants.findUnique({
     where: { id: grantId },
     select: {
@@ -12,6 +17,7 @@ export async function validateGrantRequest(userId: string, grantId: string) {
       slug: true,
       isActive: true,
       isPublished: true,
+      isPaused: true,
       region: true,
       minReward: true,
       maxReward: true,
@@ -37,6 +43,10 @@ export async function validateGrantRequest(userId: string, grantId: string) {
     throw new Error('Grant is not active');
   }
 
+  if (grant.isPaused && !options?.allowPaused) {
+    throw new Error('Grant is paused and not accepting new applications');
+  }
+
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
@@ -45,6 +55,7 @@ export async function validateGrantRequest(userId: string, grantId: string) {
       isTalentFilled: true,
       isPro: true,
       location: true,
+      locationUpdatedAt: true,
       peopleId: true,
       people: {
         select: {
@@ -76,6 +87,18 @@ export async function validateGrantRequest(userId: string, grantId: string) {
 
   if (!isUserEligibleByRegion) {
     throw new Error('Region not eligible');
+  }
+
+  if (!options?.skipLocationCooldown) {
+    const cooldown = getLocationCooldown({
+      locationUpdatedAt: user.locationUpdatedAt,
+      listingRegion: grant.region,
+      userLocation: user.location,
+      chapters: chapterRegions,
+    });
+    if (cooldown.inCooldown) {
+      throw new Error('Location cooldown active');
+    }
   }
 
   return { grant, user };

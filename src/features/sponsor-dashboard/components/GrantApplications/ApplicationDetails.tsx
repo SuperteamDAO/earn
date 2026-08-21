@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { useAtom } from 'jotai';
 import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
 import MdOutlineMail from '@/components/icons/MdOutlineMail';
@@ -11,14 +11,20 @@ import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { TokenIcon } from '@/components/ui/token-icon';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useTokenLookup } from '@/constants/tokenList';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
-import { type Grant } from '@/features/grants/types';
-import { isSTGrant, ST_GRANT_COPY } from '@/features/grants/utils/stGrant';
+import { type Grant, type GrantQuestion } from '@/features/grants/types';
+import {
+  AGENTIC_ENGINEERING_GRANT_COPY,
+  COINDCX_GRANT_ID,
+  isAgenticEngineeringGrant,
+  ST_GRANT_COPY,
+} from '@/features/grants/utils/stGrant';
+import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import {
   GitHub,
   Telegram,
@@ -45,6 +51,15 @@ interface Props {
   rejectedOnOpen: () => void;
   isLoading?: boolean;
 }
+
+const NOTES_WIDTH_STORAGE_KEY = 'grantApplicationNotesWidthPercent';
+const DEFAULT_NOTES_WIDTH = 34;
+const MIN_NOTES_WIDTH = 28;
+const MAX_NOTES_WIDTH = 55;
+
+const clampNotesWidth = (value: number) =>
+  Math.min(MAX_NOTES_WIDTH, Math.max(MIN_NOTES_WIDTH, value));
+
 export const ApplicationDetails = ({
   grant,
   applications,
@@ -53,24 +68,77 @@ export const ApplicationDetails = ({
   rejectedOnOpen,
   isLoading,
 }: Props) => {
-  const { getIcon } = useTokenLookup();
   const [selectedApplication, setSelectedApplication] = useAtom(
     selectedGrantApplicationAtom,
   );
+  const splitContainerRef = useRef<HTMLDivElement>(null);
+  const [notesWidth, setNotesWidth] = useState(DEFAULT_NOTES_WIDTH);
   const isPending = selectedApplication?.applicationStatus === 'Pending';
   const isApproved = selectedApplication?.applicationStatus === 'Approved';
   const isRejected = selectedApplication?.applicationStatus === 'Rejected';
   const isCompleted = selectedApplication?.applicationStatus === 'Completed';
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
-  const isST = isSTGrant(grant);
+  const isST = grant?.isST === true;
+  const isAgenticEngineering = isAgenticEngineeringGrant(grant);
+  const hasManagedTranches = isST || isAgenticEngineering;
+  const applicationCopy = isST
+    ? ST_GRANT_COPY.application
+    : isAgenticEngineering
+      ? AGENTIC_ENGINEERING_GRANT_COPY.application
+      : null;
+
+  const getAnswerQuestion = (answer: any): GrantQuestion | undefined =>
+    grant?.questions?.find((question) => question.question === answer.question);
+
+  const isLinkAnswer = (answer: any) => {
+    const grantQuestion = getAnswerQuestion(answer);
+    return answer.type === 'link' || grantQuestion?.type === 'link';
+  };
 
   const queryClient = useQueryClient();
 
-  const tokenIcon = getIcon(grant?.token);
-
   const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
     'DD MMM YYYY',
+  );
+
+  useEffect(() => {
+    const storedWidth = Number(
+      window.localStorage.getItem(NOTES_WIDTH_STORAGE_KEY),
+    );
+    if (Number.isFinite(storedWidth) && storedWidth > 0) {
+      setNotesWidth(clampNotesWidth(storedWidth));
+    }
+  }, []);
+
+  const updateNotesWidthFromPointer = useCallback((clientX: number) => {
+    const container = splitContainerRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const nextWidth = ((rect.right - clientX) / rect.width) * 100;
+    const clampedWidth = clampNotesWidth(nextWidth);
+
+    setNotesWidth(clampedWidth);
+    window.localStorage.setItem(NOTES_WIDTH_STORAGE_KEY, String(clampedWidth));
+  }, []);
+
+  const handleResizePointerDown = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      event.currentTarget.setPointerCapture(event.pointerId);
+      updateNotesWidthFromPointer(event.clientX);
+    },
+    [updateNotesWidthFromPointer],
+  );
+
+  const handleResizePointerMove = useCallback(
+    (event: React.PointerEvent<HTMLButtonElement>) => {
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        updateNotesWidthFromPointer(event.clientX);
+      }
+    },
+    [updateNotesWidthFromPointer],
   );
 
   const updateApplicationState = (
@@ -96,7 +164,10 @@ export const ApplicationDetails = ({
   };
 
   const chapter = useMemo(
-    () => selectedApplication?.user.people?.chapter,
+    () =>
+      isEligiblePeopleType(selectedApplication?.user.people?.type)
+        ? selectedApplication?.user.people?.chapter
+        : null,
     [selectedApplication],
   );
   return (
@@ -138,7 +209,12 @@ export const ApplicationDetails = ({
                   </Link>
                 </div>
                 <div className="self-start">
-                  {isPending && <SelectLabel grantSlug={grant?.slug!} />}
+                  {isPending && (
+                    <SelectLabel
+                      grantSlug={grant?.slug!}
+                      application={undefined}
+                    />
+                  )}
                 </div>
               </div>
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
@@ -187,8 +263,8 @@ export const ApplicationDetails = ({
                   </Button>
                 )}
                 {isApproved &&
-                  (!grant?.airtableId ||
-                    grant?.title.toLowerCase().includes('coindcx')) && (
+                  !hasManagedTranches &&
+                  (!grant?.airtableId || grant?.id === COINDCX_GRANT_ID) && (
                     <>
                       <MarkCompleted
                         isCompleted={isCompleted}
@@ -242,10 +318,10 @@ export const ApplicationDetails = ({
                   <p className="mr-3 text-sm font-semibold whitespace-nowrap text-slate-400">
                     APPROVED
                   </p>
-                  <img
+                  <TokenIcon
                     className="mr-0.5 h-4 w-4 rounded-full"
-                    src={tokenIcon}
                     alt="token"
+                    symbol={grant?.token}
                   />
 
                   <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
@@ -335,20 +411,24 @@ export const ApplicationDetails = ({
             </div>
           </div>
 
-          <div className="relative z-10 flex max-h-[39.7rem] w-full">
+          <div
+            ref={splitContainerRef}
+            className="relative z-10 flex max-h-[39.7rem] w-full"
+          >
             <ScrollArea
               type="auto"
-              className="flex w-2/3 flex-1 flex-col overflow-y-auto px-4"
+              className="flex min-w-0 flex-col overflow-y-auto px-4"
+              style={{ flexBasis: `${100 - notesWidth}%` }}
             >
               <div className="mb-4 pt-2">
                 <p className="mb-1 text-xs font-semibold text-slate-400 uppercase">
                   ASK
                 </p>
                 <div className="flex items-center gap-0.5">
-                  <img
+                  <TokenIcon
                     className="mr-0.5 h-4 w-4 rounded-full"
-                    src={tokenIcon}
                     alt="token"
+                    symbol={grant?.token}
                   />
 
                   <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
@@ -425,40 +505,37 @@ export const ApplicationDetails = ({
 
               {isST && (selectedApplication as any)?.lumaLink && (
                 <InfoBox
-                  label={ST_GRANT_COPY.application.lumaLink.label}
+                  label={ST_GRANT_COPY.application.lumaLink!.label}
                   content={(selectedApplication as any)?.lumaLink}
                 />
               )}
 
               <InfoBox
-                label={
-                  isST ? ST_GRANT_COPY.application.twitter.label : 'Twitter'
-                }
+                label={applicationCopy?.twitter.label ?? 'Twitter'}
                 content={selectedApplication?.twitter}
               />
               {!isST && (
-                <InfoBox label="Github" content={selectedApplication?.github} />
+                <InfoBox
+                  label={applicationCopy?.github?.label ?? 'Github'}
+                  content={selectedApplication?.github}
+                />
               )}
               {!isST && (
                 <InfoBox
-                  label="Deadline"
+                  label={applicationCopy?.projectTimeline?.label ?? 'Deadline'}
                   content={selectedApplication?.projectTimeline}
                 />
               )}
 
               <InfoBox
-                label={
-                  isST
-                    ? ST_GRANT_COPY.application.proofOfWork.label
-                    : 'Proof of Work'
-                }
+                label={applicationCopy?.proofOfWork.label ?? 'Proof of Work'}
                 content={selectedApplication?.proofOfWork}
                 isHtml
               />
 
               {isST && (selectedApplication as any)?.expenseBreakdown && (
                 <InfoBox
-                  label={ST_GRANT_COPY.application.expenseBreakdown.label}
+                  label={ST_GRANT_COPY.application.expenseBreakdown!.label}
                   content={(selectedApplication as any)?.expenseBreakdown}
                   isHtml
                 />
@@ -466,9 +543,7 @@ export const ApplicationDetails = ({
 
               <InfoBox
                 label={
-                  isST
-                    ? ST_GRANT_COPY.application.milestones.label
-                    : 'Goals and Milestones'
+                  applicationCopy?.milestones.label ?? 'Goals and Milestones'
                 }
                 content={selectedApplication?.milestones}
                 isHtml
@@ -476,7 +551,10 @@ export const ApplicationDetails = ({
 
               {!isST && (
                 <InfoBox
-                  label="Primary Key Performance Indicator"
+                  label={
+                    applicationCopy?.kpi?.label ??
+                    'Primary Key Performance Indicator'
+                  }
                   content={selectedApplication?.kpi}
                   isHtml
                 />
@@ -484,17 +562,34 @@ export const ApplicationDetails = ({
 
               {Array.isArray(selectedApplication?.answers) &&
                 selectedApplication.answers.map(
-                  (answer: any, answerIndex: number) => (
-                    <InfoBox
-                      key={answerIndex}
-                      label={answer.question}
-                      content={answer.answer}
-                      isHtml
-                    />
-                  ),
+                  (answer: any, answerIndex: number) => {
+                    const grantQuestion = getAnswerQuestion(answer);
+                    const isOptional =
+                      answer.optional ?? grantQuestion?.optional;
+                    return (
+                      <InfoBox
+                        key={answerIndex}
+                        label={`${answer.question}${isOptional ? ' (Optional)' : ''}`}
+                        content={answer.answer}
+                        isHtml={!isLinkAnswer(answer)}
+                      />
+                    );
+                  },
                 )}
             </ScrollArea>
-            <div className="w-1/3 max-w-[20rem] p-4">
+            <button
+              aria-label="Resize notes panel"
+              className="group flex w-3 shrink-0 cursor-col-resize items-stretch justify-center self-stretch focus:outline-none"
+              onPointerDown={handleResizePointerDown}
+              onPointerMove={handleResizePointerMove}
+              type="button"
+            >
+              <span className="h-full w-px bg-slate-200 transition-colors group-hover:bg-slate-300 group-focus-visible:bg-slate-400" />
+            </button>
+            <div
+              className="min-h-0 min-w-0 shrink-0 p-4"
+              style={{ flexBasis: `${notesWidth}%` }}
+            >
               <Notes slug={grant?.slug} />
             </div>
           </div>

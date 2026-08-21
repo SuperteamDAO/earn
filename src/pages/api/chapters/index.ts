@@ -9,6 +9,7 @@ export default async function handler(
   try {
     const chapterRegions = await getChapterRegions();
     const chapters = chapterRegions.map((chapter) => ({
+      id: chapter.id,
       name: chapter.name,
       region: chapter.region,
       displayValue: chapter.displayValue,

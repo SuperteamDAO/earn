@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type User } from '@/interface/user';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
@@ -13,9 +14,32 @@ import {
   isHandleVerified,
 } from '@/features/social/utils/x-verification';
 
-import { extractLumaEventSlug, LUMA_PREFIX } from './stGrant';
+import { type GrantQuestion } from '../types';
+import {
+  AGENTIC_ENGINEERING_FIXED_ASK,
+  extractLumaEventSlug,
+  LUMA_PREFIX,
+} from './stGrant';
 
 const X_USERNAME_REGEX = /^[A-Za-z0-9_]{1,15}$/;
+const USDG_TOKEN = 'USDG';
+
+const roundUsdGrantAmount = (value: unknown, token: string) => {
+  if (token !== USDG_TOKEN) return value;
+  if (value === '' || value === null || value === undefined) return value;
+
+  const numericValue = typeof value === 'number' ? value : Number(value);
+
+  if (!Number.isFinite(numericValue)) return value;
+
+  return Math.round(numericValue);
+};
+
+export const normalizeGrantQuestionLinkAnswer = (answer: string) => {
+  const trimmed = answer.trim();
+  if (!trimmed) return '';
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+};
 
 const twitterProfileSchema = z
   .string()
@@ -56,11 +80,18 @@ export const grantApplicationSchema = (
   minReward: number,
   maxReward: number,
   token: string,
-  questions?: { order: number; question: string }[],
+  questions?: GrantQuestion[],
   user?: User | null,
-  isST?: boolean,
-) =>
-  z
+  isST = false,
+  isAgenticEngineering = false,
+) => {
+  const fixedAsk = isAgenticEngineering
+    ? minReward === maxReward && minReward > 0
+      ? minReward
+      : AGENTIC_ENGINEERING_FIXED_ASK
+    : undefined;
+
+  return z
     .object({
       projectTitle: z
         .string()
@@ -70,16 +101,24 @@ export const grantApplicationSchema = (
         .string()
         .min(1, 'One-liner description is required')
         .max(150, 'Description must be less than 150 characters'),
-      ask: z
-        .number({
-          required_error: 'Grant amount is required',
-          invalid_type_error: 'Please enter a valid number',
-        })
-        .min(
-          Math.max(1, minReward),
-          `Amount must be at least ${Math.max(1, minReward || 1)} ${token}`,
-        )
-        .max(maxReward, `Amount cannot exceed ${maxReward || 1} ${token}`),
+      ask: z.preprocess(
+        (value) => {
+          if (value === '' || value === null || value === undefined) {
+            return fixedAsk ?? value;
+          }
+          return roundUsdGrantAmount(value, token);
+        },
+        z
+          .number({
+            required_error: 'Grant amount is required',
+            invalid_type_error: 'Please enter a valid number',
+          })
+          .min(
+            Math.max(1, minReward),
+            `Amount must be at least ${Math.max(1, minReward || 1)} ${token}`,
+          )
+          .max(maxReward, `Amount cannot exceed ${maxReward || 1} ${token}`),
+      ),
       projectDetails: z.string().min(1, 'Project details are required'),
       walletAddress: z.string().min(1, 'Solana Wallet Address is required'),
       projectTimeline: isST
@@ -88,8 +127,13 @@ export const grantApplicationSchema = (
       proofOfWork: isST
         ? z.string().optional()
         : z.string().min(1, 'Proof of work is required'),
-      milestones: z.string().min(1, 'Milestones are required'),
-      kpi: isST ? z.string().optional() : z.string().min(1, 'KPI is required'),
+      milestones: isAgenticEngineering
+        ? z.string().optional()
+        : z.string().min(1, 'Milestones are required'),
+      kpi:
+        isST || isAgenticEngineering
+          ? z.string().optional()
+          : z.string().min(1, 'KPI is required'),
       twitter: twitterProfileSchema,
       github: z
         .preprocess(
@@ -146,23 +190,43 @@ export const grantApplicationSchema = (
       const hasQuestions = Array.isArray(questions) && questions.length > 0;
 
       if (hasQuestions) {
-        if (!data.answers || data.answers.length === 0) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['answers'],
-            message: 'Answers are required for this listing',
-          });
-        } else {
-          questions?.forEach((question, index) => {
-            const answer = data.answers?.[index]?.answer;
-            if (!answer || answer?.trim() === '') {
+        questions?.forEach((question, index) => {
+          const answer = data.answers?.[index]?.answer?.trim();
+          const isOptional = Boolean(question.optional);
+
+          if (!isOptional && !answer) {
+            ctx.addIssue({
+              code: 'custom',
+              path: ['answers', index, 'answer'],
+              message: 'This field is required',
+            });
+            return;
+          }
+
+          if (answer && question.type === 'link') {
+            const linkAnswer = normalizeGrantQuestionLinkAnswer(answer);
+            const urlResult = z.string().regex(URL_REGEX).safeParse(linkAnswer);
+            if (!urlResult.success) {
               ctx.addIssue({
                 code: 'custom',
                 path: ['answers', index, 'answer'],
-                message: `Answer for "${question.question}" is required`,
+                message: 'Please enter a valid URL',
               });
             }
-          });
-        }
+          }
+        });
+      }
+
+      if (
+        isAgenticEngineering &&
+        typeof fixedAsk === 'number' &&
+        data.ask !== fixedAsk
+      ) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['ask'],
+          message: `Grant amount is fixed at ${fixedAsk} ${token}`,
+        });
       }
     });
+};

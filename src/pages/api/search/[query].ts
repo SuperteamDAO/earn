@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { status as Status } from '@/prisma/enums';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
@@ -36,10 +37,50 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     ' ',
   );
 
-  const bountiesLimit = (req.query.bountiesLimit as string) || 5;
-  const grantsLimit = (req.query.grantsLimit as string) || 2;
-  const bountiesOffset = (req.query.bountiesOffset as string) || null;
-  const grantsOffset = (req.query.grantsOffset as string) || null;
+  const bountiesLimitResult = parseBoundedIntegerParam(
+    req.query.bountiesLimit,
+    {
+      defaultValue: 5,
+      maxValue: 25,
+      name: 'bountiesLimit',
+    },
+  );
+  const grantsLimitResult = parseBoundedIntegerParam(req.query.grantsLimit, {
+    defaultValue: 2,
+    maxValue: 10,
+    name: 'grantsLimit',
+  });
+  const bountiesOffsetResult = parseBoundedIntegerParam(
+    req.query.bountiesOffset,
+    {
+      defaultValue: 0,
+      maxValue: 1000,
+      name: 'bountiesOffset',
+    },
+  );
+  const grantsOffsetResult = parseBoundedIntegerParam(req.query.grantsOffset, {
+    defaultValue: 0,
+    maxValue: 1000,
+    name: 'grantsOffset',
+  });
+
+  if (!bountiesLimitResult.ok) {
+    return res.status(400).json({ error: bountiesLimitResult.error });
+  }
+  if (!grantsLimitResult.ok) {
+    return res.status(400).json({ error: grantsLimitResult.error });
+  }
+  if (!bountiesOffsetResult.ok) {
+    return res.status(400).json({ error: bountiesOffsetResult.error });
+  }
+  if (!grantsOffsetResult.ok) {
+    return res.status(400).json({ error: grantsOffsetResult.error });
+  }
+
+  const bountiesLimit = bountiesLimitResult.value;
+  const grantsLimit = grantsLimitResult.value;
+  const bountiesOffset = bountiesOffsetResult.value;
+  const grantsOffset = grantsOffsetResult.value;
 
   let userRegion = req.query.userRegion
     ? (req.query.userRegion as string).split(',')
@@ -77,7 +118,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
     });
 
     if (user?.isBlocked) {
-      logger.warn(`Blocked user attempted listing/grant search: ${privyDid}`);
+      logger.warn('Blocked user attempted listing/grant search');
       return res.status(403).json({ error: 'User is blocked' });
     }
   }
@@ -264,7 +305,7 @@ s.name LIKE CONCAT('%', ?, '%')
         ELSE NULL
       END DESC,
       b.updatedAt DESC, b.id
-    LIMIT ? ${bountiesOffset ? `OFFSET ?` : ''}
+    LIMIT ? ${bountiesOffset > 0 ? `OFFSET ?` : ''}
     `;
 
   const grantsQuery = `
@@ -279,9 +320,13 @@ s.name LIKE CONCAT('%', ?, '%')
     b.region,
     b.createdAt,
     b.updatedAt,
-    b.totalApproved,
     b.historicalApplications,
     JSON_OBJECT('name', s.name, 'logo', s.logo, 'isVerified', s.isVerified, 'slug', s.slug) as sponsor,
+    (
+      SELECT COALESCE(SUM(ga.approvedAmountInUSD), 0)
+      FROM GrantApplication ga
+      WHERE ga.grantId = b.id AND (ga.applicationStatus = 'Approved' OR ga.applicationStatus = 'Completed')
+    ) as approvedAmountTotal,
     (
       SELECT COUNT(*)
       FROM GrantApplication ga
@@ -294,7 +339,7 @@ s.name LIKE CONCAT('%', ?, '%')
     ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}
     ORDER BY b.createdAt DESC
-    LIMIT ? ${grantsOffset ? `OFFSET ?` : ''}
+    LIMIT ? ${grantsOffset > 0 ? `OFFSET ?` : ''}
   `;
 
   let bountiesValues: (string | number)[] = duplicateElements(words, 2);
@@ -322,8 +367,8 @@ s.name LIKE CONCAT('%', ?, '%')
         ...grantsValues,
       );
 
-      grantsValues.push(Number(grantsLimit));
-      if (grantsOffset) grantsValues.push(Number(grantsOffset));
+      grantsValues.push(grantsLimit);
+      if (grantsOffset > 0) grantsValues.push(grantsOffset);
 
       logger.debug(
         `Executing grants table sqlQuery with values: ${grantsValues}`,
@@ -335,6 +380,7 @@ s.name LIKE CONCAT('%', ?, '%')
 
       grants = grants.map((g) => ({
         ...g,
+        approvedAmountTotal: Number(g.approvedAmountTotal),
         approvedApplications: Number(g.approvedApplications),
         _count: {
           GrantApplication: Number(g.approvedApplications),
@@ -350,8 +396,8 @@ s.name LIKE CONCAT('%', ?, '%')
       [{ totalCount: bigint }]
     >(bountiesCountQuery, ...bountiesValues);
 
-    bountiesValues.push(Number(bountiesLimit) - grants.length);
-    if (bountiesOffset) bountiesValues.push(Number(bountiesOffset));
+    bountiesValues.push(Math.max(bountiesLimit - grants.length, 0));
+    if (bountiesOffset > 0) bountiesValues.push(bountiesOffset);
 
     logger.debug(
       `Executing bounties table sqlQuery with values: ${bountiesValues}`,

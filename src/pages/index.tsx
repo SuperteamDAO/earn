@@ -86,6 +86,7 @@ export const getServerSideProps: GetServerSideProps<
   HomePageProps
 > = async () => {
   const chapters = await prisma.chapter.findMany({
+    where: { active: true },
     select: {
       name: true,
       region: true,
