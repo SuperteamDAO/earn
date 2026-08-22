@@ -387,6 +387,7 @@ export const SubmissionHeader = ({
                 <ShinyButton
                   disabled={
                     !afterAnnounceDate ||
+                    isHackathonPage ||
                     remainings?.podiums !== 0 ||
                     (remainings?.bonus > 0 &&
                       submissions.filter((s) => !s.isWinner).length > 0)
