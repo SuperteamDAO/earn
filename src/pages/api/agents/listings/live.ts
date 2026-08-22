@@ -1,70 +1,64 @@
-import type { NextApiResponse } from 'next';
 
-import logger from '@/lib/logger';
+import type { NextApiRequest, NextApiResponse } from 'next';
+
 import { prisma } from '@/prisma';
-import { type EnumBountyTypeFilter } from '@/prisma/commonInputTypes';
-import { type BountyType } from '@/prisma/enums';
-import { type BountiesFindManyArgs } from '@/prisma/models/Bounties';
-import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 
-import { type NextApiRequestWithAgent } from '@/features/auth/types';
-import { withAgentAuth } from '@/features/auth/utils/withAgentAuth';
-import { listingSelect } from '@/features/listings/constants/schema';
-
-async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
-  const params = req.query;
-
-  const type = params.type as EnumBountyTypeFilter | BountyType | undefined;
-  const takeResult = parseBoundedIntegerParam(params.take, {
-    defaultValue: 10,
-    maxValue: 50,
-    name: 'take',
-  });
-  if (!takeResult.ok) {
-    return res.status(400).json({ error: takeResult.error });
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
-  const take = takeResult.value;
-  const deadline = params.deadline as string;
-  const exclusiveSponsorId = params.exclusiveSponsorId as string | undefined;
-  let excludeIds = params['excludeIds[]'];
-  if (typeof excludeIds === 'string') {
-    excludeIds = [excludeIds];
-  }
-
-  const listingQueryOptions: BountiesFindManyArgs = {
-    where: {
-      id: {
-        notIn: excludeIds,
-      },
-      isPublished: true,
-      isActive: true,
-      isPrivate: false,
-      isArchived: false,
-      status: 'OPEN',
-      deadline: { gte: deadline },
-      type: type || { in: ['bounty', 'project', 'hackathon'] },
-      agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
-      sponsor: {
-        isVerified: true,
-      },
-      sponsorId: exclusiveSponsorId,
-    },
-    select: listingSelect,
-    take,
-    orderBy: [{ deadline: 'asc' }, { winnersAnnouncedAt: 'desc' }],
-  };
 
   try {
-    const listings = await prisma.bounties.findMany(listingQueryOptions);
-    res.status(200).json(listings);
-  } catch (error) {
-    logger.error(error);
+    const now = new Date();
 
-    res.status(400).json({
-      error,
-      message: 'Error occurred while fetching listings',
+    const listings = await prisma.bounties.findMany({
+      where: {
+        isPublished: true,
+        isActive: true,
+        isArchived: false,
+        status: 'OPEN',
+        isAgentAllowed: true,
+        deadline: {
+          gte: now,
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        type: true,
+        deadline: true,
+        rewardAmount: true,
+        usdValue: true,
+        token: true,
+        description: true,
+        requirements: true,
+        skills: true,
+        isAgentAllowed: true,
+        status: true,
+        sponsor: {
+          select: {
+            id: true,
+            name: true,
+            logo: true,
+            url: true,
+          },
+        },
+      },
+      orderBy: {
+        deadline: 'asc',
+      },
     });
+
+    return res.status(200).json({
+      listings,
+      count: listings.length,
+    });
+  } catch (error) {
+    console.error('Error fetching live agent listings:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
-
-export default withAgentAuth(handler);
