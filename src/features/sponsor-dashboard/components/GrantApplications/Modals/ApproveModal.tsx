@@ -3,7 +3,12 @@ import posthog from 'posthog-js';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -75,7 +80,7 @@ const CustomNumberInput = ({
   };
 
   return (
-    <div className="relative w-[160px]">
+    <div className="relative w-full max-w-[160px]">
       <Input
         value={value || ''}
         onKeyDown={handleKeyDown}
@@ -238,36 +243,41 @@ export const ApproveModal = ({
           if (!open) requestClose();
         }}
       >
-        <DialogContent className="m-0 p-0" hideCloseIcon>
-          <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+        <DialogContent
+          className="m-0 max-h-[calc(100dvh-1rem)] max-w-[calc(100vw-1rem)] overflow-hidden p-0 sm:max-w-lg"
+          hideCloseIcon
+        >
+          <DialogTitle className="text-md -mb-1 px-4 pt-4 font-semibold text-slate-900 sm:px-6">
             Approve Grant Payment
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Review the requested amount, choose the approved amount, and confirm
+            the grant approval.
+          </DialogDescription>
           <Separator />
-          <div className="px-6 pb-6 text-[0.95rem]">
-            <p className="mb-4 text-slate-500">
+          <div className="px-4 pb-5 text-[0.95rem] sm:px-6 sm:pb-6">
+            <p className="mb-4 text-sm leading-6 text-slate-500 sm:text-[0.95rem]">
               You are about to approve {granteeName}&apos;s grant request. They
               will be notified via email.
             </p>
 
-            <div className="mb-6 flex items-center justify-between">
+            <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-slate-500">Grant Request</p>
-              <div className="flex items-center">
+              <div className="flex items-center justify-between gap-2 sm:justify-end">
                 <TokenIcon
                   className="h-5 w-5 rounded-full"
                   alt={`${token} icon`}
                   symbol={token}
                 />
-                <p className="ml-1 font-semibold text-slate-600">
+                <p className="font-semibold text-slate-600">
                   {ask} <span className="text-slate-400">{token}</span>
                 </p>
               </div>
             </div>
 
-            <div className="mb-6 flex w-full items-center justify-between">
-              <p className="w-full whitespace-nowrap text-slate-500">
-                Approved Amount
-              </p>
-              <div className="flex">
+            <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-slate-500">Approved Amount</p>
+              <div className="flex w-full items-stretch overflow-hidden sm:w-auto">
                 <CustomNumberInput
                   value={approvedAmount || 0}
                   onChange={handleAmountChange}
@@ -319,12 +329,17 @@ export const ApproveModal = ({
               />
             )}
 
-            <div className="flex gap-3">
-              <div className="w-1/2" />
-              <Button variant="ghost" onClick={requestClose} disabled={loading}>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="hidden sm:block sm:flex-1" />
+              <Button
+                variant="outline"
+                onClick={requestClose}
+                disabled={loading}
+                className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:ml-auto sm:w-auto"
+              >
                 Close
               </Button>
-              <div className="flex flex-1">
+              <div className="flex w-full flex-1">
                 <Button
                   className={cn(
                     'flex-1 border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600',
@@ -368,7 +383,7 @@ export const ApproveModal = ({
                     <DropdownMenuTrigger asChild>
                       <Button
                         type="button"
-                        className="rounded-l-none rounded-r-lg border border-l-0 border-emerald-500 bg-emerald-50 px-2 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
+                        className="shrink-0 rounded-l-none rounded-r-lg border border-l-0 border-emerald-500 bg-emerald-50 px-2 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
                         disabled={loading}
                         aria-label="Approve options"
                       >

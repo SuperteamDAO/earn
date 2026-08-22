@@ -78,12 +78,13 @@ export function MarkCompleteModal({
             completed?
           </p>
 
-          <div className="flex gap-3 pt-4">
-            <div className="w-1/2" />
+          <div className="flex flex-col gap-3 pt-4 sm:flex-row">
+            <div className="hidden sm:block sm:w-1/2" />
             <Button
-              variant="ghost"
+              variant="outline"
               onClick={onClose}
               disabled={markCompletePending}
+              className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:ml-auto sm:w-auto"
             >
               Cancel
             </Button>

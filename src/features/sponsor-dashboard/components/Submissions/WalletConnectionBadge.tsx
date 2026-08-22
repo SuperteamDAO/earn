@@ -48,15 +48,17 @@ export function WalletConnectionBadge({
   if (!connected) {
     return (
       <div
-        className={cn('ph-no-capture wallet-header-button', className)}
+        className={cn('ph-no-capture wallet-header-button w-full md:w-auto', className)}
         onClick={() => {
           posthog.capture('connect_wallet_payments_tab');
         }}
       >
         <DynamicWalletMultiButton
+          className="w-full justify-center"
           style={{
             height: '40px',
-            minWidth: '160px',
+            minWidth: '0',
+            width: '100%',
             textAlign: 'center',
             justifyContent: 'center',
             alignItems: 'center',
@@ -73,17 +75,22 @@ export function WalletConnectionBadge({
   }
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
-      <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2">
+    <div
+      className={cn(
+        'flex w-full flex-col gap-2 md:w-auto md:flex-row md:items-center',
+        className,
+      )}
+    >
+      <div className="flex min-w-0 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2">
         <div className="flex h-2 w-2 items-center justify-center">
           <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
         </div>
         <Wallet className="h-4 w-4 text-slate-600" />
-        <span className="text-sm font-medium text-slate-900">
+        <span className="min-w-0 truncate text-sm font-medium text-slate-900">
           {truncatePublicKey(publicKey?.toBase58(), 4)}
         </span>
         {wallet && (
-          <span className="text-xs text-slate-500">
+          <span className="shrink-0 text-xs text-slate-500">
             ({wallet.adapter.name})
           </span>
         )}
@@ -94,7 +101,7 @@ export function WalletConnectionBadge({
           <Button
             variant="outline"
             size="sm"
-            className="h-10 gap-1 border-slate-200"
+            className="h-10 w-full gap-1 border-slate-200 md:w-auto"
           >
             <span className="text-sm">Manage</span>
             <ChevronDown className="h-4 w-4" />

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { useUser } from '@/store/user';
 
 import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
 import { SponsorStage } from '@/features/home/types/sponsor-stage';
@@ -20,10 +21,11 @@ import { UnderVerificationBanner } from './UnderVerificationBanner';
 
 export function SponsorStageBanner() {
   const isLg = useBreakpoint('lg');
+  const { user } = useUser();
 
   const { data, isLoading } = useQuery({
     ...sponsorStageQuery,
-    enabled: false,
+    enabled: !!user?.currentSponsorId && isLg,
   });
 
   if (!isLg) {

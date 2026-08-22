@@ -10,23 +10,19 @@ import { safeStringify } from '@/utils/safeStringify';
 import { validateSession } from '@/features/auth/utils/getSponsorSession';
 
 function flattenSubSkills(skillsArray: any[]): string[] {
-  const flattenedSubSkills: string[] = [];
-
-  for (const skillObj of skillsArray) {
-    flattenedSubSkills.push(...skillObj.subskills);
-  }
-
-  return flattenedSubSkills;
+  return skillsArray.flatMap((skillObj) =>
+    Array.isArray(skillObj?.subskills) ? skillObj.subskills : [],
+  );
 }
 
 function flattenSkills(skillsArray: any[]): string[] {
-  const flattenedSubSkills: string[] = [];
-
-  for (const skillObj of skillsArray) {
-    flattenedSubSkills.push(skillObj.skills);
-  }
-
-  return flattenedSubSkills;
+  return skillsArray.flatMap((skillObj) =>
+    typeof skillObj?.skills === 'string'
+      ? [skillObj.skills]
+      : Array.isArray(skillObj?.skills)
+        ? skillObj.skills
+        : [],
+  );
 }
 
 function filterInDevSkills(skills: string[]) {
@@ -77,18 +73,19 @@ export async function GET(
       );
     }
 
-    if ((scoutBounty.skills as any)?.[0].subskills === null) {
-      logger.warn('Bounty has no skills');
-      return NextResponse.json(
-        { error: 'Bounty has No skills' },
-        { status: 404 },
+    const bountySkills = Array.isArray(scoutBounty.skills)
+      ? scoutBounty.skills
+      : [];
+    const subskills = flattenSubSkills(bountySkills as any);
+    const devSkills = filterInDevSkills(flattenSkills(bountySkills as any));
+
+    if (subskills.length === 0 && devSkills.length === 0) {
+      logger.info(
+        `Bounty with ID: ${id} has no usable skills; returning empty scout list`,
       );
+      return NextResponse.json([], { status: 200 });
     }
 
-    const subskills = flattenSubSkills(scoutBounty.skills as any);
-    const devSkills = filterInDevSkills(
-      flattenSkills(scoutBounty.skills as any),
-    );
     const region = scoutBounty.region.toString();
     const insertQueryParams: unknown[] = [];
     const bindParam = (value: unknown) => {
@@ -532,7 +529,9 @@ END)
       },
     });
 
-    scouts.forEach((scout) => {
+    const validScouts = scouts.filter((scout) => scout.user);
+
+    validScouts.forEach((scout) => {
       if (Array.isArray(scout.skills)) {
         const devSkills = filterInDevSkills(scout.skills as string[]);
         const subskills = (scout.skills as string[]).filter(
@@ -546,7 +545,7 @@ END)
       minSubskill = 0,
       maxSkill = 0,
       minSkill = 0;
-    scouts.forEach((scout) => {
+    validScouts.forEach((scout) => {
       let totalSubskill = 0,
         totalSkill = 0;
       if (Array.isArray(scout.skills)) {
@@ -588,12 +587,12 @@ END)
       );
     });
 
-    scouts.sort((a, b) => b.score.toNumber() - a.score.toNumber());
+    validScouts.sort((a, b) => b.score.toNumber() - a.score.toNumber());
 
     await prisma.$transaction(
       async (tsx) => {
         return await Promise.all(
-          scouts.map(async (s) => {
+          validScouts.map(async (s) => {
             return await tsx.scouts.updateMany({
               where: {
                 id: s.id,
@@ -613,7 +612,7 @@ END)
     );
 
     logger.info(`Successfully generated scouts for bounty ID: ${id}`);
-    return NextResponse.json(scouts, { status: 200 });
+    return NextResponse.json(validScouts, { status: 200 });
   } catch (error: any) {
     logger.error(
       `Error occurred while generating scouts for bounty with id=${id}: ${safeStringify(error)}`,

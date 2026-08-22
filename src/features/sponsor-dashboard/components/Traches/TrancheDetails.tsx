@@ -90,8 +90,8 @@ export const TrancheDetails = ({
       {tranches?.length ? (
         <>
           <div className="sticky top-[3rem] rounded-t-xl border-b border-slate-200 bg-white py-1">
-            <div className="flex w-full items-center justify-between px-4 py-2">
-              <div className="flex w-full items-center gap-2">
+            <div className="flex w-full flex-col gap-2 px-4 py-2 md:flex-row md:items-center md:justify-between">
+              <div className="flex min-w-0 flex-1 items-center gap-2">
                 <EarnAvatar
                   className="h-10 w-10"
                   id={selectedTranche?.GrantApplication?.user?.id}
@@ -100,11 +100,10 @@ export const TrancheDetails = ({
                   }
                 />
 
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="w-full text-base font-medium whitespace-nowrap text-slate-900">
-                      {`${selectedTranche?.GrantApplication?.user?.firstName}`}
-                      ’s Application
+                    <p className="max-w-[10.5rem] truncate text-base font-medium text-slate-900 sm:max-w-none">
+                      {`${selectedTranche?.GrantApplication?.user?.firstName}'s Application`}
                     </p>
                     <p className="flex items-center gap-1 text-xs font-semibold whitespace-nowrap text-green-600">
                       <VerifiedBadge className="text-green-600" />
@@ -114,7 +113,7 @@ export const TrancheDetails = ({
 
                   <Link
                     href={`/earn/t/${selectedTranche?.GrantApplication?.user?.username}`}
-                    className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium whitespace-nowrap"
+                    className="text-brand-purple flex w-full items-center gap-1 text-xs font-medium"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -123,11 +122,11 @@ export const TrancheDetails = ({
                   </Link>
                 </div>
               </div>
-              <div className="ph-no-capture flex w-full items-center justify-end gap-2">
+              <div className="ph-no-capture flex w-full flex-nowrap items-center justify-start gap-1 overflow-x-auto pb-1 md:w-auto md:justify-end md:gap-2 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
                 {isPending && (
                   <>
                     <Button
-                      className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:text-sm"
                       onClick={approveOnOpen}
                     >
                       <div className="rounded-full bg-emerald-600 p-0.5">
@@ -137,7 +136,7 @@ export const TrancheDetails = ({
                     </Button>
 
                     <Button
-                      className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:text-sm"
                       onClick={rejectedOnOpen}
                     >
                       <div className="rounded-full bg-red-600 p-0.5">
@@ -150,7 +149,7 @@ export const TrancheDetails = ({
                 {isApproved && (
                   <>
                     <Button
-                      className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-100"
+                      className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-100 sm:px-3 sm:text-sm"
                       disabled={true}
                     >
                       <div className="rounded-full bg-emerald-600 p-0.5">
@@ -163,7 +162,7 @@ export const TrancheDetails = ({
                 {isRejected && (
                   <>
                     <Button
-                      className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-100"
+                      className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-100 sm:px-3 sm:text-sm"
                       disabled={true}
                     >
                       <div className="rounded-full bg-red-600 p-0.5">
@@ -176,7 +175,7 @@ export const TrancheDetails = ({
               </div>
             </div>
 
-            <div className="flex items-center gap-4 px-4 py-2">
+            <div className="flex flex-wrap items-center gap-2 px-4 py-2 md:gap-4">
               <div className="flex items-center">
                 <p className="mr-3 text-sm font-semibold whitespace-nowrap text-slate-400">
                   TOTAL GRANT

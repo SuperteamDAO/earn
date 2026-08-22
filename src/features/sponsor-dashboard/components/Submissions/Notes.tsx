@@ -138,7 +138,7 @@ export const Notes = ({ slug }: Props) => {
   );
 
   return (
-    <div className="flex w-full flex-col items-start rounded-xl border border-slate-200 py-5 pr-1 pl-4">
+    <div className="flex w-full flex-col items-start overflow-hidden rounded-xl border border-slate-200 py-5 pr-1 pl-4 max-[640px]:max-h-[52dvh]">
       <div
         className={cn(
           'mb-2 flex w-full items-center justify-between pr-3 text-slate-400',
@@ -157,10 +157,10 @@ export const Notes = ({ slug }: Props) => {
       </div>
       <div
         key={submissionId + (selectedSubmission?.label || 'label')}
-        className="h-full w-full"
+        className="h-full w-full touch-pan-y overflow-hidden"
       >
         <NotesRichEditor
-          className="h-full max-h-[25rem] min-h-[25rem] w-full resize-none !border-0 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
+          className="h-full max-h-[12rem] min-h-[12rem] w-full md:max-h-[25rem] md:min-h-[25rem] max-[640px]:max-h-[calc(52dvh-7rem)] max-[640px]:min-h-[10rem] resize-none !border-0 py-0 text-sm whitespace-pre-wrap text-slate-500 !shadow-none !ring-0 placeholder:text-slate-400 focus:!border-0 focus:!shadow-none focus:!ring-0 focus:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 focus-visible:!outline-hidden"
           key={submissionId + (selectedSubmission?.label || 'label')}
           id={submissionId + (selectedSubmission?.label || 'label')}
           onChange={handleChange}
