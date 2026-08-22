@@ -267,7 +267,6 @@ export default function BountySubmissions({ listing }: Props) {
                     setSearchText={setSearchText}
                     type={bounty?.type}
                     isMultiSelectDisabled
-                    isHackathonPage
                     onItemClick={() => setMobileView('detail')}
                   />
                   </div>

@@ -5,11 +5,8 @@ import StarterKit from '@tiptap/starter-kit';
 import { Bold, Italic, List, ListOrdered } from 'lucide-react';
 import * as React from 'react';
 
-<<<<<<< HEAD
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-=======
->>>>>>> 6295ebc70 (feat: stabilize sponsor mobile UX)
 import { cn } from '@/utils/cn';
 
 interface NotesRichEditorProps {
@@ -343,34 +340,30 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
   }
 
   return (
-<<<<<<< HEAD
     <div className="flex h-full min-h-0 w-full flex-col" key={id}>
       <NotesSelectionMenu editor={editor} />
-      <ScrollArea
-        className="min-h-0 w-full flex-1 touch-pan-y overscroll-contain"
-        type="always"
-        key={id}
-        viewportProps={{
-          className:
-            'size-full rounded-[inherit] pr-3 touch-pan-y overscroll-contain',
-        }}
-      >
-=======
-    <div className="w-full" key={id}>
-      <div className="h-full w-full max-[640px]:max-h-[52dvh]">
->>>>>>> 6295ebc70 (feat: stabilize sponsor mobile UX)
-        <EditorContent
+      <div className="min-h-0 w-full flex-1 max-[640px]:max-h-[52dvh]">
+        <ScrollArea
+          className="h-full w-full touch-pan-y overscroll-contain"
+          type="always"
           key={id}
-          editor={editor}
-          className={cn(
-            'h-full w-full max-[640px]:min-h-[10rem] md:min-h-[25rem]',
-            {
-              'pointer-events-none opacity-50': disabled,
-            },
-            className,
-          )}
-        />
-        <style jsx global>{`
+          viewportProps={{
+            className:
+              'size-full rounded-[inherit] pr-3 touch-pan-y overscroll-contain',
+          }}
+        >
+          <EditorContent
+            key={id}
+            editor={editor}
+            className={cn(
+              'h-full w-full max-[640px]:min-h-[10rem] md:min-h-[25rem]',
+              {
+                'pointer-events-none opacity-50': disabled,
+              },
+              className,
+            )}
+          />
+          <style jsx global>{`
           .notes-rich-editor {
             outline: none;
             height: 100%;
@@ -457,6 +450,7 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
             font-style: italic;
           }
         `}</style>
+        </ScrollArea>
       </div>
     </div>
   );

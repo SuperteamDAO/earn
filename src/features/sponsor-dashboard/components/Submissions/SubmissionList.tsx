@@ -178,7 +178,7 @@ export const SubmissionList = ({
               key={submission?.id}
               data-submission-id={submission?.id}
               className={cn(
-                'flex cursor-pointer items-center justify-between gap-4 border-b border-slate-200 px-3 py-2',
+                'flex cursor-pointer items-center justify-between gap-2 border-b border-slate-200 px-2 py-2 sm:gap-4 sm:px-3',
                 'hover:bg-slate-100',
                 selectedSubmission?.id === submission?.id
                   ? 'bg-slate-100'
@@ -189,11 +189,11 @@ export const SubmissionList = ({
                 onItemClick?.();
               }}
             >
-              <div className="flex items-center">
+              <div className="flex min-w-0 flex-1 items-center">
                 {!isMultiSelectDisabled && (
                   <div onClick={(e) => e.stopPropagation()}>
                     <Checkbox
-                      className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2 disabled:invisible"
+                      className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2 shrink-0 disabled:invisible"
                       checked={isToggled && isToggled(submission.id)}
                       disabled={
                         submission?.status !== 'Pending' ||
@@ -210,7 +210,7 @@ export const SubmissionList = ({
                   id={submission?.user?.id}
                   avatar={submission?.user?.photo || undefined}
                 />
-                <div className="ml-2 w-40">
+                <div className="ml-2 min-w-0 flex-1">
                   <div className="flex items-center gap-1">
                     <p className="flex min-w-0 items-center gap-2 overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-700">
                       {`${submission?.user?.firstName} ${submission?.user?.lastName}`}
@@ -223,7 +223,7 @@ export const SubmissionList = ({
                 </div>
               </div>
 
-              <div className="ml-auto flex w-min flex-col justify-end gap-1 align-bottom">
+              <div className="ml-2 flex shrink-0 flex-col justify-end gap-1 align-bottom">
                 {!isHackathonPage &&
                 submission?.status === 'Pending' &&
                 !listing?.isWinnersAnnounced &&

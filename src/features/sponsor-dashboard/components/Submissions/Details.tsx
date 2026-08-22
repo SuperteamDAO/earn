@@ -1,7 +1,6 @@
 import { useAtomValue } from 'jotai';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { type Listing } from '@/features/listings/types';
