@@ -64,6 +64,20 @@ export const supportEmailRateLimiter = new Ratelimit({
   prefix: 'ratelimit:support_email',
 });
 
+export const emailValidateRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.slidingWindow(10, '1 m'),
+  analytics: true,
+  prefix: 'ratelimit:email_validate',
+});
+
+export const emailValidateHourlyRateLimiter = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.fixedWindow(100, '1 h'),
+  analytics: true,
+  prefix: 'ratelimit:email_validate_hourly',
+});
+
 export const reportListingRateLimiter = new Ratelimit({
   redis: redis,
   limiter: Ratelimit.fixedWindow(5, '1 h'),

@@ -54,4 +54,15 @@ interface ListingWinner {
   };
 }
 
-export type { ListingWinner, SubmissionWithUser };
+interface ListingPageSubmission {
+  id: string;
+  link?: string;
+  isWinner: boolean;
+  winnerPosition?: keyof Rewards;
+  like?: unknown;
+  user: Pick<User, 'firstName' | 'lastName' | 'photo' | 'username'> & {
+    id: string;
+  };
+}
+
+export type { ListingPageSubmission, ListingWinner, SubmissionWithUser };

@@ -19,7 +19,7 @@ import { cleanRewardPrizes } from '@/utils/rank';
 
 import { RelatedListings } from '@/features/home/components/RelatedListings';
 
-import type { Listing } from '../../types';
+import type { PublicListing } from '../../types';
 import { isDeadlineOver } from '../../utils/deadline';
 import { ApprovalStages } from '../Submission/ApprovalStages';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
@@ -70,7 +70,7 @@ export function RightSideBar({
   submissionNumber,
   isSubmissionNumberLoading = false,
 }: {
-  listing: Listing;
+  listing: PublicListing;
   skills?: ParentSkills[];
   isTemplate?: boolean;
   submissionNumber?: number;

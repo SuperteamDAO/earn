@@ -10,11 +10,11 @@ import { sortRank } from '@/utils/rank';
 import { getURL } from '@/utils/validUrl';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
-import { type Listing } from '@/features/listings/types';
+import { type PublicListingDetails } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
 
 interface BountyDetailsProps {
-  bounty: Listing | null;
+  bounty: PublicListingDetails | null;
   url: string;
   submissions: StrippedSubmission[];
 }
@@ -99,15 +99,19 @@ interface StrippedSubmission {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-  const { req } = context;
+  const { req, res } = context;
   const protocol = req.headers['x-forwarded-proto'] || 'http';
   const host = req.headers.host;
   const fullUrl = `${protocol}://${host}/`;
 
-  let bountyData;
+  let bountyData: PublicListingDetails | null;
   const submissions: StrippedSubmission[] = [];
   try {
     bountyData = await getListingDetailsBySlug(String(slug));
+
+    if (!bountyData) {
+      throw new Error('Listing not found');
+    }
 
     let data = await getWinningSubmissionsByListingId(String(bountyData.id));
     data = data.filter((d) => d.winnerPosition !== BONUS_REWARD_POSITION);
@@ -136,6 +140,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     bountyData = null;
   }
 
+  if (bountyData?.id) {
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
+  }
   return {
     props: {
       bounty: bountyData,

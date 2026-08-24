@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { type User } from '@/interface/user';
+import { type ListingPageSubmission } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { ogImageQuery } from '@/queries/og';
 import { useUser } from '@/store/user';
@@ -21,7 +21,7 @@ import { Badge } from './Badge';
 interface Props {
   winner: boolean;
   winnerPosition?: keyof Rewards;
-  talent: User;
+  talent: ListingPageSubmission['user'];
   likes?: {
     id: string;
     date: number;

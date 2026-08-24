@@ -1,10 +1,10 @@
-import axios from 'axios';
 import { type IncomingMessage } from 'http';
 import { buffer } from 'micro';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { type WebhookRequiredHeaders } from 'svix';
 
 import { webhook } from '@/lib/webhook';
+import { validateEmailWithZeroBounce } from '@/lib/zerobounce';
 import { prisma } from '@/prisma';
 
 export const config = {
@@ -121,11 +121,15 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
         const normalizedEmail = recipientEmail.toLowerCase();
 
         if (event.type === 'email.bounced') {
-          const { data } = await axios.post(
-            `https://superteam.fun/api/email/validate`,
-            { email: normalizedEmail },
-          );
-          const isValid = data?.isValid ?? false;
+          let isValid = true;
+          try {
+            isValid = await validateEmailWithZeroBounce(normalizedEmail);
+          } catch {
+            // fail open: don't blocklist an email because ZeroBounce errored
+            console.log(
+              `ZeroBounce validation failed for bounced email, treating as valid`,
+            );
+          }
           await handleEmailBounce(normalizedEmail, isValid);
         } else if (event.type === 'email.complained') {
           await deleteEmailSettings(normalizedEmail);
