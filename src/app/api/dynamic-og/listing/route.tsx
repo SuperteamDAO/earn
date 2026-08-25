@@ -4,6 +4,7 @@ import { join } from 'node:path';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import logger from '@/lib/logger';
+import { prisma } from '@/prisma';
 import { getTokenIcon } from '@/server/tokenList';
 import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
@@ -57,8 +58,12 @@ const loadOgFont = async (font: string, text: string) => {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
+  const isDraftPreview = searchParams.get('preview') === '1';
+  const slug = searchParams.get('slug');
 
   const requestContext = {
+    slug,
+    isDraftPreview,
     title: searchParams.get('title'),
     token: searchParams.get('token'),
     sponsor: searchParams.get('sponsor'),
@@ -69,8 +74,53 @@ export async function GET(request: Request) {
   try {
     const bgColors = ['#FFFBEB', '#FAFAF9', '#ECFDF5', '#EFF6FF', '#EEF2FF'];
 
+    const previewListing =
+      isDraftPreview && slug
+        ? await prisma.bounties.findFirst({
+            where: {
+              slug,
+              isPublished: false,
+              isActive: true,
+              isArchived: false,
+            },
+            select: {
+              title: true,
+              rewardAmount: true,
+              token: true,
+              type: true,
+              compensationType: true,
+              minRewardAsk: true,
+              maxRewardAsk: true,
+              sponsor: {
+                select: {
+                  name: true,
+                  logo: true,
+                  isVerified: true,
+                },
+              },
+            },
+          })
+        : null;
+
+    const previewParams: Record<string, string | null | undefined> = {
+      title: previewListing?.title,
+      reward: previewListing?.rewardAmount?.toString(),
+      token: previewListing?.token,
+      sponsor: previewListing?.sponsor?.name,
+      logo: previewListing?.sponsor?.logo,
+      type: previewListing?.type,
+      compensationType: previewListing?.compensationType,
+      minRewardAsk: previewListing?.minRewardAsk?.toString(),
+      maxRewardAsk: previewListing?.maxRewardAsk?.toString(),
+      isSponsorVerified: previewListing?.sponsor?.isVerified?.toString(),
+    };
+
     const getParam = (name: any, processFn = (x: any) => x) =>
-      searchParams.has(name) ? processFn(searchParams.get(name)) : null;
+      previewParams[name] != null
+        ? processFn(previewParams[name])
+        : searchParams.has(name)
+          ? processFn(searchParams.get(name))
+          : null;
 
     const title = getParam('title', (x) =>
       formatString(safeDecodeURIComponent(x), 100),
@@ -359,7 +409,9 @@ export async function GET(request: Request) {
 
     response.headers.set(
       'Cache-Control',
-      'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000',
+      isDraftPreview
+        ? 'public, max-age=60, s-maxage=300'
+        : 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000',
     );
 
     return response;
