@@ -39,6 +39,7 @@ export function ListingPageLayout({
   maxW = '7xl',
   isTemplate = false,
 }: ListingPageProps) {
+  const router = useRouter();
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
   const { user } = useUser();
 
@@ -76,6 +77,13 @@ export function ListingPageLayout({
 
   const ogImage = new URL(`${getURL()}api/dynamic-og/listing/`);
 
+  const previewSlug =
+    typeof router.query.slug === 'string' ? router.query.slug : undefined;
+  if (router.query.preview === '1' && previewSlug) {
+    ogImage.searchParams.set('preview', '1');
+    ogImage.searchParams.set('slug', previewSlug);
+  }
+
   ogImage.searchParams.set('title', initialListing?.title || '');
   ogImage.searchParams.set(
     'reward',
@@ -102,7 +110,6 @@ export function ListingPageLayout({
     initialListing?.sponsor?.isVerified?.toString() || 'false',
   );
 
-  const router = useRouter();
   const isSubmissionPage = router.pathname.endsWith('/submission');
   const canonicalUrl = initialListing?.slug
     ? normalizeCanonicalUrl(`${getURL()}earn/listing/${initialListing.slug}/`)

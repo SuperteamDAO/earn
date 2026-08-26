@@ -37,11 +37,13 @@ const ListingWinners = dynamic(
 
 interface ListingDetailsProps {
   listing: PublicListingDetails | null;
+  isPreview: boolean;
   dehydratedState: DehydratedState;
 }
 
 function ListingDetails({
   listing: initialListing,
+  isPreview,
   dehydratedState,
 }: ListingDetailsProps) {
   const jobPostingSchema = initialListing
@@ -62,7 +64,7 @@ function ListingDetails({
   return (
     <>
       <HydrationBoundary state={dehydratedState}>
-        {initialListing?.isPrivate && (
+        {(initialListing?.isPrivate || isPreview) && (
           <Head>
             <meta name="robots" content="noindex, nofollow" />
             <meta name="googlebot" content="noindex, nofollow" />
@@ -103,11 +105,12 @@ function ListingDetails({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { preview, slug } = context.query;
   const { res } = context;
+  const isPreview = preview === '1';
   let listingData: PublicListingDetails | null;
   try {
     let canViewAllUnpublished = false;
     let unpublishedSponsorIds: string[] | undefined;
-    if (preview === '1') {
+    if (isPreview) {
       const privyDid = await getPrivyToken(context.req);
       if (privyDid) {
         const previewUser = await prisma.user.findUnique({
@@ -154,11 +157,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 
     await Promise.all(prefetchPromises);
+  }
+  if (isPreview) {
+    res.setHeader('Cache-Control', 'private, no-store');
+  } else if (listingData?.id) {
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   }
   return {
     props: {
       listing: listingData,
+      isPreview,
       dehydratedState: dehydrate(queryClient),
     },
   };
