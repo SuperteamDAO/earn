@@ -7,6 +7,7 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
+import { grantApplicationMutationSelect } from '@/features/sponsor-dashboard/constants/grantApplicationMutation';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   if (req.method !== 'PUT') {
@@ -26,7 +27,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: { id },
       select: {
         grantId: true,
+        userId: true,
         applicationStatus: true,
+        grant: {
+          select: {
+            pocId: true,
+          },
+        },
       },
     });
 
@@ -55,10 +62,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       data: {
         applicationStatus: 'Completed',
       },
-      include: {
-        user: true,
-        grant: true,
-      },
+      select: grantApplicationMutationSelect,
     });
 
     if (!result) {
@@ -70,8 +74,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       await queueEmail({
         type: 'grantCompleted',
         id: result.id,
-        userId: result.user.id,
-        triggeredBy: result.grant.pocId,
+        userId: currentApplication.userId,
+        triggeredBy: currentApplication.grant.pocId,
       });
     } catch (err) {
       logger.error(
