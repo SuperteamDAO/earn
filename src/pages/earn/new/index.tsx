@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
+import { type UserSponsorsResponse } from '@/app/api/user-sponsors/route';
 import MdCheck from '@/components/icons/MdCheck';
 import { SponsorButton } from '@/components/ProfileSetup/SponsorButton';
 import { TalentButton } from '@/components/ProfileSetup/TalentButton';
@@ -68,8 +69,9 @@ export default function NewProfilePage({
     if (!user) return;
     try {
       // localStorage.removeItem(ONBOARDING_KEY);
-      const sponsors = await api.get('/api/user-sponsors');
-      if (sponsors?.data?.length && user.currentSponsorId) {
+      const { data } =
+        await api.get<UserSponsorsResponse>('/api/user-sponsors');
+      if (data.hasSponsorMembership && user.currentSponsorId) {
         router.push('/earn/dashboard/listings?open=1');
       } else {
         const originUrl = params?.get('originUrl');
