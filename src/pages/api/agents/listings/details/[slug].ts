@@ -6,8 +6,14 @@ import { convertDatesToISO, safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithAgent } from '@/features/auth/types';
 import { withAgentAuth } from '@/features/auth/utils/withAgentAuth';
+import { publicListingDetailsSelect } from '@/features/listings/constants/publicListingDetails';
+import { type PublicListingDetails } from '@/features/listings/types';
 
-async function getAgentListingDetailsBySlug(slug: string): Promise<any> {
+export type AgentListingDetailsResponse = PublicListingDetails;
+
+async function getAgentListingDetailsBySlug(
+  slug: string,
+): Promise<AgentListingDetailsResponse | null> {
   if (!slug) {
     throw new Error('Missing required query parameters: slug');
   }
@@ -21,51 +27,12 @@ async function getAgentListingDetailsBySlug(slug: string): Promise<any> {
         isVerified: true,
       },
     },
-    include: {
-      sponsor: {
-        select: {
-          name: true,
-          logo: true,
-          slug: true,
-          entityName: true,
-          isVerified: true,
-          isCaution: true,
-        },
-      },
-      poc: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          username: true,
-          photo: true,
-        },
-      },
-      Hackathon: {
-        select: {
-          logo: true,
-          altLogo: true,
-          startDate: true,
-          name: true,
-          description: true,
-          slug: true,
-          announceDate: true,
-          sponsorId: true,
-          Sponsor: {
-            select: {
-              name: true,
-              logo: true,
-              entityName: true,
-              isVerified: true,
-              isCaution: true,
-            },
-          },
-        },
-      },
-    },
+    select: publicListingDetailsSelect,
   });
 
-  return convertDatesToISO(result);
+  return convertDatesToISO(
+    result,
+  ) as unknown as AgentListingDetailsResponse | null;
 }
 
 async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
@@ -93,13 +60,13 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
 
     logger.info(`Successfully fetched bounty details for slug=${slug}`);
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(
       `Error fetching bounty with slug=${slug}:`,
       safeStringify(error),
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: `Error occurred while fetching bounty with slug=${slug}.`,
     });
   }
