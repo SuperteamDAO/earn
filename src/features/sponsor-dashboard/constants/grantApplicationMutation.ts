@@ -14,3 +14,8 @@ export const grantApplicationMutationSelect = {
 export type GrantApplicationMutationResponse = GrantApplicationGetPayload<{
   select: typeof grantApplicationMutationSelect;
 }>;
+
+export interface GrantApplicationStatusMutationResponse {
+  success: true;
+  applicationIds: string[];
+}

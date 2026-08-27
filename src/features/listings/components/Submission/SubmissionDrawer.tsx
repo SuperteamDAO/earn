@@ -47,7 +47,7 @@ import {
 
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
-import { type Listing } from '../../types';
+import { type Listing, type SubmissionMutationResponse } from '../../types';
 import { getCombinedRegion } from '../../utils/region';
 import { submissionSchema } from '../../utils/submissionFormSchema';
 import { SubmissionTerms } from './SubmissionTerms';
@@ -454,7 +454,7 @@ export const SubmissionDrawer = ({
         ? '/api/submission/update/'
         : '/api/submission/create/';
 
-      await api.post(submissionEndpoint, {
+      await api.post<SubmissionMutationResponse>(submissionEndpoint, {
         listingId: id,
         link: data.link || '',
         tweet: data.tweet || '',
