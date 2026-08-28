@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     logger.error(`Error updating ogImage: ${safeStringify(error)}`);
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: 'Internal Server Error' },
       { status: 500 },
     );
   }

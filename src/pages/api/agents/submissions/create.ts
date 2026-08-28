@@ -100,8 +100,8 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
     );
 
     return res.status(statusCode).json({
-      error: error.message,
-      message: `Agent ${agentId} unable to submit: ${error.message}`,
+      error: 'Internal Server Error',
+      message: 'Unable to create submission.',
     });
   }
 }

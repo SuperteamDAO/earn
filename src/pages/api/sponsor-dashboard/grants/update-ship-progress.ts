@@ -89,7 +89,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Error updating grant application with ID ${id}: ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while updating the grant application.',
     });
   }

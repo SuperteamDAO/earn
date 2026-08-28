@@ -67,7 +67,10 @@ export async function GET(_request: NextRequest) {
       error: error.message,
     });
     return NextResponse.json(
-      { error: error.message, message: 'Error occurred while fetching totals' },
+      {
+        error: 'Internal Server Error',
+        message: 'Error occurred while fetching totals',
+      },
       { status: 400 },
     );
   }

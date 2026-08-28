@@ -33,7 +33,7 @@ async function poWLike(req: NextApiRequestWithUser, res: NextApiResponse) {
       safeStringify(error),
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while updating PoW like',
     });
   }

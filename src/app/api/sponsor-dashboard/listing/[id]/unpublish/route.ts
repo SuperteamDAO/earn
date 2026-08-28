@@ -154,7 +154,7 @@ export async function POST(
     logger.error(`Error unpublishing listing ${id}: ${safeStringify(error)}`);
     return NextResponse.json(
       {
-        error: error.message,
+        error: 'Internal Server Error',
         message: 'Error occurred while unpublishing a listing.',
       },
       { status: 400 },

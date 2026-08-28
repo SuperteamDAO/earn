@@ -154,8 +154,8 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     } catch {}
 
     return res.status(statusCode).json({
-      error: error.message,
-      message: `Unable to update submission: ${error.message}`,
+      error: 'Internal Server Error',
+      message: 'Unable to update submission.',
     });
   }
 }

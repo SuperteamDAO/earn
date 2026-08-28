@@ -229,7 +229,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           submissionId: paymentLink.submissionId,
           txId: paymentLink.txId || '',
           status: 'FAIL',
-          message: error.message,
+          message: 'Payment verification failed',
         });
         await wait(5000);
         logger.warn(

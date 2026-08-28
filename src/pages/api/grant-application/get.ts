@@ -40,7 +40,7 @@ async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Error fetching Grant Application for user=${userId} and grantId=${id}: ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while getting the grant application.',
     });
   }
