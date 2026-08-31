@@ -13,7 +13,10 @@ import {
   listingSelect,
   QueryParamsSchema,
 } from '@/features/listings/constants/schema';
-import { buildListingQuery } from '@/features/listings/utils/query-builder';
+import {
+  buildListingQuery,
+  shouldPrioritizeFeatured,
+} from '@/features/listings/utils/query-builder';
 import { reorderFeaturedOngoing } from '@/features/listings/utils/reorderFeaturedOngoing';
 
 export async function GET(request: NextRequest) {
@@ -85,7 +88,9 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    const reorderedListings = reorderFeaturedOngoing(listings);
+    const orderedListings = shouldPrioritizeFeatured(queryData)
+      ? reorderFeaturedOngoing(listings)
+      : listings;
 
     const isBookmarksContext = queryData.context === 'bookmarks';
     const headersInit = isBookmarksContext
@@ -98,7 +103,7 @@ export async function GET(request: NextRequest) {
           Vary: 'Cookie',
         };
 
-    return NextResponse.json(reorderedListings, {
+    return NextResponse.json(orderedListings, {
       headers: headersInit,
     });
   } catch (error) {
