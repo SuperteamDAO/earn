@@ -34,6 +34,7 @@ import {
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantApplicationAtom } from '../../atoms';
+import { type GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
 import { type GrantApplicationsReturn } from '../../queries/applications';
 import { type GrantApplicationWithUser } from '../../types';
 import { InfoBox } from '../InfoBox';
@@ -142,9 +143,13 @@ export const ApplicationDetails = ({
   );
 
   const updateApplicationState = (
-    updatedApplication: GrantApplicationWithUser,
+    updatedApplication: GrantApplicationMutationResponse,
   ) => {
-    setSelectedApplication(updatedApplication);
+    setSelectedApplication((currentApplication) =>
+      currentApplication?.id === updatedApplication.id
+        ? { ...currentApplication, ...updatedApplication }
+        : currentApplication,
+    );
 
     queryClient.setQueryData<GrantApplicationsReturn>(
       ['sponsor-applications', grant?.slug],
@@ -152,7 +157,7 @@ export const ApplicationDetails = ({
         if (!oldData) return oldData;
         const data = oldData?.data.map((application) =>
           application.id === updatedApplication.id
-            ? updatedApplication
+            ? { ...application, ...updatedApplication }
             : application,
         );
         return {
