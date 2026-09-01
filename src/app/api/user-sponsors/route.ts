@@ -7,7 +7,13 @@ import { safeStringify } from '@/utils/safeStringify';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 
+export interface UserSponsorsResponse {
+  hasSponsorMembership: boolean;
+}
+
 export async function GET(_request: NextRequest) {
+  let userId: string | undefined;
+
   try {
     const headersList = await headers();
     const sessionResponse = await getUserSession(headersList);
@@ -19,27 +25,29 @@ export async function GET(_request: NextRequest) {
       );
     }
 
-    const { userId } = sessionResponse.data;
+    userId = sessionResponse.data.userId;
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    const result = await prisma.userSponsors.findMany({
+    const sponsorMembership = await prisma.userSponsors.findFirst({
       where: { userId },
-      orderBy: { updatedAt: 'asc' },
-      include: { sponsor: true },
+      select: { userId: true },
     });
 
-    logger.info(`Fetched user sponsors for user ID: ${userId}`);
-    return NextResponse.json(result);
-  } catch (error: any) {
-    const { userId } = (await getUserSession(await headers())).data || {};
+    logger.info(`Checked sponsor membership for user ID: ${userId}`);
+    return NextResponse.json<UserSponsorsResponse>({
+      hasSponsorMembership: sponsorMembership !== null,
+    });
+  } catch (error: unknown) {
     logger.error(
-      `Error occurred while fetching user sponsors for user ID: ${userId} - ${safeStringify(error)}`,
+      `Error occurred while checking sponsor membership for user ID: ${userId ?? 'unknown'} - ${safeStringify(error)}`,
     );
     return NextResponse.json(
       {
-        error,
-        message: 'Error occurred while fetching user sponsors.',
+        error: 'Unable to check sponsor membership.',
       },
-      { status: 400 },
+      { status: 500 },
     );
   }
 }

@@ -18,6 +18,7 @@ import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
 import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
+import { type GrantApplicationStatusMutationResponse } from '@/features/sponsor-dashboard/constants/grantApplicationMutation';
 import { validateCustomEmailNote } from '@/features/sponsor-dashboard/utils/customEmailSanitizer';
 import {
   getGrantApprovedEmailBody,
@@ -380,13 +381,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
-    return res.status(200).json(result);
+    const response: GrantApplicationStatusMutationResponse = {
+      success: true,
+      applicationIds: result.map((application) => application.id),
+    };
+
+    return res.status(200).json(response);
   } catch (error: any) {
     logger.error(
       `Error occurred while updating grant application ID: ${data.map((c) => c.id)}:  ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while updating the grant application.',
     });
   }

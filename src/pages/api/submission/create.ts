@@ -14,6 +14,7 @@ import {
   sanitizeGrantApplicationAnswers,
   sanitizeGrantApplicationHtml,
 } from '@/features/grants/utils/sanitizeGrantApplicationHtml';
+import { type SubmissionMutationResponse } from '@/features/listings/types';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
@@ -186,7 +187,12 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       );
     }
 
-    return res.status(200).json(result);
+    const response: SubmissionMutationResponse = {
+      success: true,
+      submissionId: result.id,
+    };
+
+    return res.status(200).json(response);
   } catch (error: any) {
     const statusCode = error.message.includes('Validation') ? 400 : 403;
     logger.error(`User ${userId} unable to submit: ${safeStringify(error)}`);
