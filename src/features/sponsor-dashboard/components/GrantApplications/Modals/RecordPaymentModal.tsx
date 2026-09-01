@@ -19,6 +19,8 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 
+import { type GrantApplicationMutationResponse } from '../../../constants/grantApplicationMutation';
+
 interface RecordPaymentModalProps {
   recordPaymentIsOpen: boolean;
   recordPaymentOnClose: () => void;
@@ -26,7 +28,9 @@ interface RecordPaymentModalProps {
   approvedAmount: number;
   totalPaid: number;
   token: string;
-  onPaymentRecorded: (newTotalPaid: number) => void;
+  onPaymentRecorded: (
+    updatedApplication: GrantApplicationMutationResponse,
+  ) => void;
 }
 
 const paymentSchema = (maxAmount: number, token: string) =>
@@ -74,7 +78,7 @@ export const RecordPaymentModal = ({
 
   const addPaymentMutation = useMutation({
     mutationFn: async (data: PaymentFormInputs) => {
-      const response = await api.post(
+      const response = await api.post<GrantApplicationMutationResponse>(
         `/api/sponsor-dashboard/grants/add-tranche`,
         {
           id: applicationId,
