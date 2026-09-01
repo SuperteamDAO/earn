@@ -5,8 +5,8 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
-import { withAuth } from '@/features/auth/utils/withAuth';
+import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 function extractTweetId(url: string): string | null {
   if (!url || typeof url !== 'string') return null;
@@ -46,7 +46,23 @@ const tweetStatsQuerySchema = z.object({
   }),
 });
 
-async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET');
+    return res.status(405).json({
+      error: 'Method Not Allowed',
+      message: 'Only GET requests are supported',
+    });
+  }
+
+  if (!req.userSponsorId) {
+    logger.warn(`Tweet stats access denied for user ${req.userId}`);
+    return res.status(403).json({
+      error: 'Unauthorized',
+      message: 'User does not have an active sponsor',
+    });
+  }
+
   const validation = tweetStatsQuerySchema.safeParse(req.query);
 
   if (!validation.success) {
@@ -64,13 +80,17 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
   let tweetUrl: string | null = null;
   try {
-    const submission = await prisma.submission.findUnique({
-      where: { id: submissionId },
+    const submission = await prisma.submission.findFirst({
+      where: {
+        id: submissionId,
+      },
       select: { link: true, tweet: true },
     });
 
     if (!submission) {
-      logger.warn(`Submission not found: ${submissionId}`);
+      logger.warn(
+        `Submission ${submissionId} not found or inaccessible to user ${req.userId}`,
+      );
       return res.status(404).json({
         error: 'Submission not found',
         message: 'Submission not found',
@@ -228,4 +248,4 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withSponsorAuth(handler);
