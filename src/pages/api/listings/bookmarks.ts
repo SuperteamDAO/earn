@@ -56,7 +56,7 @@ async function getBookmarks(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Error occurred while fetching bookmarks for user ID=${req.userId}: ${safeStringify(error)}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while fetching bookmarks.',
     });
   }

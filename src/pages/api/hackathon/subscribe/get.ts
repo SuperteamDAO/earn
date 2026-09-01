@@ -35,7 +35,7 @@ export default async function handler(
       `Error occurred while fetching subscription status for hackathon slug=${req.body.slug}: ${safeStringify(error)}`,
     );
     res.status(400).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while fetching subscription status.',
     });
   }

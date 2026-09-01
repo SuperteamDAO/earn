@@ -546,6 +546,6 @@ export default async function handler(
     logger.error(
       `Error occurred while fetching submissions and PoWs: ${safeStringify(error)}`,
     );
-    res.status(500).json({ error: `Unable to fetch data: ${error.message}` });
+    res.status(500).json({ error: 'Unable to fetch data.' });
   }
 }

@@ -42,7 +42,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Error occurred while updating sponsor for user ${userId}: ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message || 'Internal server error',
+      error: 'Internal Server Error',
       message: 'Error occurred while updating sponsor.',
     });
   }

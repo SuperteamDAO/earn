@@ -119,7 +119,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Error fetching grant with slug=${slug} for user=${userId}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: `Error occurred while fetching grant with slug=${slug}.`,
     });
   }

@@ -60,8 +60,8 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
   } catch (error) {
     logger.error(error);
 
-    res.status(400).json({
-      error,
+    res.status(500).json({
+      error: 'Internal Server Error',
       message: 'Error occurred while fetching listings',
     });
   }

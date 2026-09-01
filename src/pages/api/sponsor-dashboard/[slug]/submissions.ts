@@ -153,7 +153,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Error occurred while fetching submissions for slug=${slug}: ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: `Error occurred while fetching submissions with slug=${slug}.`,
     });
   }

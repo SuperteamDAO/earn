@@ -198,8 +198,8 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     logger.error(`User ${userId} unable to submit: ${safeStringify(error)}`);
 
     return res.status(statusCode).json({
-      error: error.message,
-      message: `User ${userId} unable to submit: ${error.message}`,
+      error: 'Internal Server Error',
+      message: 'Unable to create submission.',
     });
   }
 }

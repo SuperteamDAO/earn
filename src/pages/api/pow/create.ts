@@ -80,7 +80,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       safeStringify(error),
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
     });
   }
 }

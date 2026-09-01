@@ -2087,7 +2087,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Error resolving userIds from privyDids: ${safeStringify(error)}`,
     );
     return res.status(500).json({
-      error: error?.message || 'Internal server error',
+      error: 'Internal Server Error',
       message: 'Error occurred while resolving user IDs from privyDids.',
     });
   }

@@ -116,7 +116,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Error occurred while adding a new sponsor for user ${userId}: ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message || 'Internal server error',
+      error: 'Internal Server Error',
       message: 'Error occurred while adding a new sponsor.',
     });
   }

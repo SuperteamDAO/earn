@@ -160,7 +160,7 @@ export async function POST(
     );
     return NextResponse.json(
       {
-        error: error.message,
+        error: 'Internal Server Error',
         message: 'Error occurred while publishing a Listing.',
       },
       { status: 500 },
