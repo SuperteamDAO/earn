@@ -41,9 +41,58 @@ const tweetStatsQuerySchema = z.object({
     })
     .trim()
     .min(1, 'Missing or invalid submissionId parameter'),
-  type: z.enum(['link', 'tweet'], {
-    required_error: 'Missing or invalid type parameter',
-  }),
+});
+
+type TweetSource = 'link' | 'tweet';
+
+interface TwitterPublicMetrics {
+  impression_count?: number;
+  like_count?: number;
+  quote_count?: number;
+  reply_count?: number;
+  retweet_count?: number;
+}
+
+interface TweetMetrics {
+  views: number;
+  likes: number;
+  retweets: number;
+  comments: number;
+  isAvailable: boolean;
+}
+
+const unavailableMetrics = (): TweetMetrics => ({
+  views: 0,
+  likes: 0,
+  retweets: 0,
+  comments: 0,
+  isAvailable: false,
+});
+
+const toTweetMetrics = (
+  metrics: TwitterPublicMetrics | undefined,
+): TweetMetrics => {
+  if (!metrics) return unavailableMetrics();
+
+  return {
+    views: metrics.impression_count || 0,
+    likes: metrics.like_count || 0,
+    retweets: (metrics.retweet_count || 0) + (metrics.quote_count || 0),
+    comments: metrics.reply_count || 0,
+    isAvailable: true,
+  };
+};
+
+const buildStatsBySource = (
+  tweetIds: Record<TweetSource, string | null>,
+  metricsByTweetId: Map<string, TwitterPublicMetrics> = new Map(),
+): Record<TweetSource, TweetMetrics | null> => ({
+  link: tweetIds.link
+    ? toTweetMetrics(metricsByTweetId.get(tweetIds.link))
+    : null,
+  tweet: tweetIds.tweet
+    ? toTweetMetrics(metricsByTweetId.get(tweetIds.tweet))
+    : null,
 });
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
@@ -76,18 +125,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
   }
 
-  const { submissionId, type } = validation.data;
+  const { submissionId } = validation.data;
 
-  let tweetUrl: string | null = null;
+  let submission: { link: string | null; tweet: string | null };
   try {
-    const submission = await prisma.submission.findFirst({
+    const foundSubmission = await prisma.submission.findFirst({
       where: {
         id: submissionId,
       },
       select: { link: true, tweet: true },
     });
 
-    if (!submission) {
+    if (!foundSubmission) {
       logger.warn(
         `Submission ${submissionId} not found or inaccessible to user ${req.userId}`,
       );
@@ -97,7 +146,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    tweetUrl = type === 'link' ? submission.link : submission.tweet;
+    submission = foundSubmission;
   } catch (error: any) {
     logger.error(
       `Error querying submission ${submissionId}: ${safeStringify(error)}`,
@@ -108,35 +157,22 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
   }
 
-  if (!tweetUrl) {
-    return res.status(200).json({
-      data: {
-        views: 0,
-        likes: 0,
-        retweets: 0,
-        comments: 0,
-        isMocked: false,
-        isAvailable: false,
-      },
-      message: 'No URL found in submission',
-    });
-  }
+  const tweetIds: Record<TweetSource, string | null> = {
+    link: submission.link ? extractTweetId(submission.link) : null,
+    tweet: submission.tweet ? extractTweetId(submission.tweet) : null,
+  };
+  const uniqueTweetIds = [
+    ...new Set(
+      Object.values(tweetIds).filter((tweetId): tweetId is string =>
+        Boolean(tweetId),
+      ),
+    ),
+  ];
 
-  const tweetId = extractTweetId(tweetUrl);
-  if (!tweetId) {
-    logger.warn(
-      `Invalid Twitter/X post URL in submission ${submissionId} ${type}: ${tweetUrl}`,
-    );
+  if (uniqueTweetIds.length === 0) {
     return res.status(200).json({
-      data: {
-        views: 0,
-        likes: 0,
-        retweets: 0,
-        comments: 0,
-        isMocked: false,
-        isAvailable: false,
-      },
-      message: 'Invalid Twitter/X post URL',
+      data: buildStatsBySource(tweetIds),
+      message: 'No valid Twitter/X post URLs found in submission',
     });
   }
 
@@ -148,14 +184,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       'Twitter/X API bearer token is not configured. Returning 0 metrics.',
     );
     return res.status(200).json({
-      data: {
-        views: 0,
-        likes: 0,
-        retweets: 0,
-        comments: 0,
-        isMocked: false,
-        isAvailable: false,
-      },
+      data: buildStatsBySource(tweetIds),
       message: 'Operation successful',
     });
   }
@@ -166,62 +195,46 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   }, 5000);
 
   try {
-    const response = await fetch(
-      `https://api.twitter.com/2/tweets/${tweetId}?tweet.fields=public_metrics`,
-      {
-        headers: {
-          Authorization: `Bearer ${bearerToken}`,
-        },
-        signal: controller.signal,
+    const twitterUrl = new URL('https://api.twitter.com/2/tweets');
+    twitterUrl.searchParams.set('ids', uniqueTweetIds.join(','));
+    twitterUrl.searchParams.set('tweet.fields', 'public_metrics');
+
+    const response = await fetch(twitterUrl, {
+      headers: {
+        Authorization: `Bearer ${bearerToken}`,
       },
-    );
+      signal: controller.signal,
+    });
 
     if (!response.ok) {
       logger.error(
         `Twitter API responded with status ${response.status}: ${await response.text()}`,
       );
       return res.status(200).json({
-        data: {
-          views: 0,
-          likes: 0,
-          retweets: 0,
-          comments: 0,
-          isMocked: false,
-          isAvailable: false,
-        },
+        data: buildStatsBySource(tweetIds),
         message: 'Operation successful',
       });
     }
 
-    const json = await response.json();
-    const metrics = json.data?.public_metrics;
+    const json = (await response.json()) as {
+      data?: Array<{ id?: string; public_metrics?: TwitterPublicMetrics }>;
+    };
+    const metricsByTweetId = new Map<string, TwitterPublicMetrics>();
 
-    if (!metrics) {
+    for (const tweet of json.data || []) {
+      if (tweet.id && tweet.public_metrics) {
+        metricsByTweetId.set(tweet.id, tweet.public_metrics);
+      }
+    }
+
+    if (metricsByTweetId.size === 0) {
       logger.warn(
-        `Metrics not found in Twitter API response for tweetId: ${tweetId}`,
+        `Metrics not found in Twitter API response for tweetIds: ${uniqueTweetIds.join(',')}`,
       );
-      return res.status(200).json({
-        data: {
-          views: 0,
-          likes: 0,
-          retweets: 0,
-          comments: 0,
-          isMocked: false,
-          isAvailable: false,
-        },
-        message: 'Operation successful',
-      });
     }
 
     return res.status(200).json({
-      data: {
-        views: metrics.impression_count || 0,
-        likes: metrics.like_count || 0,
-        retweets: (metrics.retweet_count || 0) + (metrics.quote_count || 0),
-        comments: metrics.reply_count || 0,
-        isMocked: false,
-        isAvailable: true,
-      },
+      data: buildStatsBySource(tweetIds, metricsByTweetId),
       message: 'Operation successful',
     });
   } catch (error: any) {
@@ -233,14 +246,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       );
     }
     return res.status(200).json({
-      data: {
-        views: 0,
-        likes: 0,
-        retweets: 0,
-        comments: 0,
-        isMocked: false,
-        isAvailable: false,
-      },
+      data: buildStatsBySource(tweetIds),
       message: 'Operation successful',
     });
   } finally {
