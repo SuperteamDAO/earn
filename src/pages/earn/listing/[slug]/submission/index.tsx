@@ -51,11 +51,13 @@ const SubmissionPage = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
+  const { res } = context;
 
   try {
     const { bounty, submission } = await getSubmissionsData(slug as string);
 
     if (!bounty) {
+      res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
       return {
         props: {
           slug,
@@ -65,6 +67,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       };
     }
 
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
     return {
       props: {
         slug,
@@ -74,6 +77,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   } catch (e) {
     console.log(e);
+    res.setHeader('Cache-Control', 'no-store');
     return {
       props: {
         slug,

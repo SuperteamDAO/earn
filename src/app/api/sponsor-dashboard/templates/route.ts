@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
     );
     return NextResponse.json(
       {
-        error: err.message,
+        error: 'Internal Server Error',
         message: 'Error occurred while fetching bounties.',
       },
       { status: 400 },

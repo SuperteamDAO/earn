@@ -114,7 +114,7 @@ async function sendInvites(
       `User ${userId} unable to send invite: ${safeStringify(error)}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while sending the invite.',
     });
   }

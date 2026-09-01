@@ -27,7 +27,7 @@ export async function GET(_request: NextRequest) {
     return NextResponse.json({ balance });
   } catch (error: any) {
     return NextResponse.json(
-      { error: error.message || 'Internal Server Error' },
+      { error: 'Internal Server Error' },
       { status: 500 },
     );
   }

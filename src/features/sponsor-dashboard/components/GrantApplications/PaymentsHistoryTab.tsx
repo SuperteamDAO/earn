@@ -21,6 +21,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { type Grant } from '@/features/grants/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import { type GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
 import { approvedGranteesQuery } from '../../queries/approved-grantees';
 import { type GrantApplicationWithUser } from '../../types';
 import { RecordPaymentButton } from './RecordPaymentButton';
@@ -175,13 +176,15 @@ export const PaymentsHistoryTab = ({
   };
 
   const handlePaymentRecorded = (
-    updatedApplication: GrantApplicationWithUser,
+    updatedApplication: GrantApplicationMutationResponse,
   ) => {
     queryClient.setQueryData<GrantApplicationWithUser[]>(
       ['approved-grantees', grantId, searchTerm],
       (oldData) =>
         oldData?.map((grantee) =>
-          grantee.id === updatedApplication.id ? updatedApplication : grantee,
+          grantee.id === updatedApplication.id
+            ? { ...grantee, ...updatedApplication }
+            : grantee,
         ),
     );
   };

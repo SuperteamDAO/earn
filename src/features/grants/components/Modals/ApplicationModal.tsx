@@ -31,7 +31,6 @@ import {
 } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
-import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -48,6 +47,7 @@ import {
   isHandleVerified,
 } from '@/features/social/utils/x-verification';
 
+import { type UserApplicationResponse } from '../../constants/userApplication';
 import { userApplicationQuery } from '../../queries/user-application';
 import { type Grant, type GrantQuestion } from '../../types';
 import {
@@ -78,7 +78,7 @@ type FormData = z.infer<ReturnType<typeof grantApplicationSchema>>;
 
 interface Props {
   grant: Grant;
-  grantApplication: GrantApplicationModel | undefined;
+  grantApplication: UserApplicationResponse | undefined;
   modalRef: React.RefObject<HTMLDivElement | null>;
   onClose: () => void;
 }

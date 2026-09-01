@@ -14,11 +14,13 @@ import { ListingPageLayout } from '@/layouts/Listing';
 import { getSubmissionCount } from '@/pages/api/listings/[listingId]/submission-count';
 import { getWinningSubmissionsByListingId } from '@/pages/api/listings/[listingId]/winners';
 import { getListingDetailsBySlug } from '@/pages/api/listings/details/[slug]';
+import { prisma } from '@/prisma';
 import {
   generateBreadcrumbListSchema,
   generateJobPostingSchema,
 } from '@/utils/json-ld';
 
+import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { ListingPop } from '@/features/conversion-popups/components/ListingPop';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
 import { listingWinnersQuery } from '@/features/listings/queries/listing-winners';
@@ -35,11 +37,13 @@ const ListingWinners = dynamic(
 
 interface ListingDetailsProps {
   listing: PublicListingDetails | null;
+  isPreview: boolean;
   dehydratedState: DehydratedState;
 }
 
 function ListingDetails({
   listing: initialListing,
+  isPreview,
   dehydratedState,
 }: ListingDetailsProps) {
   const jobPostingSchema = initialListing
@@ -60,7 +64,7 @@ function ListingDetails({
   return (
     <>
       <HydrationBoundary state={dehydratedState}>
-        {initialListing?.isPrivate && (
+        {(initialListing?.isPrivate || isPreview) && (
           <Head>
             <meta name="robots" content="noindex, nofollow" />
             <meta name="googlebot" content="noindex, nofollow" />
@@ -99,10 +103,37 @@ function ListingDetails({
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { slug } = context.query;
+  const { preview, slug } = context.query;
+  const { res } = context;
+  const isPreview = preview === '1';
   let listingData: PublicListingDetails | null;
   try {
-    listingData = await getListingDetailsBySlug(String(slug));
+    let canViewAllUnpublished = false;
+    let unpublishedSponsorIds: string[] | undefined;
+    if (isPreview) {
+      const privyDid = await getPrivyToken(context.req);
+      if (privyDid) {
+        const previewUser = await prisma.user.findUnique({
+          where: { privyDid },
+          select: {
+            isBlocked: true,
+            role: true,
+            UserSponsors: { select: { sponsorId: true } },
+          },
+        });
+        if (!previewUser?.isBlocked) {
+          canViewAllUnpublished = previewUser?.role === 'GOD';
+          unpublishedSponsorIds = previewUser?.UserSponsors.map(
+            ({ sponsorId }) => sponsorId,
+          );
+        }
+      }
+    }
+
+    listingData = await getListingDetailsBySlug(String(slug), {
+      canViewAllUnpublished,
+      unpublishedSponsorIds,
+    });
   } catch (e) {
     console.error(e);
     listingData = null;
@@ -127,9 +158,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     await Promise.all(prefetchPromises);
   }
+  if (isPreview) {
+    res.setHeader('Cache-Control', 'private, no-store');
+  } else if (listingData?.id) {
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
+  }
   return {
     props: {
       listing: listingData,
+      isPreview,
       dehydratedState: dehydrate(queryClient),
     },
   };

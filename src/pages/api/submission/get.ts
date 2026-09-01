@@ -42,7 +42,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Error fetching submission for user=${userId} and listingId=${id}: ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while getting the submission.',
     });
   }

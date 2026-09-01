@@ -107,8 +107,8 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
     } catch {}
 
     return res.status(statusCode).json({
-      error: error.message,
-      message: `Agent ${agentId} unable to update submission: ${error.message}`,
+      error: 'Internal Server Error',
+      message: 'Unable to update submission.',
     });
   }
 }
