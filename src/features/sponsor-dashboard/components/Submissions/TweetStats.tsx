@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import {
   Eye,
   Heart,
@@ -6,7 +8,8 @@ import {
   Loader2,
   AlertCircle,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+
+import { api } from '@/lib/api';
 
 interface TweetMetrics {
   views: number;
@@ -17,6 +20,20 @@ interface TweetMetrics {
   isAvailable?: boolean;
 }
 
+interface TweetStatsResponse {
+  data: TweetMetrics;
+}
+
+const TWEET_STATS_CACHE_TIME = 24 * 60 * 60 * 1000;
+
+const getTweetStatsErrorMessage = (error: unknown): string => {
+  if (isAxiosError<{ message?: string }>(error)) {
+    return error.response?.data?.message || 'Failed to fetch tweet statistics';
+  }
+
+  return error instanceof Error ? error.message : 'Error loading stats';
+};
+
 export const TweetStats = ({
   submissionId,
   type,
@@ -24,47 +41,31 @@ export const TweetStats = ({
   submissionId: string;
   type: 'link' | 'tweet';
 }) => {
-  const [metrics, setMetrics] = useState<TweetMetrics | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    data: metrics,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ['tweet-stats', submissionId, type],
+    queryFn: async ({ signal }): Promise<TweetMetrics> => {
+      const response = await api.get<TweetStatsResponse>(
+        '/api/twitter/tweet-stats',
+        {
+          params: { submissionId, type },
+          signal,
+        },
+      );
 
-  useEffect(() => {
-    let active = true;
-    const fetchStats = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetch(
-          `/api/twitter/tweet-stats?submissionId=${submissionId}&type=${type}`,
-        );
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(
-            errData.message || 'Failed to fetch tweet statistics',
-          );
-        }
-        const json = await res.json();
-        if (active) {
-          setMetrics(json.data);
-        }
-      } catch (err: any) {
-        if (active) {
-          setError(err.message || 'Error loading stats');
-        }
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    };
+      return response.data.data;
+    },
+    staleTime: TWEET_STATS_CACHE_TIME,
+    gcTime: TWEET_STATS_CACHE_TIME,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: false,
+  });
 
-    fetchStats();
-    return () => {
-      active = false;
-    };
-  }, [submissionId, type]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="mb-4 flex max-w-md animate-pulse items-center space-x-2 rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-2.5">
         <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
@@ -79,7 +80,9 @@ export const TweetStats = ({
     return (
       <div className="mb-4 flex max-w-md items-center space-x-2 rounded-xl border border-red-100/50 bg-red-50/30 px-3 py-2.5">
         <AlertCircle className="h-4 w-4 text-red-500" />
-        <span className="text-xs font-medium text-red-600">{error}</span>
+        <span className="text-xs font-medium text-red-600">
+          {getTweetStatsErrorMessage(error)}
+        </span>
       </div>
     );
   }
