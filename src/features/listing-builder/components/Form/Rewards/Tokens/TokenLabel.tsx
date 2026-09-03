@@ -1,4 +1,4 @@
-import { type ClassValue } from 'clsx';
+import { type ClassValue } from 'cn';
 import { useWatch } from 'react-hook-form';
 
 import { type Token, useToken } from '@/constants/tokenList';
