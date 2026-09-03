@@ -1,6 +1,7 @@
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
+import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
 import { getTokenBySymbol } from '@/server/tokenList';
 import { safeStringify } from '@/utils/safeStringify';
@@ -49,182 +50,197 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   }
 
   try {
-    const currentSubmission = await prisma.submission.findUnique({
-      where: { id },
-      include: {
-        user: true,
-        listing: true,
-      },
-    });
-
-    if (!currentSubmission) {
-      logger.warn(`Submission with ID ${id} not found`);
-      return res.status(404).json({
-        message: `Submission with ID ${id} not found.`,
-      });
-    }
-
-    const userSponsorId = req.userSponsorId;
-
-    const { error } = await checkListingSponsorAuth(
-      userSponsorId,
-      currentSubmission.listingId,
-    );
-    if (error) {
-      return res.status(error.status).json({ error: error.message });
-    }
-
-    const { listing, user, winnerPosition } = currentSubmission;
-    const txIds = paymentDetails
-      .map((payment: { txId?: string }) => payment.txId)
-      .filter((txId: string | undefined): txId is string => !!txId)
-      .map(normalizePaymentTxId);
-    const duplicateTxIds = txIds.filter(
-      (txId, index) => txIds.indexOf(txId) !== index,
-    );
-    if (duplicateTxIds.length > 0) {
-      const uniqueDuplicateTxIds = [...new Set(duplicateTxIds)];
-      return res.status(400).json({
-        error: `Duplicate transaction IDs found: ${uniqueDuplicateTxIds.join(', ')}`,
-        message: `Duplicate transaction IDs found: ${uniqueDuplicateTxIds.join(', ')}`,
-      });
-    }
-
-    const alreadyUsedTxIds = await findUsedPaymentTxIds(txIds);
-    if (alreadyUsedTxIds.length > 0) {
-      return res.status(400).json({
-        error: `Transaction IDs already used: ${alreadyUsedTxIds.join(', ')}`,
-        message: `Transaction IDs already used: ${alreadyUsedTxIds.join(', ')}`,
-      });
-    }
-
-    const isProject = listing.type === 'project';
-    if (!isProject) {
-      if (paymentDetails.length > 1 || paymentDetail.tranche !== 1) {
-        logger.warn('Bounties only support single payment with tranche 1');
-        return res.status(400).json({
-          error: 'Bounties only support single payment with tranche 1',
-          message: 'Bounties only support single payment with tranche 1',
+    return await withRedisLock(
+      `locks:add-payment:${id}`,
+      async () => {
+        const currentSubmission = await prisma.submission.findUnique({
+          where: { id },
+          include: {
+            user: true,
+            listing: true,
+          },
         });
-      }
-    } else {
-      const existingPayments =
-        (currentSubmission.paymentDetails as any[]) || [];
-      const existingTranches = existingPayments.map((p) => p.tranche);
-      const newTranche = paymentDetail.tranche;
-      const expectedNextTranche = existingTranches.length + 1;
 
-      if (newTranche !== expectedNextTranche) {
-        logger.warn(
-          `Project tranche ${newTranche} is not the expected next tranche ${expectedNextTranche}`,
+        if (!currentSubmission) {
+          logger.warn(`Submission with ID ${id} not found`);
+          return res.status(404).json({
+            message: `Submission with ID ${id} not found.`,
+          });
+        }
+
+        const userSponsorId = req.userSponsorId;
+
+        const { error } = await checkListingSponsorAuth(
+          userSponsorId,
+          currentSubmission.listingId,
         );
-        return res.status(400).json({
-          error: `Expected tranche ${expectedNextTranche}, but received tranche ${newTranche}`,
-          message: `Expected tranche ${expectedNextTranche}, but received tranche ${newTranche}`,
+        if (error) {
+          return res.status(error.status).json({ error: error.message });
+        }
+
+        const { listing, user, winnerPosition } = currentSubmission;
+        const txIds = paymentDetails
+          .map((payment: { txId?: string }) => payment.txId)
+          .filter((txId: string | undefined): txId is string => !!txId)
+          .map(normalizePaymentTxId);
+        const duplicateTxIds = txIds.filter(
+          (txId, index) => txIds.indexOf(txId) !== index,
+        );
+        if (duplicateTxIds.length > 0) {
+          const uniqueDuplicateTxIds = [...new Set(duplicateTxIds)];
+          return res.status(400).json({
+            error: `Duplicate transaction IDs found: ${uniqueDuplicateTxIds.join(', ')}`,
+            message: `Duplicate transaction IDs found: ${uniqueDuplicateTxIds.join(', ')}`,
+          });
+        }
+
+        const alreadyUsedTxIds = await findUsedPaymentTxIds(txIds);
+        if (alreadyUsedTxIds.length > 0) {
+          return res.status(400).json({
+            error: `Transaction IDs already used: ${alreadyUsedTxIds.join(', ')}`,
+            message: `Transaction IDs already used: ${alreadyUsedTxIds.join(', ')}`,
+          });
+        }
+
+        const isProject = listing.type === 'project';
+        if (!isProject) {
+          if (paymentDetails.length > 1 || paymentDetail.tranche !== 1) {
+            logger.warn('Bounties only support single payment with tranche 1');
+            return res.status(400).json({
+              error: 'Bounties only support single payment with tranche 1',
+              message: 'Bounties only support single payment with tranche 1',
+            });
+          }
+        } else {
+          const existingPayments =
+            (currentSubmission.paymentDetails as any[]) || [];
+          const existingTranches = existingPayments.map((p) => p.tranche);
+          const newTranche = paymentDetail.tranche;
+          const expectedNextTranche = existingTranches.length + 1;
+
+          if (newTranche !== expectedNextTranche) {
+            logger.warn(
+              `Project tranche ${newTranche} is not the expected next tranche ${expectedNextTranche}`,
+            );
+            return res.status(400).json({
+              error: `Expected tranche ${expectedNextTranche}, but received tranche ${newTranche}`,
+              message: `Expected tranche ${expectedNextTranche}, but received tranche ${newTranche}`,
+            });
+          }
+        }
+
+        if (!winnerPosition) {
+          return res.status(400).json({
+            error: 'Submission has no winner position',
+            message: 'Submission has no winner position',
+          });
+        }
+
+        const winnerReward = (listing.rewards as Record<string, any>)?.[
+          winnerPosition + ''
+        ] as number;
+        if (!winnerReward) {
+          return res.status(400).json({
+            error: 'Winner position has no reward',
+            message: 'Winner position has no reward',
+          });
+        }
+
+        const dbToken = await getTokenBySymbol(listing.token);
+        if (!dbToken) {
+          return res.status(400).json({
+            error: "Token doesn't exist for this listing",
+            message: "Token doesn't exist for this listing",
+          });
+        }
+
+        let tokenPriceUSD: number | undefined;
+        try {
+          tokenPriceUSD = await fetchTokenUSDValue(dbToken.mintAddress);
+        } catch (err) {
+          logger.warn(
+            `Failed to fetch token price for ${dbToken.tokenSymbol}, falling back to fixed tolerance`,
+          );
+        }
+
+        logger.debug(`Validating transaction for submission ID: ${id}`);
+        const validationResult = await validatePayment({
+          txId: paymentDetail.txId,
+          recipientPublicKey: user.walletAddress!,
+          expectedAmount: paymentDetail.amount,
+          tokenMint: dbToken,
+          tokenPriceUSD,
         });
-      }
-    }
 
-    if (!winnerPosition) {
-      return res.status(400).json({
-        error: 'Submission has no winner position',
-        message: 'Submission has no winner position',
-      });
-    }
+        if (!validationResult.isValid) {
+          logger.warn(
+            `Transaction validation failed for submission ID: ${id}: ${validationResult.error}`,
+          );
+          return res.status(400).json({
+            error: validationResult.error,
+            message: `Transaction validation failed: ${validationResult.error}`,
+          });
+        }
 
-    const winnerReward = (listing.rewards as Record<string, any>)?.[
-      winnerPosition + ''
-    ] as number;
-    if (!winnerReward) {
-      return res.status(400).json({
-        error: 'Winner position has no reward',
-        message: 'Winner position has no reward',
-      });
-    }
+        const finalPaymentDetails = isProject
+          ? [
+              ...((currentSubmission.paymentDetails as any[]) || []),
+              ...paymentDetails,
+            ]
+          : paymentDetails;
 
-    const dbToken = await getTokenBySymbol(listing.token);
-    if (!dbToken) {
-      return res.status(400).json({
-        error: "Token doesn't exist for this listing",
-        message: "Token doesn't exist for this listing",
-      });
-    }
+        const totalAllPayments = finalPaymentDetails.reduce(
+          (sum, payment) => sum + payment.amount,
+          0,
+        );
+        const isFullyPaid = totalAllPayments >= winnerReward;
 
-    let tokenPriceUSD: number | undefined;
-    try {
-      tokenPriceUSD = await fetchTokenUSDValue(dbToken.mintAddress);
-    } catch (err) {
-      logger.warn(
-        `Failed to fetch token price for ${dbToken.tokenSymbol}, falling back to fixed tolerance`,
-      );
-    }
+        logger.debug(`Updating submission with ID: ${id}`);
+        const result = await prisma.submission.update({
+          where: {
+            id,
+          },
+          data: {
+            isPaid: isFullyPaid,
+            paymentDetails: finalPaymentDetails,
+          },
+        });
 
-    logger.debug(`Validating transaction for submission ID: ${id}`);
-    const validationResult = await validatePayment({
-      txId: paymentDetail.txId,
-      recipientPublicKey: user.walletAddress!,
-      expectedAmount: paymentDetail.amount,
-      tokenMint: dbToken,
-      tokenPriceUSD,
-    });
+        const bountyId = result.listingId;
+        const updatedBounty: any = {};
 
-    if (!validationResult.isValid) {
-      logger.warn(
-        `Transaction validation failed for submission ID: ${id}: ${validationResult.error}`,
-      );
-      return res.status(400).json({
-        error: validationResult.error,
-        message: `Transaction validation failed: ${validationResult.error}`,
-      });
-    }
+        logger.info(
+          `Sending payment notification email for submission ID: ${id}`,
+        );
+        await queueEmail({
+          type: 'addPayment',
+          id,
+          triggeredBy: userId,
+        });
 
-    const finalPaymentDetails = isProject
-      ? [
-          ...((currentSubmission.paymentDetails as any[]) || []),
-          ...paymentDetails,
-        ]
-      : paymentDetails;
+        logger.debug(`Updating bounty with ID: ${bountyId}`);
+        await prisma.bounties.update({
+          where: {
+            id: bountyId,
+          },
+          data: {
+            ...updatedBounty,
+          },
+        });
 
-    const totalAllPayments = finalPaymentDetails.reduce(
-      (sum, payment) => sum + payment.amount,
-      0,
+        logger.info(
+          `Successfully updated submission payment status for ID: ${id}`,
+        );
+        return res.status(200).json(result);
+      },
+      { ttlSeconds: 300 },
     );
-    const isFullyPaid = totalAllPayments >= winnerReward;
-
-    logger.debug(`Updating submission with ID: ${id}`);
-    const result = await prisma.submission.update({
-      where: {
-        id,
-      },
-      data: {
-        isPaid: isFullyPaid,
-        paymentDetails: finalPaymentDetails,
-      },
-    });
-
-    const bountyId = result.listingId;
-    const updatedBounty: any = {};
-
-    logger.info(`Sending payment notification email for submission ID: ${id}`);
-    await queueEmail({
-      type: 'addPayment',
-      id,
-      triggeredBy: userId,
-    });
-
-    logger.debug(`Updating bounty with ID: ${bountyId}`);
-    await prisma.bounties.update({
-      where: {
-        id: bountyId,
-      },
-      data: {
-        ...updatedBounty,
-      },
-    });
-
-    logger.info(`Successfully updated submission payment status for ID: ${id}`);
-    return res.status(200).json(result);
   } catch (error: any) {
+    if (error instanceof LockNotAcquiredError) {
+      return res.status(409).json({
+        error: 'Payment processing already in progress for this submission',
+      });
+    }
     logger.error(
       `Error updating payment status for submission ${id}: ${safeStringify(
         error,
