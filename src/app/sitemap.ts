@@ -51,12 +51,6 @@ function getStaticRoutes(now: Date): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/projects/`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
       url: `${baseUrl}/earn/jobs/`,
       lastModified: now,
       changeFrequency: 'daily',
