@@ -1,7 +1,7 @@
+import { type ClassNameValue } from 'cn';
 import { motion } from 'motion/react';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
-import { type ClassNameValue } from 'tailwind-merge';
 
 import { cn } from '@/utils/cn';
 

@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
-import { api } from '@/lib/api';
 import { ogImageQuery } from '@/queries/og';
 import { cn } from '@/utils/cn';
 
@@ -47,102 +46,35 @@ export const OgImageViewer = ({
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
     cachedImageUrl || null,
   );
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const {
     data: ogData,
     isLoading,
     error,
   } = useQuery({
-    ...ogImageQuery(externalUrl!),
+    ...ogImageQuery(externalUrl!, type, id),
     retry: 1,
     enabled: !cachedImageUrl && isWinnersAnnounced && !!externalUrl,
   });
 
   useEffect(() => {
-    if (error && !isUpdating) {
-      const handleError = async () => {
-        setIsUpdating(true);
-        try {
-          if (type && id) {
-            await api.post('/api/og/update', {
-              type,
-              url: 'error',
-              id,
-            });
-          }
-          setCurrentImageUrl(fallbackImage);
-        } finally {
-          setIsUpdating(false);
-        }
-      };
-      handleError();
-    }
-  }, [error, type, id, fallbackImage]);
+    if (error) setCurrentImageUrl(fallbackImage);
+  }, [error, fallbackImage]);
 
   useEffect(() => {
-    if (isUpdating || currentImageUrl) return;
+    if (!ogData || currentImageUrl) return;
 
-    const updateOgImage = async () => {
-      setIsUpdating(true);
-      try {
-        if (ogData === 'error') {
-          if (type && id) {
-            await api.post('/api/og/update', {
-              type,
-              url: 'error',
-              id,
-            });
-          }
-          setCurrentImageUrl(fallbackImage);
-          return;
-        }
-
-        const ogImageUrl = ogData?.images?.[0]?.url;
-        if (ogImageUrl) {
-          if (type && id) {
-            await api.post('/api/og/update', {
-              type,
-              url: ogImageUrl,
-              id,
-            });
-          }
-          setCurrentImageUrl(ogImageUrl);
-        } else {
-          setCurrentImageUrl(fallbackImage);
-        }
-      } catch (error) {
-        setCurrentImageUrl(fallbackImage);
-      } finally {
-        setIsUpdating(false);
-      }
-    };
-
-    if (ogData) {
-      updateOgImage();
+    if (ogData === 'error') {
+      setCurrentImageUrl(fallbackImage);
+      return;
     }
-  }, [ogData, type, id, fallbackImage, isUpdating, currentImageUrl]);
+
+    setCurrentImageUrl(ogData.images?.[0]?.url || fallbackImage);
+  }, [ogData, fallbackImage, currentImageUrl]);
 
   const handleImageError = useCallback(() => {
-    if (isUpdating) return;
-
-    const updateImage = async () => {
-      setIsUpdating(true);
-      try {
-        if (type && id) {
-          await api.post('/api/og/update', {
-            type,
-            url: 'error',
-            id,
-          });
-        }
-        setCurrentImageUrl(fallbackImage);
-      } finally {
-        setIsUpdating(false);
-      }
-    };
-    updateImage();
-  }, [fallbackImage, type, id, isUpdating]);
+    setCurrentImageUrl(fallbackImage);
+  }, [fallbackImage]);
 
   if (isLoading) {
     return <Skeleton className={className} />;
