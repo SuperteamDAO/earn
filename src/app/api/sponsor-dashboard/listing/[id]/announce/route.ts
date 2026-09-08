@@ -446,17 +446,6 @@ export async function POST(
                 });
               }
 
-              try {
-                await earncognitoClient.post(
-                  `/airtable/sync-announced-listings`,
-                  {
-                    listingId: updatedListing.id,
-                  },
-                );
-              } catch (err) {
-                logger.error('Airatable Listing Sync Message Error', err);
-              }
-
               logger.info(`ALl Non Blocking Tasks Triggered`);
             })(),
           );
