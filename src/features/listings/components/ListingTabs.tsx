@@ -83,7 +83,7 @@ export const ListingTabs = ({
             <ExternalImage
               src={hackathon.logo}
               alt={hackathon.label}
-              className="my-[0.10rem] h-4 scale-130 object-contain"
+              className="my-[0.10rem] h-3 scale-90 object-contain"
             />
           </ListingTabTrigger>
         ))}

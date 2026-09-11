@@ -172,7 +172,7 @@ export const MobileDrawer = ({
                   <ExternalImage
                     src={hackathon.logo}
                     alt={hackathon.label}
-                    className="h-5 scale-200 p-1"
+                    className="h-6 scale-100 p-1"
                   />
                 </div>
               }
