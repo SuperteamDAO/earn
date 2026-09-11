@@ -161,9 +161,14 @@ export const MultiActionModal = ({
               </span>
             </div>
           )}
-          <div className="flex gap-3">
-            <div className="w-1/2" />
-            <Button variant="ghost" onClick={onClose} disabled={loading}>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="hidden sm:block sm:w-1/2" />
+            <Button
+              variant="outline"
+              onClick={onClose}
+              disabled={loading}
+              className="w-full border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 sm:ml-auto sm:w-auto"
+            >
               Close
             </Button>
             <Button

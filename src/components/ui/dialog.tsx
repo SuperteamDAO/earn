@@ -67,8 +67,8 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'max-h-screen overflow-y-auto',
-          'bg-background fixed z-60 grid w-full max-w-lg gap-4 border p-6 shadow-lg sm:rounded-lg',
+          'max-h-[calc(100dvh-1rem)] overflow-y-auto overflow-x-hidden',
+          'bg-background fixed z-60 grid w-[calc(100vw-1rem)] max-w-[calc(100vw-1rem)] gap-4 border p-4 shadow-lg sm:w-full sm:max-w-lg sm:rounded-lg sm:p-6',
           'data-[state=open]:animate-in data-[state=closed]:animate-out duration-200',
           'focus-visible:outline-0',
           !unsetDefaultPosition &&

@@ -4,7 +4,7 @@ export const SubmissionsPageSkeleton = () => {
   return (
     <div className="w-full">
       {/* Header skeleton */}
-      <div className="mb-2 flex items-center justify-between gap-12 pt-2">
+      <div className="mb-2 flex flex-col items-start justify-between gap-4 pt-2 md:flex-row md:items-center md:gap-12">
         <div>
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-slate-400">
@@ -20,7 +20,7 @@ export const SubmissionsPageSkeleton = () => {
             <Skeleton className="ml-2 h-6 w-20 rounded-full" />
           </div>
         </div>
-        <div className="flex flex-col items-end">
+        <div className="flex w-full flex-col items-end md:w-auto">
           <Skeleton className="h-9 w-52 rounded-lg" />
         </div>
       </div>
@@ -35,7 +35,7 @@ export const SubmissionsPageSkeleton = () => {
       <div className="my-2 h-[1.5px] w-full bg-slate-200/70" />
 
       {/* Main content - two column layout */}
-      <div className="grid h-160 w-full grid-cols-[23rem_1fr] bg-white">
+      <div className="flex w-full flex-col bg-white md:grid md:h-160 md:grid-cols-[23rem_1fr]">
         {/* Left side - SubmissionList skeleton */}
         <div className="h-full w-full rounded-l-lg border border-slate-200 bg-white">
           {/* Search bar */}
@@ -65,7 +65,7 @@ export const SubmissionsPageSkeleton = () => {
         </div>
 
         {/* Right side - SubmissionPanel skeleton */}
-        <div className="h-full w-full rounded-r-xl border-t border-r border-b border-slate-200 bg-white">
+        <div className="mt-2 h-full w-full rounded-r-xl border border-slate-200 bg-white md:mt-0 md:border-t md:border-r md:border-b md:border-l-0">
           {/* Panel header */}
           <div className="border-b border-slate-200 py-1">
             <div className="flex w-full items-center justify-between px-4 pt-3">

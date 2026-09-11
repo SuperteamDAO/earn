@@ -135,7 +135,7 @@ export function Banner({
 
           <div className="block h-0.5 w-full border-t border-slate-200 lg:h-14 lg:w-0.5 lg:shrink-0 lg:border-t-0 lg:border-r" />
 
-          <div className="grid grid-cols-3 gap-6 sm:gap-8 lg:mr-auto lg:gap-6 xl:gap-4 2xl:gap-6 [@media(min-width:1305px)]:gap-6">
+          <div className="grid grid-cols-3 gap-3 sm:gap-8 lg:mr-auto lg:gap-6 xl:gap-4 2xl:gap-6 [@media(min-width:1305px)]:gap-6">
             <StatsTooltip
               label={!isHackathon ? 'Rewarded' : 'Total Prizes'}
               tooltipText={tooltipTextReward}

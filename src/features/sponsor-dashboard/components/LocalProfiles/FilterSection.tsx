@@ -92,11 +92,11 @@ export const FilterSection = ({
   });
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:gap-3">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            className="h-9 w-40 border-slate-300 font-medium text-slate-400 hover:text-slate-500"
+            className="h-9 w-full border-slate-300 font-medium text-slate-400 hover:text-slate-500 sm:w-40"
             size="sm"
             variant="outline"
           >
@@ -130,7 +130,7 @@ export const FilterSection = ({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <div className="relative w-64">
+      <div className="relative w-full sm:w-64">
         <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <Input
           className="placeholder:text-md h-9 border-slate-300 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-slate-300"
@@ -144,7 +144,7 @@ export const FilterSection = ({
       </div>
 
       <Button
-        className="h-9 border border-slate-300 px-4 font-medium text-slate-400"
+        className="h-9 w-full border border-slate-300 px-4 font-medium text-slate-400 sm:w-auto"
         disabled={exportMutation.isPending}
         onClick={() => exportMutation.mutate()}
         size="sm"

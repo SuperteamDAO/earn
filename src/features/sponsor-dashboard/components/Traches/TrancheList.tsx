@@ -24,6 +24,7 @@ interface Props {
   setSearchText: (value: string) => void;
   selectedFilters: Set<GrantTrancheStatus>;
   onFilterChange: (filters: Set<GrantTrancheStatus>) => void;
+  onItemClick?: () => void;
 }
 
 export const TrancheList = ({
@@ -31,6 +32,7 @@ export const TrancheList = ({
   setSearchText,
   selectedFilters,
   onFilterChange,
+  onItemClick,
 }: Props) => {
   const debouncedSetSearchTextRef = useRef<
     ReturnType<typeof debounce> | undefined
@@ -88,6 +90,7 @@ export const TrancheList = ({
               )}
               onClick={() => {
                 setSelectedTranche(tranche);
+                onItemClick?.();
               }}
             >
               <div className="flex items-center">

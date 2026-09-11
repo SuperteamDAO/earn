@@ -138,9 +138,8 @@ export const ApplicationHeader = ({
   };
 
   return (
-    <div className="mb-2 flex items-center justify-between">
-      <button className="sr-only" />
-      <div>
+    <div className="mb-2 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+      <div className="min-w-0 flex-1">
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -154,65 +153,72 @@ export const ApplicationHeader = ({
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="mb-2 flex items-center gap-2">
-          <div className="ml-1 flex items-center gap-2">
-            {getListingIcon('grant', 'size-5')}
-            <p className="text-xl font-bold text-slate-800">{grant?.title}</p>
+        <div className="mb-2 flex min-w-0 flex-col gap-3">
+          <div className="flex min-w-0 items-start gap-2">
+            {getListingIcon('grant', 'size-5 shrink-0 mt-1')}
+            <div className="min-w-0 flex-1">
+              <p className="break-words text-lg font-bold text-slate-800 sm:text-xl">
+                {grant?.title}
+              </p>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="rounded-md p-2 text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-500"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 text-slate-500">
+                <DropdownMenuItem
+                  disabled={exportMutation.isPending}
+                  onClick={() => handleExport()}
+                  className="cursor-pointer"
+                >
+                  {exportMutation.isPending ? (
+                    <>
+                      <span className="loading loading-spinner" />
+                      Exporting...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="size-4" />
+                      Export CSV
+                    </>
+                  )}
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={exportSheetsOnOpen}
+                  className="cursor-pointer"
+                >
+                  <Sheet className="size-4" />
+                  Export to Google Sheets
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={() =>
+                    window.open(`${router.basePath}/${listingPath}`, '_blank')
+                  }
+                  className="cursor-pointer"
+                >
+                  <ExternalLink className="size-4" />
+                  View Listing
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onClick={() => copyToClipboard(getGrantUrl())}
+                  className="cursor-pointer"
+                >
+                  <CopyIcon className="size-4" />
+                  Copy Link
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="cursor-pointer rounded-md p-2 text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-500">
-                <MoreVertical className="h-4 w-4" />
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48 text-slate-500">
-              <DropdownMenuItem
-                disabled={exportMutation.isPending}
-                onClick={() => handleExport()}
-                className="cursor-pointer"
-              >
-                {exportMutation.isPending ? (
-                  <>
-                    <span className="loading loading-spinner" />
-                    Exporting...
-                  </>
-                ) : (
-                  <>
-                    <Download className="size-4" />
-                    Export CSV
-                  </>
-                )}
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                onClick={exportSheetsOnOpen}
-                className="cursor-pointer"
-              >
-                <Sheet className="size-4" />
-                Export to Google Sheets
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                onClick={() =>
-                  window.open(`${router.basePath}/${listingPath}`, '_blank')
-                }
-                className="cursor-pointer"
-              >
-                <ExternalLink className="size-4" />
-                View Listing
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                onClick={() => copyToClipboard(getGrantUrl())}
-                className="cursor-pointer"
-              >
-                <CopyIcon className="size-4" />
-                Copy Link
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
           <StatusPill
-            className="ml-2 w-fit text-[0.8rem]"
+            className="w-fit text-[0.8rem]"
             color={getColorStyles(grantStatus).color}
             backgroundColor={getColorStyles(grantStatus).bgColor}
             borderColor={getColorStyles(grantStatus).borderColor}
@@ -222,7 +228,7 @@ export const ApplicationHeader = ({
         </div>
       </div>
       {showAiReview && (
-        <div>
+        <div className="w-full md:w-auto md:self-start">
           <AiReviewModal applications={applications} grant={grant} />
         </div>
       )}

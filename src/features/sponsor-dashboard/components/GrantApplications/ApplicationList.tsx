@@ -36,6 +36,7 @@ interface Props {
   ) => void;
   isToggleDisabled: boolean;
   grantSlug: string | undefined;
+  onItemClick?: () => void;
 }
 
 export const ApplicationList = ({
@@ -49,6 +50,7 @@ export const ApplicationList = ({
   onFilterChange,
   isToggleDisabled,
   grantSlug,
+  onItemClick,
 }: Props) => {
   const debouncedSetSearchTextRef = useRef<
     ReturnType<typeof debounce> | undefined
@@ -108,7 +110,7 @@ export const ApplicationList = ({
       </div>
       <div
         ref={scrollContainerRef}
-        className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white"
+        className="scrollbar-thin scrollbar-w-1 scrollbar-track-white scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300 h-[60dvh] md:h-[42rem] w-full overflow-y-auto rounded-bl-lg border-t bg-white"
       >
         {applications?.map((application) => {
           const applicationStatus = application?.applicationStatus;
@@ -138,7 +140,7 @@ export const ApplicationList = ({
               key={application?.id}
               data-application-id={application?.id}
               className={cn(
-                'flex cursor-pointer items-center justify-between gap-4 border-b border-slate-200 px-3 py-2',
+                'flex cursor-pointer items-center justify-between gap-2 border-b border-slate-200 px-2 py-2 sm:gap-4 sm:px-3',
                 'hover:bg-slate-100',
                 selectedApplication?.id === application?.id
                   ? 'bg-[#F5F3FF80]'
@@ -146,22 +148,25 @@ export const ApplicationList = ({
               )}
               onClick={() => {
                 setSelectedApplication(application);
+                onItemClick?.();
               }}
             >
-              <div className="flex items-center">
-                <Checkbox
-                  className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2 disabled:invisible"
-                  checked={isToggled(application.id)}
-                  disabled={application?.applicationStatus !== 'Pending'}
-                  onCheckedChange={() => toggleApplication(application.id)}
-                />
+              <div className="flex min-w-0 flex-1 items-center">
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Checkbox
+                    className="data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mr-2 shrink-0 disabled:invisible"
+                    checked={isToggled(application.id)}
+                    disabled={application?.applicationStatus !== 'Pending'}
+                    onCheckedChange={() => toggleApplication(application.id)}
+                  />
+                </div>
 
                 <EarnAvatar
                   id={application?.user?.id}
                   avatar={application?.user?.photo || undefined}
                 />
 
-                <div className="ml-2 w-40">
+                <div className="ml-2 min-w-0 flex-1">
                   <p className="overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap text-slate-700">
                     {application?.projectTitle}
                   </p>
@@ -182,7 +187,7 @@ export const ApplicationList = ({
                 </div>
               </div>
 
-              <div className="ml-auto flex w-min flex-col justify-end gap-1 align-bottom">
+              <div className="ml-2 flex shrink-0 flex-col justify-end gap-1 align-bottom">
                 {applicationLabel === 'Spam' ? (
                   <StatusPill
                     className="ml-auto w-fit text-[0.625rem]"
