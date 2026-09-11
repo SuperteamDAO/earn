@@ -1,21 +1,18 @@
-import axios from 'axios';
 import { type GetServerSideProps } from 'next';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 
 import HeroContainer from '@/features/stfun/components/common/HeroContainer';
-import PerksGrid from '@/features/stfun/components/grids/PerksGrid';
+import PerksGrid, {
+  type Perk,
+} from '@/features/stfun/components/grids/PerksGrid';
 
 interface MemberPerksProps {
-  liveNow: any[];
-  completed: any[];
-  comingSoon: any[];
-}
-
-interface AirtablePerkRecord {
-  createdTime?: string;
-  fields: Record<string, any>;
+  liveNow: Perk[];
+  completed: Perk[];
+  comingSoon: Perk[];
 }
 
 export default function MemberPerks({
@@ -87,38 +84,25 @@ export default function MemberPerks({
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const airtableUrl = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.AIRTABLE_PERKS_TABLE}`;
-
   try {
-    const result = await axios(airtableUrl, {
-      headers: {
-        Authorization: `Bearer ${process.env.AIRTABLE_API_TOKEN}`,
+    const perks = await prisma.publicMemberPerk.findMany({
+      where: {
+        published: true,
       },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        link: true,
+        imageUrl: true,
+        status: true,
+      },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     });
 
-    const records: AirtablePerkRecord[] =
-      result?.data?.records
-        ?.slice()
-        .sort((a: AirtablePerkRecord, b: AirtablePerkRecord) => {
-          const aCreatedTime = a.createdTime
-            ? new Date(a.createdTime).getTime()
-            : 0;
-          const bCreatedTime = b.createdTime
-            ? new Date(b.createdTime).getTime()
-            : 0;
-
-          return bCreatedTime - aCreatedTime;
-        }) ?? [];
-
-    const liveNow = records.filter(
-      (item: any) => item.fields['Status'] === 'Live now',
-    );
-    const completed = records.filter(
-      (item: any) => item.fields['Status'] === 'Completed',
-    );
-    const comingSoon = records.filter(
-      (item: any) => item.fields['Status'] === 'Coming Soon',
-    );
+    const liveNow = perks.filter((perk) => perk.status === 'Live now');
+    const completed = perks.filter((perk) => perk.status === 'Completed');
+    const comingSoon = perks.filter((perk) => perk.status === 'Coming Soon');
 
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
     return {
@@ -129,27 +113,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
       },
     };
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error('Error fetching perks from Airtable', {
-        message: error.message,
-        code: error.code,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        responseData: error.response?.data,
-        request: {
-          method: error.config?.method?.toUpperCase() ?? 'GET',
-          url: error.config?.url ?? airtableUrl,
-          params: error.config?.params,
-        },
-        env: {
-          hasBaseId: Boolean(process.env.AIRTABLE_BASE_ID),
-          hasPerksTable: Boolean(process.env.AIRTABLE_PERKS_TABLE),
-          hasApiToken: Boolean(process.env.AIRTABLE_API_TOKEN),
-        },
-      });
-    } else {
-      console.error('Unexpected error fetching perks:', error);
-    }
+    console.error('Unexpected error fetching member perks from DB:', error);
 
     res.setHeader('Cache-Control', 'no-store');
     return {
