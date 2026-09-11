@@ -14,7 +14,7 @@ export default async function handler(
   try {
     const chapters = await getChapterRegions();
     const countries = Array.from(
-      new Set(chapters.flatMap((chapter) => chapter.country)),
+      new Set(chapters.map((chapter) => chapter.displayValue)),
     ).sort();
 
     return res.status(200).json(countries);
