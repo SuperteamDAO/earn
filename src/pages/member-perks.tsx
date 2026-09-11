@@ -85,7 +85,7 @@ export default function MemberPerks({
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   try {
-    const perks = await prisma.memberPerk.findMany({
+    const perks = await prisma.publicMemberPerk.findMany({
       where: {
         published: true,
       },
