@@ -23,8 +23,17 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
   if (!takeResult.ok) {
     return res.status(400).json({ error: takeResult.error });
   }
-  const take = takeResult.value;
-  const deadline = params.deadline as string;
+  let parsedDeadline: Date = new Date();
+  if (params.deadline) {
+    if (typeof params.deadline !== 'string') {
+      return res.status(400).json({ error: 'Invalid deadline parameter format' });
+    }
+    const d = new Date(params.deadline);
+    if (Number.isNaN(d.getTime())) {
+      return res.status(400).json({ error: 'Invalid deadline date format' });
+    }
+    parsedDeadline = d;
+  }
   const exclusiveSponsorId = params.exclusiveSponsorId as string | undefined;
   let excludeIds = params['excludeIds[]'];
   if (typeof excludeIds === 'string') {
@@ -41,7 +50,8 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       isPrivate: false,
       isArchived: false,
       status: 'OPEN',
-      deadline: { gte: deadline },
+      deadline: { gte: parsedDeadline },
+
       type: type || { in: ['bounty', 'project', 'hackathon'] },
       agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
       sponsor: {
