@@ -24,7 +24,7 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
     return res.status(400).json({ error: takeResult.error });
   }
   const take = takeResult.value;
-  const deadline = params.deadline as string;
+  const deadline = (params.deadline as string) || new Date().toISOString();
   const exclusiveSponsorId = params.exclusiveSponsorId as string | undefined;
   let excludeIds = params['excludeIds[]'];
   if (typeof excludeIds === 'string') {
@@ -41,7 +41,9 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       isPrivate: false,
       isArchived: false,
       status: 'OPEN',
-      deadline: { gte: deadline },
+      // Listings without a deadline are treated as open indefinitely, matching
+      // the open-status logic used by the other listing query builders.
+      OR: [{ deadline: null }, { deadline: { gte: deadline } }],
       type: type || { in: ['bounty', 'project', 'hackathon'] },
       agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
       sponsor: {
