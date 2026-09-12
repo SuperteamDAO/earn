@@ -11,6 +11,11 @@ import { type NextApiRequestWithAgent } from '@/features/auth/types';
 import { withAgentAuth } from '@/features/auth/utils/withAgentAuth';
 import { listingSelect } from '@/features/listings/constants/schema';
 
+/**
+ * GET /api/agents/listings/live
+ * Discovery endpoint returning currently active and agent-accessible listings.
+ * Filters for status OPEN, agentAccess in ['AGENT_ALLOWED', 'AGENT_ONLY'], and deadline >= now.
+ */
 async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
   const params = req.query;
 
@@ -23,8 +28,18 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
   if (!takeResult.ok) {
     return res.status(400).json({ error: takeResult.error });
   }
-  const take = takeResult.value;
-  const deadline = params.deadline as string;
+  let deadlineDate: Date | undefined = new Date();
+  if (params.deadline !== undefined) {
+    if (typeof params.deadline !== 'string' || params.deadline.trim() === '') {
+      return res.status(400).json({ error: 'Expected ISO-8601 datetime format for deadline' });
+    }
+    const rawDeadline = params.deadline.trim();
+    const parsed = new Date(rawDeadline);
+    if (isNaN(parsed.getTime())) {
+      return res.status(400).json({ error: 'Expected ISO-8601 datetime format for deadline' });
+    }
+    deadlineDate = parsed;
+  }
   const exclusiveSponsorId = params.exclusiveSponsorId as string | undefined;
   let excludeIds = params['excludeIds[]'];
   if (typeof excludeIds === 'string') {
@@ -41,7 +56,7 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       isPrivate: false,
       isArchived: false,
       status: 'OPEN',
-      deadline: { gte: deadline },
+      deadline: deadlineDate ? { gte: deadlineDate } : undefined,
       type: type || { in: ['bounty', 'project', 'hackathon'] },
       agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
       sponsor: {
