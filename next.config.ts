@@ -226,7 +226,7 @@ const nextConfig: NextConfig = {
   logging: {
     // @ts-ignore — valid option, missing from Next.js type definitions
     browserToTerminal: true,
-  },
+  } as NextConfig['logging'],
 };
 
 const combinedConfig = withAxiom(withPWA(nextConfig));
