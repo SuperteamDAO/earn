@@ -7,7 +7,7 @@ import { dayjs } from '@/utils/dayjs';
 import { type Listing } from '@/features/listings/types';
 
 import { type GeneratedListingData } from '../atoms';
-import { DEADLINE_FORMAT } from '../constants';
+import { DEADLINE_FORMAT, getDefaultListingToken } from '../constants';
 import { type ListingFormData } from '../types';
 import { createListingFormSchema } from '../types/schema';
 import { calculateTotalRewardsForPodium } from './rewards';
@@ -86,8 +86,11 @@ export const getListingDefaults = ({
   defaults['title'] ??= '';
   defaults['slug'] ??= '';
   defaults['type'] = type;
+  const currentHackathon =
+    type === 'hackathon'
+      ? hackathons?.find((hackathon) => hackathon.id === hackathonId)
+      : undefined;
   if (type === 'hackathon') {
-    const currentHackathon = hackathons?.find((s) => s.id === hackathonId);
     if (!currentHackathon) defaults['type'] = 'bounty';
     else {
       defaults['type'] = type;
@@ -96,6 +99,7 @@ export const getListingDefaults = ({
       if (currentHackathon.deadline)
         defaults['deadline'] = currentHackathon.deadline;
       defaults['hackathonId'] = hackathonId;
+      defaults['token'] = getDefaultListingToken(isST, currentHackathon.slug);
     }
   }
   defaults['isFndnPaying'] = false;
