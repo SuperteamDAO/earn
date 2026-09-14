@@ -380,34 +380,35 @@ function Tracks({
 
 const faqs: { question: string; answer: string }[] = [
   {
-    question: 'How are sidetracks different from the main hackathon tracks?',
+    question:
+      'How are Sidetracks different from the main Colosseum Crypto World’s Fair tracks?',
     answer:
-      'Sidetracks are extra challenges hosted on Superteam Earn. They offer additional opportunities to build unique projects and win special prizes.',
+      'Sidetracks are extra challenges hosted by Superteam Earn, separate from Colosseum’s Crypto World’s Fair tracks. They offer additional opportunities to build unique projects and win special prizes.',
   },
   {
-    question: 'Do I need to submit separately to sidetracks on Superteam Earn?',
+    question: 'Do I need to submit separately to Sidetracks on Superteam Earn?',
     answer:
-      'Yes. Sidetracks have their own submission process on Superteam Earn. Submit your project directly to each sidetrack you wish to enter.',
+      'Yes! Sidetracks have their own submission process on Superteam Earn. Make sure you submit your project directly to each Sidetrack you wish to enter.',
   },
   {
-    question: 'When will sidetrack winners be announced?',
+    question: 'When will Sidetrack winners be announced?',
     answer:
-      'Sidetrack winners will be announced after judging is complete. We will email entrants when winners are announced.',
+      'Sidetrack winners will be announced shortly after the main Colosseum Crypto World’s Fair winners. If you submitted a project to a Sidetrack, we’ll email you directly when winners are announced.',
   },
   {
-    question: 'Can I submit my project to multiple sidetracks?',
+    question: 'Can I submit my project to multiple Sidetracks?',
     answer:
-      'Yes, you can submit to multiple sidetracks as long as your project fits each sidetrack’s requirements.',
+      'Yes, you’re welcome to submit your project to as many Sidetracks as you like, as long as your submission fits each Sidetrack’s requirements.',
   },
   {
     question: 'Where can I find developer resources for my project?',
     answer:
-      'Developer resources and documentation will be added here before submissions open.',
+      'Check out <a href="https://colosseum.com/arena/resources" target="_blank" rel="noopener noreferrer">Colosseum’s Developer Resources page</a>. You’ll find documentation, tools, tutorials, and everything you need to build on Solana.',
   },
   {
-    question: 'What are the evaluation criteria for sidetracks?',
+    question: 'What are the evaluation criteria for Sidetracks?',
     answer:
-      'Each sidetrack sponsor defines its evaluation criteria. Review the description and judging guidelines for every sidetrack you enter.',
+      'Each Sidetrack sponsor defines their own evaluation criteria. Be sure to carefully review the description and judging guidelines for each Sidetrack you’re submitting to.',
   },
 ];
 

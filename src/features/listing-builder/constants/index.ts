@@ -6,3 +6,7 @@ export const MAX_REWARD = 100_000_000_000_000; // 100 Trillion
 export const AUTO_GENERATE_STORAGE_KEY = `ai-generate-form-listing-builder`;
 
 export const DEADLINE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
+
+export function getDefaultListingToken(isST: boolean, hackathonSlug?: string) {
+  return isST || hackathonSlug === 'crypto-world-fair' ? 'USDG' : 'USDC';
+}
