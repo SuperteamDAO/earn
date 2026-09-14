@@ -5,7 +5,7 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
-import { type SubmissionLabels } from '@/prisma/enums';
+import { GrantApplicationStatus, type SubmissionLabels } from '@/prisma/enums';
 import { getTokenBySymbol } from '@/server/tokenList';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 import { safeStringify } from '@/utils/safeStringify';
@@ -173,7 +173,24 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(authError.status).json({ error: authError.message });
     }
 
-    const isApproved = applicationStatus === 'Approved';
+    const isDecisionStatus =
+      applicationStatus === GrantApplicationStatus.Approved ||
+      applicationStatus === GrantApplicationStatus.Rejected;
+    if (
+      isDecisionStatus &&
+      currentApplications.some((application) => application.grant.isPaused)
+    ) {
+      logger.warn(
+        `Blocked ${applicationStatus} decision for paused grant ${grantId}`,
+      );
+      return res.status(409).json({
+        error: 'Grant is paused',
+        message:
+          'Applications cannot be approved or rejected while the grant is paused.',
+      });
+    }
+
+    const isApproved = applicationStatus === GrantApplicationStatus.Approved;
     let sanitizedCustomNote: string | undefined;
     if (customNote) {
       for (const [index, application] of currentApplications.entries()) {
