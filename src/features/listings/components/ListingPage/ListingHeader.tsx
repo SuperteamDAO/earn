@@ -94,7 +94,7 @@ const HeaderSub = ({
   region: string | undefined;
   isPro: boolean | undefined;
 }) => {
-  const isFrontierHackathon = Hackathon?.slug === 'frontier';
+  const isFrontierHackathon = Hackathon?.slug === 'crypto-worlds-fair';
 
   return (
     <div className="flex flex-wrap items-center gap-1 md:gap-2">
