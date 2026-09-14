@@ -74,7 +74,7 @@ export default function CryptoWorldFair({
         <Meta
           title="Crypto World's Fair | Superteam Earn"
           description={hackathon.description}
-          canonical="https://superteam.fun/earn/hackathon/crypto-world-fair/"
+          canonical="https://superteam.fun/earn/hackathon/crypto-worlds-fair/"
           og={OG_IMAGE}
         />
       }
