@@ -3,13 +3,15 @@ import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useDisclosure } from '@/hooks/use-disclosure';
 
-import { type GrantApplicationWithUser } from '../../types';
+import { type GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
 import { MarkCompleteModal } from './Modals/MarkCompletedModal';
 
 interface Props {
   isCompleted: boolean;
   applicationId: string;
-  onMarkCompleted: (updatedApplication: GrantApplicationWithUser) => void;
+  onMarkCompleted: (
+    updatedApplication: GrantApplicationMutationResponse,
+  ) => void;
 }
 
 export function MarkCompleted({

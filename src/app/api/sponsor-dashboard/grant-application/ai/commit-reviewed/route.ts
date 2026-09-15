@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     return NextResponse.json(
       {
-        error: error.message,
+        error: 'Internal Server Error',
         message: `Error occurred while committing reviewed grant applications.`,
       },
       { status: 500 },

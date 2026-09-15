@@ -3,14 +3,8 @@ import type { NextApiResponse } from 'next';
 import { type PrismaUserWithoutKYC } from '@/interface/user';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import {
-  PrismaClientInitializationError,
-  PrismaClientKnownRequestError,
-  PrismaClientRustPanicError,
-  PrismaClientUnknownRequestError,
-  PrismaClientValidationError,
-  sql,
-} from '@/prisma/internal/prismaNamespace';
+import { GrantApplicationStatus } from '@/prisma/enums';
+import { sql } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -36,7 +30,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const grant = await prisma.grants.findUnique({
       where: { slug },
-      select: { id: true, sponsorId: true, isActive: true },
+      select: { id: true, sponsorId: true, isActive: true, isPaused: true },
     });
 
     if (!grant || !grant.isActive) {
@@ -53,12 +47,32 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(error.status).json({ error: error.message });
     }
 
-    const baseWhere = sql`GrantApplication.grantId = ${grant.id} AND Grants.sponsorId = ${req.userSponsorId}`;
+    const applicationStatusWhere = grant.isPaused
+      ? {
+          applicationStatus: {
+            in: [
+              GrantApplicationStatus.Approved,
+              GrantApplicationStatus.Rejected,
+              GrantApplicationStatus.Completed,
+            ],
+          },
+        }
+      : {};
+    const applicationStatusSql = grant.isPaused
+      ? sql`AND GrantApplication.applicationStatus IN ('Approved', 'Rejected', 'Completed')`
+      : sql``;
+
+    const baseWhere = sql`
+      GrantApplication.grantId = ${grant.id}
+      AND Grants.sponsorId = ${req.userSponsorId}
+      ${applicationStatusSql}
+    `;
 
     const countResult = await prisma.grantApplication.aggregate({
       _count: { id: true },
       where: {
         grant: { slug, isActive: true, sponsorId: req.userSponsorId! },
+        ...applicationStatusWhere,
       },
     });
     const totalCount = countResult._count.id;
@@ -221,37 +235,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     return res.status(200).json(responseData);
   } catch (error: any) {
-    let errorMessage = `Error fetching submissions with slug=${slug}.`;
-    if (error.code) {
-      errorMessage += ` Code: ${error.code}`;
-    }
-    if (
-      error instanceof PrismaClientKnownRequestError ||
-      error instanceof PrismaClientUnknownRequestError ||
-      error instanceof PrismaClientRustPanicError ||
-      error instanceof PrismaClientInitializationError ||
-      error instanceof PrismaClientValidationError
-    ) {
-      logger.error(
-        `Prisma Error fetching submissions with slug=${slug}: ${safeStringify(error)}`,
-        error.stack,
-      );
-      if (error instanceof PrismaClientKnownRequestError && error.meta) {
-        errorMessage += ` Meta: ${safeStringify(error.meta)}`;
-      }
-    } else {
-      logger.error(
-        `Generic Error fetching submissions with slug=${slug}: ${safeStringify(error)}`,
-        error.stack,
-      );
-    }
+    logger.error(
+      `Error fetching submissions with slug=${slug}: ${safeStringify(error)}`,
+      error.stack,
+    );
 
     return res.status(500).json({
       error: 'Internal Server Error',
-      message: errorMessage,
-      ...(process.env.NODE_ENV !== 'production'
-        ? { details: safeStringify(error) }
-        : {}),
+      message: 'Error occurred while fetching grant applications.',
     });
   }
 }

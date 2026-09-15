@@ -52,13 +52,12 @@ export async function GET(request: NextRequest) {
     logger.info(`Fetched bookmark status for listing ID: ${listingId}`);
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
     logger.error(
       `Error occurred while fetching bookmark status for listing ID=${request.nextUrl.searchParams.get('listingId')}: ${safeStringify(error)}`,
     );
     return NextResponse.json(
       {
-        error: message,
+        error: 'Internal Server Error',
         message: 'Error occurred while fetching bookmark status.',
       },
       { status: 500 },

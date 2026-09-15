@@ -11,6 +11,7 @@ import {
   sanitizeGrantApplicationAnswers,
   sanitizeGrantApplicationHtml,
 } from '@/features/grants/utils/sanitizeGrantApplicationHtml';
+import { type SubmissionMutationResponse } from '@/features/listings/types';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 
@@ -141,7 +142,12 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       );
     }
 
-    return res.status(200).json(result);
+    const response: SubmissionMutationResponse = {
+      success: true,
+      submissionId: result.id,
+    };
+
+    return res.status(200).json(response);
   } catch (error: any) {
     logger.error(
       `User ${userId} unable to update submission: ${safeStringify(error)}`,
@@ -154,8 +160,8 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     } catch {}
 
     return res.status(statusCode).json({
-      error: error.message,
-      message: `Unable to update submission: ${error.message}`,
+      error: 'Internal Server Error',
+      message: 'Unable to update submission.',
     });
   }
 }

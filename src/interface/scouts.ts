@@ -1,4 +1,4 @@
-import { type User } from './user';
+import { type ScoutUserResponse } from '@/features/sponsor-dashboard/constants/scouts';
 
 interface Scouts {
   id: string;
@@ -9,7 +9,7 @@ interface Scouts {
   invited: boolean;
   skills: string[];
   createdAt: Date;
-  user: User;
+  user: ScoutUserResponse;
 }
 
 export type { Scouts };

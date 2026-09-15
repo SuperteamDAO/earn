@@ -324,7 +324,7 @@ export async function POST(request: NextRequest) {
     );
     return NextResponse.json(
       {
-        error: error.message,
+        error: 'Internal Server Error',
         message: 'Error occurred while updating the grant tranche.',
       },
       { status: 500 },

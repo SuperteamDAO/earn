@@ -577,22 +577,6 @@
     border: 1px solid #f6f3f3;
   }
 
-  /* ==================== ProjectCard Component ==================== */
-  .project-card {
-    background:
-      linear-gradient(180deg, #000000 -18.75%, rgba(0, 0, 0, 0) 114.5%),
-      linear-gradient(180deg, #1d1d1d 0%, rgba(22, 22, 22, 0) 100%);
-    border: 1px solid #3f3f3f;
-    transition:
-      background 0.5s,
-      border 0.5s ease-in-out;
-  }
-
-  .project-card:hover {
-    background: linear-gradient(180deg, #232323 -18.75%, #121212 25.65%);
-    border: 1px solid #f6f3f3;
-  }
-
   /* ==================== TestimonialCard Component ==================== */
   .test-container {
     width: 289px;
@@ -884,7 +868,7 @@
     animation-play-state: paused;
   }
 
-  /* ==================== Stars Background (Projects/Perks pages) ==================== */
+  /* ==================== Stars Background (Perks page) ==================== */
   .stars-bg {
     position: absolute;
     width: calc(50% * (100vw / 1440px));
@@ -892,7 +876,7 @@
     top: calc(2.25% * (100vw / 1440px));
   }
 
-  /* ==================== PerksGrid & ProjectsGrid Components ==================== */
+  /* ==================== PerksGrid Component ==================== */
   .grid-cards-container {
     /* Base styles - will be modified by media queries */
   }

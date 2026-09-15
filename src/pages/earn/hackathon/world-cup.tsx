@@ -165,25 +165,37 @@ function Hero({
         <div
           className={cn(
             'absolute top-0 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-b-[1rem] bg-slate-950/38 px-4 py-2 text-base font-medium whitespace-nowrap shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),0_10px_24px_rgba(15,23,42,0.24)] backdrop-blur-2xl sm:px-5 sm:text-lg md:gap-2 md:px-4 md:pt-3 md:pb-3 md:text-sm',
-            isUpcoming || isReview ? 'text-[#FDFFA4]' : 'text-[#9bff63]',
+            isReview
+              ? 'text-[#FF0404]'
+              : isUpcoming
+                ? 'text-[#FDFFA4]'
+                : 'text-[#9bff63]',
           )}
         >
           <span
             className={cn(
               'grid size-4 place-items-center rounded-full md:size-3.5',
-              isUpcoming || isReview ? 'bg-[#FFED4C3D]' : 'bg-[#97E9593D]',
+              isReview
+                ? 'bg-[#FF04043D]'
+                : isUpcoming
+                  ? 'bg-[#FFED4C3D]'
+                  : 'bg-[#97E9593D]',
             )}
           >
             <span
               className={cn(
                 'size-1.5 rounded-full font-semibold shadow-[1px_1px_2px_rgba(0,0,0,0.2)] md:size-1.5',
-                isUpcoming || isReview ? 'bg-[#FFED4C]' : 'bg-[#97E959]',
+                isReview
+                  ? 'bg-[#FF0404]'
+                  : isUpcoming
+                    ? 'bg-[#FFED4C]'
+                    : 'bg-[#97E959]',
               )}
             />
           </span>
           {isUpcoming && 'Submissions open soon'}
           {!isUpcoming && status === 'Open' && 'Submissions open'}
-          {isReview && 'In Review'}
+          {isReview && 'Closed'}
         </div>
         <div className="relative z-10 mt-[6.75rem] flex flex-col items-center sm:mt-[7.5rem] md:mt-[6.5rem]">
           <Image
@@ -226,7 +238,7 @@ function Hero({
             zeroPadDays={2}
           />
         ) : (
-          <DigitalTimerShell isReview={status === 'Closed'}>
+          <DigitalTimerShell>
             {countdownMode === 'Begins' && (
               <span className="mr-4">BEGINS IN</span>
             )}
@@ -257,7 +269,7 @@ function DigitalTimer({
   status: HackathonStatus;
 }) {
   return (
-    <DigitalTimerShell isReview={status === 'Closed'}>
+    <DigitalTimerShell>
       {status !== 'Closed' && mode !== 'Review' ? (
         <>
           {mode === 'Begins' && <span className="mr-4">BEGINS IN</span>}
@@ -271,25 +283,19 @@ function DigitalTimer({
           {mode === 'Left' && <span className="ml-4">LEFT</span>}
         </>
       ) : (
-        'In Review'
+        'Closed'
       )}
     </DigitalTimerShell>
   );
 }
 
-function DigitalTimerShell({
-  children,
-  isReview = false,
-}: {
-  children: ReactNode;
-  isReview?: boolean;
-}) {
+function DigitalTimerShell({ children }: { children: ReactNode }) {
   return (
     <div
       className={cn(
         digital7Italic.className,
         'flex w-[18rem] items-center justify-center border-2 border-[#B7B7AB] bg-[#101010] px-3 py-3 text-[1.6rem] leading-none tracking-normal uppercase shadow-[0_8px_12px_rgba(15,23,42,0.35),inset_0_0_14px_rgba(0,0,0,0.5),inset_0_1px_10px_rgba(255,255,255,0.5)] sm:w-[38rem] sm:border-[5px] sm:px-8 sm:py-4 sm:text-[3.5rem] md:w-[28rem] md:px-6 md:py-3 md:text-[2.25rem] [&_.timer-unit]:text-[0.58em]',
-        isReview ? 'text-[#FDFFA4]' : 'text-[#FF0404]',
+        'text-[#FF0404]',
       )}
       style={{
         fontStyle: 'italic',

@@ -35,7 +35,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       `Error occurred while fetching grant with slug=${slug}: ${safeStringify(error)}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: `Error occurred while fetching grant with slug=${slug}.`,
     });
   }

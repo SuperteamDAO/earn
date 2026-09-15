@@ -59,13 +59,12 @@ export async function POST(request: NextRequest) {
     );
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error';
     logger.error(
       `Error occurred while toggling bookmark: ${safeStringify(error)}`,
     );
     return NextResponse.json(
       {
-        error: message,
+        error: 'Internal Server Error',
         message: 'Error occurred while toggling bookmark.',
       },
       { status: 400 },

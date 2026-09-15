@@ -97,12 +97,10 @@ export async function POST(req: NextRequest) {
     }
 
     logger.error('Error generating description:', safeStringify(error));
-    const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred';
     return new Response(
       JSON.stringify({
         error: 'Failed to generate description',
-        details: errorMessage,
+        details: 'Internal Server Error',
       }),
       {
         status: 500,

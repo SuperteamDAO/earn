@@ -100,6 +100,7 @@ const OpportunitiesPage = ({ parsedTags }: OpportunitiesPageProps) => {
 export const getServerSideProps: GetServerSideProps<
   OpportunitiesPageProps
 > = async (context) => {
+  const { res } = context;
   const { params } = context;
 
   const tags = params?.tags;
@@ -118,6 +119,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const parsedTags = parseOpportunityTags(tagsArray, regionSlugs);
 
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       parsedTags,

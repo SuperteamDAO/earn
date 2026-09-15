@@ -313,8 +313,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        error: error.message,
-        message: `Unable to submit grant application: ${error.message}`,
+        error: 'Internal Server Error',
+        message: 'Unable to submit grant application.',
       },
       { status: statusCode },
     );

@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { cn } from '@/utils/cn';
 
+import { type GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
 import { RecordPaymentModal } from './Modals/RecordPaymentModal';
 
 interface RecordPaymentButtonProps {
@@ -10,7 +11,9 @@ interface RecordPaymentButtonProps {
   approvedAmount: number;
   totalPaid: number;
   token: string;
-  onPaymentRecorded: (updatedApplication: any) => void;
+  onPaymentRecorded: (
+    updatedApplication: GrantApplicationMutationResponse,
+  ) => void;
 }
 
 export const RecordPaymentButton = ({

@@ -54,7 +54,7 @@ export async function DELETE(
     logger.error(`Error deleting bounty ${id}: ${safeStringify(error)}`);
     return NextResponse.json(
       {
-        error: error.message,
+        error: 'Internal Server Error',
         message: `Error occurred while deleting bounty with id=${id}.`,
       },
       { status: 400 },

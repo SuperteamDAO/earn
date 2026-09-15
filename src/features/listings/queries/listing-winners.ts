@@ -1,11 +1,13 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import { type SubmissionWithUser } from '@/interface/submission';
+import { type ListingWinner } from '@/interface/submission';
 import { api } from '@/lib/api';
 
-const fetchWinners = async (id: string): Promise<SubmissionWithUser[]> => {
-  const { data } = await api.get(`/api/listings/${id}/winners/`);
-  return data.sort((a: SubmissionWithUser, b: SubmissionWithUser) => {
+const fetchWinners = async (id: string): Promise<ListingWinner[]> => {
+  const { data } = await api.get<ListingWinner[]>(
+    `/api/listings/${id}/winners/`,
+  );
+  return data.sort((a, b) => {
     if (!a.winnerPosition) return 1;
     if (!b.winnerPosition) return -1;
     return Number(a.winnerPosition) - Number(b.winnerPosition);

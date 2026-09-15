@@ -10,8 +10,12 @@ import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSpons
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import {
   type ValidatePaymentResult,
-  type VerifyPaymentsFormData,
+  verifyExternalPaymentRequestSchema,
 } from '@/features/sponsor-dashboard/types';
+import {
+  findUsedPaymentTxIds,
+  normalizePaymentTxId,
+} from '@/features/sponsor-dashboard/utils/paymentReplayCheck';
 import {
   validatePayment,
   type ValidationResult,
@@ -33,16 +37,21 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   try {
     logger.debug(`Request body: ${safeStringify(req.body)}`);
-    let { paymentLinks } = req.body as VerifyPaymentsFormData;
-    const { listingId } = req.body as VerifyPaymentsFormData & {
-      listingId: string;
-    };
+
+    const validationResult = verifyExternalPaymentRequestSchema.safeParse(
+      req.body,
+    );
+    if (!validationResult.success) {
+      return res.status(400).json({
+        error: 'Invalid request body',
+        details: validationResult.error.flatten(),
+      });
+    }
+
+    let { paymentLinks } = validationResult.data;
+    const { listingId } = validationResult.data;
 
     paymentLinks = paymentLinks.filter((p) => !!p.link);
-
-    if (!listingId) {
-      return res.status(400).json({ error: 'Listing ID is missing' });
-    }
 
     const { error } = await checkListingSponsorAuth(userSponsorId, listingId);
     if (error) {
@@ -53,16 +62,30 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       where: {
         id: listingId,
       },
+      select: {
+        isWinnersAnnounced: true,
+        rewards: true,
+        token: true,
+        type: true,
+      },
     });
     const submissions = await prisma.submission.findMany({
       where: {
         id: {
           in: paymentLinks.map((d) => d.submissionId),
         },
+        listingId,
         isPaid: false,
       },
-      include: {
-        user: true,
+      select: {
+        id: true,
+        paymentDetails: true,
+        winnerPosition: true,
+        user: {
+          select: {
+            walletAddress: true,
+          },
+        },
       },
     });
 
@@ -89,7 +112,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const validationResults: ValidatePaymentResult[] = [];
 
-    const txIds = paymentLinks.map((link) => link.txId).filter(Boolean);
+    const txIds = paymentLinks
+      .map((link) => link.txId)
+      .filter(Boolean)
+      .map(normalizePaymentTxId);
     const duplicateTxIds = txIds.filter(
       (txId, index) => txIds.indexOf(txId) !== index,
     );
@@ -103,32 +129,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     // transaction replay attacks where a txId from a paid submission is reused
     // for a different winner.
     if (txIds.length === 0) {
-      return res.status(400).json({ error: 'No valid transaction IDs provided' });
+      return res
+        .status(400)
+        .json({ error: 'No valid transaction IDs provided' });
     }
 
-    const submissionsUsingTxIds: Array<{
-      id: string;
-      paymentDetails: unknown;
-    }> = await prisma.submission.findMany({
-      where: {
-        OR: txIds.map((txId) => ({
-          paymentDetails: { string_contains: txId },
-        })),
-      },
-      select: { id: true, paymentDetails: true },
-    });
-
-    const alreadyUsedTxIds = [
-      ...new Set(
-        submissionsUsingTxIds
-          .flatMap((sub): (string | undefined)[] =>
-            (
-              (sub.paymentDetails as Array<{ txId?: string }> | null) ?? []
-            ).map((p) => p.txId),
-          )
-          .filter((txId): txId is string => !!txId && txIds.includes(txId)),
-      ),
-    ];
+    const alreadyUsedTxIds = await findUsedPaymentTxIds(txIds);
 
     if (alreadyUsedTxIds.length > 0) {
       return res.status(400).json({
@@ -242,7 +248,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           submissionId: paymentLink.submissionId,
           txId: paymentLink.txId || '',
           status: 'FAIL',
-          message: error.message,
+          message: 'Payment verification failed',
         });
         await wait(5000);
         logger.warn(

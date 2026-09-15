@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const signedParams = generateSignedUploadParams(source);
+    const signedParams = generateSignedUploadParams(source, undefined, userId);
 
     logger.info(`Image upload signature generated for user ${userId}`, {
       source,
@@ -126,10 +126,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: `Failed to generate signature: ${errorMessage}` },
+      { error: 'Internal Server Error' },
       { status: 500 },
     );
   }

@@ -1,5 +1,5 @@
+import { type ClassNameValue } from 'cn';
 import { useState } from 'react';
-import { type ClassNameValue } from 'tailwind-merge';
 
 import { cn } from '@/utils/cn';
 

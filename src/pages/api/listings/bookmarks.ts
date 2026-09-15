@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -18,13 +19,16 @@ async function getBookmarks(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const take = req.query.take
-      ? parseInt(req.query.take as string, 10)
-      : undefined;
-
-    if (take !== undefined && (isNaN(take) || take < 1)) {
-      return res.status(400).json({ error: 'Invalid take parameter' });
+    const takeResult = parseBoundedIntegerParam(req.query.take, {
+      defaultValue: 50,
+      maxValue: 100,
+      minValue: 1,
+      name: 'take',
+    });
+    if (!takeResult.ok) {
+      return res.status(400).json({ error: takeResult.error });
     }
+    const take = req.query.take ? takeResult.value : undefined;
 
     logger.debug(`Fetching bookmarks for user ID: ${userId}`);
 
@@ -52,7 +56,7 @@ async function getBookmarks(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Error occurred while fetching bookmarks for user ID=${req.userId}: ${safeStringify(error)}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while fetching bookmarks.',
     });
   }

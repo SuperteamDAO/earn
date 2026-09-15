@@ -1,4 +1,11 @@
-import { Check, ChevronDown, CopyIcon, Loader2, Plus } from 'lucide-react';
+import {
+  Check,
+  ChevronDown,
+  CopyIcon,
+  Loader2,
+  Plus,
+  ShieldCheck,
+} from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -24,6 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Tooltip } from '@/components/ui/tooltip';
 import {
   addTokenToList,
   type Token,
@@ -59,19 +67,62 @@ type AddTokenResponse = {
   error?: string;
 };
 
+type TokenSearchResult =
+  | {
+      type: 'db';
+      key: string;
+      rank: number;
+      token: Token;
+    }
+  | {
+      type: 'jupiter';
+      key: string;
+      rank: number;
+      token: JupiterToken;
+    };
+
 const supportEmail = 'support@superteam.fun';
 const defaultTokenIcon = '/assets/dollar.svg';
+
+const getJupiterTokenUrl = (mintAddress: string) =>
+  `https://jup.ag/tokens/${mintAddress}`;
+
+const openJupiterTokenPage = (mintAddress: string) => {
+  window.open(getJupiterTokenUrl(mintAddress), '_blank', 'noopener,noreferrer');
+};
+
+function JupiterVerifiedIcon({ mintAddress }: { mintAddress: string }) {
+  return (
+    <Tooltip
+      content="Verified on Jupiter"
+      contentProps={{ side: 'top' }}
+      triggerClassName="ml-1 inline-flex align-middle"
+      disableOnClickClose
+    >
+      <ShieldCheck
+        className="h-3.5 w-3.5 text-[#1C4CE7]"
+        aria-label="Verified on Jupiter"
+        onClick={(event) => {
+          event.stopPropagation();
+          openJupiterTokenPage(mintAddress);
+        }}
+      />
+    </Tooltip>
+  );
+}
 
 function TokenSearchLabel({
   icon,
   name,
   symbol,
   mintAddress,
+  isVerifiedOnJupiter,
 }: {
   icon?: string | null;
   name: string;
   symbol?: string | null;
   mintAddress: string;
+  isVerifiedOnJupiter?: boolean;
 }) {
   return (
     <div className="flex min-w-0 items-center gap-2">
@@ -84,10 +135,26 @@ function TokenSearchLabel({
         <p className="truncate text-sm">
           {name}
           {symbol ? <span className="text-slate-500"> ({symbol})</span> : null}
+          {isVerifiedOnJupiter && (
+            <JupiterVerifiedIcon mintAddress={mintAddress} />
+          )}
         </p>
-        <p className="truncate text-xs text-slate-500">
-          {truncatePublicKey(mintAddress, 6)}
-        </p>
+        <Tooltip
+          content="Open in another tab"
+          contentProps={{ side: 'top' }}
+          triggerClassName="block w-fit cursor-pointer"
+          disableOnClickClose
+        >
+          <p
+            className="truncate text-xs text-slate-500 hover:underline"
+            onClick={(event) => {
+              event.stopPropagation();
+              openJupiterTokenPage(mintAddress);
+            }}
+          >
+            {truncatePublicKey(mintAddress, 6)}
+          </p>
+        </Tooltip>
       </div>
     </div>
   );
@@ -187,6 +254,51 @@ export function TokenSelect() {
   const unverifiedJupiterToken = filteredJupiterTokens.find(
     (token) => !token.isVerified,
   );
+  const searchResults = useMemo<TokenSearchResult[]>(() => {
+    const dbResults: TokenSearchResult[] = filteredTokens.map((token) => ({
+      type: 'db',
+      key: `db-${token.mintAddress}`,
+      rank: getTokenSearchRank({
+        query: trimmedSearchValue,
+        name: token.tokenName,
+        symbol: token.tokenSymbol,
+        mintAddress: token.mintAddress,
+        sortOrder: token.sortOrder,
+      }),
+      token,
+    }));
+    const jupiterResults: TokenSearchResult[] = verifiedJupiterTokens.map(
+      (token) => ({
+        type: 'jupiter',
+        key: `jupiter-${token.id}`,
+        rank: getTokenSearchRank({
+          query: trimmedSearchValue,
+          name: token.name,
+          symbol: token.symbol,
+          mintAddress: token.id,
+        }),
+        token,
+      }),
+    );
+
+    return [...dbResults, ...jupiterResults].sort(
+      (firstResult, secondResult) => {
+        const rankDelta = firstResult.rank - secondResult.rank;
+        if (rankDelta !== 0) return rankDelta;
+
+        const firstSymbol =
+          firstResult.type === 'db'
+            ? firstResult.token.tokenSymbol
+            : firstResult.token.symbol;
+        const secondSymbol =
+          secondResult.type === 'db'
+            ? secondResult.token.tokenSymbol
+            : secondResult.token.symbol;
+
+        return firstSymbol.localeCompare(secondSymbol);
+      },
+    );
+  }, [filteredTokens, trimmedSearchValue, verifiedJupiterTokens]);
 
   useEffect(() => {
     if (!shouldSearchJupiter) {
@@ -275,93 +387,6 @@ export function TokenSelect() {
       name="token"
       control={form?.control}
       render={({ field }) => {
-        const localBestRank = filteredTokens[0]
-          ? getTokenSearchRank({
-              query: trimmedSearchValue,
-              name: filteredTokens[0].tokenName,
-              symbol: filteredTokens[0].tokenSymbol,
-              mintAddress: filteredTokens[0].mintAddress,
-              sortOrder: filteredTokens[0].sortOrder,
-            })
-          : Number.POSITIVE_INFINITY;
-        const jupiterBestRank = verifiedJupiterTokens[0]
-          ? getTokenSearchRank({
-              query: trimmedSearchValue,
-              name: verifiedJupiterTokens[0].name,
-              symbol: verifiedJupiterTokens[0].symbol,
-              mintAddress: verifiedJupiterTokens[0].id,
-            })
-          : Number.POSITIVE_INFINITY;
-        const shouldShowJupiterFirst = jupiterBestRank < localBestRank;
-
-        const localTokenResults =
-          filteredTokens.length > 0 ? (
-            <CommandGroup>
-              {filteredTokens.map((token) => (
-                <CommandItem
-                  value={`${token.tokenName} ${token.tokenSymbol} ${token.mintAddress}`}
-                  key={token.tokenSymbol}
-                  onSelect={() => {
-                    field.onChange(token.tokenSymbol);
-                    form.saveDraft();
-                    setOpen(false);
-                  }}
-                >
-                  <TokenSearchLabel
-                    icon={token.icon}
-                    name={token.tokenName}
-                    symbol={token.tokenSymbol}
-                    mintAddress={token.mintAddress}
-                  />
-                  <Check
-                    className={cn(
-                      'ml-auto',
-                      token.tokenSymbol === field.value
-                        ? 'opacity-100'
-                        : 'opacity-0',
-                    )}
-                  />
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          ) : null;
-
-        const jupiterTokenResults =
-          shouldSearchJupiter &&
-          !isSearchingJupiter &&
-          verifiedJupiterTokens.length > 0 ? (
-            <CommandGroup heading="Found on Jupiter">
-              {verifiedJupiterTokens.map((token) => (
-                <div
-                  key={token.id}
-                  className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm"
-                >
-                  <TokenSearchLabel
-                    icon={token.icon}
-                    name={token.name}
-                    symbol={token.symbol}
-                    mintAddress={token.id}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="ml-auto h-7 gap-1"
-                    disabled={!!addingMintAddress}
-                    onClick={() => addJupiterToken(token.id, field.onChange)}
-                  >
-                    {addingMintAddress === token.id ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <Plus className="h-3 w-3" />
-                    )}
-                    Add
-                  </Button>
-                </div>
-              ))}
-            </CommandGroup>
-          ) : null;
-
         return (
           <FormItem className="gap-2">
             <FormLabel>Payment</FormLabel>
@@ -401,12 +426,76 @@ export function TokenSelect() {
                     onValueChange={setSearchValue}
                   />
                   <CommandList>
-                    {shouldShowJupiterFirst
-                      ? jupiterTokenResults
-                      : localTokenResults}
-                    {shouldShowJupiterFirst
-                      ? localTokenResults
-                      : jupiterTokenResults}
+                    {searchResults.length > 0 && (
+                      <CommandGroup>
+                        {searchResults.map((result) =>
+                          result.type === 'db' ? (
+                            <CommandItem
+                              value={`${result.token.tokenName} ${result.token.tokenSymbol} ${result.token.mintAddress}`}
+                              key={result.key}
+                              onSelect={() => {
+                                field.onChange(result.token.tokenSymbol);
+                                form.saveDraft();
+                                setOpen(false);
+                              }}
+                            >
+                              <TokenSearchLabel
+                                icon={result.token.icon}
+                                name={result.token.tokenName}
+                                symbol={result.token.tokenSymbol}
+                                mintAddress={result.token.mintAddress}
+                                isVerifiedOnJupiter={
+                                  result.token.isVerifiedOnJupiter
+                                }
+                              />
+                              <Check
+                                className={cn(
+                                  'ml-auto',
+                                  result.token.tokenSymbol === field.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0',
+                                )}
+                              />
+                            </CommandItem>
+                          ) : (
+                            <div
+                              key={result.key}
+                              className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm"
+                            >
+                              <TokenSearchLabel
+                                icon={result.token.icon}
+                                name={result.token.name}
+                                symbol={result.token.symbol}
+                                mintAddress={result.token.id}
+                                isVerifiedOnJupiter={result.token.isVerified}
+                              />
+                              <Button
+                                type="button"
+                                variant="link"
+                                size="sm"
+                                className="ml-auto flex h-7 items-center gap-1 px-0 text-[0.9rem]"
+                                disabled={!!addingMintAddress}
+                                onClick={() =>
+                                  addJupiterToken(
+                                    result.token.id,
+                                    field.onChange,
+                                  )
+                                }
+                              >
+                                {addingMintAddress === result.token.id ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <>
+                                    <Plus className="h-4 w-4" />
+                                    <span>Add</span>
+                                  </>
+                                )}
+                              </Button>
+                            </div>
+                          ),
+                        )}
+                      </CommandGroup>
+                    )}
                     {shouldSearchJupiter && isSearchingJupiter && (
                       <div className="flex items-center justify-center gap-2 py-8 text-sm text-slate-500">
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -416,7 +505,8 @@ export function TokenSelect() {
                     {shouldSearchJupiter &&
                       !isSearchingJupiter &&
                       filteredJupiterTokens.length > 0 &&
-                      verifiedJupiterTokens.length === 0 && (
+                      verifiedJupiterTokens.length === 0 &&
+                      searchResults.length === 0 && (
                         <ReachOutMessage
                           jupiterUrl={
                             unverifiedJupiterToken
@@ -428,7 +518,7 @@ export function TokenSelect() {
                     {shouldSearchJupiter &&
                       !isSearchingJupiter &&
                       filteredJupiterTokens.length === 0 &&
-                      filteredTokens.length === 0 && <ReachOutMessage />}
+                      searchResults.length === 0 && <ReachOutMessage />}
                   </CommandList>
                 </Command>
               </PopoverContent>

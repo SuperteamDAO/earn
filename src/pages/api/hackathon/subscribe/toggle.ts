@@ -60,7 +60,7 @@ async function toggleSubscription(
       `Error occurred while toggling subscription for hackathon slug: ${slug} and user ID: ${userId}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while toggling subscription.',
     });
   }

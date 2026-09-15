@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import type { SubmissionWithUser } from '@/interface/submission';
+import type { ListingWinner } from '@/interface/submission';
 import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
 import { nthLabelGenerator } from '@/utils/rank';
@@ -26,7 +26,11 @@ const BORING_AVATAR_COLORS = [
 
 const AVATAR_SIZE = 80;
 
-const getAvatarSeed = (winner: SubmissionWithUser) => {
+type WinnerOgSubmission = Pick<ListingWinner, 'id' | 'winnerPosition'> & {
+  user: Pick<ListingWinner['user'], 'id' | 'firstName' | 'lastName' | 'photo'>;
+};
+
+const getAvatarSeed = (winner: WinnerOgSubmission) => {
   return (
     winner?.user?.id ||
     [winner?.user?.firstName, winner?.user?.lastName, winner?.id]
@@ -129,7 +133,7 @@ export async function GET(request: Request) {
 
     const submissions = getParam('submissions', (x) =>
       JSON.parse(decodeURIComponent(x)),
-    ) as SubmissionWithUser[];
+    ) as WinnerOgSubmission[];
 
     if (!id) throw new Error('ID IS MISSING');
     if (!rewards) throw new Error('REWARDS IS MISSING');

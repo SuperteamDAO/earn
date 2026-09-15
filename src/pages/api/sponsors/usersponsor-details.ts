@@ -102,7 +102,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     );
     return res.status(500).json({
       error: 'Internal server error',
-      message: `Error occurred while updating user: ${error.message}`,
+      message: 'Error occurred while updating the user.',
     });
   }
 }

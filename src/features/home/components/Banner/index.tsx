@@ -15,9 +15,9 @@ import {
   popupsShowedAtom,
 } from '@/features/conversion-popups/atoms';
 
+import { HomeCryptoWorldFairHackathonBanner } from './CryptoWorldFairHackathonBanner';
 import { HomeSponsorBanner } from './SponsorBanner';
 import { HomeTalentBanner } from './TalentBanner';
-import { HomeWorldCupHackathonBanner } from './WorldCupHackathonBanner';
 
 interface BannerCarouselProps {
   readonly totalUsers?: number | null;
@@ -70,10 +70,10 @@ export function BannerCarousel({
     >
       <CarouselContent>
         <CarouselItem>
-          <HomeTalentBanner totalUsers={totalUsers} />
+          <HomeCryptoWorldFairHackathonBanner />
         </CarouselItem>
         <CarouselItem>
-          <HomeWorldCupHackathonBanner />
+          <HomeTalentBanner totalUsers={totalUsers} />
         </CarouselItem>
         <CarouselItem>
           <HomeSponsorBanner

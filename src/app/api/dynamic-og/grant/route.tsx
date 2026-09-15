@@ -56,7 +56,9 @@ export async function GET(request: Request) {
     const displayReward =
       minReward === '0' ? `Up to ${maxReward}` : `${minReward} - ${maxReward}`;
 
-    const icon = resolveAbsoluteUrl((await getTokenIcon(token)) ?? null);
+    const icon = resolveAbsoluteUrl(
+      (await getTokenIcon(token, { format: 'png' })) ?? null,
+    );
 
     return new ImageResponse(
       <div

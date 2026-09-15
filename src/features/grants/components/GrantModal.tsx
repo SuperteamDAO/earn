@@ -4,9 +4,9 @@ import { useRef } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
 
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
+import { type UserApplicationResponse } from '../constants/userApplication';
 import { type Grant } from '../types';
 import { ApplicationModal } from './Modals/ApplicationModal';
 import { KYCModal } from './Modals/KYCModal';
@@ -16,7 +16,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   grant: Grant;
-  editableGrantApplication?: GrantApplicationModel;
+  editableGrantApplication?: UserApplicationResponse;
   applicationId?: string;
   tranches?: number;
 }

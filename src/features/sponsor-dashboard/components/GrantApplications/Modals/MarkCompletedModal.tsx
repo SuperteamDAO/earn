@@ -8,13 +8,15 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
+import { type GrantApplicationMutationResponse } from '@/features/sponsor-dashboard/constants/grantApplicationMutation';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   applicationId: string;
-  onMarkCompleted: (updatedApplication: GrantApplicationWithUser) => void;
+  onMarkCompleted: (
+    updatedApplication: GrantApplicationMutationResponse,
+  ) => void;
 }
 
 export function MarkCompleteModal({
@@ -26,7 +28,7 @@ export function MarkCompleteModal({
   const { mutate: markCompletedMutation, isPending: markCompletePending } =
     useMutation({
       mutationFn: async () => {
-        const response = await api.put<GrantApplicationWithUser>(
+        const response = await api.put<GrantApplicationMutationResponse>(
           `/api/sponsor-dashboard/grants/update-ship-progress`,
           {
             id: applicationId,
@@ -42,10 +44,10 @@ export function MarkCompleteModal({
       onError: (error) => {
         console.error(error);
         if (error instanceof AxiosError) {
+          const responseError = error.response?.data?.error;
           if (
-            (error.response?.data.error as string)
-              .toLowerCase()
-              .includes('airtable recipient')
+            typeof responseError === 'string' &&
+            responseError.toLowerCase().includes('airtable recipient')
           ) {
             toast.error('User has not filled the Grant Onboarding form');
             return;

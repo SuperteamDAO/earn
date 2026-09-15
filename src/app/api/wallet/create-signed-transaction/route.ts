@@ -444,6 +444,9 @@ export async function POST(request: NextRequest) {
     logger.error(
       `Failed to create transfer transaction: ${safeStringify(error)}`,
     );
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 },
+    );
   }
 }

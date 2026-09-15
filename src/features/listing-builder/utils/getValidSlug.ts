@@ -32,7 +32,10 @@ export const generateUniqueSlug = async (
   title: string,
   id?: string,
 ): Promise<string> => {
-  const baseSlug = slugify(title, { lower: true, strict: true });
+  const baseSlug = slugify(title.replace(/\|/g, ''), {
+    lower: true,
+    strict: true,
+  });
 
   const existingSlugs = await prisma.bounties
     .findMany({

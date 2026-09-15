@@ -1,6 +1,9 @@
 import axios from 'axios';
 import type { NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
+import { safeStringify } from '@/utils/safeStringify';
+
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { SUMSUB_BASE_URL } from '@/features/kyc/constants/SUMSUB_BASE_URL';
@@ -51,9 +54,10 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
 
     return res.status(200).json(result);
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : 'Internal server error';
-    return res.status(400).json({ message });
+    logger.error(
+      `Unable to create Sumsub access token: ${safeStringify(error)}`,
+    );
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 

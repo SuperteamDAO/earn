@@ -30,7 +30,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Error updating submission like for user=${req.userId}: ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while updating submission like.',
     });
   }

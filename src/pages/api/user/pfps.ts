@@ -38,6 +38,6 @@ export default async function getAllUsers(
     logger.error(
       `Error occurred while fetching user details: ${safeStringify(error)}`,
     );
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }

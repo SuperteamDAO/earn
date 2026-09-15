@@ -49,7 +49,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
     );
     return res.status(400).json({
       error: 'Error occurred while deleting a comment.',
-      message: error.message,
+      message: 'Internal Server Error',
     });
   }
 }

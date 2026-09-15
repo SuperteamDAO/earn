@@ -5,7 +5,7 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
-import { type SubmissionLabels } from '@/prisma/enums';
+import { GrantApplicationStatus, type SubmissionLabels } from '@/prisma/enums';
 import { getTokenBySymbol } from '@/server/tokenList';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 import { safeStringify } from '@/utils/safeStringify';
@@ -18,6 +18,7 @@ import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
 import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
+import { type GrantApplicationStatusMutationResponse } from '@/features/sponsor-dashboard/constants/grantApplicationMutation';
 import { validateCustomEmailNote } from '@/features/sponsor-dashboard/utils/customEmailSanitizer';
 import {
   getGrantApprovedEmailBody,
@@ -172,7 +173,24 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(authError.status).json({ error: authError.message });
     }
 
-    const isApproved = applicationStatus === 'Approved';
+    const isDecisionStatus =
+      applicationStatus === GrantApplicationStatus.Approved ||
+      applicationStatus === GrantApplicationStatus.Rejected;
+    if (
+      isDecisionStatus &&
+      currentApplications.some((application) => application.grant.isPaused)
+    ) {
+      logger.warn(
+        `Blocked ${applicationStatus} decision for paused grant ${grantId}`,
+      );
+      return res.status(409).json({
+        error: 'Grant is paused',
+        message:
+          'Applications cannot be approved or rejected while the grant is paused.',
+      });
+    }
+
+    const isApproved = applicationStatus === GrantApplicationStatus.Approved;
     let sanitizedCustomNote: string | undefined;
     if (customNote) {
       for (const [index, application] of currentApplications.entries()) {
@@ -385,13 +403,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
     }
 
-    return res.status(200).json(result);
+    const response: GrantApplicationStatusMutationResponse = {
+      success: true,
+      applicationIds: result.map((application) => application.id),
+    };
+
+    return res.status(200).json(response);
   } catch (error: any) {
     logger.error(
       `Error occurred while updating grant application ID: ${data.map((c) => c.id)}:  ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while updating the grant application.',
     });
   }

@@ -98,6 +98,45 @@ export const verifyPaymentsSchema = z.object({
 
 export type VerifyPaymentsFormData = z.infer<typeof verifyPaymentsSchema>;
 
+const paymentTxIdSchema = z.string().trim().min(1).max(500);
+
+export const verifyExternalPaymentRequestSchema = z.object({
+  listingId: z.string().trim().min(1).max(191),
+  paymentLinks: z
+    .array(
+      z
+        .object({
+          submissionId: z.string().trim().min(1).max(191),
+          link: z.string().max(2048).optional(),
+          isVerified: z.boolean(),
+          txId: z.string().trim().max(500),
+        })
+        .refine((payment) => payment.isVerified || payment.txId.length > 0, {
+          message: 'Transaction ID is required',
+          path: ['txId'],
+        }),
+    )
+    .min(1)
+    .refine(
+      (payments) => payments.filter((payment) => payment.txId).length <= 25,
+      { message: 'Cannot verify more than 25 transaction IDs at once' },
+    ),
+});
+
+export const addSubmissionPaymentRequestSchema = z.object({
+  id: z.string().trim().min(1).max(191),
+  paymentDetails: z
+    .array(
+      z.object({
+        txId: paymentTxIdSchema,
+        amount: z.number().finite().positive(),
+        tranche: z.number().int().positive(),
+      }),
+    )
+    .min(1)
+    .max(25),
+});
+
 export type ValidatePaymentResult = {
   submissionId: string;
   txId: string;
