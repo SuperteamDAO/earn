@@ -8,6 +8,7 @@ import { type NextApiRequestWithAgent } from '@/features/auth/types';
 import { withAgentAuth } from '@/features/auth/utils/withAgentAuth';
 import { publicListingDetailsSelect } from '@/features/listings/constants/publicListingDetails';
 import { type PublicListingDetails } from '@/features/listings/types';
+import { agentListingVisibilityWhere } from '@/features/listings/utils/agentListingVisibility';
 
 export type AgentListingDetailsResponse = PublicListingDetails;
 
@@ -21,11 +22,7 @@ async function getAgentListingDetailsBySlug(
   const result = await prisma.bounties.findFirst({
     where: {
       slug,
-      isActive: true,
-      agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
-      sponsor: {
-        isVerified: true,
-      },
+      ...agentListingVisibilityWhere,
     },
     select: publicListingDetailsSelect,
   });

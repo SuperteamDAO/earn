@@ -10,6 +10,8 @@ import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { type NextApiRequestWithAgent } from '@/features/auth/types';
 import { withAgentAuth } from '@/features/auth/utils/withAgentAuth';
 import { listingSelect } from '@/features/listings/constants/schema';
+import { agentListingVisibilityWhere } from '@/features/listings/utils/agentListingVisibility';
+import { parseLiveDeadline } from '@/features/listings/utils/agentLiveDeadline';
 
 async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
   const params = req.query;
@@ -24,7 +26,11 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
     return res.status(400).json({ error: takeResult.error });
   }
   const take = takeResult.value;
-  const deadline = params.deadline as string;
+  const deadlineResult = parseLiveDeadline(params.deadline);
+  if (!deadlineResult.ok) {
+    return res.status(400).json({ error: deadlineResult.error });
+  }
+  const deadline = deadlineResult.value;
   const exclusiveSponsorId = params.exclusiveSponsorId as string | undefined;
   let excludeIds = params['excludeIds[]'];
   if (typeof excludeIds === 'string') {
@@ -36,17 +42,11 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       id: {
         notIn: excludeIds,
       },
-      isPublished: true,
-      isActive: true,
-      isPrivate: false,
-      isArchived: false,
+      ...agentListingVisibilityWhere,
       status: 'OPEN',
+      isWinnersAnnounced: false,
       deadline: { gte: deadline },
       type: type || { in: ['bounty', 'project', 'hackathon'] },
-      agentAccess: { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] },
-      sponsor: {
-        isVerified: true,
-      },
       sponsorId: exclusiveSponsorId,
     },
     select: listingSelect,
