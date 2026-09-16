@@ -26,9 +26,24 @@ const buildCloudinaryURL = (
         .join(',')
     : '';
 
-  const urlParts = [baseUrl, transformationString, src].filter(Boolean);
+  if (!transformationString) {
+    return [baseUrl, src].filter(Boolean).join('/');
+  }
 
-  return urlParts.join('/');
+  const uploadMarker = '/upload/';
+  const uploadMarkerIndex = baseUrl.indexOf(uploadMarker);
+
+  if (uploadMarkerIndex === -1) {
+    return [baseUrl, transformationString, src].filter(Boolean).join('/');
+  }
+
+  const transformationIndex = uploadMarkerIndex + uploadMarker.length;
+  const cloudinaryRoot = baseUrl.slice(0, transformationIndex - 1);
+  const assetPath = baseUrl.slice(transformationIndex);
+
+  return [cloudinaryRoot, transformationString, assetPath, src]
+    .filter(Boolean)
+    .join('/');
 };
 
 export const ExternalImage = ({

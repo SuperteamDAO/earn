@@ -25,6 +25,14 @@ export function HomeCryptoWorldFairHackathonBanner() {
           alt=""
           className="h-full w-full object-cover object-center md:block"
           loading="eager"
+          transformations={{
+            f: 'auto',
+            q: 'auto',
+            c: 'limit',
+            w: 2000,
+          }}
+          width={2000}
+          height={529}
         />
       </div>
       <div className="absolute inset-0 bg-black/45" aria-hidden="true" />
