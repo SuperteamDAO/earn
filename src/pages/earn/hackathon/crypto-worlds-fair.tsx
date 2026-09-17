@@ -149,7 +149,7 @@ function Hero({
         <p className="text-sm sm:text-base">{description}</p>
         <Button
           variant="outline"
-          className="mx-auto min-h-10 w-fit gap-3 rounded-[0.5rem] border-white/40 bg-black/20 px-8 text-base text-white hover:bg-black/35 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/35"
+          className="mx-auto min-h-10 w-fit gap-3 rounded-[0.5rem] border-white/40 bg-black/20 px-8 text-base text-white hover:bg-black/20 hover:text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/35"
           onClick={() => {
             const tracksSection = document.getElementById('tracks-section');
             if (tracksSection) {
