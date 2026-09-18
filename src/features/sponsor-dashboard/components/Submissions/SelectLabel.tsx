@@ -93,21 +93,23 @@ export const SelectLabel = ({
   });
 
   return (
-    <div onClick={(e) => e.stopPropagation()}>
+    <div className="w-fit max-w-[104px] sm:max-w-none" onClick={(e) => e.stopPropagation()}>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild className="min-w-[110px]">
+        <DropdownMenuTrigger asChild>
           <button
             className={cn(
-              'flex w-full items-center justify-between rounded-lg border border-slate-200 bg-transparent px-2 py-1 text-xs font-medium text-slate-500 capitalize transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200',
+              'flex min-w-[82px] max-w-[104px] items-center justify-between gap-1 rounded-full border border-slate-200 bg-transparent px-2 py-1 text-[11px] leading-none font-medium whitespace-nowrap text-slate-500 capitalize transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200 sm:min-w-[110px] sm:max-w-none sm:rounded-lg sm:text-xs sm:leading-normal',
               color,
               bg,
               border,
             )}
           >
-            {labelMenuOptions(type).find(
-              (option) => option.value === targetSubmission?.label,
-            )?.label || 'Select Option'}
-            <ChevronDown className="ml-2 size-3" />
+            <span className="min-w-0 truncate">
+              {labelMenuOptions(type).find(
+                (option) => option.value === targetSubmission?.label,
+              )?.label || 'Select Option'}
+            </span>
+            <ChevronDown className="size-3 shrink-0" />
           </button>
         </DropdownMenuTrigger>
 

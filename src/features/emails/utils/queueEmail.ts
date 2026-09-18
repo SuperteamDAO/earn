@@ -41,8 +41,11 @@ interface EmailNotificationParams {
   delay?: number;
 }
 
-const redis = new Redis(process.env.REDIS_URL!, { maxRetriesPerRequest: null });
-const logicQueue = new Queue('logicQueue', { connection: redis });
+const redisUrl = process.env.REDIS_URL?.trim();
+const redis = redisUrl
+  ? new Redis(redisUrl, { maxRetriesPerRequest: null })
+  : null;
+const logicQueue = redis ? new Queue('logicQueue', { connection: redis }) : null;
 
 export async function queueEmail({
   type,
@@ -55,6 +58,13 @@ export async function queueEmail({
   logger.info(
     `Queueing email notification: type=${type}, userId=${userId}, id=${id}, triggeredBy=${triggeredBy}`,
   );
+
+  if (!logicQueue) {
+    logger.warn(
+      `Skipping email queue because REDIS_URL is not configured: type=${type}, userId=${userId}, id=${id}`,
+    );
+    return;
+  }
 
   try {
     const job = await logicQueue.add(

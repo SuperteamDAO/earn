@@ -54,13 +54,17 @@ export function InviteButton({
   return (
     <Button
       onClick={handleInvite}
-      disabled={invited || maxInvitesReached}
+      disabled={invited || maxInvitesReached || inviteMutation.isPending}
       className={cn(
-        'ph-no-capture h-full gap-2 text-xs',
-        'text-brand-purple bg-indigo-50',
-        'disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400',
+        'ph-no-capture h-full gap-2 text-xs transition-colors',
+        invited
+          ? 'cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400'
+          : inviteMutation.isPending
+            ? 'border border-brand-purple bg-brand-purple text-white shadow-sm'
+            : 'border border-brand-purple bg-white text-brand-purple hover:bg-brand-purple hover:text-white active:bg-brand-purple active:text-white',
+        'disabled:cursor-not-allowed disabled:opacity-100',
       )}
-      {...(inviteMutation.isPending && { 'aria-disabled': true })}
+      variant="outline"
     >
       {invited ? (
         <>
