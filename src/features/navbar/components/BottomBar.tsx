@@ -152,13 +152,15 @@ export function BottomBar({
         <Button
           variant="ghost"
           className={cn(
-            setColor(`/earn/t/${user?.username}/`, router.asPath),
+            user?.username
+              ? setColor(`/earn/t/${user.username}/`, router.asPath)
+              : 'text-slate-500',
             'w-12 hover:bg-transparent active:bg-transparent',
           )}
           asChild
         >
           <Link
-            href={`/earn/t/${user?.username}`}
+            href={user?.username ? `/earn/t/${user.username}` : '#'}
             style={{
               ...linkStyle,
               pointerEvents: user ? 'auto' : 'none',
