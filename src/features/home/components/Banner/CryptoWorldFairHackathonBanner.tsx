@@ -4,7 +4,7 @@ import posthog from 'posthog-js';
 export function HomeCryptoWorldFairHackathonBanner() {
   return (
     <Link
-      href="/earn/hackathon/crypto-worlds-fair"
+      href="/earn/next-stop-breakpoint"
       className="group relative mx-auto flex h-full min-h-64 w-full flex-col overflow-hidden rounded-lg p-5 text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#65496F] md:p-10"
       prefetch={false}
       onClick={() => {

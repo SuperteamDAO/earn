@@ -5,37 +5,67 @@ import Image from 'next/image';
 import { type ReactNode, useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
+import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { type TrackProps } from '@/interface/hackathon';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { nextStopBreakpointStatsQuery, type Stats } from '@/queries/hackathon';
+import { domPurify } from '@/lib/domPurify';
+import { prisma } from '@/prisma';
+import { type HackathonGetPayload } from '@/prisma/models/Hackathon';
+import {
+  type Stats,
+  statsDataQuery,
+  trackDataQuery,
+} from '@/queries/hackathon';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
+type Hackathon = HackathonGetPayload<{
+  include: {
+    Sponsor: true;
+  };
+}>;
+
 type HackathonStatus = 'Start In' | 'Close In' | 'Closed';
 
-const HACKATHON_DESCRIPTION =
-  'Submit to bounties for a chance to win Breakpoint tickets.';
+const SLUG = 'crypto-worlds-fair';
 const BACKGROUND_IMAGE =
-  '/assets/hackathon/crypto-world-fair/road-to-bp-main.png';
-const SUMMARY_BACKGROUND_IMAGE =
-  '/assets/hackathon/crypto-world-fair/big-ben-blue.png';
+  'https://res.cloudinary.com/dgvnuwspr/image/upload/v1788934363/assets/hackathon/crypto-world-fair/bg-wo-logo.png';
 const OG_IMAGE =
   'https://res.cloudinary.com/dgvnuwspr/image/upload/v1788934366/assets/hackathon/crypto-world-fair/og.png';
-const HERO_LOGO = '/assets/hackathon/crypto-world-fair/breakpoint-logo.png';
+const HERO_LOGO =
+  'https://res.cloudinary.com/dgvnuwspr/image/upload/v1788934363/assets/hackathon/crypto-world-fair/logo-alt.png';
 
 export default function CryptoWorldFair({
-  startDate,
-  closeDate,
+  hackathon,
 }: {
-  startDate: string;
-  closeDate: string;
+  hackathon: Hackathon;
 }) {
-  const { data: stats } = useQuery(nextStopBreakpointStatsQuery());
+  if (!hackathon.startDate || !hackathon.deadline) {
+    throw new Error('Start Date and deadline missing');
+  }
+
+  const startDate = hackathon.startDate;
+  const closeDate = hackathon.deadline;
+
+  const {
+    data: trackData,
+    isPending: areTracksLoading,
+    isError: didTracksFail,
+    refetch: refetchTracks,
+  } = useQuery(trackDataQuery(SLUG));
+  const { data: stats } = useQuery(statsDataQuery(SLUG));
 
   return (
     <Default
@@ -43,8 +73,8 @@ export default function CryptoWorldFair({
       meta={
         <Meta
           title="Crypto World's Fair | Superteam Earn"
-          description={HACKATHON_DESCRIPTION}
-          canonical="https://superteam.fun/earn/next-stop-breakpoint/"
+          description={hackathon.description}
+          canonical="https://superteam.fun/earn/hackathon/crypto-worlds-fair/"
           og={OG_IMAGE}
         />
       }
@@ -53,30 +83,50 @@ export default function CryptoWorldFair({
         stats={stats}
         startDate={startDate}
         closeDate={closeDate}
-        description={HACKATHON_DESCRIPTION}
+        description={hackathon.description}
       />
       <div className="mx-auto mt-14 mb-20 w-full max-w-7xl px-4 md:mt-14 xl:mt-16">
-        <Tracks />
-        <p className="mx-auto mt-2 max-w-3xl text-center text-base text-slate-500">
-          Note: The prize amount shown is for listing purposes only. Winners
-          will receive a Breakpoint ticket instead of the stated cash prize.
-        </p>
+        <Tracks
+          tracks={trackData}
+          isLoading={areTracksLoading}
+          isError={didTracksFail}
+          onRetry={() => void refetchTracks()}
+        />
+        <FAQs />
       </div>
     </Default>
   );
 }
 
 function Hero({
-  stats,
   startDate,
   closeDate,
+  stats,
   description,
 }: {
-  stats: Pick<Stats, 'totalRewardAmount' | 'totalListings'> | undefined;
   startDate: string | Date;
   closeDate: string | Date;
+  stats: Stats | undefined;
   description: string;
 }) {
+  const [status, setStatus] = useState<HackathonStatus>('Start In');
+
+  useEffect(() => {
+    function updateStatus() {
+      if (dayjs().isAfter(dayjs(closeDate))) {
+        setStatus('Closed');
+      } else if (dayjs().isAfter(dayjs(startDate))) {
+        setStatus('Close In');
+      }
+    }
+
+    updateStatus();
+
+    const intervalId = window.setInterval(updateStatus, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [startDate, closeDate]);
+
   return (
     <section
       className="relative flex w-full flex-col items-center border-b border-slate-200 bg-[#FFF1CE] bg-cover bg-center bg-no-repeat pt-14 pb-25 text-center text-white"
@@ -86,19 +136,13 @@ function Hero({
     >
       <div className="absolute inset-0 bg-black/35" aria-hidden="true" />
       <div className="relative w-full max-w-[18rem] sm:max-w-[24rem] md:max-w-[32rem]">
-        <p
-          className="mb-4 w-full text-center text-xs font-black tracking-[2em] text-white uppercase sm:text-sm"
-          style={{ fontFamily: 'Inter, sans-serif' }}
-        >
-          Next Stop
-        </p>
         <Image
           src={HERO_LOGO}
           alt="Crypto World's Fair"
           width={1120}
           height={320}
           priority
-          className="h-auto w-full"
+          className="mt-12 h-auto w-full"
         />
       </div>
       <div className="relative mt-4 mb-1 flex w-full max-w-[42rem] flex-col items-center gap-4 px-4 text-white">
@@ -122,14 +166,27 @@ function Hero({
             }
           }}
         >
-          <PulseIcon
-            isPulsing={false}
-            w={8}
-            h={8}
-            bg="#ff9305"
-            text="#ff9305"
-          />
-          Submissions Open Soon
+          {status === 'Close In' && (
+            <PulseIcon
+              isPulsing={true}
+              w={6}
+              h={6}
+              bg="#4be369"
+              text="#16A34A"
+            />
+          )}
+          {status === 'Start In' && (
+            <PulseIcon
+              isPulsing={false}
+              w={8}
+              h={8}
+              bg="#ff9305"
+              text="#ff9305"
+            />
+          )}
+          {status === 'Start In' && 'Submissions Open Soon'}
+          {status === 'Close In' && 'Submissions Open'}
+          {status === 'Closed' && 'Submissions Closed'}
         </Button>
       </div>
       <div className="absolute bottom-[-16%] mt-0 flex w-full max-w-[90%] flex-row overflow-hidden rounded-2xl border-[1.14px] border-white/50 md:w-fit">
@@ -146,18 +203,21 @@ function HeroMini({
 }: {
   startDate: string | Date;
   closeDate: string | Date;
-  stats: Pick<Stats, 'totalRewardAmount' | 'totalListings'> | undefined;
+  stats: Stats | undefined;
 }) {
   const isMd = useBreakpoint('md');
-  const [isMounted, setIsMounted] = useState(false);
   const [countdownDate, setCountdownDate] = useState<Date>(
     dayjs.utc(startDate).toDate(),
   );
-  const [status, setStatus] = useState<HackathonStatus>('Start In');
+  const [status, setStatus] = useState<HackathonStatus>(() =>
+    dayjs().isAfter(dayjs(closeDate))
+      ? 'Closed'
+      : dayjs().isAfter(dayjs(startDate))
+        ? 'Close In'
+        : 'Start In',
+  );
 
   useEffect(() => {
-    setIsMounted(true);
-
     function updateStatus() {
       if (dayjs().isAfter(dayjs(closeDate))) {
         setStatus('Closed');
@@ -175,19 +235,11 @@ function HeroMini({
   }, [startDate, closeDate]);
 
   return (
-    <div
-      className="relative flex w-full items-center justify-center gap-0 overflow-hidden rounded-md bg-cover bg-center bg-no-repeat px-1 py-6 text-black sm:gap-8 sm:px-6 md:flex-row md:gap-12 md:rounded-xl md:px-16"
-      style={{
-        backgroundImage: `url('${SUMMARY_BACKGROUND_IMAGE}')`,
-        backgroundPosition: 'center bottom',
-      }}
-    >
-      <div className="absolute inset-0 bg-black/25" aria-hidden="true" />
+    <div className="relative flex w-full items-center justify-center gap-8 rounded-md bg-[#65496F] px-6 py-6 text-white md:flex-row md:gap-12 md:rounded-xl md:px-16">
       <MiniStat
-        className="w-[9rem]"
         title={isMd ? `Submissions ${status}` : mobileTitleForCountdown(status)}
       >
-        {isMounted && status !== 'Closed' ? (
+        {status !== 'Closed' ? (
           <Countdown
             date={countdownDate}
             renderer={CountDownRenderer}
@@ -197,15 +249,15 @@ function HeroMini({
           '-'
         )}
       </MiniStat>
-      <MiniStat className="w-[5rem] sm:w-[7rem]" title="Total Prizes">
+      <MiniStat title="Total Prizes">
         $
-        {(stats?.totalRewardAmount ?? 0).toLocaleString('en-US', {
+        {stats?.totalRewardAmount.toLocaleString('en-US', {
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
-        })}
+        }) ?? '-'}
       </MiniStat>
 
-      <MiniStat className="w-[5rem] sm:w-[7rem]" title="Bounties">
+      <MiniStat className="hidden sm:flex" title="Tracks">
         {stats?.totalListings ?? '-'}
       </MiniStat>
     </div>
@@ -239,49 +291,186 @@ function MiniStat({
     >
       <div
         className={cn(
-          'relative z-10 flex flex-col items-start gap-1 md:items-start',
+          'flex flex-col items-start gap-1 md:items-start',
           className,
         )}
       >
         <span className="flex items-center gap-2">
-          <span className="text-left text-xs whitespace-nowrap text-white md:w-max md:text-sm">
+          <span className="text-left text-xs text-white/80 md:w-max md:text-sm">
             {title}
           </span>
           {infotipContent && (
             <Info className="h-3 w-3 text-gray-400" aria-hidden="true" />
           )}
         </span>
-        <span
-          className="text-lg font-bold text-white tabular-nums md:text-2xl"
-          style={{ fontFamily: 'Inter, sans-serif' }}
-        >
-          {children}
-        </span>
+        <span className="text-lg font-bold md:text-2xl">{children}</span>
       </div>
     </Tooltip>
   );
 }
 
-function Tracks() {
+function Tracks({
+  tracks,
+  isLoading,
+  isError,
+  onRetry,
+}: {
+  tracks: TrackProps[] | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  onRetry: () => void;
+}) {
   return (
     <section id="tracks-section" className="sm:mx-6">
       <div className="max-w-7xl py-6 sm:mx-auto">
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-700">
-          Bounties are coming soon.
-        </div>
+        <h2 className="mb-4 text-lg font-semibold text-slate-900 md:text-xl">
+          Submission Tracks
+        </h2>
+        {isLoading && (
+          <div
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            aria-label="Loading submission tracks"
+          >
+            {Array.from({ length: 3 }, (_, index) => (
+              <div
+                key={index}
+                className="h-56 animate-pulse rounded-lg bg-slate-100 motion-reduce:animate-none"
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+        )}
+        {isError && (
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center">
+            <p className="text-sm text-slate-700">
+              We couldn't load the submission tracks.
+            </p>
+            <Button
+              variant="outline"
+              className="mt-4 min-h-10 focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+              onClick={onRetry}
+            >
+              Try Again
+            </Button>
+          </div>
+        )}
+        {!isLoading && !isError && tracks?.length === 0 && (
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-700">
+            Submission tracks are coming soon.
+          </div>
+        )}
+        {!isLoading && !isError && tracks && tracks.length > 0 && (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {tracks.map((track) => (
+              <TrackBox
+                key={track.slug}
+                title={track.title}
+                sponsor={track.sponsor}
+                token={track.token}
+                rewardAmount={track.rewardAmount}
+                slug={track.slug}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+const faqs: { question: string; answer: string }[] = [
+  {
+    question:
+      'How are Sidetracks different from the main Colosseum Crypto World’s Fair tracks?',
+    answer:
+      'Sidetracks are extra challenges hosted by Superteam Earn, separate from Colosseum’s Crypto World’s Fair tracks. They offer additional opportunities to build unique projects and win special prizes.',
+  },
+  {
+    question: 'Do I need to submit separately to Sidetracks on Superteam Earn?',
+    answer:
+      'Yes! Sidetracks have their own submission process on Superteam Earn. Make sure you submit your project directly to each Sidetrack you wish to enter.',
+  },
+  {
+    question: 'When will Sidetrack winners be announced?',
+    answer:
+      'Sidetrack winners will be announced shortly after the main Colosseum Crypto World’s Fair winners. If you submitted a project to a Sidetrack, we’ll email you directly when winners are announced.',
+  },
+  {
+    question: 'Can I submit my project to multiple Sidetracks?',
+    answer:
+      'Yes, you’re welcome to submit your project to as many Sidetracks as you like, as long as your submission fits each Sidetrack’s requirements.',
+  },
+  {
+    question: 'Where can I find developer resources for my project?',
+    answer:
+      'Check out <a href="https://colosseum.com/arena/resources" target="_blank" rel="noopener noreferrer">Colosseum’s Developer Resources page</a>. You’ll find documentation, tools, tutorials, and everything you need to build on Solana.',
+  },
+  {
+    question: 'What are the evaluation criteria for Sidetracks?',
+    answer:
+      'Each Sidetrack sponsor defines their own evaluation criteria. Be sure to carefully review the description and judging guidelines for each Sidetrack you’re submitting to.',
+  },
+];
+
+function FAQs() {
+  return (
+    <section className="mt-4 flex flex-col items-center px-1 py-8 md:mt-8">
+      <h2 className="pb-2 text-4xl font-bold md:text-5xl">FAQ</h2>
+      <div className="w-full max-w-[35rem]">
+        <Accordion type="single" collapsible>
+          {faqs.map((faq) => (
+            <AccordionItem
+              key={faq.question}
+              value={faq.question}
+              className="my-4 rounded-lg border shadow-md"
+            >
+              <AccordionTrigger className="rounded px-4 py-3 text-left font-normal text-slate-500 hover:bg-black/5 hover:no-underline focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 data-[state=open]:bg-black/5">
+                <span className="flex-1 text-left text-sm sm:text-base">
+                  {faq.question}
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pt-3 text-sm text-slate-700 sm:text-base [&_a]:text-blue-700">
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: domPurify(faq.answer),
+                  }}
+                />
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
     </section>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const startDate = dayjs().add(1, 'day').toISOString();
-  const closeDate = dayjs().add(20, 'day').toISOString();
+  const hackathon = await prisma.hackathon.findUnique({
+    where: {
+      slug: SLUG,
+    },
+    include: {
+      Sponsor: true,
+    },
+  });
+
+  if (!hackathon) throw Error('Hackathon not found');
 
   return {
     props: {
-      startDate,
-      closeDate,
+      hackathon: {
+        ...hackathon,
+        deadline: hackathon.deadline?.toISOString() || null,
+        startDate: hackathon.startDate?.toISOString() || null,
+        announceDate: hackathon.announceDate?.toISOString() || null,
+        Sponsor: hackathon.Sponsor
+          ? {
+              ...hackathon.Sponsor,
+              createdAt: hackathon.Sponsor.createdAt.toISOString(),
+              updatedAt: hackathon.Sponsor.updatedAt.toISOString(),
+            }
+          : null,
+      },
     },
   };
 };
