@@ -8,7 +8,7 @@ export function HomeCryptoWorldFairHackathonBanner() {
       className="group relative mx-auto flex h-full min-h-64 w-full flex-col overflow-hidden rounded-lg p-5 text-white focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#65496F] md:p-10"
       prefetch={false}
       onClick={() => {
-        posthog.capture('next_stop_breakpoint_banner');
+        posthog.capture('open_next_stop_breakpoint_banner');
       }}
     >
       <div className="absolute inset-0 overflow-hidden bg-[#65496F]">
