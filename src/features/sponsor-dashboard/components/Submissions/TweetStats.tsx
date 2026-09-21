@@ -72,7 +72,7 @@ export const TweetStats = ({
     return (
       <div
         aria-live="polite"
-        className="mb-4 flex max-w-md items-center gap-2 rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-2.5 motion-safe:animate-pulse dark:border-slate-800 dark:bg-slate-900/40"
+        className="mb-4 flex w-full max-w-md items-center gap-2 rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-2.5 motion-safe:animate-pulse dark:border-slate-800 dark:bg-slate-900/40"
         role="status"
       >
         <Loader2
@@ -89,7 +89,7 @@ export const TweetStats = ({
   if (error) {
     return (
       <div
-        className="mb-4 flex max-w-md items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-900/60 dark:bg-red-950/30"
+        className="mb-4 flex w-full max-w-md flex-col items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-3 sm:flex-row sm:items-center dark:border-red-900/60 dark:bg-red-950/30"
         role="alert"
       >
         <AlertCircle
@@ -104,6 +104,7 @@ export const TweetStats = ({
           size="sm"
           type="button"
           variant="outline"
+          className="w-full sm:w-auto"
         >
           Try again
         </Button>
@@ -117,7 +118,7 @@ export const TweetStats = ({
 
   if (!metrics) {
     return (
-      <div className="mb-4 flex max-w-md items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40">
+      <div className="mb-4 flex w-full max-w-md items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40">
         <AlertCircle
           aria-hidden
           className="h-4 w-4 text-slate-500 dark:text-slate-400"
@@ -150,7 +151,7 @@ const TweetStatsCard = ({
   };
 
   return (
-    <div className="group relative mb-4 max-w-md overflow-hidden rounded-xl border border-slate-100 bg-white p-3 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-200 hover:border-slate-200/80 hover:bg-slate-50/30 hover:shadow-md dark:border-slate-800 dark:bg-slate-950 dark:hover:border-slate-700 dark:hover:bg-slate-900/40">
+    <div className="group relative mb-4 w-full max-w-md overflow-hidden rounded-xl border border-slate-100 bg-white p-3 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-200 hover:border-slate-200/80 hover:bg-slate-50/30 hover:shadow-md dark:border-slate-800 dark:bg-slate-950 dark:hover:border-slate-700 dark:hover:bg-slate-900/40">
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center space-x-1.5">
           <svg
@@ -171,7 +172,7 @@ const TweetStatsCard = ({
         )}
       </div>
 
-      <div className="grid grid-cols-4 gap-2 text-center">
+      <div className="grid grid-cols-2 gap-2 text-center min-[360px]:grid-cols-4">
         <div className="flex flex-col items-center justify-center rounded-lg p-1.5 transition-colors duration-150 hover:bg-slate-100/50">
           <Eye aria-hidden className="mb-1 h-4 w-4 text-blue-500" />
           <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">

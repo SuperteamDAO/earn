@@ -137,7 +137,7 @@ export const Notes = ({ slug }: Props) => {
     <div className="flex h-full min-h-0 w-full flex-col items-start rounded-xl border border-slate-200 py-5 pr-1 pl-4">
       <div
         className={cn(
-          'mb-2 flex w-full items-center justify-between pr-3 text-slate-400',
+          'mb-2 flex w-full items-center justify-between pr-10 text-slate-400 md:pr-3',
           isAiCommited && 'text-slate-600',
         )}
       >

@@ -128,8 +128,8 @@ export const PayoutSection = ({
     return (
       <div className="space-y-4">
         {/* Wallet Connection Header */}
-        <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-          <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
             <h3 className="text-sm font-semibold text-slate-900">
               Your Wallet
             </h3>
@@ -137,7 +137,9 @@ export const PayoutSection = ({
               Directly process payments to winners using this wallet
             </p>
           </div>
-          <WalletConnectionBadge />
+          <div className="w-full md:w-auto">
+            <WalletConnectionBadge />
+          </div>
         </div>
 
         {/* No Winners Message */}
@@ -159,8 +161,8 @@ export const PayoutSection = ({
   return (
     <div className="space-y-4">
       {/* Wallet Connection Header */}
-      <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-        <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
           <h3 className="text-sm font-semibold text-slate-900">
             Wallet Connection
           </h3>
@@ -170,7 +172,9 @@ export const PayoutSection = ({
               : 'Connect your wallet to process payments to winners'}
           </p>
         </div>
-        <WalletConnectionBadge />
+        <div className="w-full md:w-auto">
+          <WalletConnectionBadge />
+        </div>
       </div>
 
       {/* Payment Table */}

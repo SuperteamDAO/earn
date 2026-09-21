@@ -5,6 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
+import { ChevronLeft } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -13,6 +14,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { GrantTrancheStatus } from '@/prisma/enums';
 import { useUser } from '@/store/user';
+import { cn } from '@/utils/cn';
 
 import { selectedGrantTrancheAtom, tranchesAtom } from '../atoms';
 import { sponsorGrantQuery } from '../queries/grant';
@@ -32,6 +34,7 @@ interface Props {
 
 export const TranchesTab = ({ slug }: Props) => {
   const [searchText, setSearchText] = useState('');
+  const [mobileView, setMobileView] = useState<'list' | 'detail'>('list');
   const [selectedFilters, setSelectedFilters] = useState<
     Set<GrantTrancheStatus>
   >(new Set());
@@ -277,17 +280,36 @@ export const TranchesTab = ({ slug }: Props) => {
   return (
     <>
       <div className="flex w-full items-start bg-white">
-        <div className="grid min-h-[42rem] w-full grid-cols-[23rem_1fr] bg-white">
-          <div className="h-full w-full">
+        <div className="flex min-h-[42rem] w-full flex-col bg-white md:grid md:grid-cols-[23rem_1fr]">
+          <div
+            className={cn(
+              mobileView === 'detail' ? 'hidden md:block' : 'block',
+            )}
+          >
             <TrancheList
               tranches={tranches}
               setSearchText={setSearchText}
               selectedFilters={selectedFilters}
               onFilterChange={setSelectedFilters}
+              onItemClick={() => setMobileView('detail')}
             />
           </div>
 
-          <div className="h-full w-full rounded-r-lg border-t border-r border-b border-slate-200 bg-white">
+          <div
+            className={cn(
+              'h-full w-full rounded-r-lg border-t border-r border-b border-slate-200 bg-white',
+              mobileView === 'list' ? 'hidden md:block' : 'block',
+            )}
+          >
+            {mobileView === 'detail' && (
+              <button
+                className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 md:hidden"
+                onClick={() => setMobileView('list')}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Back to list
+              </button>
+            )}
             {!tranches?.length && !searchText && !isTrancheLoading ? (
               <>
                 <ExternalImage

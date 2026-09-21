@@ -32,6 +32,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { JTTG } from '@/constants/Telegram';
 import { SolanaWalletProvider } from '@/context/SolanaWallet';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { useMediaQuery } from '@/hooks/use-media-query';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { SponsorContentSkeleton } from '@/layouts/SponsorLayoutSkeleton';
@@ -42,6 +43,7 @@ import { cn } from '@/utils/cn';
 import { isAutoGenerateOpenAtom } from '@/features/listing-builder/atoms';
 import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
 import { NavItem } from '@/features/sponsor-dashboard/components/NavItems';
+import { MobileDesktopOnlyDialog } from '@/features/sponsor-dashboard/components/MobileDesktopOnlyDialog';
 import { SelectHackathon } from '@/features/sponsor-dashboard/components/SelectHackathon';
 import { SelectSponsor } from '@/features/sponsor-dashboard/components/SelectSponsor';
 import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/active-hackathons';
@@ -107,6 +109,11 @@ export function SponsorLayout({
     onOpen: onSponsorInfoModalOpen,
     onClose: onSponsorInfoModalClose,
   } = useDisclosure();
+  const {
+    isOpen: isMobileDesktopOnlyOpen,
+    onOpen: onMobileDesktopOnlyOpen,
+    onClose: onMobileDesktopOnlyClose,
+  } = useDisclosure();
 
   const [isEntityModalOpen, setIsEntityModalOpen] = useState(false);
   const { query } = router;
@@ -114,8 +121,17 @@ export function SponsorLayout({
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const canSelectSponsor =
     user?.role === 'GOD' || (user?.UserSponsors?.length ?? 0) > 0;
-
   const setAutoGenerateOpen = useSetAtom(isAutoGenerateOpenAtom);
+  const isMobile = useMediaQuery('(max-width: 767px)');
+
+  const openMobileDesktopOnlyNotice = (flow: 'ai' | 'scratch') => {
+    onMobileDesktopOnlyOpen();
+    posthog.capture(
+      flow === 'ai'
+        ? 'new generate with ai_sponsor_mobile_desktop_only'
+        : 'new start from scratch_sponsor_mobile_desktop_only',
+    );
+  };
 
   const handleMouseEnter = useCallback(() => {
     if (!isCollapsible) return;
@@ -145,6 +161,10 @@ export function SponsorLayout({
   const { data: isCreateListingAllowed } = useQuery(
     isCreateListingAllowedQuery,
   );
+  const isCreateListingLocked =
+    isCreateListingAllowed !== undefined &&
+    isCreateListingAllowed === false &&
+    user?.role !== 'GOD';
 
   const handleEntityClose = () => {
     setIsEntityModalOpen(false);
@@ -280,6 +300,14 @@ export function SponsorLayout({
           isOpen={isSponsorInfoModalOpen}
         />
 
+        <MobileDesktopOnlyDialog
+          open={isMobileDesktopOnlyOpen}
+          onOpenChange={onMobileDesktopOnlyClose}
+          title="Continue on desktop"
+          description="Creating and editing listings is optimized for desktop. Please continue on a larger screen to choose a listing type or finish setup."
+          actionLabel="Understood"
+        />
+
         {/* {router.pathname === '/dashboard/listings' && (
           <SponsorAnnouncements isAnyModalOpen={isAnyModalOpen} />
         )} */}
@@ -291,18 +319,13 @@ export function SponsorLayout({
           onClose={handleEntityClose}
         />
 
-        <div className="flex min-h-[80vh] px-3 md:hidden">
-          <p className="pt-20 text-center text-xl font-medium text-slate-500">
-            The Sponsor Dashboard on Earn is not optimized for mobile yet.
-            Please use a desktop to check out the Sponsor Dashboard
-          </p>
-        </div>
-        <div className="hidden min-h-[max(100vh,1000px)] justify-start transition-all duration-300 ease-in-out hover:shadow-lg md:flex">
+        <div className="flex min-h-[max(100vh,1000px)] flex-col justify-start overflow-x-hidden transition-all duration-300 ease-in-out md:flex-row md:hover:shadow-lg">
           <div
             className={cn(
               'sponsor-dashboard-sidebar overflow-x-hidden border-r border-slate-200 bg-white pt-5 whitespace-nowrap',
               'transition-all duration-300 ease-in-out',
               'transition-shadow hover:shadow-lg',
+              'hidden md:flex md:flex-col',
               isCollapsible ? 'fixed' : 'static',
               isExpanded
                 ? ['w-64 max-w-64 min-w-64', 'expanded']
@@ -383,6 +406,10 @@ export function SponsorLayout({
                       <DropdownMenuItem
                         className="flex items-center justify-between"
                         onClick={() => {
+                          if (isMobile) {
+                            openMobileDesktopOnlyNotice('ai');
+                            return;
+                          }
                           posthog.capture('new generate with ai_sponsor');
                           setAutoGenerateOpen(true);
                         }}
@@ -400,6 +427,10 @@ export function SponsorLayout({
                       <DropdownMenuItem
                         className="flex items-center justify-between"
                         onClick={() => {
+                          if (isMobile) {
+                            openMobileDesktopOnlyNotice('scratch');
+                            return;
+                          }
                           posthog.capture('new start from scratch_sponsor');
                           onOpen();
                         }}
@@ -457,14 +488,124 @@ export function SponsorLayout({
           {(showContent || isLoading) && (
             <div
               className={cn(
-                'w-full flex-1 overflow-x-auto bg-white py-5 pr-8 pl-4 transition-[margin-left] duration-300 ease-in-out',
-                isCollapsible ? 'ml-20' : 'ml-0',
+                'w-full flex-1 overflow-x-auto bg-white py-5 pr-4 pl-4 pb-20 transition-[margin-left] duration-300 ease-in-out md:pr-8 md:pb-5',
+                isCollapsible ? 'md:ml-20' : 'ml-0',
               )}
             >
+              {/* Mobile-only top strip: sponsor selector + quick actions */}
+              <div className="mb-4 flex flex-col gap-3 md:hidden">
+                {canSelectSponsor && (
+                  <div className="min-w-0 flex-1">
+                    {isHackathonRoute ? (
+                      <SelectHackathon isExpanded={true} />
+                    ) : (
+                      <SelectSponsor isExpanded={true} />
+                    )}
+                  </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="min-w-0 flex-1 gap-1.5 border-slate-200 text-slate-600"
+                  >
+                    <Link href="/earn/dashboard/team-settings">
+                      <Users className="h-3.5 w-3.5" />
+                      Team
+                    </Link>
+                  </Button>
+                  {!isHackathonRoute ? (
+                    <Tooltip
+                      content={
+                        "Creating a new listing has been temporarily locked for you since you have 5 listings which are 'In Review'. Please announce the winners for such listings to create new listings."
+                      }
+                      disabled={!isCreateListingLocked}
+                    >
+                      <Button
+                        className="ph-no-capture min-w-0 flex-1 gap-1.5 disabled:cursor-not-allowed disabled:opacity-50"
+                        size="sm"
+                        onClick={() => {
+                          if (isMobile) {
+                            openMobileDesktopOnlyNotice('scratch');
+                            return;
+                          }
+                          posthog.capture('new start from scratch_sponsor');
+                          onOpen();
+                        }}
+                        disabled={isCreateListingLocked}
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                        New
+                        {isCreateListingLocked && (
+                          <Lock className="h-3.5 w-3.5" />
+                        )}
+                      </Button>
+                    </Tooltip>
+                  ) : isMobile ? (
+                    <Button
+                      size="sm"
+                      className="min-w-0 flex-1 gap-1.5"
+                      onClick={() => {
+                        openMobileDesktopOnlyNotice('scratch');
+                      }}
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      New Track
+                    </Button>
+                  ) : (
+                    <Button size="sm" className="min-w-0 flex-1 gap-1.5" asChild>
+                      <Link href="/earn/dashboard/new/?type=hackathon">
+                        <Plus className="h-3.5 w-3.5" />
+                        New Track
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              </div>
               {isLoading ? <SponsorContentSkeleton /> : children}
             </div>
           )}
         </div>
+
+        {/* Mobile bottom navigation */}
+        <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-stretch border-t border-slate-200 bg-white md:hidden">
+          {LinkItems.map((link) => {
+            const Icon = link.icon;
+            const resolvedLink = link.link?.startsWith('https://')
+              ? link.link
+              : `/earn/dashboard${link.link}`;
+            const isActive = router.asPath
+              .split('?')[0]
+              ?.startsWith(resolvedLink || '');
+            return (
+              <Link
+                key={link.name}
+                href={resolvedLink || '#'}
+                target={link.link?.startsWith('https://') ? '_blank' : undefined}
+                rel={
+                  link.link?.startsWith('https://')
+                    ? 'noopener noreferrer'
+                    : undefined
+                }
+                onClick={() => {
+                  if (link.posthog) posthog.capture(link.posthog);
+                }}
+                className={cn(
+                  'flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-xs font-medium transition-colors',
+                  isActive
+                    ? 'text-indigo-600'
+                    : 'text-slate-500 hover:text-indigo-600',
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                <span className="max-w-[60px] truncate text-center leading-tight">
+                  {link.name}
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
       </Default>
     </SolanaWalletProvider>
   );

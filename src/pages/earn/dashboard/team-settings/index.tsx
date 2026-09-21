@@ -9,6 +9,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
+import Link from 'next/link';
 import posthog from 'posthog-js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -197,20 +198,32 @@ const Index = () => {
   return (
     <SponsorLayout>
       {isOpen && <InviteMembers isOpen={isOpen} onClose={onClose} />}
+      <div className="mb-4 md:hidden">
+        <Button
+          asChild
+          variant="ghost"
+          className="h-9 px-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+        >
+          <Link href="/earn/dashboard/listings">
+            <ChevronLeft className="mr-1 h-4 w-4" />
+            Back to dashboard
+          </Link>
+        </Button>
+      </div>
       <Banner stats={sponsorStats} isLoading={isStatsLoading} />
       <div className="mb-4 flex flex-col justify-between gap-3 xl:flex-row xl:items-center">
-        <div className="flex min-w-0 shrink-0 items-start gap-3 lg:items-center">
-          <p className="font-semibold whitespace-nowrap text-slate-800 lg:text-lg">
+        <div className="flex min-w-0 shrink-0 flex-col gap-1 md:flex-row md:items-start md:gap-3 lg:items-center">
+          <p className="text-lg font-semibold whitespace-nowrap text-slate-800">
             Team Members
           </p>
-          <p className="text-slate-500">
+          <p className="max-w-xl text-sm text-slate-500 md:text-base">
             Manage who gets access to your sponsor profile
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center">
           {isAdminLoggedIn ? (
             <Button
-              className="ph-no-capture text-brand-purple h-9 rounded-lg border border-indigo-500 bg-indigo-50 hover:bg-indigo-100"
+              className="ph-no-capture h-10 w-full rounded-lg border border-indigo-500 bg-indigo-50 text-brand-purple hover:bg-indigo-100 md:h-9 md:w-auto"
               onClick={() => {
                 posthog.capture('invite member_sponsor');
                 onOpen();
@@ -226,17 +239,17 @@ const Index = () => {
             >
               <Button
                 disabled
-                className="ph-no-capture h-9 cursor-not-allowed rounded-lg border border-slate-300 bg-slate-50 text-slate-400"
+                className="ph-no-capture h-10 w-full cursor-not-allowed rounded-lg border border-slate-300 bg-slate-50 text-slate-400 md:h-9 md:w-auto"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Invite Members
               </Button>
             </Tooltip>
           )}
-          <div className="relative w-64">
+          <div className="relative w-full md:w-64">
             <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
-              className="placeholder:text-md focus-visible:ring-brand-purple h-9 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
+              className="h-10 border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400 focus-visible:ring-brand-purple placeholder:text-md md:h-9"
               onChange={(e) => {
                 debouncedSetSearchTextRef.current?.(e.target.value);
               }}
@@ -254,8 +267,69 @@ const Index = () => {
         />
       )}
       {!isMembersLoading && !!members?.length && (
-        <div className="rounded-md border border-slate-200 bg-white">
-          <Table>
+        <>
+          <div className="space-y-3 md:hidden">
+            {members.map((member: UserSponsor) => (
+              <div
+                key={member?.userId}
+                className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <EarnAvatar
+                      className="h-11 w-11 shrink-0"
+                      id={member?.user?.id}
+                      avatar={member?.user?.photo}
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-slate-800">
+                        {`${member?.user?.firstName} ${member?.user?.lastName}`}
+                      </p>
+                      <p className="truncate text-sm text-slate-500">
+                        @{member?.user?.username}
+                      </p>
+                    </div>
+                  </div>
+                  <MemberActionsMenu
+                    member={member}
+                    isAdminLoggedIn={isAdminLoggedIn}
+                    onRemoveMember={onRemoveMember}
+                    onChangeMemberRole={onChangeMemberRole}
+                    isRemovingMember={
+                      removeMemberMutation.isPending &&
+                      removeMemberMutation.variables === member.userId
+                    }
+                    isUpdatingMemberRole={
+                      updateMemberRoleMutation.isPending &&
+                      updateMemberRoleMutation.variables?.userId ===
+                        member.userId
+                    }
+                  />
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                  <StatusPill
+                    {...roleStyles[member?.role ?? 'MEMBER']}
+                    className="w-fit"
+                  >
+                    {member?.role === 'ADMIN' ? 'Admin' : 'Member'}
+                  </StatusPill>
+                  <CopyButton
+                    text={member?.user?.email || ''}
+                    contentProps={{ side: 'right' }}
+                  >
+                    <div className="flex min-w-0 items-center gap-1 text-sm text-slate-600">
+                      <Copy className="h-4 w-4 shrink-0" />
+                      <span className="truncate">{member?.user?.email}</span>
+                    </div>
+                  </CopyButton>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="hidden rounded-md border border-slate-200 bg-white md:block">
+            <Table>
             <TableHeader>
               <TableRow className="text-slate-100">
                 <TableHead className="text-sm font-medium tracking-tight text-slate-400 uppercase">
@@ -333,18 +407,19 @@ const Index = () => {
                 );
               })}
             </TableBody>
-          </Table>
-        </div>
+            </Table>
+          </div>
+        </>
       )}
-      <div className="mt-6 flex items-center justify-end">
-        <p className="mr-4 text-sm text-slate-400">
+      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end">
+        <p className="text-sm text-slate-400 sm:mr-4">
           <span className="font-bold">{skip + 1}</span> -{' '}
           <span className="font-bold">
             {Math.min(skip + length, totalMembers)}
           </span>{' '}
           of <span className="font-bold">{totalMembers}</span> Members
         </p>
-        <div className="flex gap-4">
+        <div className="flex gap-3 md:gap-4">
           <Button
             variant="outline"
             size="sm"
@@ -352,7 +427,7 @@ const Index = () => {
             onClick={() =>
               skip >= length ? setSkip(skip - length) : setSkip(0)
             }
-            className="flex items-center"
+            className="flex flex-1 items-center justify-center sm:flex-none"
           >
             <ChevronLeft className="mr-2 h-5 w-5" />
             Previous
@@ -364,7 +439,7 @@ const Index = () => {
               totalMembers <= skip + length || (skip > 0 && skip % length !== 0)
             }
             onClick={() => skip % length === 0 && setSkip(skip + length)}
-            className="flex items-center"
+            className="flex flex-1 items-center justify-center sm:flex-none"
           >
             Next
             <ChevronRight className="ml-2 h-5 w-5" />
@@ -432,7 +507,7 @@ const MemberActionsMenu = ({
               type="button"
               size="icon"
               variant="ghost"
-              className="h-8 w-8 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+              className="h-10 w-10 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-700 md:h-8 md:w-8"
               aria-label={`Manage ${member.user?.email ?? 'member'}`}
             >
               <MoreHorizontal className="h-4 w-4" />
