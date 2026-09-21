@@ -13,7 +13,7 @@ export function HomeCryptoWorldFairHackathonBanner() {
     >
       <div className="absolute inset-0 overflow-hidden bg-[#65496F]">
         <img
-          src="/assets/hackathon/crypto-world-fair/road-to-bp-main.png"
+          src="https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989342/assets/hackathon/next-stop-breakpoint/road-to-bp.png"
           alt=""
           className="h-full w-full object-cover object-center md:block"
           loading="eager"

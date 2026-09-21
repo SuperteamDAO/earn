@@ -21,12 +21,13 @@ type HackathonStatus = 'Start In' | 'Close In' | 'Closed';
 const HACKATHON_DESCRIPTION =
   'Submit to bounties for a chance to win Breakpoint tickets.';
 const BACKGROUND_IMAGE =
-  '/assets/hackathon/crypto-world-fair/road-to-bp-main.png';
+  'https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989342/assets/hackathon/next-stop-breakpoint/road-to-bp.png';
 const SUMMARY_BACKGROUND_IMAGE =
-  '/assets/hackathon/crypto-world-fair/big-ben-blue.png';
+  'https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989339/assets/hackathon/next-stop-breakpoint/big-ben.png';
 const OG_IMAGE =
   'https://res.cloudinary.com/dgvnuwspr/image/upload/v1788934366/assets/hackathon/crypto-world-fair/og.png';
-const HERO_LOGO = '/assets/hackathon/crypto-world-fair/breakpoint-logo.png';
+const HERO_LOGO =
+  'https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989266/assets/hackathon/next-stop-breakpoint/bp-logo.png';
 
 export default function CryptoWorldFair({
   startDate,
