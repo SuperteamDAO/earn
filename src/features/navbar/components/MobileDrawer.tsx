@@ -7,7 +7,6 @@ import React, { useState } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { Button } from '@/components/ui/button';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
 import {
   Collapsible,
   CollapsibleContent,
@@ -20,7 +19,6 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { useLogout, useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
-import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
 import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import { ProBadge } from '@/features/pro/components/ProBadge';
@@ -30,6 +28,7 @@ import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsMo
 
 import {
   CATEGORY_NAV_ITEMS,
+  BREAKPOINT_NAV_ITEM,
   LISTING_NAV_ITEMS,
   renderLabel,
 } from '../constants';
@@ -164,23 +163,22 @@ export const MobileDrawer = ({
               Complete your Profile
             </Button>
           )}
-          {HACKATHONS?.map((hackathon) => (
-            <NavItem
-              key={hackathon.slug}
-              label={
-                <div className="relateive flex translate-x-1.75 items-center gap-2">
-                  <ExternalImage
-                    src={hackathon.logo}
-                    alt={hackathon.label}
-                    className="h-6 scale-100 p-1"
-                  />
-                </div>
-              }
-              onClick={() => {
-                router.push(`/earn/hackathon/${hackathon.slug}`);
-              }}
-            />
-          ))}
+          <NavItem
+            label={
+              <div className="flex items-center gap-2">
+                <img
+                  src={BREAKPOINT_NAV_ITEM.icon}
+                  alt={BREAKPOINT_NAV_ITEM.label}
+                  className="h-8 max-w-48 object-contain p-1"
+                />
+              </div>
+            }
+            onClick={() => {
+              posthog.capture(BREAKPOINT_NAV_ITEM.posthog);
+              router.push(BREAKPOINT_NAV_ITEM.href);
+              onDrawerClose();
+            }}
+          />
           <div className="ph-no-capture flex flex-col">
             {isLoggedIn && user?.isTalentFilled && (
               <>

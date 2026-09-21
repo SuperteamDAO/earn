@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import posthog from 'posthog-js';
 
-import { ExternalImage } from '@/components/ui/cloudinary-image';
-
 export function HomeCryptoWorldFairHackathonBanner() {
   return (
     <Link
@@ -14,25 +12,11 @@ export function HomeCryptoWorldFairHackathonBanner() {
       }}
     >
       <div className="absolute inset-0 overflow-hidden bg-[#65496F]">
-        {/* <ExternalImage
-          src="hackathon/crypto-world-fair/sidebar.png"
-          alt=""
-          className="h-full w-full object-cover object-center md:hidden"
-          loading="eager"
-        /> */}
-        <ExternalImage
-          src="hackathon/crypto-world-fair/bg-wo-logo.png"
+        <img
+          src="/assets/hackathon/crypto-world-fair/road-to-bp-main.png"
           alt=""
           className="h-full w-full object-cover object-center md:block"
           loading="eager"
-          transformations={{
-            f: 'auto',
-            q: 'auto',
-            c: 'limit',
-            w: 2000,
-          }}
-          width={2000}
-          height={529}
         />
       </div>
       <div className="absolute inset-0 bg-black/45" aria-hidden="true" />

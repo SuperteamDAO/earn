@@ -15,6 +15,11 @@ import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
+import {
+  NEXT_STOP_BREAKPOINT_LABEL,
+  NEXT_STOP_BREAKPOINT_SLUG,
+  NEXT_STOP_BREAKPOINT_TAG,
+} from '@/features/hackathon/constants/next-stop-breakpoint';
 import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
@@ -68,6 +73,7 @@ const ListingStatus = ({
 const HeaderSub = ({
   sponsor,
   title,
+  description,
   isHackathon,
   Hackathon,
   type,
@@ -82,6 +88,7 @@ const HeaderSub = ({
 }: {
   sponsor: SponsorType | undefined;
   title: string | undefined;
+  description: string | undefined;
   isHackathon: boolean;
   Hackathon: ListingHackathon | undefined;
   type: string | undefined;
@@ -95,6 +102,9 @@ const HeaderSub = ({
   isPro: boolean | undefined;
 }) => {
   const isFrontierHackathon = Hackathon?.slug === 'crypto-worlds-fair';
+  const hasNextStopBreakpointTag = [title, description].some((value) =>
+    value?.toLowerCase().includes(NEXT_STOP_BREAKPOINT_TAG),
+  );
 
   return (
     <div className="flex flex-wrap items-center gap-1 md:gap-2">
@@ -146,6 +156,12 @@ const HeaderSub = ({
             </div>
           </Tooltip>
         </div>
+      )}
+      {(Hackathon?.slug === NEXT_STOP_BREAKPOINT_SLUG ||
+        hasNextStopBreakpointTag) && (
+        <span className="rounded-full bg-[#3C91FF]/10 px-2 py-0.5 text-xs font-semibold text-[#3C91FF]">
+          {NEXT_STOP_BREAKPOINT_LABEL}
+        </span>
       )}
       <ListingHeaderSeparator className="hidden sm:flex" />
       <div className="hidden sm:flex">
@@ -203,6 +219,7 @@ export function ListingHeader({
     status,
     deadline,
     title,
+    description,
     sponsor,
     slug,
     region,
@@ -285,6 +302,7 @@ export function ListingHeader({
               <HeaderSub
                 sponsor={sponsor}
                 title={title}
+                description={description}
                 isHackathon={isHackathon}
                 Hackathon={Hackathon}
                 type={type}
@@ -316,6 +334,7 @@ export function ListingHeader({
         <HeaderSub
           sponsor={sponsor}
           title={title}
+          description={description}
           isHackathon={isHackathon}
           Hackathon={Hackathon}
           type={type}

@@ -8,7 +8,6 @@ import { useEffect, useMemo, useState } from 'react';
 import IoSearchOutline from '@/components/icons/IoSearchOutline';
 import IoWalletOutline from '@/components/icons/IoWalletOutline';
 import { Button } from '@/components/ui/button';
-import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { LocalImage } from '@/components/ui/local-image';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,10 +17,9 @@ import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { CreditIcon } from '@/features/credits/icon/credit';
-import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
-import { LISTING_NAV_ITEMS } from '../constants';
+import { BREAKPOINT_NAV_ITEM, LISTING_NAV_ITEMS } from '../constants';
 import { LogoContextMenu } from './LogoContextMenu';
 import { NavLink } from './NavLink';
 import { UserMenu } from './UserMenu';
@@ -187,20 +185,22 @@ export const DesktopNavbar = ({
                 isActive={router.pathname === '/earn/pro'}
               />
 
-              {HACKATHONS.map((hackathon) => (
-                <Link
-                  href={`/earn/hackathon/${hackathon.slug}`}
-                  key={hackathon.slug}
-                  className={cn('flex items-center py-2 font-medium', 'h-7')}
-                  prefetch={false}
-                >
-                  <ExternalImage
-                    src={hackathon.logo}
-                    alt={hackathon.label}
-                    className="h-full object-contain"
-                  />
-                </Link>
-              ))}
+              <Link
+                href={BREAKPOINT_NAV_ITEM.href}
+                className={cn('flex items-center py-2 font-medium', 'h-9')}
+                onClick={() => {
+                  posthog.capture(BREAKPOINT_NAV_ITEM.posthog);
+                }}
+                aria-label={BREAKPOINT_NAV_ITEM.label}
+                title={BREAKPOINT_NAV_ITEM.label}
+                prefetch={false}
+              >
+                <LocalImage
+                  src={BREAKPOINT_NAV_ITEM.icon}
+                  alt={BREAKPOINT_NAV_ITEM.label}
+                  className="h-full max-w-40 object-contain"
+                />
+              </Link>
             </>
           )}
 
