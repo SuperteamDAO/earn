@@ -11,10 +11,13 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
+import { prisma } from '@/prisma';
 import { nextStopBreakpointStatsQuery, type Stats } from '@/queries/hackathon';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+
+import { NEXT_STOP_BREAKPOINT_SLUG } from '@/features/hackathon/constants/next-stop-breakpoint';
 
 type HackathonStatus = 'Start In' | 'Close In' | 'Closed';
 
@@ -25,7 +28,7 @@ const BACKGROUND_IMAGE =
 const SUMMARY_BACKGROUND_IMAGE =
   'https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989339/assets/hackathon/next-stop-breakpoint/big-ben.png';
 const OG_IMAGE =
-  'https://res.cloudinary.com/dgvnuwspr/image/upload/v1788934366/assets/hackathon/crypto-world-fair/og.png';
+  'https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989342/assets/hackathon/next-stop-breakpoint/road-to-bp.png';
 const HERO_LOGO =
   'https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989266/assets/hackathon/next-stop-breakpoint/bp-logo.png';
 
@@ -43,7 +46,7 @@ export default function CryptoWorldFair({
       className="bg-white"
       meta={
         <Meta
-          title="Crypto World's Fair | Superteam Earn"
+          title="Next Stop Breakpoint | Superteam Earn"
           description={HACKATHON_DESCRIPTION}
           canonical="https://superteam.fun/earn/next-stop-breakpoint/"
           og={OG_IMAGE}
@@ -95,7 +98,7 @@ function Hero({
         </p>
         <Image
           src={HERO_LOGO}
-          alt="Crypto World's Fair"
+          alt="Next Stop Breakpoint"
           width={1120}
           height={320}
           priority
@@ -276,13 +279,20 @@ function Tracks() {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const startDate = dayjs().add(1, 'day').toISOString();
-  const closeDate = dayjs().add(20, 'day').toISOString();
+  const hackathon = await prisma.hackathon.findUnique({
+    where: { slug: NEXT_STOP_BREAKPOINT_SLUG },
+  });
+
+  if (!hackathon?.startDate || !hackathon.deadline) {
+    throw Error(
+      'Next Stop Breakpoint hackathon not found or dates are missing',
+    );
+  }
 
   return {
     props: {
-      startDate,
-      closeDate,
+      startDate: hackathon.startDate.toISOString(),
+      closeDate: hackathon.deadline.toISOString(),
     },
   };
 };

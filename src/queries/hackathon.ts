@@ -37,7 +37,7 @@ export const statsDataQuery = (slug: string) =>
 
 export const nextStopBreakpointStatsQuery = () =>
   queryOptions({
-    queryKey: ['stats', 'next-stop-breakpoint'],
+    queryKey: ['stats', 'next-stop-breakpoint', 'live-bounties'],
     queryFn: () =>
       api
         .get<Pick<Stats, 'totalRewardAmount' | 'totalListings'>>(

@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { setCacheHeaders } from '@/utils/cacheControl';
+import { safeStringify } from '@/utils/safeStringify';
 
 import {
   NEXT_STOP_BREAKPOINT_SLUG,
@@ -39,11 +42,24 @@ export default async function handler(
       }),
     ]);
 
+    setCacheHeaders(res, {
+      public: true,
+      maxAge: 60,
+      sMaxAge: 300,
+      staleWhileRevalidate: 60,
+    });
+
     return res.status(200).json({
       totalListings,
       totalRewardAmount: totalRewardAmount._sum.usdValue || 0,
     });
-  } catch {
-    return res.status(500).json({ error: 'Internal Server Error' });
+  } catch (error) {
+    logger.error(
+      `Error fetching Next Stop Breakpoint stats: ${safeStringify(error)}`,
+    );
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Internal Server Error',
+    });
   }
 }
