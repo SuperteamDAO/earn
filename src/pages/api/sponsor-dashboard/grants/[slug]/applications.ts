@@ -3,7 +3,6 @@ import type { NextApiResponse } from 'next';
 import { type PrismaUserWithoutKYC } from '@/interface/user';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { GrantApplicationStatus } from '@/prisma/enums';
 import { sql } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -30,7 +29,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const grant = await prisma.grants.findUnique({
       where: { slug },
-      select: { id: true, sponsorId: true, isActive: true, isPaused: true },
+      select: { id: true, sponsorId: true, isActive: true },
     });
 
     if (!grant || !grant.isActive) {
@@ -47,32 +46,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(error.status).json({ error: error.message });
     }
 
-    const applicationStatusWhere = grant.isPaused
-      ? {
-          applicationStatus: {
-            in: [
-              GrantApplicationStatus.Approved,
-              GrantApplicationStatus.Rejected,
-              GrantApplicationStatus.Completed,
-            ],
-          },
-        }
-      : {};
-    const applicationStatusSql = grant.isPaused
-      ? sql`AND GrantApplication.applicationStatus IN ('Approved', 'Rejected', 'Completed')`
-      : sql``;
-
-    const baseWhere = sql`
-      GrantApplication.grantId = ${grant.id}
-      AND Grants.sponsorId = ${req.userSponsorId}
-      ${applicationStatusSql}
-    `;
+    const baseWhere = sql`GrantApplication.grantId = ${grant.id} AND Grants.sponsorId = ${req.userSponsorId}`;
 
     const countResult = await prisma.grantApplication.aggregate({
       _count: { id: true },
       where: {
         grant: { slug, isActive: true, sponsorId: req.userSponsorId! },
-        ...applicationStatusWhere,
       },
     });
     const totalCount = countResult._count.id;

@@ -173,20 +173,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(authError.status).json({ error: authError.message });
     }
 
-    const isDecisionStatus =
-      applicationStatus === GrantApplicationStatus.Approved ||
-      applicationStatus === GrantApplicationStatus.Rejected;
     if (
-      isDecisionStatus &&
+      applicationStatus === GrantApplicationStatus.Approved &&
       currentApplications.some((application) => application.grant.isPaused)
     ) {
-      logger.warn(
-        `Blocked ${applicationStatus} decision for paused grant ${grantId}`,
-      );
+      logger.warn(`Blocked approval decision for paused grant ${grantId}`);
       return res.status(409).json({
         error: 'Grant is paused',
-        message:
-          'Applications cannot be approved or rejected while the grant is paused.',
+        message: 'Applications cannot be approved while the grant is paused.',
       });
     }
 
