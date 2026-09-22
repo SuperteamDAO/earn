@@ -21,6 +21,8 @@ type HackathonStatus = 'Start In' | 'Close In' | 'Closed';
 type StatsState = 'loading' | 'unavailable' | 'ready';
 
 const NEXT_STOP_BREAKPOINT_SLUG = 'next-stop-breakpoint';
+const FALLBACK_START_DATE = '2026-09-23T00:00:00.000Z';
+const FALLBACK_CLOSE_DATE = '2026-10-13T00:00:00.000Z';
 
 const HACKATHON_DESCRIPTION =
   'Submit to bounties for a chance to win Breakpoint tickets.';
@@ -308,16 +310,10 @@ export const getServerSideProps: GetServerSideProps = async () => {
     where: { slug: NEXT_STOP_BREAKPOINT_SLUG },
   });
 
-  if (!hackathon?.startDate || !hackathon.deadline) {
-    throw Error(
-      'Next Stop Breakpoint hackathon not found or dates are missing',
-    );
-  }
-
   return {
     props: {
-      startDate: hackathon.startDate.toISOString(),
-      closeDate: hackathon.deadline.toISOString(),
+      startDate: hackathon?.startDate?.toISOString() ?? FALLBACK_START_DATE,
+      closeDate: hackathon?.deadline?.toISOString() ?? FALLBACK_CLOSE_DATE,
     },
   };
 };
