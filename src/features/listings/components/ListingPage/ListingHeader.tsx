@@ -15,6 +15,7 @@ import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
+import { getHackathonPageHref } from '@/features/hackathon/utils/getHackathonPageHref';
 import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
@@ -26,10 +27,6 @@ import { RegionLabel } from './RegionLabel';
 import { SecondaryOptions } from './SecondaryOptions';
 import { ListingHeaderSeparator } from './Separator';
 import { StatusBadge } from './StatusBadge';
-
-const NEXT_STOP_BREAKPOINT_LABEL = 'Next Stop Breakpoint';
-const NEXT_STOP_BREAKPOINT_SLUG = 'next-stop-breakpoint';
-const NEXT_STOP_BREAKPOINT_TAG = 'next stop breakpoint';
 
 const SponsorLogo = ({ sponsor }: { sponsor: SponsorType | undefined }) => {
   return (
@@ -72,7 +69,6 @@ const ListingStatus = ({
 const HeaderSub = ({
   sponsor,
   title,
-  description,
   isHackathon,
   Hackathon,
   type,
@@ -87,7 +83,6 @@ const HeaderSub = ({
 }: {
   sponsor: SponsorType | undefined;
   title: string | undefined;
-  description: string | undefined;
   isHackathon: boolean;
   Hackathon: ListingHackathon | undefined;
   type: string | undefined;
@@ -101,9 +96,10 @@ const HeaderSub = ({
   isPro: boolean | undefined;
 }) => {
   const isFrontierHackathon = Hackathon?.slug === 'crypto-worlds-fair';
-  const hasNextStopBreakpointTag = [title, description].some((value) =>
-    value?.toLowerCase().includes(NEXT_STOP_BREAKPOINT_TAG),
-  );
+  const hackathonLogo =
+    Hackathon?.slug === 'next-stop-breakpoint'
+      ? Hackathon.altLogo || Hackathon.logo
+      : Hackathon?.logo || Hackathon?.altLogo || '';
 
   return (
     <div className="flex flex-wrap items-center gap-1 md:gap-2">
@@ -124,16 +120,16 @@ const HeaderSub = ({
         {!!sponsor?.isVerified && <VerifiedBadge />}
       </Link>
       <ListingHeaderSeparator />
-      {isHackathon ? (
+      {isHackathon && Hackathon ? (
         <div className="flex items-center">
-          <Link href={`/earn/hackathon/${Hackathon?.slug}`}>
+          <Link href={getHackathonPageHref(Hackathon.slug)}>
             <img
               className={cn(
                 'w-auto object-contain',
                 isFrontierHackathon ? 'h-2.5' : 'h-4',
               )}
-              alt={type}
-              src={Hackathon?.logo || Hackathon?.altLogo || ''}
+              alt={Hackathon.name}
+              src={hackathonLogo}
             />
           </Link>
         </div>
@@ -155,12 +151,6 @@ const HeaderSub = ({
             </div>
           </Tooltip>
         </div>
-      )}
-      {(Hackathon?.slug === NEXT_STOP_BREAKPOINT_SLUG ||
-        hasNextStopBreakpointTag) && (
-        <span className="rounded-full bg-[#3C91FF]/10 px-2 py-0.5 text-xs font-semibold text-[#3C91FF]">
-          {NEXT_STOP_BREAKPOINT_LABEL}
-        </span>
       )}
       <ListingHeaderSeparator className="hidden sm:flex" />
       <div className="hidden sm:flex">
@@ -218,7 +208,6 @@ export function ListingHeader({
     status,
     deadline,
     title,
-    description,
     sponsor,
     slug,
     region,
@@ -239,7 +228,7 @@ export function ListingHeader({
   const hasDeadlineEnded = dayjs(serverTime()).isAfter(deadline);
   const hasHackathonStarted = dayjs(serverTime()).isAfter(Hackathon?.startDate);
   const isProject = type === 'project';
-  const isHackathon = type === 'hackathon';
+  const isHackathon = Boolean(Hackathon);
 
   const statusIconStyles = 'w-5 h-5';
   let statusText = '';
@@ -301,7 +290,6 @@ export function ListingHeader({
               <HeaderSub
                 sponsor={sponsor}
                 title={title}
-                description={description}
                 isHackathon={isHackathon}
                 Hackathon={Hackathon}
                 type={type}
@@ -333,7 +321,6 @@ export function ListingHeader({
         <HeaderSub
           sponsor={sponsor}
           title={title}
-          description={description}
           isHackathon={isHackathon}
           Hackathon={Hackathon}
           type={type}

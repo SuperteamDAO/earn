@@ -17,21 +17,12 @@ export default async function handler(
       return res.status(404).json({ error: 'Hackathon not found' });
     }
 
-    const isNextStopBreakpoint = hackathonSlug === 'next-stop-breakpoint';
     const listingsWhere = {
+      hackathonId: hackathon.id,
       isActive: true,
       isArchived: false,
       status: 'OPEN' as const,
       isPublished: true,
-      ...(isNextStopBreakpoint
-        ? {
-            OR: [
-              { hackathonId: hackathon.id },
-              { title: { contains: 'next stop breakpoint' } },
-              { description: { contains: 'next stop breakpoint' } },
-            ],
-          }
-        : { hackathonId: hackathon.id }),
     };
 
     const totalListings = await prisma.bounties.count({

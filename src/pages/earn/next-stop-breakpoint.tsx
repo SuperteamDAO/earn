@@ -5,14 +5,20 @@ import Image from 'next/image';
 import { type ReactNode, useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
+import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { type TrackProps } from '@/interface/hackathon';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
-import { statsDataQuery, type Stats } from '@/queries/hackathon';
+import {
+  statsDataQuery,
+  type Stats,
+  trackDataQuery,
+} from '@/queries/hackathon';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -33,7 +39,7 @@ const OG_IMAGE =
 const HERO_LOGO =
   'https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989266/assets/hackathon/next-stop-breakpoint/bp-logo.png';
 
-export default function CryptoWorldFair({
+export default function NextStopBreakpoint({
   startDate,
   closeDate,
 }: {
@@ -45,6 +51,12 @@ export default function CryptoWorldFair({
     isError,
     isLoading,
   } = useQuery(statsDataQuery(NEXT_STOP_BREAKPOINT_SLUG));
+  const {
+    data: tracks,
+    isPending: areTracksLoading,
+    isError: didTracksFail,
+    refetch: refetchTracks,
+  } = useQuery(trackDataQuery(NEXT_STOP_BREAKPOINT_SLUG));
   const statsState: StatsState = isLoading
     ? 'loading'
     : isError || !stats
@@ -71,7 +83,12 @@ export default function CryptoWorldFair({
         description={HACKATHON_DESCRIPTION}
       />
       <div className="mx-auto mt-14 mb-20 w-full max-w-7xl px-4 md:mt-14 xl:mt-16">
-        <Tracks />
+        <Tracks
+          tracks={tracks}
+          isLoading={areTracksLoading}
+          isError={didTracksFail}
+          onRetry={() => void refetchTracks()}
+        />
         <p className="mx-auto mt-2 max-w-3xl text-center text-base text-slate-500">
           Note: The prize amount shown is for listing purposes only. Winners
           will receive a Breakpoint ticket instead of the stated cash prize.
@@ -94,6 +111,25 @@ function Hero({
   closeDate: string | Date;
   description: string;
 }) {
+  const [status, setStatus] = useState<HackathonStatus>('Start In');
+
+  useEffect(() => {
+    function updateStatus() {
+      if (dayjs().isAfter(dayjs(closeDate))) {
+        setStatus('Closed');
+      } else if (dayjs().isAfter(dayjs(startDate))) {
+        setStatus('Close In');
+      } else {
+        setStatus('Start In');
+      }
+    }
+
+    updateStatus();
+    const intervalId = window.setInterval(updateStatus, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [startDate, closeDate]);
+
   return (
     <section
       className="relative flex w-full flex-col items-center border-b border-slate-200 bg-[#FFF1CE] bg-cover bg-center bg-no-repeat pt-14 pb-25 text-center text-white"
@@ -139,14 +175,18 @@ function Hero({
             }
           }}
         >
-          <PulseIcon
-            isPulsing={false}
-            w={8}
-            h={8}
-            bg="#ff9305"
-            text="#ff9305"
-          />
-          Submissions Open Soon
+          {status !== 'Closed' && (
+            <PulseIcon
+              isPulsing={status === 'Close In'}
+              w={status === 'Close In' ? 6 : 8}
+              h={status === 'Close In' ? 6 : 8}
+              bg={status === 'Close In' ? '#4be369' : '#ff9305'}
+              text={status === 'Close In' ? '#16A34A' : '#ff9305'}
+            />
+          )}
+          {status === 'Start In' && 'Submissions Open Soon'}
+          {status === 'Close In' && 'Submissions Open'}
+          {status === 'Closed' && 'Submissions Closed'}
         </Button>
       </div>
       <div className="absolute bottom-[-16%] mt-0 flex w-full max-w-[90%] flex-row overflow-hidden rounded-2xl border-[1.14px] border-white/50 md:w-fit">
@@ -291,13 +331,70 @@ function MiniStat({
   );
 }
 
-function Tracks() {
+function Tracks({
+  tracks,
+  isLoading,
+  isError,
+  onRetry,
+}: {
+  tracks: TrackProps[] | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  onRetry: () => void;
+}) {
   return (
     <section id="tracks-section" className="sm:mx-6">
       <div className="max-w-7xl py-6 sm:mx-auto">
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-700">
-          Bounties are coming soon.
-        </div>
+        <h2 className="mb-4 text-lg font-semibold text-slate-900 md:text-xl">
+          Bounties
+        </h2>
+        {isLoading && (
+          <div
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            aria-label="Loading bounties"
+          >
+            {Array.from({ length: 3 }, (_, index) => (
+              <div
+                key={index}
+                className="h-56 animate-pulse rounded-lg bg-slate-100 motion-reduce:animate-none"
+                aria-hidden="true"
+              />
+            ))}
+          </div>
+        )}
+        {isError && (
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center">
+            <p className="text-sm text-slate-700">
+              We couldn&apos;t load the bounties.
+            </p>
+            <Button
+              variant="outline"
+              className="mt-4 min-h-10 focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2"
+              onClick={onRetry}
+            >
+              Try Again
+            </Button>
+          </div>
+        )}
+        {!isLoading && !isError && tracks?.length === 0 && (
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-700">
+            Bounties are coming soon.
+          </div>
+        )}
+        {!isLoading && !isError && tracks && tracks.length > 0 && (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {tracks.map((track) => (
+              <TrackBox
+                key={track.slug}
+                title={track.title}
+                sponsor={track.sponsor}
+                token={track.token}
+                rewardAmount={track.rewardAmount}
+                slug={track.slug}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
