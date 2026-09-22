@@ -18,6 +18,7 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 type HackathonStatus = 'Start In' | 'Close In' | 'Closed';
+type StatsState = 'loading' | 'unavailable' | 'ready';
 
 const NEXT_STOP_BREAKPOINT_SLUG = 'next-stop-breakpoint';
 
@@ -39,7 +40,16 @@ export default function CryptoWorldFair({
   startDate: string;
   closeDate: string;
 }) {
-  const { data: stats } = useQuery(statsDataQuery(NEXT_STOP_BREAKPOINT_SLUG));
+  const {
+    data: stats,
+    isError,
+    isLoading,
+  } = useQuery(statsDataQuery(NEXT_STOP_BREAKPOINT_SLUG));
+  const statsState: StatsState = isLoading
+    ? 'loading'
+    : isError || !stats
+      ? 'unavailable'
+      : 'ready';
 
   return (
     <Default
@@ -55,6 +65,7 @@ export default function CryptoWorldFair({
     >
       <Hero
         stats={stats}
+        statsState={statsState}
         startDate={startDate}
         closeDate={closeDate}
         description={HACKATHON_DESCRIPTION}
@@ -72,11 +83,13 @@ export default function CryptoWorldFair({
 
 function Hero({
   stats,
+  statsState,
   startDate,
   closeDate,
   description,
 }: {
   stats: Pick<Stats, 'totalRewardAmount' | 'totalListings'> | undefined;
+  statsState: StatsState;
   startDate: string | Date;
   closeDate: string | Date;
   description: string;
@@ -137,7 +150,12 @@ function Hero({
         </Button>
       </div>
       <div className="absolute bottom-[-16%] mt-0 flex w-full max-w-[90%] flex-row overflow-hidden rounded-2xl border-[1.14px] border-white/50 md:w-fit">
-        <HeroMini stats={stats} startDate={startDate} closeDate={closeDate} />
+        <HeroMini
+          stats={stats}
+          statsState={statsState}
+          startDate={startDate}
+          closeDate={closeDate}
+        />
       </div>
     </section>
   );
@@ -147,10 +165,12 @@ function HeroMini({
   startDate,
   closeDate,
   stats,
+  statsState,
 }: {
   startDate: string | Date;
   closeDate: string | Date;
   stats: Pick<Stats, 'totalRewardAmount' | 'totalListings'> | undefined;
+  statsState: StatsState;
 }) {
   const isMd = useBreakpoint('md');
   const [isMounted, setIsMounted] = useState(false);
@@ -202,15 +222,20 @@ function HeroMini({
         )}
       </MiniStat>
       <MiniStat className="w-[5rem] sm:w-[7rem]" title="Total Prizes">
-        $
-        {(stats?.totalRewardAmount ?? 0).toLocaleString('en-US', {
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0,
-        })}
+        {statsState === 'loading' && 'Loading'}
+        {statsState === 'unavailable' && 'Unavailable'}
+        {statsState === 'ready' &&
+          stats &&
+          `$${stats.totalRewardAmount.toLocaleString('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}`}
       </MiniStat>
 
       <MiniStat className="w-[5rem] sm:w-[7rem]" title="Bounties">
-        {stats?.totalListings ?? '-'}
+        {statsState === 'loading' && 'Loading'}
+        {statsState === 'unavailable' && 'Unavailable'}
+        {statsState === 'ready' && stats && stats.totalListings}
       </MiniStat>
     </div>
   );
