@@ -15,11 +15,6 @@ import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
-import {
-  NEXT_STOP_BREAKPOINT_LABEL,
-  NEXT_STOP_BREAKPOINT_SLUG,
-  NEXT_STOP_BREAKPOINT_TAG,
-} from '@/features/hackathon/constants/next-stop-breakpoint';
 import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
@@ -31,6 +26,10 @@ import { RegionLabel } from './RegionLabel';
 import { SecondaryOptions } from './SecondaryOptions';
 import { ListingHeaderSeparator } from './Separator';
 import { StatusBadge } from './StatusBadge';
+
+const NEXT_STOP_BREAKPOINT_LABEL = 'Next Stop Breakpoint';
+const NEXT_STOP_BREAKPOINT_SLUG = 'next-stop-breakpoint';
+const NEXT_STOP_BREAKPOINT_TAG = 'next stop breakpoint';
 
 const SponsorLogo = ({ sponsor }: { sponsor: SponsorType | undefined }) => {
   return (

@@ -12,14 +12,14 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
-import { nextStopBreakpointStatsQuery, type Stats } from '@/queries/hackathon';
+import { statsDataQuery, type Stats } from '@/queries/hackathon';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
-import { NEXT_STOP_BREAKPOINT_SLUG } from '@/features/hackathon/constants/next-stop-breakpoint';
-
 type HackathonStatus = 'Start In' | 'Close In' | 'Closed';
+
+const NEXT_STOP_BREAKPOINT_SLUG = 'next-stop-breakpoint';
 
 const HACKATHON_DESCRIPTION =
   'Submit to bounties for a chance to win Breakpoint tickets.';
@@ -39,7 +39,7 @@ export default function CryptoWorldFair({
   startDate: string;
   closeDate: string;
 }) {
-  const { data: stats } = useQuery(nextStopBreakpointStatsQuery());
+  const { data: stats } = useQuery(statsDataQuery(NEXT_STOP_BREAKPOINT_SLUG));
 
   return (
     <Default

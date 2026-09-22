@@ -34,14 +34,3 @@ export const statsDataQuery = (slug: string) =>
     queryKey: ['stats', slug],
     queryFn: () => fetchStats(slug),
   });
-
-export const nextStopBreakpointStatsQuery = () =>
-  queryOptions({
-    queryKey: ['stats', 'next-stop-breakpoint', 'live-bounties'],
-    queryFn: () =>
-      api
-        .get<Pick<Stats, 'totalRewardAmount' | 'totalListings'>>(
-          '/api/hackathon/next-stop-breakpoint-stats',
-        )
-        .then((response) => response.data),
-  });
