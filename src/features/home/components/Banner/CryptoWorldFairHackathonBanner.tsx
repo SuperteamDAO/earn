@@ -35,8 +35,7 @@ export function HomeCryptoWorldFairHackathonBanner() {
         Build the onchain future at Crypto World&apos;s Fair
       </h1>
       <p className="relative z-10 mt-2.5 max-w-[30rem] text-sm leading-[130%] [text-shadow:_0_1px_2px_rgb(0_0_0_/1)] md:mt-4 md:text-lg">
-        Join the ideas, technologies, and communities shaping what comes next
-        onchain.
+        $197,000+ in prizes. Build what comes next.
       </p>
       <div className="relative z-10 mt-auto flex pt-4">
         <span className="ph-no-capture inline-flex min-h-10 w-full items-center justify-center rounded-md bg-[#65496F] px-9 py-3 text-sm font-medium text-white transition-colors group-hover:bg-[#533D5B] group-focus-visible:bg-[#533D5B] md:w-auto">

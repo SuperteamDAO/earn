@@ -34,12 +34,12 @@ export function SidebarBanner({ className }: SidebarPosterProps) {
 
         <div className="relative z-10 flex h-full w-full flex-col px-4 pt-2 pb-5 text-black">
           <h2 className="mt-2 text-lg leading-[120%] font-semibold text-slate-800">
-            Are you a dev? We have prizes worth $10,000+ for you
+            Are you a dev? We have prizes worth $197,000+ for you
           </h2>
           <p className="mt-3 text-sm leading-[130%] text-slate-600 md:text-base">
             Submit to any of the Crypto World&apos;s Fair sidetracks on Earn and
-            stand to win from $10,000+. Deadline for submissions is 13 Oct (6:59
-            AM UTC).
+            stand to win from $197,000+. Deadline for submissions is 13 Oct
+            (6:59 AM UTC).
           </p>
 
           <span className="mt-4 inline-flex min-h-10 items-center justify-center rounded-md bg-[#65496F] px-4 text-base font-medium text-white transition-colors group-hover:bg-[#533D5B] group-focus-visible:bg-[#533D5B]">
