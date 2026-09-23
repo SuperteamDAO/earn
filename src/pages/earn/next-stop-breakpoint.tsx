@@ -90,8 +90,10 @@ export default function NextStopBreakpoint({
           onRetry={() => void refetchTracks()}
         />
         <p className="mx-auto mt-2 max-w-3xl text-center text-base text-slate-500">
-          Note: The prize amount shown is for listing purposes only. Winners
-          will receive a Breakpoint ticket instead of the stated cash prize.
+          <strong>Note:</strong> The prize amount shown is for listing purposes
+          only. Winners will receive a{' '}
+          <strong>Breakpoint ticket worth the stated prize amount</strong>{' '}
+          instead of a cash payout.
         </p>
       </div>
     </Default>
