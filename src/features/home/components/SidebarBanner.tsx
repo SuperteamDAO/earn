@@ -158,7 +158,7 @@ function NextStopBreakpointSidebarBanner({ className }: SidebarPosterProps) {
 
         <div className="relative z-10 flex h-full w-full flex-col px-4 pt-2 pb-5 text-black">
           <h2 className="mt-2 text-lg leading-[120%] font-semibold text-slate-800">
-            Complete bounties for a chance to win a Breakpoint ticket
+            Create creative content, win ticket to Breakpoint
           </h2>
           <p className="mt-3 text-sm leading-[130%] text-slate-600 md:text-base">
             Take on Next Stop Breakpoint bounties on Earn for a chance to win a
