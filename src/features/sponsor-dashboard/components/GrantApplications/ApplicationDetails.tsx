@@ -260,16 +260,18 @@ export const ApplicationDetails = ({
                 </div>
                 {isPending && (
                   <>
-                    <Button
-                      className="shrink-0 rounded-lg border border-emerald-500 bg-emerald-50 px-2.5 text-[13px] text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"
-                      disabled={isMultiSelectOn}
-                      onClick={approveOnOpen}
-                    >
-                      <div className="rounded-full bg-emerald-600 p-0.5">
-                        <Check className="size-1 text-white" />
-                      </div>
-                      Approve
-                    </Button>
+                    {!grant?.isPaused && (
+                      <Button
+                        className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={isMultiSelectOn}
+                        onClick={approveOnOpen}
+                      >
+                        <div className="rounded-full bg-emerald-600 p-0.5">
+                          <Check className="size-1 text-white" />
+                        </div>
+                        Approve
+                      </Button>
+                    )}
 
                     <Button
                       className="shrink-0 rounded-lg border border-red-500 bg-red-50 px-2.5 text-[13px] text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50 max-[390px]:gap-1 max-[390px]:px-2 max-[390px]:text-xs sm:px-3 sm:text-sm"

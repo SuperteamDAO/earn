@@ -561,20 +561,22 @@ export const ApplicationsTab = ({ slug }: Props) => {
         onRejectGrant={handleRejectGrant}
       />
 
-      <ApproveModal
-        applicationId={selectedApplication?.id}
-        approveIsOpen={approveIsOpen}
-        approveOnClose={approveOnClose}
-        ask={selectedApplication?.ask}
-        granteeName={selectedApplication?.user?.firstName}
-        grantTitle={grant?.title}
-        projectTitle={selectedApplication?.projectTitle}
-        salutation={grant?.emailSalutation}
-        token={grant?.token || 'USDC'}
-        enableCustomEmail={grant?.isNative === true}
-        onApproveGrant={handleApproveGrant}
-        max={grant?.maxReward}
-      />
+      {!grant?.isPaused && (
+        <ApproveModal
+          applicationId={selectedApplication?.id}
+          approveIsOpen={approveIsOpen}
+          approveOnClose={approveOnClose}
+          ask={selectedApplication?.ask}
+          granteeName={selectedApplication?.user?.firstName}
+          grantTitle={grant?.title}
+          projectTitle={selectedApplication?.projectTitle}
+          salutation={grant?.emailSalutation}
+          token={grant?.token || 'USDC'}
+          enableCustomEmail={grant?.isNative === true}
+          onApproveGrant={handleApproveGrant}
+          max={grant?.maxReward}
+        />
+      )}
       {currentAction && (
         <MultiActionModal
           isOpen={rejectedMultipleIsOpen}
