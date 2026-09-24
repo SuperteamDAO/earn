@@ -263,15 +263,10 @@ function HeroMini({
           '-'
         )}
       </MiniStat>
-      <MiniStat className="w-[5rem] sm:w-[7rem]" title="Total Prizes">
+      <MiniStat className="w-[5rem] sm:w-[7rem]" title="Total Tickets">
         {statsState === 'loading' && 'Loading'}
         {statsState === 'unavailable' && 'Unavailable'}
-        {statsState === 'ready' &&
-          stats &&
-          `$${stats.totalRewardAmount.toLocaleString('en-US', {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          })}`}
+        {statsState === 'ready' && stats && `60`}
       </MiniStat>
 
       <MiniStat className="w-[5rem] sm:w-[7rem]" title="Bounties">
