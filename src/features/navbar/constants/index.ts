@@ -24,6 +24,13 @@ export const LISTING_NAV_ITEMS: Array<NavItem> = [
   },
 ];
 
+export const BREAKPOINT_NAV_ITEM = {
+  label: 'Next Stop Breakpoint',
+  href: '/earn/next-stop-breakpoint',
+  icon: 'https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989283/assets/hackathon/next-stop-breakpoint/bp-mobile.png',
+  posthog: 'next_stop_breakpoint_navbar',
+};
+
 export const CATEGORY_NAV_ITEMS: Array<NavItem & { pillPH: string }> = [
   {
     label: 'Content',

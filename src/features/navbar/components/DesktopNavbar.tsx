@@ -21,7 +21,7 @@ import { CreditIcon } from '@/features/credits/icon/credit';
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
-import { LISTING_NAV_ITEMS } from '../constants';
+import { BREAKPOINT_NAV_ITEM, LISTING_NAV_ITEMS } from '../constants';
 import { LogoContextMenu } from './LogoContextMenu';
 import { NavLink } from './NavLink';
 import { UserMenu } from './UserMenu';
@@ -201,6 +201,23 @@ export const DesktopNavbar = ({
                   />
                 </Link>
               ))}
+
+              <Link
+                href={BREAKPOINT_NAV_ITEM.href}
+                className={cn('flex items-center py-2 font-medium', 'h-9')}
+                onClick={() => {
+                  posthog.capture(BREAKPOINT_NAV_ITEM.posthog);
+                }}
+                aria-label={BREAKPOINT_NAV_ITEM.label}
+                title={BREAKPOINT_NAV_ITEM.label}
+                prefetch={false}
+              >
+                <LocalImage
+                  src={BREAKPOINT_NAV_ITEM.icon}
+                  alt={BREAKPOINT_NAV_ITEM.label}
+                  className="h-full max-w-40 object-contain"
+                />
+              </Link>
             </>
           )}
 

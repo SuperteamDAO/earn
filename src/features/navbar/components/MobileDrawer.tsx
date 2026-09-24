@@ -30,6 +30,7 @@ import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsMo
 
 import {
   CATEGORY_NAV_ITEMS,
+  BREAKPOINT_NAV_ITEM,
   LISTING_NAV_ITEMS,
   renderLabel,
 } from '../constants';
@@ -181,6 +182,22 @@ export const MobileDrawer = ({
               }}
             />
           ))}
+          <NavItem
+            label={
+              <div className="flex items-center gap-2">
+                <img
+                  src={BREAKPOINT_NAV_ITEM.icon}
+                  alt={BREAKPOINT_NAV_ITEM.label}
+                  className="h-8 max-w-48 object-contain p-1"
+                />
+              </div>
+            }
+            onClick={() => {
+              posthog.capture(BREAKPOINT_NAV_ITEM.posthog);
+              router.push(BREAKPOINT_NAV_ITEM.href);
+              onDrawerClose();
+            }}
+          />
           <div className="ph-no-capture flex flex-col">
             {isLoggedIn && user?.isTalentFilled && (
               <>
