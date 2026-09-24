@@ -115,11 +115,11 @@ function CryptoWorldFairSidebarBanner({ className }: SidebarPosterProps) {
 
         <div className="relative z-10 flex h-full w-full flex-col px-4 pt-2 pb-5 text-black">
           <h2 className="mt-2 text-lg leading-[120%] font-semibold text-slate-800">
-            Are you a dev? We have prizes worth $197,000+ for you
+            Are you a dev? We have prizes worth $319,000+ for you
           </h2>
           <p className="mt-3 text-sm leading-[130%] text-slate-600 md:text-base">
             Submit to any of the Crypto World&apos;s Fair sidetracks on Earn and
-            stand to win from $197,000+. Deadline for submissions is 13 Oct
+            stand to win from $319,000+. Deadline for submissions is 13 Oct
             (6:59 AM UTC).
           </p>
 
