@@ -35,7 +35,7 @@ const BACKGROUND_IMAGE =
 const SUMMARY_BACKGROUND_IMAGE =
   'https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989339/assets/hackathon/next-stop-breakpoint/big-ben.png';
 const OG_IMAGE =
-  'https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989342/assets/hackathon/next-stop-breakpoint/road-to-bp.png';
+  'https://res.cloudinary.com/dgvnuwspr/image/upload/v1790232920/assets/hackathon/next-stop-breakpoint/og.png';
 const HERO_LOGO =
   'https://res.cloudinary.com/dgvnuwspr/image/upload/v1789989266/assets/hackathon/next-stop-breakpoint/bp-logo.png';
 

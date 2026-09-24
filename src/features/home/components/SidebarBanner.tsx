@@ -150,7 +150,7 @@ function NextStopBreakpointSidebarBanner({ className }: SidebarPosterProps) {
       >
         <div className="aspect-video w-full overflow-hidden rounded-md">
           <ExternalImage
-            src="hackathon/next-stop-breakpoint/road-to-bp.png"
+            src="hackathon/next-stop-breakpoint/sidebar.png"
             alt="Next Stop Breakpoint"
             className="h-full w-full object-cover"
           />
