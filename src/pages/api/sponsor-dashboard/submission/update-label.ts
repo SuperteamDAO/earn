@@ -116,7 +116,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
 
       if (label === 'Spam') {
-        await addSpamPenaltyCredit(submission.id);
+        const penaltyResult = await addSpamPenaltyCredit(submission.id);
+        if (!penaltyResult.created) {
+          results.push({ ...result, autoFixed });
+          continue;
+        }
+
         try {
           await queueEmail({
             type: 'spamCredit',
