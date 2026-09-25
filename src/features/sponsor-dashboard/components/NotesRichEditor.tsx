@@ -6,7 +6,6 @@ import { Bold, Italic, List, ListOrdered } from 'lucide-react';
 import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/utils/cn';
 
 interface NotesRichEditorProps {
@@ -342,17 +341,12 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
   return (
     <div className="flex h-full min-h-0 w-full flex-col" key={id}>
       <NotesSelectionMenu editor={editor} />
-      <ScrollArea
-        className="min-h-0 w-full flex-1"
-        type="auto"
-        key={id}
-        viewportProps={{ className: 'size-full rounded-[inherit] pr-3' }}
-      >
+      <div className="min-h-0 w-full flex-1 touch-pan-y overflow-x-hidden overflow-y-auto overscroll-contain pr-3 [-webkit-overflow-scrolling:touch] max-[640px]:max-h-[calc(52dvh-7rem)] md:h-full md:max-h-full">
         <EditorContent
           key={id}
           editor={editor}
           className={cn(
-            'h-full',
+            'w-full max-[640px]:min-h-[10rem]',
             {
               'pointer-events-none opacity-50': disabled,
             },
@@ -362,7 +356,7 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
         <style jsx global>{`
           .notes-rich-editor {
             outline: none;
-            height: 100%;
+            height: auto;
             display: flex;
             flex-direction: column;
             min-height: 100%;
@@ -374,6 +368,7 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
             overflow: visible;
             max-width: 100%;
             box-sizing: border-box;
+            touch-action: pan-y;
           }
 
           .notes-rich-editor p.is-editor-empty:first-child::before {
@@ -430,6 +425,12 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
             margin: 0;
           }
 
+          @media (max-width: 640px) {
+            .notes-rich-editor {
+              min-height: 10rem !important;
+            }
+          }
+
           .notes-rich-editor strong {
             font-weight: 600;
           }
@@ -438,7 +439,7 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
             font-style: italic;
           }
         `}</style>
-      </ScrollArea>
+      </div>
     </div>
   );
 };

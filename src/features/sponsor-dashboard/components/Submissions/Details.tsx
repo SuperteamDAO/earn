@@ -50,7 +50,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
       <ScrollArea
         className={cn(
           'flex flex-1 flex-col overflow-y-auto p-4',
-          !isHackathonPage ? 'w-2/3' : 'w-full',
+          !isHackathonPage ? 'md:w-2/3 md:flex-none' : 'w-full',
         )}
         type="auto"
       >
@@ -111,8 +111,8 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
         />
       </ScrollArea>
       {!isHackathonPage && (
-        <div className="w-1/3 max-w-[22.5rem] p-4">
-          {selectedSubmission && !isHackathonPage && (
+        <div className="hidden w-1/3 max-w-[22.5rem] p-4 md:block">
+          {selectedSubmission && (
             <Notes key={selectedSubmission.id} slug={bounty?.slug} />
           )}
         </div>

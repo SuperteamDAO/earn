@@ -120,16 +120,16 @@ export default function LocalProfiles() {
 
   return (
     <SponsorLayout>
-      <div className="mb-4 flex justify-between">
-        <div className="flex items-center gap-2">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-wrap items-center gap-2">
           {sponsorChapter?.code && (
             <UserFlag location={sponsorChapter.code} isCode />
           )}
           <p className="text-lg font-semibold text-slate-800">
             Local Earn Profiles
           </p>
-          <div className="mx-1 h-[60%] border-r border-slate-200" />
-          <p className="text-slate-500">
+          <div className="mx-1 hidden h-[60%] border-r border-slate-200 sm:block" />
+          <p className="text-sm text-slate-500 sm:text-base">
             All profiles that are based in{' '}
             {sponsorChapter?.displayValue || sponsorChapter?.region}
           </p>
@@ -152,8 +152,8 @@ export default function LocalProfiles() {
         />
       )}
       {filteredUsers && filteredUsers?.length > 0 && (
-        <div className="mt-6 flex items-center justify-end">
-          <p className="mr-4 text-sm text-slate-400">
+        <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-end">
+          <p className="text-sm text-slate-400 sm:mr-4">
             <span className="font-bold">{indexOfFirstUser + 1}</span> -{' '}
             <span className="font-bold">
               {Math.min(indexOfLastUser, filteredUsers?.length || 0)}
@@ -161,9 +161,9 @@ export default function LocalProfiles() {
             of <span className="font-bold">{filteredUsers?.length || 0}</span>{' '}
             Members
           </p>
-          <div className="flex gap-4">
+          <div className="flex w-full gap-2 sm:w-auto sm:gap-4">
             <Button
-              className="flex items-center"
+              className="flex flex-1 items-center justify-center sm:flex-none"
               disabled={currentPage === 1}
               onClick={handlePreviousPage}
               size="sm"
@@ -173,7 +173,7 @@ export default function LocalProfiles() {
               Previous
             </Button>
             <Button
-              className="flex items-center"
+              className="flex flex-1 items-center justify-center sm:flex-none"
               disabled={currentPage === totalPages}
               onClick={handleNextPage}
               size="sm"
