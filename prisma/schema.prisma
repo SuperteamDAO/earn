@@ -1473,6 +1473,25 @@ model MemberPerk {
   @@index([published, sortOrder])
 }
 
+model PublicMemberPerk {
+  id                String   @id @default(uuid()) @db.Char(36)
+  title             String   @db.VarChar(160)
+  description       String   @db.Text
+  imageUrl          String   @db.VarChar(500)
+  link              String?  @db.VarChar(500)
+  status            String   @default("Live now") @db.VarChar(40)
+  claimInstructions String   @db.Text
+  published         Boolean  @default(false)
+  category          String?  @db.VarChar(80)
+  airtableRecordId  String?  @unique @db.VarChar(50)
+  minLevel          Int      @default(1)
+  sortOrder         Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([published, status, sortOrder])
+}
+
 model MemberLevel {
   memberId  String   @id @db.Char(36)
   level     Int      @default(1)

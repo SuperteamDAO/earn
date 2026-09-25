@@ -2,13 +2,12 @@
 
 import PerkCard from '../cards/PerkCard';
 
-interface Perk {
-  fields: {
-    Name: string;
-    Notes?: string;
-    Link?: string;
-    Logo?: Array<{ url: string }>;
-  };
+export interface Perk {
+  id: string;
+  title: string;
+  description: string;
+  link: string | null;
+  imageUrl: string;
 }
 
 interface PerksGridProps {
@@ -47,11 +46,11 @@ export default function PerksGrid({ perks }: PerksGridProps) {
       <div className="grid-cards-container flex flex-col gap-8 md:grid md:gap-0">
         {perks.map((perk, index) => (
           <PerkCard
-            key={index}
-            name={perk.fields['Name']}
-            description={perk.fields['Notes'] || ''}
-            projectLink={perk.fields['Link'] || '#'}
-            imgUrl={perk.fields['Logo']?.[0]?.url || ''}
+            key={perk.id}
+            name={perk.title}
+            description={perk.description}
+            projectLink={perk.link || '#'}
+            imgUrl={perk.imageUrl}
             className={`col-span-1 row-span-1 ${getOffsetClasses(index)}`}
           />
         ))}
