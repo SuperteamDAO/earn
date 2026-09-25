@@ -1,14 +1,24 @@
+import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { getUserSession } from '@/features/auth/utils/getUserSession';
 import {
   checkSlug,
   generateUniqueSlug,
 } from '@/features/listing-builder/utils/getValidSlug';
 
 export async function GET(request: NextRequest) {
+  const session = await getUserSession(await headers());
+  if (session.status !== 200 || !session.data) {
+    return NextResponse.json(
+      { error: session.error || 'Unauthorized' },
+      { status: session.status || 401 },
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const slug = searchParams.get('slug');
   const check = searchParams.get('check');
