@@ -1,15 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
-import {
-  Eye,
-  Heart,
-  Repeat,
-  MessageSquare,
-  Loader2,
-  AlertCircle,
-} from 'lucide-react';
+import { Eye, Heart, Repeat, MessageSquare, AlertCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 
 interface TweetMetrics {
@@ -69,21 +63,7 @@ export const TweetStats = ({
   });
 
   if (isLoading) {
-    return (
-      <div
-        aria-live="polite"
-        className="mb-4 flex max-w-md items-center gap-2 rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-2.5 motion-safe:animate-pulse dark:border-slate-800 dark:bg-slate-900/40"
-        role="status"
-      >
-        <Loader2
-          aria-hidden
-          className="h-4 w-4 text-slate-400 motion-safe:animate-spin"
-        />
-        <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-          Fetching X post metrics...
-        </span>
-      </div>
-    );
+    return <TweetStatsSkeleton source={source} />;
   }
 
   if (error) {
@@ -130,6 +110,51 @@ export const TweetStats = ({
   }
 
   return <TweetStatsCard metrics={metrics} source={source} />;
+};
+
+const TweetStatsSkeleton = ({ source }: { source: TweetSource }) => {
+  const metricLabels = ['Views', 'Likes', 'Reposts', 'Replies'];
+
+  return (
+    <div
+      aria-label="Loading X post metrics"
+      className="mb-4 max-w-md overflow-hidden rounded-xl border border-slate-100 bg-white p-3 shadow-[0_1px_3px_rgba(0,0,0,0.02)] dark:border-slate-800 dark:bg-slate-950"
+      role="status"
+    >
+      <div aria-hidden>
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex items-center space-x-1.5">
+            <Skeleton className="h-3 w-3" />
+            <span className="relative text-[10px] font-bold tracking-wider uppercase">
+              <span className="invisible">
+                {source === 'link' ? 'Main Submission' : 'Tweet Link'} · X
+              </span>
+              <Skeleton className="absolute inset-0" />
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 text-center">
+          {metricLabels.map((label) => (
+            <div
+              className="flex flex-col items-center justify-center rounded-lg p-1.5"
+              key={label}
+            >
+              <Skeleton className="mb-1 h-4 w-4" />
+              <span className="relative text-xs font-semibold">
+                <span className="invisible">0</span>
+                <Skeleton className="absolute inset-0" />
+              </span>
+              <span className="relative text-[9px] font-medium">
+                <span className="invisible">{label}</span>
+                <Skeleton className="absolute inset-0" />
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const TweetStatsCard = ({
