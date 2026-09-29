@@ -34,6 +34,7 @@ import {
 } from '@/components/ui/select';
 import type { CompensationType } from '@/prisma/enums';
 
+import { getVisibleHackathons } from '@/features/hackathon/utils/getVisibleHackathons';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
 import { hackathonsAtom, isEditingAtom, isSTAtom } from '../../atoms';
@@ -198,6 +199,10 @@ function Type() {
   const isEditing = useAtomValue(isEditingAtom);
   const isST = useAtomValue(isSTAtom);
   const hackathons = useAtomValue(hackathonsAtom);
+  const visibleHackathons = useMemo(
+    () => getVisibleHackathons(hackathons),
+    [hackathons],
+  );
   const [prevCompType, setPrevCompType] = useState<CompensationType>('fixed');
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [pendingTypeChange, setPendingTypeChange] = useState<string | null>(
@@ -338,7 +343,7 @@ function Type() {
                       </div>
                     </SelectItem>
                   ))}
-                  {hackathons?.map((hackathon) => (
+                  {visibleHackathons.map((hackathon) => (
                     <SelectItem key={hackathon.id} value={hackathon.slug}>
                       <div className="flex items-center gap-2 text-xs">
                         {getListingIcon('hackathon')}
