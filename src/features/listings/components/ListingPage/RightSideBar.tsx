@@ -1,5 +1,6 @@
-import { Ticket, TriangleAlert } from 'lucide-react';
+import { TriangleAlert } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 
@@ -161,17 +162,21 @@ export function RightSideBar({
                   <tr className="w-full">
                     <td className="w-full p-0" colSpan={3}>
                       {isNextStopBreakpoint ? (
-                        <div className="flex items-center gap-3">
-                          <Ticket
-                            className="h-8 w-8 text-slate-500"
+                        <div className="bg-brand-purple/10 flex items-center gap-4 rounded-xl px-4 py-4">
+                          <Image
+                            src="/assets/ticket-icon.svg"
+                            alt=""
+                            width={36}
+                            height={36}
+                            className="h-9 w-9 shrink-0"
                             aria-hidden="true"
                           />
                           <div>
-                            <p className="text-lg font-semibold text-slate-700 md:text-xl">
-                              1 Breakpoint Ticket
+                            <p className="text-lg font-semibold text-slate-900 md:text-xl">
+                              10 × Breakpoint Tickets
                             </p>
-                            <p className="text-sm text-slate-500">
-                              Each for the top 10 winners
+                            <p className="text-brand-purple text-sm font-medium md:text-base">
+                              1 per winner
                             </p>
                           </div>
                         </div>

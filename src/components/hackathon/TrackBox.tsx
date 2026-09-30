@@ -1,8 +1,12 @@
-import { Ticket } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { TokenIcon } from '@/components/ui/token-icon';
 import { type TrackProps } from '@/interface/hackathon';
+
+type TrackBoxProps = TrackProps & {
+  rewardLabel?: string;
+};
 
 export const TrackBox = ({
   title,
@@ -11,7 +15,7 @@ export const TrackBox = ({
   rewardAmount,
   slug,
   rewardLabel,
-}: TrackProps & { rewardLabel?: string }) => {
+}: TrackBoxProps) => {
   return (
     <Link
       href={`/earn/listing/${slug}`}
@@ -35,8 +39,12 @@ export const TrackBox = ({
       <div className="flex items-center justify-end gap-1">
         {rewardLabel ? (
           <>
-            <Ticket
-              className="h-4 w-4 text-slate-500 md:h-5 md:w-5"
+            <Image
+              src="/assets/ticket-icon.svg"
+              alt=""
+              width={20}
+              height={20}
+              className="h-4 w-4 md:h-5 md:w-5"
               aria-hidden="true"
             />
             <span className="text-sm font-semibold text-slate-700 md:text-base">
