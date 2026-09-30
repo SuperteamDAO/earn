@@ -90,8 +90,10 @@ export default function NextStopBreakpoint({
           onRetry={() => void refetchTracks()}
         />
         <p className="mx-auto mt-2 max-w-3xl text-center text-base text-slate-500">
-          Each bounty awards <strong>1 Breakpoint ticket</strong> to each of its{' '}
-          <strong>top 10 winners</strong>.
+          <strong>Note:</strong> Each bounty awards{' '}
+          <strong>1 Breakpoint ticket</strong> to each of its{' '}
+          <strong>top 10 winners</strong>. The prize includes the ticket only;
+          travel and accommodation are not covered.
         </p>
       </div>
     </Default>
