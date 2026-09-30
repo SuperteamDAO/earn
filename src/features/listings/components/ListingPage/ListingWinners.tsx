@@ -39,6 +39,8 @@ const getOrRemoveBonuses = (
 
 export function ListingWinners({ bounty }: Props) {
   const isProject = bounty?.type === 'project';
+  const isNextStopBreakpoint =
+    bounty?.Hackathon?.slug === 'next-stop-breakpoint';
 
   const isMD = useBreakpoint('md');
   const isSM = useBreakpoint('sm');
@@ -156,13 +158,21 @@ export function ListingWinners({ bounty }: Props) {
                   <p className="w-16 truncate pt-4 text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.firstName}`}</p>
                   <p className="w-16 truncate text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.lastName}`}</p>
                   <p className="text-center text-xs font-normal text-slate-500 opacity-60">
-                    {bounty?.rewards &&
-                      formatTotalPrize(
-                        bounty?.rewards[
-                          Number(submission?.winnerPosition) as keyof Rewards
-                        ] ?? 0,
-                      )}{' '}
-                    {bounty?.token}
+                    {isNextStopBreakpoint ? (
+                      '1 Breakpoint Ticket'
+                    ) : (
+                      <>
+                        {bounty?.rewards &&
+                          formatTotalPrize(
+                            bounty?.rewards[
+                              Number(
+                                submission?.winnerPosition,
+                              ) as keyof Rewards
+                            ] ?? 0,
+                          )}{' '}
+                        {bounty?.token}
+                      </>
+                    )}
                   </p>
                 </Link>
               ))}

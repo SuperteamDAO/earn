@@ -1,4 +1,4 @@
-import { TriangleAlert } from 'lucide-react';
+import { Ticket, TriangleAlert } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
@@ -109,6 +109,8 @@ export function RightSideBar({
   }, [submissionNumber]);
 
   const isProject = type === 'project';
+  const isNextStopBreakpoint =
+    Hackathon?.slug === 'next-stop-breakpoint' && !isProject;
 
   const router = useRouter();
 
@@ -158,42 +160,59 @@ export function RightSideBar({
                 <tbody>
                   <tr className="w-full">
                     <td className="w-full p-0" colSpan={3}>
-                      <div
-                        className={cn(
-                          'flex items-center gap-2',
-                          showUsdSymbolOnly && 'ml-6',
-                        )}
-                      >
-                        {!showUsdSymbolOnly && (
-                          <TokenIcon
-                            className="h-8 w-8 rounded-full"
-                            alt="token icon"
-                            symbol={token}
+                      {isNextStopBreakpoint ? (
+                        <div className="flex items-center gap-3">
+                          <Ticket
+                            className="h-8 w-8 text-slate-500"
+                            aria-hidden="true"
                           />
-                        )}
-                        <CompensationAmount
-                          compensationType={compensationType}
-                          rewardAmount={rewardAmount}
-                          maxRewardAsk={maxRewardAsk}
-                          minRewardAsk={minRewardAsk}
-                          token={!showUsdSymbolOnly ? token : 'USD'}
-                          isWinnersAnnounced={isWinnersAnnounced}
+                          <div>
+                            <p className="text-lg font-semibold text-slate-700 md:text-xl">
+                              1 Breakpoint Ticket
+                            </p>
+                            <p className="text-sm text-slate-500">
+                              Each for the top 10 winners
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div
                           className={cn(
-                            'text-lg font-semibold text-slate-700 md:text-xl',
+                            'flex items-center gap-2',
+                            showUsdSymbolOnly && 'ml-6',
                           )}
-                          style={{
-                            width: widthOfPrize,
-                          }}
-                          showUsdSymbol={showUsdSymbolOnly}
-                        />
-                        <p className="text-lg font-normal text-slate-500">
-                          {isProject ? 'Payment' : 'Total Prizes'}
-                        </p>
-                      </div>
+                        >
+                          {!showUsdSymbolOnly && (
+                            <TokenIcon
+                              className="h-8 w-8 rounded-full"
+                              alt="token icon"
+                              symbol={token}
+                            />
+                          )}
+                          <CompensationAmount
+                            compensationType={compensationType}
+                            rewardAmount={rewardAmount}
+                            maxRewardAsk={maxRewardAsk}
+                            minRewardAsk={minRewardAsk}
+                            token={!showUsdSymbolOnly ? token : 'USD'}
+                            isWinnersAnnounced={isWinnersAnnounced}
+                            className={cn(
+                              'text-lg font-semibold text-slate-700 md:text-xl',
+                            )}
+                            style={{
+                              width: widthOfPrize,
+                            }}
+                            showUsdSymbol={showUsdSymbolOnly}
+                          />
+                          <p className="text-lg font-normal text-slate-500">
+                            {isProject ? 'Payment' : 'Total Prizes'}
+                          </p>
+                        </div>
+                      )}
                     </td>
                   </tr>
 
-                  {!isProject && rewards && (
+                  {!isProject && rewards && !isNextStopBreakpoint && (
                     <tr>
                       <td className="p-0" colSpan={3}>
                         <PrizesList

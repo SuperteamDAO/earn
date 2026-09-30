@@ -1,3 +1,4 @@
+import { Ticket } from 'lucide-react';
 import Link from 'next/link';
 
 import { TokenIcon } from '@/components/ui/token-icon';
@@ -9,7 +10,8 @@ export const TrackBox = ({
   token,
   rewardAmount,
   slug,
-}: TrackProps) => {
+  rewardLabel,
+}: TrackProps & { rewardLabel?: string }) => {
   return (
     <Link
       href={`/earn/listing/${slug}`}
@@ -31,17 +33,31 @@ export const TrackBox = ({
         </div>
       </div>
       <div className="flex items-center justify-end gap-1">
-        <TokenIcon
-          className="h-4 w-4 rounded-full md:h-6 md:w-6"
-          alt={token ?? 'token'}
-          symbol={token}
-        />
-        <span className="text-sm font-semibold text-slate-700 md:text-base">
-          {rewardAmount?.toLocaleString('en-us')}
-        </span>
-        <span className="text-sm font-semibold text-slate-400 md:text-base">
-          {token}
-        </span>
+        {rewardLabel ? (
+          <>
+            <Ticket
+              className="h-4 w-4 text-slate-500 md:h-5 md:w-5"
+              aria-hidden="true"
+            />
+            <span className="text-sm font-semibold text-slate-700 md:text-base">
+              {rewardLabel}
+            </span>
+          </>
+        ) : (
+          <>
+            <TokenIcon
+              className="h-4 w-4 rounded-full md:h-6 md:w-6"
+              alt={token ?? 'token'}
+              symbol={token}
+            />
+            <span className="text-sm font-semibold text-slate-700 md:text-base">
+              {rewardAmount?.toLocaleString('en-us')}
+            </span>
+            <span className="text-sm font-semibold text-slate-400 md:text-base">
+              {token}
+            </span>
+          </>
+        )}
       </div>
     </Link>
   );

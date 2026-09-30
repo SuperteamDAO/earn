@@ -90,10 +90,8 @@ export default function NextStopBreakpoint({
           onRetry={() => void refetchTracks()}
         />
         <p className="mx-auto mt-2 max-w-3xl text-center text-base text-slate-500">
-          <strong>Note:</strong> The prize amount shown is for listing purposes
-          only. Winners will receive a{' '}
-          <strong>Breakpoint ticket worth the stated prize amount</strong>{' '}
-          instead of a cash payout.
+          Each bounty awards <strong>1 Breakpoint ticket</strong> to each of its{' '}
+          <strong>top 10 winners</strong>.
         </p>
       </div>
     </Default>
@@ -388,6 +386,7 @@ function Tracks({
                 token={track.token}
                 rewardAmount={track.rewardAmount}
                 slug={track.slug}
+                rewardLabel="10 tickets"
               />
             ))}
           </div>
