@@ -37,6 +37,7 @@ const MenuOption = ({ option, activeMenu, onSelect }: MenuOptionProps) => {
   return (
     <button
       type="button"
+      aria-pressed={activeMenu === option}
       className={cn(
         'flex cursor-pointer items-center border-b-2 text-sm font-medium capitalize transition-colors lg:text-base',
         activeMenu === option
@@ -92,19 +93,18 @@ export const Feed = ({ isWinner = false, id, type, meta }: Props) => {
   return (
     <FeedPageLayout isHomePage meta={meta}>
       <HomepagePop />
-      {/* Horizontal padding matches the activity cards below */}
-      <div className="border-b pt-5 pr-5 pl-6 md:pl-5">
+      <div className="border-b border-slate-200 px-5 pt-6">
         <h1 className="text-lg font-semibold text-slate-900 lg:text-xl">
           Activity Feed
         </h1>
-        <p className="mt-0.5 text-sm text-slate-500 lg:text-base">
+        <p className="mt-1 text-sm text-slate-500 lg:text-base">
           Discover the best work on Earn
         </p>
         <div className="flex w-full pt-4 lg:hidden">
           <VibeCard />
         </div>
-        <div className="mt-3 -mb-px flex h-11 w-full items-stretch justify-between">
-          <div className="flex gap-5">
+        <div className="mt-4 -mb-px flex h-12 items-stretch justify-between gap-4">
+          <div className="flex shrink-0 gap-5">
             <MenuOption
               option="new"
               activeMenu={activeMenu}
@@ -119,7 +119,10 @@ export const Feed = ({ isWinner = false, id, type, meta }: Props) => {
 
           {activeMenu === 'popular' && (
             <Select value={timePeriod} onValueChange={setTimePeriod}>
-              <SelectTrigger className="h-8 w-32 self-center text-xs text-slate-500">
+              <SelectTrigger
+                aria-label="Activity time period"
+                className="h-8 w-32 shrink-0 self-center text-xs text-slate-500"
+              >
                 <SelectValue placeholder="Select period" />
               </SelectTrigger>
               <SelectContent className="text-slate-500">
@@ -137,7 +140,7 @@ export const Feed = ({ isWinner = false, id, type, meta }: Props) => {
           )}
         </div>
       </div>
-      <div className="pl-1 md:pl-0">
+      <div className="min-w-0">
         <FeedLoop
           feed={feedItems}
           ref={ref}
