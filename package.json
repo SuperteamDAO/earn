@@ -9,6 +9,7 @@
     "lint": "oxlint . --quiet",
     "format": "oxlint . --fix --quiet && oxfmt --write .",
     "check-types": "tsc --noEmit --pretty",
+    "check:lockfile": "node scripts/check-lockfile.cjs",
     "prepare": "husky",
     "postinstall": "prisma generate",
     "knip": "knip",
@@ -190,6 +191,7 @@
     "Safari >= 16.8",
     "iOS >= 16.8"
   ],
+  "packageManager": "pnpm@9.15.9",
   "pnpm": {
     "overrides": {
       "@types/react": "19.2.2",
