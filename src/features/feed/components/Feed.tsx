@@ -36,12 +36,12 @@ interface MenuOptionProps {
 const MenuOption = ({ option, activeMenu, onSelect }: MenuOptionProps) => {
   return (
     <button
+      type="button"
       className={cn(
-        'cursor-pointer capitalize',
-        'text-sm lg:text-base',
+        'flex cursor-pointer items-center border-b-2 text-sm font-medium capitalize transition-colors lg:text-base',
         activeMenu === option
-          ? 'font-semibold text-slate-700'
-          : 'font-normal text-slate-500',
+          ? 'border-brand-purple/80 text-slate-900'
+          : 'border-transparent text-slate-500 hover:text-slate-700',
       )}
       onClick={() => onSelect(option)}
     >
@@ -92,18 +92,19 @@ export const Feed = ({ isWinner = false, id, type, meta }: Props) => {
   return (
     <FeedPageLayout isHomePage meta={meta}>
       <HomepagePop />
-      <div className="border-b py-5 pr-2 pl-6 md:pl-5">
-        <p className="text-lg font-medium text-slate-900 lg:text-xl">
+      {/* Horizontal padding matches the activity cards below */}
+      <div className="border-b pt-5 pr-5 pl-6 md:pl-5">
+        <h1 className="text-lg font-semibold text-slate-900 lg:text-xl">
           Activity Feed
-        </p>
-        <p className="text-base text-slate-500">
+        </h1>
+        <p className="mt-0.5 text-sm text-slate-500 lg:text-base">
           Discover the best work on Earn
         </p>
         <div className="flex w-full pt-4 lg:hidden">
           <VibeCard />
         </div>
-        <div className="mt-4 flex w-full items-center justify-between">
-          <div className="mr-3 flex gap-3">
+        <div className="mt-3 -mb-px flex h-11 w-full items-stretch justify-between">
+          <div className="flex gap-5">
             <MenuOption
               option="new"
               activeMenu={activeMenu}
@@ -118,7 +119,7 @@ export const Feed = ({ isWinner = false, id, type, meta }: Props) => {
 
           {activeMenu === 'popular' && (
             <Select value={timePeriod} onValueChange={setTimePeriod}>
-              <SelectTrigger className="mr-1 h-6 w-28 text-right text-xs text-slate-500 sm:h-8">
+              <SelectTrigger className="h-8 w-32 self-center text-xs text-slate-500">
                 <SelectValue placeholder="Select period" />
               </SelectTrigger>
               <SelectContent className="text-slate-500">
