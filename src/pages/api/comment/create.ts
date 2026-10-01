@@ -183,6 +183,8 @@ export async function createComment(
           otherInfo: {
             personName: result?.author?.firstName,
             type: refType,
+            // earn-emails skips the email when the commenter owns the item.
+            authorId: userId,
           },
           triggeredBy: userId,
         });
