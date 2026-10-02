@@ -25,13 +25,16 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       include: { user: true, listing: true },
     });
 
+    const isFoundationPayment =
+      submission.listing.isFndnPaying &&
+      submission.listing.winnersAnnouncedAt &&
+      new Date(submission.listing.winnersAnnouncedAt) > new Date('2025-08-06');
+    const isInKindReward = submission.listing.rewardType === 'IN_KIND';
     const isAllowed =
       submission.isWinner &&
       submission.listing.isWinnersAnnounced &&
-      submission.listing.isFndnPaying &&
       !submission.isPaid &&
-      submission.listing.winnersAnnouncedAt &&
-      new Date(submission.listing.winnersAnnouncedAt) > new Date('2025-08-06');
+      (isFoundationPayment || isInKindReward);
 
     if (!isAllowed) {
       return res.status(200).json({ message: 'Not allowed' });
@@ -82,7 +85,7 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
       } catch (lockError) {
         if (lockError instanceof LockNotAcquiredError) {
           return res.status(409).json({
-            message: 'Payment processing already in progress for this user',
+            message: 'KYC verification is already in progress for this user',
           });
         }
         throw lockError;
