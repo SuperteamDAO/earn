@@ -20,7 +20,17 @@ export default async function getHackathon(
       },
       select: {
         title: true,
+        rewardType: true,
         token: true,
+        inKindReward: {
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            pluralName: true,
+            icon: true,
+          },
+        },
         rewardAmount: true,
         slug: true,
         sponsor: {
