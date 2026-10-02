@@ -196,9 +196,15 @@ export async function buildListingQuery(
     andConditions.push({
       language: { in: ['eng', 'sco'] },
       OR: [
-        { compensationType: 'fixed', usdValue: { gt: 100 } },
-        { compensationType: 'range', maxRewardAsk: { gt: 100 } },
-        { compensationType: 'variable' },
+        { rewardType: 'IN_KIND' },
+        {
+          rewardType: 'TOKEN',
+          OR: [
+            { compensationType: 'fixed', usdValue: { gt: 100 } },
+            { compensationType: 'range', maxRewardAsk: { gt: 100 } },
+            { compensationType: 'variable' },
+          ],
+        },
       ],
     });
   }

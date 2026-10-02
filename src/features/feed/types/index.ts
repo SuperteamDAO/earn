@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
-import { type Rewards } from '@/features/listings/types';
+import { type ListingRewardType } from '@/prisma/enums';
+
+import {
+  type InKindRewardMetadata,
+  type Rewards,
+} from '@/features/listings/types';
 
 export interface FeedDataProps {
   id: string;
@@ -27,7 +32,9 @@ export interface FeedDataProps {
   listingType: 'bounty' | 'hackathon' | 'project';
   listingSlug: string;
   isWinnersAnnounced: boolean;
-  token: string;
+  rewardType?: ListingRewardType;
+  token?: string | null;
+  inKindReward?: InKindRewardMetadata | null;
   sponsorName: string;
   sponsorLogo: string;
   sponsorSlug: string;
