@@ -370,7 +370,7 @@ function Tracks({ tracks }: { tracks: Track[] | undefined }) {
 type Track = {
   title: string;
   slug: string;
-  token: string;
+  token: string | null;
   rewardAmount: number;
   sponsor: {
     name: string;
