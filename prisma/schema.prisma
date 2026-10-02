@@ -18,7 +18,9 @@ model Bounties {
   commitmentDate     DateTime?
   eligibility        Json?
   status             status             @default(OPEN)
+  rewardType         ListingRewardType  @default(TOKEN)
   token              String?
+  inKindRewardId     String?
   rewardAmount       Float?
   rewards            Json?
   maxBonusSpots      Int                @default(0)
@@ -56,6 +58,7 @@ model Bounties {
   template           BountiesTemplates? @relation(fields: [templateId], references: [id])
   sponsor            Sponsors           @relation(fields: [sponsorId], references: [id])
   poc                User               @relation("poc", fields: [pocId], references: [id])
+  inKindReward       InKindReward?      @relation(fields: [inKindRewardId], references: [id])
   language           String?
   shouldSendEmail    Boolean            @default(true)
   isFndnPaying       Boolean            @default(false)
@@ -76,6 +79,7 @@ model Bounties {
   @@index([id, slug])
   @@index([pocId])
   @@index([templateId])
+  @@index([inKindRewardId])
   @@index([hackathonId])
   @@index([isPublished, isPrivate])
   @@index([deadline, updatedAt])
@@ -169,6 +173,44 @@ model TokenMetadata {
 
   @@index([isActive, sortOrder])
   @@index([sortOrder])
+}
+
+model InKindReward {
+  id         String   @id @default(uuid())
+  slug       String   @unique @db.VarChar(191)
+  name       String   @db.VarChar(191)
+  pluralName String   @db.VarChar(191)
+  icon       String   @db.VarChar(2048)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  listings     Bounties[]
+  fulfillments InKindDelivery[]
+
+  @@index([isActive, name])
+}
+
+model InKindDelivery {
+  id             String                  @id @default(uuid())
+  submissionId   String                  @unique
+  inKindRewardId String
+  quantity       Int
+  status         InKindFulfillmentStatus @default(PENDING)
+  reference      String?                 @db.VarChar(500)
+  notes          String?                 @db.Text
+  fulfilledAt    DateTime?
+  fulfilledById  String?
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+
+  submission   Submission   @relation(fields: [submissionId], references: [id])
+  inKindReward InKindReward @relation(fields: [inKindRewardId], references: [id])
+  fulfilledBy  User?        @relation("InKindRewardFulfilledBy", fields: [fulfilledById], references: [id])
+
+  @@index([inKindRewardId])
+  @@index([fulfilledById])
+  @@index([status])
 }
 
 model Comment {
@@ -376,6 +418,7 @@ model Submission {
   CreditLedger       CreditLedger[]
   ai                 Json?
   paymentSynced      Boolean          @default(false)
+  inKindFulfillment  InKindDelivery?
 
   @@index([id, listingId])
   @@index([isWinner])
@@ -505,6 +548,7 @@ model User {
   isAgent            Boolean              @default(false)
   agentProfile       Agent?
   claimedAgents      Agent[]              @relation("AgentClaimedBy")
+  rewardFulfillments InKindDelivery[]     @relation("InKindRewardFulfilledBy")
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -1248,6 +1292,18 @@ enum CompensationType {
   fixed
   range
   variable
+}
+
+enum ListingRewardType {
+  TOKEN
+  IN_KIND
+}
+
+enum InKindFulfillmentStatus {
+  PENDING
+  IN_PROGRESS
+  FULFILLED
+  CANCELLED
 }
 
 enum SubmissionLabels {
