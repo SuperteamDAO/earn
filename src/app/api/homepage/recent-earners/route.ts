@@ -10,7 +10,11 @@ export async function GET(_request: NextRequest) {
     const winningSubmissions = await prisma.submission.findMany({
       where: {
         isWinner: true,
-        listing: { isWinnersAnnounced: true, isPrivate: false },
+        listing: {
+          isWinnersAnnounced: true,
+          isPrivate: false,
+          rewardType: 'TOKEN',
+        },
         rewardInUSD: { gte: 200 },
       },
       select: {

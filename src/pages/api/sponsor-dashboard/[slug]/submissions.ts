@@ -86,6 +86,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           },
         },
         listing: true,
+        inKindFulfillment: {
+          select: {
+            id: true,
+            quantity: true,
+            status: true,
+            reference: true,
+            notes: true,
+            fulfilledAt: true,
+          },
+        },
       },
       orderBy: { createdAt: 'asc' },
     });

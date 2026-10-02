@@ -15,6 +15,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { cleanRewards, nthLabelGenerator, sortRank } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
+import { InKindRewardDisplay } from '@/features/listings/components/InKindRewardDisplay';
 import type { Listing, Rewards } from '@/features/listings/types';
 
 import { selectedSubmissionAtom } from '../../atoms';
@@ -42,6 +43,8 @@ export const SelectWinner = ({
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
 
   const isProject = bounty?.type === 'project';
+  const inKindReward =
+    bounty?.rewardType === 'IN_KIND' ? bounty.inKindReward : null;
 
   const isPending = selectedSubmission?.status === 'Pending';
 
@@ -167,29 +170,41 @@ export const SelectWinner = ({
                               {nthLabelGenerator(reward)}
                             </p>
                             <div className="flex items-center gap-1">
-                              {bounty?.token && (
-                                <div className="flex items-center gap-1">
-                                  <TokenIcon
-                                    symbol={bounty.token}
-                                    alt="token"
-                                    className="h-4 w-4"
-                                  />
-                                  <p className="font-semibold text-slate-700">
-                                    {bounty?.compensationType === 'fixed'
-                                      ? bounty?.rewards &&
-                                        formatNumberWithSuffix(
-                                          bounty?.rewards[
-                                            reward as keyof Rewards
-                                          ] ?? 0,
-                                          1,
-                                          false,
-                                        )
-                                      : selectedSubmission?.ask}
-                                  </p>
-                                  <span className="text-slate-400">
-                                    {bounty.token}
-                                  </span>
-                                </div>
+                              {inKindReward ? (
+                                <InKindRewardDisplay
+                                  item={inKindReward}
+                                  quantity={
+                                    bounty?.rewards?.[
+                                      reward as keyof Rewards
+                                    ] ?? 0
+                                  }
+                                  className="text-sm"
+                                />
+                              ) : (
+                                bounty?.token && (
+                                  <div className="flex items-center gap-1">
+                                    <TokenIcon
+                                      symbol={bounty.token}
+                                      alt="token"
+                                      className="h-4 w-4"
+                                    />
+                                    <p className="font-semibold text-slate-700">
+                                      {bounty?.compensationType === 'fixed'
+                                        ? bounty?.rewards &&
+                                          formatNumberWithSuffix(
+                                            bounty?.rewards[
+                                              reward as keyof Rewards
+                                            ] ?? 0,
+                                            1,
+                                            false,
+                                          )
+                                        : selectedSubmission?.ask}
+                                    </p>
+                                    <span className="text-slate-400">
+                                      {bounty.token}
+                                    </span>
+                                  </div>
+                                )
                               )}
                             </div>
                           </div>
@@ -222,29 +237,43 @@ export const SelectWinner = ({
                       <>
                         <div className="mx-3 h-4 w-px bg-slate-200" />
                         <div className="flex items-center gap-2">
-                          {bounty?.token && (
-                            <TokenIcon
-                              symbol={bounty.token}
-                              alt={bounty.token}
-                              className="h-5 w-5 rounded-full"
+                          {inKindReward ? (
+                            <InKindRewardDisplay
+                              item={inKindReward}
+                              quantity={
+                                bounty?.rewards?.[
+                                  selectedSubmission.winnerPosition as keyof Rewards
+                                ] ?? 0
+                              }
+                              className="text-sm"
                             />
-                          )}
-                          <span className="font-semibold text-slate-900">
-                            {bounty?.rewards && bounty?.token && (
-                              <>
-                                {formatNumberWithSuffix(
-                                  bounty.rewards[
-                                    selectedSubmission.winnerPosition as keyof Rewards
-                                  ] ?? 0,
-                                  1,
-                                  false,
+                          ) : (
+                            <>
+                              {bounty?.token && (
+                                <TokenIcon
+                                  symbol={bounty.token}
+                                  alt={bounty.token}
+                                  className="h-5 w-5 rounded-full"
+                                />
+                              )}
+                              <span className="font-semibold text-slate-900">
+                                {bounty?.rewards && bounty?.token && (
+                                  <>
+                                    {formatNumberWithSuffix(
+                                      bounty.rewards[
+                                        selectedSubmission.winnerPosition as keyof Rewards
+                                      ] ?? 0,
+                                      1,
+                                      false,
+                                    )}
+                                    <span className="ml-1 font-normal text-slate-400">
+                                      {bounty.token}
+                                    </span>
+                                  </>
                                 )}
-                                <span className="ml-1 font-normal text-slate-400">
-                                  {bounty.token}
-                                </span>
-                              </>
-                            )}
-                          </span>
+                              </span>
+                            </>
+                          )}
                         </div>
                       </>
                     )}

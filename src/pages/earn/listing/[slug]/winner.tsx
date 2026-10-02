@@ -37,6 +37,13 @@ function WinnerBounty({
   image.searchParams.set('id', bounty?.id || '');
   image.searchParams.set('rewards', JSON.stringify(bounty?.rewards));
   image.searchParams.set('token', bounty?.token || '');
+  image.searchParams.set('rewardType', bounty?.rewardType || 'TOKEN');
+  image.searchParams.set('inKindRewardName', bounty?.inKindReward?.name || '');
+  image.searchParams.set(
+    'inKindRewardPluralName',
+    bounty?.inKindReward?.pluralName || '',
+  );
+  image.searchParams.set('inKindRewardIcon', bounty?.inKindReward?.icon || '');
   image.searchParams.set('submissions', JSON.stringify(submissions));
 
   return (

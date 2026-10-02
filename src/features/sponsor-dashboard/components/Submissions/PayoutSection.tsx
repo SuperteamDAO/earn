@@ -1,7 +1,8 @@
 import { useWallet } from '@solana/wallet-adapter-react';
-import { ChevronDown, ExternalLink } from 'lucide-react';
+import { Check, ChevronDown, ExternalLink } from 'lucide-react';
 import React, { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -18,10 +19,12 @@ import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
+import { InKindRewardDisplay } from '@/features/listings/components/InKindRewardDisplay';
 import { type Listing, type Rewards } from '@/features/listings/types';
 import { getListingStatus } from '@/features/listings/utils/status';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import { FulfillInKindRewardModal } from './Modals/FulfillInKindRewardModal';
 import { PayoutButton } from './PayoutButton';
 import { WalletConnectionBadge } from './WalletConnectionBadge';
 
@@ -98,6 +101,8 @@ export const PayoutSection = ({
   bounty: Listing;
 }) => {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [fulfillmentSubmission, setFulfillmentSubmission] =
+    useState<SubmissionWithUser | null>(null);
   const { connected: walletConnected } = useWallet();
 
   const toggleExpandRow = (id: string) => {
@@ -115,6 +120,117 @@ export const PayoutSection = ({
   const winners = submissions.filter(
     (submission) => submission.isWinner && submission.winnerPosition,
   );
+
+  if (bounty.rewardType === 'IN_KIND' && bounty.inKindReward) {
+    return (
+      <div className="space-y-4">
+        <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+          <h3 className="text-sm font-semibold text-slate-900">
+            In-kind reward fulfillment
+          </h3>
+          <p className="mt-1 text-xs text-slate-500">
+            Mark each reward as fulfilled after it has been delivered to the
+            winner. No wallet payment is required.
+          </p>
+        </div>
+
+        {winners.length === 0 ? (
+          <div className="rounded-lg border border-slate-200 bg-white py-8 text-center text-slate-500">
+            No winners have been announced yet.
+          </div>
+        ) : (
+          <div className="w-full overflow-x-auto rounded-md border border-gray-200">
+            <Table>
+              <TableHeader className="bg-slate-50">
+                <TableRow>
+                  <TableHead>Winner</TableHead>
+                  <TableHead>Position</TableHead>
+                  <TableHead>Reward</TableHead>
+                  <TableHead>Fulfillment</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {winners.map((submission) => {
+                  const quantity =
+                    submission.inKindFulfillment?.quantity ??
+                    bounty.rewards?.[
+                      submission.winnerPosition as keyof Rewards
+                    ] ??
+                    0;
+                  const status =
+                    submission.inKindFulfillment?.status ?? 'PENDING';
+
+                  return (
+                    <TableRow key={submission.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-2 font-medium">
+                          <EarnAvatar
+                            id={submission.user.id}
+                            avatar={submission.user.photo}
+                            className="size-8"
+                          />
+                          <span>
+                            {submission.user.firstName}{' '}
+                            {submission.user.lastName}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium text-slate-700">
+                        {getRankLabels(submission.winnerPosition!)}
+                      </TableCell>
+                      <TableCell>
+                        <InKindRewardDisplay
+                          item={bounty.inKindReward!}
+                          quantity={quantity}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={cn(
+                            'rounded-full px-2.5 py-1 text-xs font-semibold capitalize',
+                            status === 'FULFILLED'
+                              ? 'bg-emerald-50 text-emerald-700'
+                              : 'bg-amber-50 text-amber-700',
+                          )}
+                        >
+                          {status.toLowerCase()}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {status === 'FULFILLED' ? (
+                          <span className="inline-flex items-center gap-1 text-sm font-medium text-emerald-700">
+                            <Check className="size-4" aria-hidden="true" />
+                            Delivered
+                          </span>
+                        ) : (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setFulfillmentSubmission(submission)}
+                          >
+                            Mark fulfilled
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+
+        <FulfillInKindRewardModal
+          bounty={bounty}
+          submission={fulfillmentSubmission}
+          isOpen={!!fulfillmentSubmission}
+          onClose={() => setFulfillmentSubmission(null)}
+        />
+      </div>
+    );
+  }
 
   if (bounty.isFndnPaying) {
     return (

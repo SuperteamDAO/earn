@@ -26,6 +26,14 @@ interface SubmissionWithUser {
     amount: number;
     tranche: number;
   }>;
+  inKindFulfillment?: {
+    id: string;
+    quantity: number;
+    status: 'PENDING' | 'PROCESSING' | 'FULFILLED' | 'CANCELLED';
+    reference?: string | null;
+    notes?: string | null;
+    fulfilledAt?: string | null;
+  } | null;
   rewardInUSD: number;
   isActive: boolean;
   isArchived: boolean;
