@@ -66,6 +66,7 @@ export async function GET(request: Request) {
     isDraftPreview,
     title: searchParams.get('title'),
     token: searchParams.get('token'),
+    rewardType: searchParams.get('rewardType'),
     sponsor: searchParams.get('sponsor'),
     type: searchParams.get('type'),
     compensationType: searchParams.get('compensationType'),
@@ -86,7 +87,15 @@ export async function GET(request: Request) {
             select: {
               title: true,
               rewardAmount: true,
+              rewardType: true,
               token: true,
+              inKindReward: {
+                select: {
+                  name: true,
+                  pluralName: true,
+                  icon: true,
+                },
+              },
               type: true,
               compensationType: true,
               minRewardAsk: true,
@@ -106,6 +115,10 @@ export async function GET(request: Request) {
       title: previewListing?.title,
       reward: previewListing?.rewardAmount?.toString(),
       token: previewListing?.token,
+      rewardType: previewListing?.rewardType,
+      inKindRewardName: previewListing?.inKindReward?.name,
+      inKindRewardPluralName: previewListing?.inKindReward?.pluralName,
+      inKindRewardIcon: previewListing?.inKindReward?.icon,
       sponsor: previewListing?.sponsor?.name,
       logo: previewListing?.sponsor?.logo,
       type: previewListing?.type,
@@ -152,13 +165,24 @@ export async function GET(request: Request) {
     const compensationType = getParam('compensationType', (x) => x) || 'fixed';
     const sponsor = getParam('sponsor', (x) => formatString(x, 16));
     const token = getParam('token', (x) => formatString(x, 100));
+    const rewardType = getParam('rewardType', (x) => x) || 'TOKEN';
+    const inKindRewardName = getParam('inKindRewardName', (x) =>
+      formatString(x, 100),
+    );
+    const inKindRewardPluralName = getParam('inKindRewardPluralName', (x) =>
+      formatString(x, 100),
+    );
+    const inKindRewardIcon = resolveAbsoluteUrl(
+      getParam('inKindRewardIcon', (x) => x),
+    );
+    const isInKindReward = rewardType === 'IN_KIND' && !!inKindRewardName;
     const isSponsorVerified = getParam('isSponsorVerified', (x) => x) || false;
     const bgColor =
       bgColors[
         getStableIndex(`${title || ''}${sponsor || ''}`, bgColors.length)
       ];
 
-    const allText = `${title || ''}${type || ''}${sponsor || ''}${token || ''}${reward || ''}${minRewardAsk || ''}${maxRewardAsk || ''}`;
+    const allText = `${title || ''}${type || ''}${sponsor || ''}${token || ''}${inKindRewardName || ''}${inKindRewardPluralName || ''}${reward || ''}${minRewardAsk || ''}${maxRewardAsk || ''}`;
 
     const [interMedium, interSemiBold, interBold] = await Promise.all([
       loadOgFont('Inter:wght@500', allText),
@@ -179,9 +203,16 @@ export async function GET(request: Request) {
         break;
     }
 
-    const icon = resolveAbsoluteUrl(
-      (await getTokenIcon(token, { format: 'png' })) ?? null,
-    );
+    const icon = isInKindReward
+      ? inKindRewardIcon
+      : resolveAbsoluteUrl(
+          (await getTokenIcon(token, { format: 'png' })) ?? null,
+        );
+    const rewardLabel = isInKindReward
+      ? Number(reward) === 1
+        ? inKindRewardName
+        : inKindRewardPluralName
+      : token;
 
     const capitalizedType = type
       ? type?.charAt(0).toUpperCase() + type?.slice(1).toLowerCase()
@@ -324,7 +355,7 @@ export async function GET(request: Request) {
                     height: '40px',
                     objectFit: 'contain',
                   }}
-                  alt="token"
+                  alt="reward"
                   src={icon as string}
                 />
               )}
@@ -342,9 +373,10 @@ export async function GET(request: Request) {
                   }}
                 >
                   {displayReward}
+                  {isInKindReward && ' ×'}
                 </div>
               )}
-              {token && (
+              {rewardLabel && (
                 <div
                   style={{
                     fontSize: 32,
@@ -356,7 +388,7 @@ export async function GET(request: Request) {
                     marginLeft: 10,
                   }}
                 >
-                  {token}
+                  {rewardLabel}
                 </div>
               )}
             </div>

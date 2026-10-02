@@ -126,6 +126,23 @@ export async function GET(request: Request) {
     const token = getParam('token', (x) => decodeURIComponent(x)) as
       | string
       | undefined;
+    const rewardType = getParam('rewardType', (x) => decodeURIComponent(x)) as
+      | string
+      | undefined;
+    const inKindRewardName = getParam('inKindRewardName', (x) =>
+      decodeURIComponent(x),
+    ) as string | undefined;
+    const inKindRewardPluralName = getParam('inKindRewardPluralName', (x) =>
+      decodeURIComponent(x),
+    ) as string | undefined;
+    const inKindRewardIcon = getParam('inKindRewardIcon', (x) =>
+      decodeURIComponent(x),
+    ) as string | undefined;
+    const isInKindReward =
+      rewardType === 'IN_KIND' && !!inKindRewardName && !!inKindRewardIcon;
+    const rewardIcon = inKindRewardIcon
+      ? new URL(inKindRewardIcon, request.url).toString()
+      : undefined;
 
     const rewards = getParam('rewards', (x) =>
       JSON.parse(decodeURIComponent(x)),
@@ -146,7 +163,7 @@ export async function GET(request: Request) {
       )
       .join(
         '',
-      )}Winners Winner ${token || 'USD'} ${Object.values(rewards).join('')}`;
+      )}Winners Winner ${isInKindReward ? inKindRewardPluralName : token || 'USD'} ${Object.values(rewards).join('')}`;
 
     const interSemiBold = await loadGoogleFont('Inter:wght@600', allText);
 
@@ -280,17 +297,45 @@ export async function GET(request: Request) {
                 style={{
                   marginTop: '0.5rem',
                   display: 'flex',
-                  color: 'rgba(255, 255, 255, 0.58)',
+                  alignItems: 'center',
+                  gap: '8px',
+                  color: isInKindReward
+                    ? '#FFFFFF'
+                    : 'rgba(255, 255, 255, 0.58)',
                   fontSize: '24.17px',
                   fontWeight: '500',
                   textAlign: 'center',
                 }}
               >
-                {token ?? 'USD'}{' '}
-                {rewards &&
-                  formatter.format(
-                    +(rewards[winner?.winnerPosition as keyof Rewards] ?? 0),
-                  )}
+                {isInKindReward && rewardIcon && (
+                  <img
+                    src={rewardIcon}
+                    alt=""
+                    width="28"
+                    height="28"
+                    style={{
+                      width: '28px',
+                      height: '28px',
+                      objectFit: 'contain',
+                      borderRadius: '6px',
+                      backgroundColor: '#ffffff',
+                      padding: '4px',
+                    }}
+                  />
+                )}
+                {(() => {
+                  const quantity = +(
+                    rewards[winner?.winnerPosition as keyof Rewards] ?? 0
+                  );
+                  if (isInKindReward) {
+                    const label =
+                      quantity === 1
+                        ? inKindRewardName
+                        : inKindRewardPluralName;
+                    return `${formatter.format(quantity)} × ${label}`;
+                  }
+                  return `${token ?? 'USD'} ${formatter.format(quantity)}`;
+                })()}
               </div>
             </div>
           ))}
