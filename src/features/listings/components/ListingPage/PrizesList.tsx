@@ -7,7 +7,8 @@ import { nthLabelGenerator } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 
-import { type Rewards } from '../../types';
+import { type InKindRewardMetadata, type Rewards } from '../../types';
+import { getInKindRewardQuantityLabel } from '../InKindRewardDisplay';
 
 function calculateRewards(
   iterableRewards: [string, number][],
@@ -30,6 +31,7 @@ export function PrizesList({
   totalReward,
   widthPrize,
   showUsdSymbol,
+  inKindReward,
 }: {
   rewards: Rewards;
   token: string;
@@ -37,6 +39,7 @@ export function PrizesList({
   totalReward: number;
   widthPrize: string;
   showUsdSymbol?: boolean;
+  inKindReward?: InKindRewardMetadata;
 }) {
   const iterableRewards: [string, number][] = Object.entries(rewards);
   const [visibleRewards, setVisibleRewards] =
@@ -95,7 +98,11 @@ export function PrizesList({
                 {showUsdSymbol && '$'}
                 {formatNumberWithSuffix(step[1], 2, true)}
               </p>
-              <p className="font-semibold text-slate-400">{token}</p>
+              <p className="font-semibold text-slate-400">
+                {inKindReward
+                  ? getInKindRewardQuantityLabel(step[1], inKindReward)
+                  : token}
+              </p>
             </div>
             <LabelOrAction
               setSeeAll={setSeeAll}

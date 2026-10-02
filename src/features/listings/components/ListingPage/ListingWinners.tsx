@@ -13,6 +13,7 @@ import { tweetEmbedLink } from '@/utils/socialEmbeds';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { formatTotalPrize } from '@/features/listing-builder/utils/formatTotalPrize';
+import { InKindRewardDisplay } from '@/features/listings/components/InKindRewardDisplay';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { listingWinnersQuery } from '../../queries/listing-winners';
@@ -39,6 +40,8 @@ const getOrRemoveBonuses = (
 
 export function ListingWinners({ bounty }: Props) {
   const isProject = bounty?.type === 'project';
+  const inKindReward =
+    bounty.rewardType === 'IN_KIND' ? bounty.inKindReward : null;
 
   const isMD = useBreakpoint('md');
   const isSM = useBreakpoint('sm');
@@ -155,15 +158,28 @@ export function ListingWinners({ bounty }: Props) {
                   </div>
                   <p className="w-16 truncate pt-4 text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.firstName}`}</p>
                   <p className="w-16 truncate text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.lastName}`}</p>
-                  <p className="text-center text-xs font-normal text-slate-500 opacity-60">
-                    {bounty?.rewards &&
-                      formatTotalPrize(
-                        bounty?.rewards[
-                          Number(submission?.winnerPosition) as keyof Rewards
-                        ] ?? 0,
-                      )}{' '}
-                    {bounty?.token}
-                  </p>
+                  {inKindReward ? (
+                    <InKindRewardDisplay
+                      item={inKindReward}
+                      quantity={
+                        bounty.rewards?.[
+                          Number(submission.winnerPosition) as keyof Rewards
+                        ] ?? 0
+                      }
+                      className="text-xs opacity-60"
+                      iconClassName="size-3"
+                    />
+                  ) : (
+                    <p className="text-center text-xs font-normal text-slate-500 opacity-60">
+                      {bounty?.rewards &&
+                        formatTotalPrize(
+                          bounty?.rewards[
+                            Number(submission?.winnerPosition) as keyof Rewards
+                          ] ?? 0,
+                        )}{' '}
+                      {bounty?.token}
+                    </p>
+                  )}
                 </Link>
               ))}
           </div>

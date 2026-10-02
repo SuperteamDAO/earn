@@ -15,6 +15,7 @@ import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { type Listing } from '../types';
 import { getListingIcon } from '../utils/getListingIcon';
+import { InKindRewardDisplay } from './InKindRewardDisplay';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardSkeleton = () => {
@@ -49,6 +50,8 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     sponsor,
     title,
     token,
+    rewardType,
+    inKindReward,
     slug,
     isWinnersAnnounced,
     isFeatured,
@@ -83,7 +86,9 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     : `${ASSET_URL}/logo/sponsor-logo.png`;
 
   const isVariable = compensationType === 'variable';
-  const showToken = !isVariable || (isVariable && isWinnersAnnounced);
+  const isInKindReward = rewardType === 'IN_KIND' && !!inKindReward;
+  const showToken =
+    !isInKindReward && (!isVariable || (isVariable && isWinnersAnnounced));
 
   return (
     <Link
@@ -117,6 +122,13 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             </Link>
             <div className="mt-px flex items-center gap-1 sm:gap-2">
               <div className="flex items-center justify-start sm:hidden">
+                {isInKindReward && (
+                  <InKindRewardDisplay
+                    item={inKindReward}
+                    quantity={rewardAmount ?? 0}
+                    className="text-xs"
+                  />
+                )}
                 {!!showToken && (
                   <TokenIcon
                     className="mr-0.5 h-3.5 w-3.5 rounded-full"
@@ -124,20 +136,24 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                     symbol={token}
                   />
                 )}
-                <div className="flex items-baseline">
-                  <CompensationAmount
-                    compensationType={compensationType}
-                    maxRewardAsk={maxRewardAsk}
-                    minRewardAsk={minRewardAsk}
-                    rewardAmount={rewardAmount}
-                    isWinnersAnnounced={isWinnersAnnounced}
-                    className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
-                  />
+                {!isInKindReward && (
+                  <div className="flex items-baseline">
+                    <CompensationAmount
+                      compensationType={compensationType}
+                      maxRewardAsk={maxRewardAsk}
+                      minRewardAsk={minRewardAsk}
+                      rewardAmount={rewardAmount}
+                      isWinnersAnnounced={isWinnersAnnounced}
+                      className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
+                    />
 
-                  {!!showToken && (
-                    <p className="text-xs font-medium text-gray-400">{token}</p>
-                  )}
-                </div>
+                    {!!showToken && (
+                      <p className="text-xs font-medium text-gray-400">
+                        {token}
+                      </p>
+                    )}
+                  </div>
+                )}
                 <p className="ml-1 text-[10px] text-slate-300">|</p>
               </div>
               <div className="flex items-center gap-1">
@@ -214,6 +230,13 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             showToken ? 'mr-3' : 'mr-0',
           )}
         >
+          {isInKindReward && (
+            <InKindRewardDisplay
+              item={inKindReward}
+              quantity={rewardAmount ?? 0}
+              className="text-xs sm:text-base"
+            />
+          )}
           {!!showToken && (
             <TokenIcon
               className="mt-1 mr-1 h-4 w-4 rounded-full sm:mt-0.5"
@@ -221,22 +244,24 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               symbol={token}
             />
           )}
-          <div className="flex items-baseline gap-1">
-            <CompensationAmount
-              compensationType={compensationType}
-              maxRewardAsk={maxRewardAsk}
-              minRewardAsk={minRewardAsk}
-              rewardAmount={rewardAmount}
-              isWinnersAnnounced={isWinnersAnnounced}
-              className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
-            />
+          {!isInKindReward && (
+            <div className="flex items-baseline gap-1">
+              <CompensationAmount
+                compensationType={compensationType}
+                maxRewardAsk={maxRewardAsk}
+                minRewardAsk={minRewardAsk}
+                rewardAmount={rewardAmount}
+                isWinnersAnnounced={isWinnersAnnounced}
+                className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
+              />
 
-            {!!showToken && (
-              <p className="text-xs font-medium text-gray-400 sm:text-base">
-                {token}
-              </p>
-            )}
-          </div>
+              {!!showToken && (
+                <p className="text-xs font-medium text-gray-400 sm:text-base">
+                  {token}
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </Link>

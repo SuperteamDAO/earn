@@ -44,6 +44,7 @@ import { getURL } from '@/utils/validUrl';
 import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 import { isListingEditable } from '@/features/listing-builder/utils/isListingEditable';
+import { InKindRewardDisplay } from '@/features/listings/components/InKindRewardDisplay';
 import { type ListingWithSubmissions } from '@/features/listings/types';
 import { formatDeadline } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
@@ -230,6 +231,11 @@ export const ListingTable = ({
               const textColor = getColorStyles(listingStatus).color;
               const bgColor = getColorStyles(listingStatus).bgColor;
               const borderColor = getColorStyles(listingStatus).borderColor;
+              const inKindReward =
+                listing.rewardType === 'IN_KIND' ? listing.inKindReward : null;
+              const isInKindReward = !!inKindReward;
+              const isTokenPaymentPending =
+                listingStatus === 'Payment Pending' && !isInKindReward;
 
               return (
                 <TableRow key={listing?.id}>
@@ -292,13 +298,22 @@ export const ListingTable = ({
                   </TableCell>
                   <TableCell className="py-2 pr-6">
                     <div className="flex items-center justify-start gap-1">
-                      <TokenIcon
-                        className="h-5 w-5 rounded-full"
-                        alt={listing.token || 'token'}
-                        symbol={listing.token}
-                      />
+                      {isInKindReward ? (
+                        <InKindRewardDisplay
+                          item={inKindReward}
+                          quantity={listing.rewardAmount ?? 0}
+                          className="text-sm"
+                          iconClassName="size-5"
+                        />
+                      ) : (
+                        <TokenIcon
+                          className="h-5 w-5 rounded-full"
+                          alt={listing.token || 'token'}
+                          symbol={listing.token}
+                        />
+                      )}
 
-                      {listing?.type === 'grant' && (
+                      {!isInKindReward && listing?.type === 'grant' && (
                         <p className="text-sm font-medium whitespace-nowrap text-slate-700">
                           {grantAmount({
                             maxReward: listing?.maxRewardAsk!,
@@ -306,30 +321,34 @@ export const ListingTable = ({
                           })}
                         </p>
                       )}
-                      <SponsorPrize
-                        compensationType={listing?.compensationType}
-                        maxRewardAsk={listing?.maxRewardAsk}
-                        minRewardAsk={listing?.minRewardAsk}
-                        rewardAmount={listing?.rewardAmount}
-                        className="text-sm font-medium text-slate-700"
-                      />
+                      {!isInKindReward && (
+                        <SponsorPrize
+                          compensationType={listing?.compensationType}
+                          maxRewardAsk={listing?.maxRewardAsk}
+                          minRewardAsk={listing?.minRewardAsk}
+                          rewardAmount={listing?.rewardAmount}
+                          className="text-sm font-medium text-slate-700"
+                        />
+                      )}
 
-                      <p className="text-sm font-medium text-slate-400">
-                        {listing.token}
-                      </p>
+                      {!isInKindReward && (
+                        <p className="text-sm font-medium text-slate-400">
+                          {listing.token}
+                        </p>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell className="items-center py-2">
                     <StatusPill
                       className={cn(
                         'cursor-default py-1 text-[0.65rem]',
-                        listingStatus === 'Payment Pending' && 'cursor-pointer',
+                        isTokenPaymentPending && 'cursor-pointer',
                       )}
                       color={textColor}
                       backgroundColor={bgColor}
                       borderColor={borderColor}
                       onClick={() => {
-                        if (listingStatus !== 'Payment Pending') return;
+                        if (!isTokenPaymentPending) return;
                         handleVerifyPayment(listing);
                       }}
                     >
@@ -375,7 +394,8 @@ export const ListingTable = ({
                     )}
                   </TableCell>
                   <TableCell className="px-0 py-2">
-                    {listingStatus === 'In Progress' ? (
+                    {listingStatus === 'In Progress' &&
+                    listing.rewardType !== 'IN_KIND' ? (
                       <BoostButton listing={listing} showDate={false} />
                     ) : (
                       <></>
@@ -451,16 +471,15 @@ export const ListingTable = ({
                             </DropdownMenuItem>
                           )}
 
-                        {listingStatus === 'Payment Pending' &&
-                          listing?.type !== 'grant' && (
-                            <DropdownMenuItem
-                              className="cursor-pointer text-sm font-medium whitespace-nowrap text-slate-500"
-                              onClick={() => handleVerifyPayment(listing)}
-                            >
-                              <DollarSign className="mr-2 h-4 w-4" />
-                              Update Payment Status
-                            </DropdownMenuItem>
-                          )}
+                        {isTokenPaymentPending && listing?.type !== 'grant' && (
+                          <DropdownMenuItem
+                            className="cursor-pointer text-sm font-medium whitespace-nowrap text-slate-500"
+                            onClick={() => handleVerifyPayment(listing)}
+                          >
+                            <DollarSign className="mr-2 h-4 w-4" />
+                            Update Payment Status
+                          </DropdownMenuItem>
+                        )}
 
                         {listing.status === 'OPEN' &&
                           !!listing.isPublished &&

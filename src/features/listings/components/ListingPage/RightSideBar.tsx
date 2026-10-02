@@ -21,11 +21,11 @@ import { RelatedListings } from '@/features/home/components/RelatedListings';
 
 import type { PublicListing } from '../../types';
 import { isDeadlineOver } from '../../utils/deadline';
+import { InKindRewardDisplay } from '../InKindRewardDisplay';
 import { ApprovalStages } from '../Submission/ApprovalStages';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 import { ExtraInfoSection } from './ExtraInfoSection';
-import { PrizesList } from './PrizesList';
 
 const ListingWinners = dynamic(
   () => import('./ListingWinners').then((m) => m.ListingWinners),
@@ -78,6 +78,8 @@ export function RightSideBar({
 }) {
   const {
     token,
+    rewardType,
+    inKindReward,
     type,
     deadline,
     rewards,
@@ -86,7 +88,6 @@ export function RightSideBar({
     maxRewardAsk,
     minRewardAsk,
     Hackathon,
-    maxBonusSpots,
     isWinnersAnnounced,
     isPro,
   } = listing;
@@ -109,6 +110,7 @@ export function RightSideBar({
   }, [submissionNumber]);
 
   const isProject = type === 'project';
+  const isInKindReward = rewardType === 'IN_KIND' && !!inKindReward;
 
   const router = useRouter();
 
@@ -128,6 +130,8 @@ export function RightSideBar({
   }, [listing]);
 
   const widthOfPrize = useMemo(() => {
+    if (isInKindReward) return '2.5rem';
+
     let calculateWidthOfPrize: string | number = largestDigits - 0.75;
     if (cleanRewardPrizes(rewards).length > 6) {
       calculateWidthOfPrize = largestDigits + 0.5;
@@ -137,7 +141,7 @@ export function RightSideBar({
       calculateWidthOfPrize = '90%';
     }
     return calculateWidthOfPrize;
-  }, [largestDigits, rewards]);
+  }, [compensationType, isInKindReward, largestDigits, rewards]);
 
   const inReview =
     isDeadlineOver(deadline, serverTime()) && !isWinnersAnnounced;
@@ -158,66 +162,55 @@ export function RightSideBar({
                 <tbody>
                   <tr className="w-full">
                     <td className="w-full p-0" colSpan={3}>
-                      <div
-                        className={cn(
-                          'flex items-center gap-2',
-                          showUsdSymbolOnly && 'ml-6',
-                        )}
-                      >
-                        {!showUsdSymbolOnly && (
-                          <TokenIcon
-                            className="h-8 w-8 rounded-full"
-                            alt="token icon"
-                            symbol={token}
-                          />
-                        )}
-                        <CompensationAmount
-                          compensationType={compensationType}
-                          rewardAmount={rewardAmount}
-                          maxRewardAsk={maxRewardAsk}
-                          minRewardAsk={minRewardAsk}
-                          token={!showUsdSymbolOnly ? token : 'USD'}
-                          isWinnersAnnounced={isWinnersAnnounced}
-                          className={cn(
-                            'text-lg font-semibold text-slate-700 md:text-xl',
-                          )}
-                          style={{
-                            width: widthOfPrize,
-                          }}
-                          showUsdSymbol={showUsdSymbolOnly}
+                      {isInKindReward ? (
+                        <InKindRewardDisplay
+                          item={inKindReward}
+                          quantity={rewardAmount ?? 0}
+                          rewards={rewards}
+                          variant="summary"
                         />
-                        <p className="text-lg font-normal text-slate-500">
-                          {isProject ? 'Payment' : 'Total Prizes'}
-                        </p>
-                      </div>
+                      ) : (
+                        <div
+                          className={cn(
+                            'flex items-center gap-2',
+                            showUsdSymbolOnly && 'ml-6',
+                          )}
+                        >
+                          {!showUsdSymbolOnly && (
+                            <TokenIcon
+                              className="h-8 w-8 rounded-full"
+                              alt="token icon"
+                              symbol={token}
+                            />
+                          )}
+                          <CompensationAmount
+                            compensationType={compensationType}
+                            rewardAmount={rewardAmount}
+                            maxRewardAsk={maxRewardAsk}
+                            minRewardAsk={minRewardAsk}
+                            token={!showUsdSymbolOnly ? token : 'USD'}
+                            isWinnersAnnounced={isWinnersAnnounced}
+                            className={cn(
+                              'text-lg font-semibold text-slate-700 md:text-xl',
+                            )}
+                            style={{
+                              width: widthOfPrize,
+                            }}
+                            showUsdSymbol={showUsdSymbolOnly}
+                          />
+                          <p className="text-lg font-normal text-slate-500">
+                            {isProject ? 'Payment' : 'Total Prizes'}
+                          </p>
+                        </div>
+                      )}
                     </td>
                   </tr>
-
-                  {!isProject && rewards && (
-                    <tr>
-                      <td className="p-0" colSpan={3}>
-                        <PrizesList
-                          widthPrize={widthOfPrize}
-                          totalReward={rewardAmount ?? 0}
-                          maxBonusSpots={maxBonusSpots ?? 0}
-                          token={!showUsdSymbolOnly ? token || '' : 'USD'}
-                          rewards={rewards}
-                          showUsdSymbol={showUsdSymbolOnly}
-                        />
-                      </td>
-                    </tr>
-                  )}
                 </tbody>
               </table>
             </div>
           </div>
           <div className="w-full border-b border-slate-100" />
-          <div
-            className={cn(
-              'flex w-full justify-between',
-              rewards ? 'py-0' : 'py-3',
-            )}
-          >
+          <div className="flex w-full justify-between py-3">
             {hasHackathonStarted ? (
               <>
                 <div className="flex flex-col items-start justify-center">
