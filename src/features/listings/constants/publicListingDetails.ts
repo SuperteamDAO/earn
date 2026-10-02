@@ -1,5 +1,7 @@
 import { type BountiesSelect } from '@/prisma/models/Bounties';
 
+import { inKindRewardSelect } from './inKindReward';
+
 export const publicListingDetailsSelect = {
   id: true,
   title: true,
@@ -9,7 +11,12 @@ export const publicListingDetailsSelect = {
   commitmentDate: true,
   eligibility: true,
   status: true,
+  rewardType: true,
   token: true,
+  inKindRewardId: true,
+  inKindReward: {
+    select: inKindRewardSelect,
+  },
   rewardAmount: true,
   rewards: true,
   maxBonusSpots: true,

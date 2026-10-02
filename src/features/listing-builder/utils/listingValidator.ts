@@ -3,6 +3,7 @@ import logger from '@/lib/logger';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { type SponsorsModel } from '@/prisma/models/Sponsors';
 import { type UserModel } from '@/prisma/models/User';
+import { getActiveInKindRewardById } from '@/server/inKindRewards';
 import { getTokenBySymbol } from '@/server/tokenList';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
@@ -54,7 +55,7 @@ export const validateListing = async ({
       isEditing,
       isST,
       hackathons: hackathon ? [hackathon] : [],
-      pastListing: isEditing ? (listing as any) : undefined,
+      pastListing: listing as any,
     });
     const innerSchema = listingSchema._def.schema.omit({
       isPublished: true,
@@ -90,8 +91,13 @@ export const validateListing = async ({
       } else {
         data.region = validRegion;
       }
-      await backendListingRefinements(data, ctx, checkSlug, async (token) =>
-        Boolean(await getTokenBySymbol(token)),
+      await backendListingRefinements(
+        data,
+        ctx,
+        checkSlug,
+        async (token) => Boolean(await getTokenBySymbol(token)),
+        async (inKindRewardId) =>
+          Boolean(await getActiveInKindRewardById(inKindRewardId)),
       );
     });
     const validatedData = await superValidator.parseAsync({
