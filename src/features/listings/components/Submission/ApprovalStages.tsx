@@ -98,7 +98,7 @@ export const ApprovalStages = ({ listing }: Props) => {
             <div className="relative z-10">
               <CheckIcon />
             </div>
-            <ConnectingLine isStartComplete isEndComplete={isFulfilled} />
+            <ConnectingLine isStartComplete isEndComplete={isKycVerified} />
             <div>
               <Heading>{wonTitle}</Heading>
               <InKindRewardDisplay
@@ -111,11 +111,35 @@ export const ApprovalStages = ({ listing }: Props) => {
 
           <div className="relative flex items-start gap-4">
             <div className="relative z-10">
+              {isKycVerified ? <CheckIcon /> : <PendingIcon />}
+            </div>
+            <ConnectingLine
+              isStartComplete={isKycVerified}
+              isEndComplete={isFulfilled}
+            />
+            <div>
+              <Heading>
+                {isKycVerified ? 'KYC Successful' : 'KYC Required'}
+              </Heading>
+              <Subheading>
+                {isKycVerified
+                  ? 'Documents verified'
+                  : 'Complete KYC before your reward can be fulfilled'}
+              </Subheading>
+            </div>
+          </div>
+
+          <div className="relative flex items-start gap-4">
+            <div className="relative z-10">
               {isFulfilled ? <CheckIcon /> : <PendingIcon />}
             </div>
             <div>
               <Heading>Reward Fulfillment</Heading>
-              <Subheading>{fulfillmentCopy}</Subheading>
+              <Subheading>
+                {isKycVerified
+                  ? fulfillmentCopy
+                  : 'Waiting for KYC verification'}
+              </Subheading>
             </div>
           </div>
         </div>

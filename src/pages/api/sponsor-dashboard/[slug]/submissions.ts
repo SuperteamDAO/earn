@@ -47,6 +47,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             lastName: true,
             username: true,
             email: true,
+            isKYCVerified: true,
             walletAddress: true,
             twitter: true,
             discord: true,

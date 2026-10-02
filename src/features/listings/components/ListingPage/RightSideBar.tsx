@@ -320,10 +320,11 @@ export function RightSideBar({
           )}
           <div className="w-full">
             {listing.isWinnersAnnounced &&
-              listing.isFndnPaying &&
-              dayjs(listing.winnersAnnouncedAt).isAfter(
-                dayjs.utc('2025-08-06'),
-              ) && <ApprovalStages listing={listing} />}
+              (isInKindReward ||
+                (listing.isFndnPaying &&
+                  dayjs(listing.winnersAnnouncedAt).isAfter(
+                    dayjs.utc('2025-08-06'),
+                  ))) && <ApprovalStages listing={listing} />}
           </div>
           {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
             <div className="mb-4 flex w-full gap-2 bg-[#62F6FF10] p-3">

@@ -33,6 +33,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         listingId: true,
         isWinner: true,
         winnerPosition: true,
+        user: {
+          select: { isKYCVerified: true },
+        },
         inKindFulfillment: {
           select: { quantity: true },
         },
@@ -71,6 +74,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     if (!submission.listing.isWinnersAnnounced || !submission.isWinner) {
       return res.status(400).json({
         error: 'Only announced winners can receive an in-kind reward',
+      });
+    }
+
+    if (!submission.user.isKYCVerified) {
+      return res.status(400).json({
+        error: 'Winner must complete KYC before reward fulfillment',
       });
     }
 

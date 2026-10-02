@@ -1,5 +1,5 @@
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Check, ChevronDown, ExternalLink } from 'lucide-react';
+import { Check, ChevronDown, ExternalLink, Lock } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -146,6 +146,7 @@ export const PayoutSection = ({
                   <TableHead>Winner</TableHead>
                   <TableHead>Position</TableHead>
                   <TableHead>Reward</TableHead>
+                  <TableHead>KYC</TableHead>
                   <TableHead>Fulfillment</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
@@ -188,6 +189,20 @@ export const PayoutSection = ({
                       <TableCell>
                         <span
                           className={cn(
+                            'rounded-full px-2.5 py-1 text-xs font-semibold',
+                            submission.user.isKYCVerified
+                              ? 'bg-emerald-50 text-emerald-700'
+                              : 'bg-slate-100 text-slate-600',
+                          )}
+                        >
+                          {submission.user.isKYCVerified
+                            ? 'Verified'
+                            : 'Required'}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={cn(
                             'rounded-full px-2.5 py-1 text-xs font-semibold capitalize',
                             status === 'FULFILLED'
                               ? 'bg-emerald-50 text-emerald-700'
@@ -198,7 +213,12 @@ export const PayoutSection = ({
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
-                        {status === 'FULFILLED' ? (
+                        {!submission.user.isKYCVerified ? (
+                          <span className="inline-flex items-center gap-1 text-sm font-medium text-slate-500">
+                            <Lock className="size-4" aria-hidden="true" />
+                            Awaiting KYC
+                          </span>
+                        ) : status === 'FULFILLED' ? (
                           <span className="inline-flex items-center gap-1 text-sm font-medium text-emerald-700">
                             <Check className="size-4" aria-hidden="true" />
                             Delivered
