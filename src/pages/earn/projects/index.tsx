@@ -1,4 +1,5 @@
 import { type GetServerSideProps } from 'next';
+import Link from 'next/link';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -36,7 +37,11 @@ export default function ProjectsPage({ potentialSession }: ProjectsPageProps) {
       }
     >
       <HomepagePop />
-
+      <nav aria-label="Breadcrumb" className="sr-only">
+        <Link href="/earn">Home</Link>
+        <span>/</span>
+        <Link href="/earn/projects">Crypto Projects</Link>
+      </nav>
       <div className="w-full">
         <ListingsSection
           type="all"
