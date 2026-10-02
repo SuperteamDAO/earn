@@ -33,7 +33,6 @@ export default async function handler(
       valid: remaining > 0,
       remaining,
       inviter: {
-        id: inviter.id,
         name:
           [inviter.firstName, inviter.lastName].filter(Boolean).join(' ') ||
           'A Superteamer',
