@@ -13,6 +13,7 @@ import BrandingColorSwatch from '@/features/stfun/components/branding/BrandingCo
 import BrandingSectionHeader from '@/features/stfun/components/branding/BrandingSectionHeader';
 import BrandingSTLogo from '@/features/stfun/components/branding/BrandingSTLogo';
 import BrandingTypeSample from '@/features/stfun/components/branding/BrandingTypeSample';
+import { getStLayout } from '@/features/stfun/components/common/StLayout';
 
 export default function Branding() {
   return (
@@ -213,3 +214,5 @@ export default function Branding() {
     </>
   );
 }
+
+Branding.getLayout = getStLayout;

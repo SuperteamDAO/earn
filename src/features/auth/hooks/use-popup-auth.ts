@@ -1,4 +1,4 @@
-import type { BuiltInProviderType } from 'next-auth/providers';
+import type { BuiltInProviderType } from 'next-auth/providers/index';
 import { type LiteralUnion, useSession } from 'next-auth/react';
 import { useCallback, useState } from 'react';
 

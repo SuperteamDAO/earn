@@ -14,7 +14,12 @@ export default function Providers({
   children: React.ReactNode;
   session?: Session | null;
 }) {
-  const [queryClient] = useState(() => new QueryClient());
+  // A short staleTime stops every mount, focus and SSR-hydrated query from
+  // refetching immediately; mutations still invalidate explicitly.
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({ defaultOptions: { queries: { staleTime: 30_000 } } }),
+  );
 
   return (
     <SessionProvider session={session}>

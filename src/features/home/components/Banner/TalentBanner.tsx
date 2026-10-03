@@ -47,8 +47,7 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
             alt="Illustration — Two people working on laptops outdoors at night, surrounded by a mystical mountainous landscape illuminated by the moonlight"
             className="h-full w-full"
             style={{ objectFit: 'cover' }}
-            loading="eager"
-            fetchPriority="high"
+            loading="lazy"
           />
         </picture>
       </div>
@@ -76,7 +75,6 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
                 className="relative h-6 w-6 rounded-full border border-[#49139c] md:h-8 md:w-8"
                 src={avatar.src}
                 alt={avatar.name}
-                loading="eager"
               />
             ))}
           </div>

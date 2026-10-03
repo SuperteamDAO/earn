@@ -19,6 +19,9 @@ export function HomeCryptoWorldFairHackathonBanner() {
           alt=""
           className="h-full w-full object-cover object-center md:block"
           loading="eager"
+          fetchPriority="high"
+          widths={[640, 960, 1280, 1920]}
+          sizes="(min-width: 1280px) 900px, (min-width: 1024px) 70vw, 100vw"
           transformations={{
             f: 'auto',
             q: 'auto',

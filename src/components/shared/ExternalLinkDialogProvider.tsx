@@ -114,7 +114,7 @@ export function useExternalLinkDialog() {
   const { openExternalLinkDialog } = context;
 
   const handleExternalLinkClick = useCallback(
-    (event: MouseEvent<HTMLAnchorElement>, url: string) => {
+    (event: MouseEvent<HTMLElement>, url: string) => {
       if (!isExternalLink(url)) {
         return;
       }

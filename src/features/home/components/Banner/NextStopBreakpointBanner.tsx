@@ -18,7 +18,9 @@ export function HomeNextStopBreakpointBanner() {
           src="hackathon/next-stop-breakpoint/road-to-bp.png"
           alt=""
           className="h-full w-full object-cover object-center"
-          loading="eager"
+          loading="lazy"
+          widths={[640, 960, 1280, 1920]}
+          sizes="(min-width: 1280px) 900px, (min-width: 1024px) 70vw, 100vw"
           transformations={{
             f: 'auto',
             q: 'auto',

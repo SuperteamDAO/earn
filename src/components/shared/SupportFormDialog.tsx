@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import IsoDomPurify from 'isomorphic-dompurify';
+import IsoDomPurify, { type Config } from 'isomorphic-dompurify';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -27,7 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useUser } from '@/store/user';
 
-const hardDomPurify = (dirty: string | Node, cfg?: IsoDomPurify.Config) =>
+const hardDomPurify = (dirty: string | Node, cfg?: Config) =>
   IsoDomPurify.sanitize(dirty, {
     ALLOWED_TAGS: [],
     ALLOWED_ATTR: [],

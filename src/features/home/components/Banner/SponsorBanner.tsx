@@ -83,8 +83,7 @@ export function HomeSponsorBanner({
               pointerEvents: 'none',
               objectFit: 'contain',
             }}
-            loading="eager"
-            fetchPriority="high"
+            loading="lazy"
           />
         </picture>
       </div>

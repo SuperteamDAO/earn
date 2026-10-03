@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 
-import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cn } from '@/utils/cn';
@@ -147,9 +146,7 @@ export const GrantsSection = ({
         </div>
       )}
 
-      <AnimateChangeInHeight disableOnHeightZero>
-        {renderContent()}
-      </AnimateChangeInHeight>
+      {renderContent()}
     </div>
   );
 };

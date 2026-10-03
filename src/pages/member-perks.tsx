@@ -5,6 +5,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Meta } from '@/layouts/Meta';
 
 import HeroContainer from '@/features/stfun/components/common/HeroContainer';
+import { getStLayout } from '@/features/stfun/components/common/StLayout';
 import PerksGrid from '@/features/stfun/components/grids/PerksGrid';
 
 interface MemberPerksProps {
@@ -85,6 +86,8 @@ export default function MemberPerks({
     </>
   );
 }
+
+MemberPerks.getLayout = getStLayout;
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const airtableUrl = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.AIRTABLE_PERKS_TABLE}`;

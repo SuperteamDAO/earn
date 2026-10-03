@@ -2,6 +2,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Meta } from '@/layouts/Meta';
 
 import FastTrackContainer from '@/features/stfun/components/common/FastTrackContainer';
+import { getStLayout } from '@/features/stfun/components/common/StLayout';
 import Accelerator from '@/features/stfun/components/sections/Accelerator';
 import FastTrackFaq from '@/features/stfun/components/sections/FastTrackFaq';
 
@@ -76,3 +77,5 @@ export default function FastTrack() {
     </>
   );
 }
+
+FastTrack.getLayout = getStLayout;

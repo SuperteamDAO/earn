@@ -5,7 +5,6 @@ import { ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { useEffect } from 'react';
 
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useUser } from '@/store/user';
@@ -22,17 +21,11 @@ export function SponsorStageSnackbar() {
 
   const isHomepage = router.asPath === '/earn' || router.pathname === '/earn';
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading } = useQuery({
     ...sponsorStageQuery,
     enabled: !!user?.currentSponsorId && isLg && isHomepage,
-    refetchOnMount: true,
+    refetchOnMount: 'always',
   });
-
-  useEffect(() => {
-    if (isHomepage && !!user?.currentSponsorId && isLg) {
-      refetch();
-    }
-  }, [isHomepage, user?.currentSponsorId, isLg, refetch]);
 
   if (
     !isHomepage ||

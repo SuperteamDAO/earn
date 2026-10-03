@@ -7,6 +7,7 @@ import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
 import { generateSuperteamChaptersSchema } from '@/utils/json-ld';
 
+import { getStLayout } from '@/features/stfun/components/common/StLayout';
 import Collab from '@/features/stfun/components/sections/Collab';
 import Geographies from '@/features/stfun/components/sections/Geographies';
 import Hero from '@/features/stfun/components/sections/Hero';
@@ -81,6 +82,8 @@ export default function Home({ chapters, chaptersForSchema }: HomePageProps) {
     </>
   );
 }
+
+Home.getLayout = getStLayout;
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
   res,
