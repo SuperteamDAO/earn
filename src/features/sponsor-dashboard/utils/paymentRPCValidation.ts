@@ -14,6 +14,7 @@ interface ValidatePaymentParams {
   expectedAmount: number;
   tokenMint: Token;
   tokenPriceUSD?: number;
+  allowPartialPayment?: boolean;
 }
 
 export interface ValidationResult {
@@ -32,7 +33,15 @@ export async function validatePayment({
   expectedAmount,
   tokenMint,
   tokenPriceUSD,
+  allowPartialPayment = false,
 }: ValidatePaymentParams): Promise<ValidationResult> {
+  if (expectedAmount <= 0) {
+    return {
+      isValid: false,
+      error: 'Expected payment amount must be greater than 0',
+    };
+  }
+
   const rpc = getRpc();
   const maxRetries = 3;
   const delayMs = 5000;
@@ -129,12 +138,19 @@ export async function validatePayment({
 
       const allowedDiff = getAllowedDifference(expectedAmount);
       if (
-        expectedAmount > 0 &&
+        !allowPartialPayment &&
         Math.abs(actualTransferAmount - expectedAmount) > allowedDiff
       ) {
         return {
           isValid: false,
           error: "Transferred amount doesn't match the amount",
+        };
+      }
+
+      if (allowPartialPayment && actualTransferAmount <= 0) {
+        return {
+          isValid: false,
+          error: 'Transferred amount must be greater than 0',
         };
       }
 
@@ -179,12 +195,19 @@ export async function validatePayment({
 
     const allowedDiff = getAllowedDifference(expectedAmount);
     if (
-      expectedAmount > 0 &&
+      !allowPartialPayment &&
       Math.abs(actualTransferAmount - expectedAmount) > allowedDiff
     ) {
       return {
         isValid: false,
         error: "Transferred amount doesn't match the amount",
+      };
+    }
+
+    if (allowPartialPayment && actualTransferAmount <= 0) {
+      return {
+        isValid: false,
+        error: 'Transferred amount must be greater than 0',
       };
     }
 
