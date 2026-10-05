@@ -68,6 +68,7 @@ model Bounties {
   winnersAnnouncedAt DateTime?
   Scouts             Scouts[]
   Comments           Comment[]
+  campaigns          Campaign[]
   discordMessageIds  Json?
   telegramMessageIds Json?
   ai                 Json?
@@ -549,6 +550,7 @@ model User {
   agentProfile       Agent?
   claimedAgents      Agent[]              @relation("AgentClaimedBy")
   rewardFulfillments InKindDelivery[]     @relation("InKindRewardFulfilledBy")
+  campaignRecipients CampaignRecipient[]
 
   @@index([currentSponsorId])
   @@index([hackathonId])
@@ -736,6 +738,40 @@ model emailLogs {
   @@index([userId, type])
   @@index([type, createdAt(sort: Desc)])
   @@index([email, type])
+}
+
+model Campaign {
+  id          String              @id @default(uuid())
+  name        String
+  type        CampaignType
+  status      CampaignStatus      @default(draft)
+  listingId   String?
+  audience    Json
+  content     Json
+  createdBy   String
+  approvedBy  String?
+  approvedAt  DateTime?
+  scheduledAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  listing     Bounties?           @relation(fields: [listingId], references: [id])
+  recipients  CampaignRecipient[]
+
+  @@index([listingId])
+  @@index([status, scheduledAt])
+}
+
+model CampaignRecipient {
+  campaignId String
+  userId     String
+  createdAt  DateTime @default(now())
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@id([campaignId, userId])
+  @@index([userId])
 }
 
 model ResendLogs {
@@ -1190,6 +1226,22 @@ enum TalentRankingSkills {
   CONTENT
   OTHER
   ALL
+}
+
+enum CampaignType {
+  opportunity
+  product
+  newsletter
+}
+
+enum CampaignStatus {
+  draft
+  scheduled
+  sending
+  paused
+  sent
+  cancelled
+  failed
 }
 
 enum EmailType {

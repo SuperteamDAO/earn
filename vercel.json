@@ -1,4 +1,5 @@
 {
+  "installCommand": "corepack pnpm install --frozen-lockfile",
   "rewrites": [
     { "source": "/build", "destination": "https://build.superteam.fun/build" },
     {

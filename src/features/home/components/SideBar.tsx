@@ -7,10 +7,9 @@ import posthog from 'posthog-js';
 import { useCallback } from 'react';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
-import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { type User } from '@/interface/user';
-import { useUser } from '@/store/user';
+import { type UserRoleHint, useUser } from '@/store/user';
 
 import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
 import { yourBookmarksQuery } from '@/features/listings/queries/your-bookmarks';
@@ -25,6 +24,7 @@ import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
 import { SidebarBanner } from './SidebarBanner';
+import { HomeSideBarSkeleton } from './SideBarSkeleton';
 import { SponsorBanner } from './SponsorBanner';
 import { SponsorFeatures } from './SponsorFeatures';
 import { SponsorResources } from './SponsorResources';
@@ -45,6 +45,8 @@ interface SideBarProps {
     | 'skill'
     | 'skill-all'
     | 'opportunity';
+  /** SSR-provided role hint (homepage) for picking the loading skeleton. */
+  roleHint?: UserRoleHint | null;
 }
 
 const VibeCard = dynamic(() =>
@@ -151,7 +153,7 @@ const NonSponsorSidebarContent = ({
   </>
 );
 
-export const HomeSideBar = ({ type }: SideBarProps) => {
+export const HomeSideBar = ({ type, roleHint }: SideBarProps) => {
   const router = useRouter();
   const { user, isLoading: isUserLoading } = useUser();
   const isLg = useBreakpoint('lg');
@@ -172,6 +174,9 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
   const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
 
   const isSponsor = !!(ready && !isUserLoading && user?.currentSponsorId);
+  // Avoid flashing talent content for a sponsor while the user resolves.
+  const isResolvingSponsor =
+    (!ready || isUserLoading) && roleHint === 'sponsor';
   const isFeed = type === 'feed';
   const showSponsorBanner =
     router.asPath === '/earn' &&
@@ -221,11 +226,11 @@ export const HomeSideBar = ({ type }: SideBarProps) => {
     );
   };
 
+  if (isResolvingSponsor && !isFeed) {
+    return <HomeSideBarSkeleton />;
+  }
+
   return (
-    <AnimateChangeInHeight duration={0.3}>
-      <div className="flex w-96 flex-col gap-8 py-3 pl-6">
-        {renderContent()}
-      </div>
-    </AnimateChangeInHeight>
+    <div className="flex w-96 flex-col gap-8 py-3 pl-6">{renderContent()}</div>
   );
 };

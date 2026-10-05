@@ -1,0 +1,20 @@
+name: Validate lockfile
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check frozen lockfile with the pinned pnpm version
+        run: corepack pnpm check:lockfile

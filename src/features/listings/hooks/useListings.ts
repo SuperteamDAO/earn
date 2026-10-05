@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { type z } from 'zod';
 
 import { api } from '@/lib/api';
@@ -32,6 +32,7 @@ interface ListingsParams {
   sponsor?: string;
   skill?: string;
   authenticated?: boolean;
+  enabled?: boolean;
 }
 
 const fetchListings = async ({
@@ -76,8 +77,13 @@ export function useListings({
   sponsor,
   skill,
   authenticated,
+  enabled = true,
 }: ListingsParams) {
   return useQuery({
+    enabled,
+    // Keep showing the previous results while a new key loads (auth or
+    // filter change) instead of collapsing back to skeletons.
+    placeholderData: keepPreviousData,
     queryKey: [
       'listings',
       context,

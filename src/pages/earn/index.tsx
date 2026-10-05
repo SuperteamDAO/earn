@@ -8,7 +8,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
-import { useUser } from '@/store/user';
+import { parseUserRoleHint, useUser, type UserRoleHint } from '@/store/user';
 import { cn } from '@/utils/cn';
 import {
   generateOrganizationSchema,
@@ -17,6 +17,7 @@ import {
 
 import { ProListingsAnnouncement } from '@/features/announcements/components/ProListingsAnnouncement';
 import { BannerCarousel } from '@/features/home/components/Banner';
+import { HomeSideBarSkeleton } from '@/features/home/components/SideBarSkeleton';
 import { SponsorStageBanner } from '@/features/home/components/SponsorStage/SponsorStageBanner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
@@ -28,8 +29,10 @@ const GrantsSection = dynamic(() =>
   ),
 );
 
-const HomeSideBar = dynamic(() =>
-  import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
+const HomeSideBar = dynamic(
+  () =>
+    import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
+  { loading: () => <HomeSideBarSkeleton /> },
 );
 
 const HomepagePop = dynamic(
@@ -42,19 +45,25 @@ const HomepagePop = dynamic(
 
 interface HomePageProps {
   readonly potentialSession: boolean;
+  readonly roleHint: UserRoleHint | null;
   readonly totalUsers: number;
   readonly totalSponsors: number;
 }
 
 export default function HomePage({
   potentialSession,
+  roleHint,
   totalUsers,
   totalSponsors,
 }: HomePageProps) {
   const { authenticated } = usePrivy();
   useQuery({ ...userCountQuery, initialData: { totalUsers } });
-  const { user } = useUser();
+  const { user, isLoading: isUserLoading } = useUser();
   const isLg = useBreakpoint('lg');
+  // The role hint only picks skeletons while the user is still resolving.
+  const isSponsorView = user
+    ? !!user.currentSponsorId
+    : isUserLoading && roleHint === 'sponsor';
 
   const organizationSchema = generateOrganizationSchema();
   const websiteSchema = generateWebSiteSchema();
@@ -93,15 +102,18 @@ export default function HomePage({
               <div className="w-full lg:pr-6">
                 <div className="pt-3">
                   {potentialSession || authenticated ? (
-                    <>
-                      {!!user?.currentSponsorId && isLg ? (
-                        <div className="mt-3">
+                    isSponsorView ? (
+                      <>
+                        <div className="mt-3 hidden lg:block">
                           <SponsorStageBanner />
                         </div>
-                      ) : (
-                        <UserStatsBanner />
-                      )}
-                    </>
+                        <div className="lg:hidden">
+                          <UserStatsBanner />
+                        </div>
+                      </>
+                    ) : (
+                      <UserStatsBanner />
+                    )
                   ) : (
                     <BannerCarousel
                       totalUsers={totalUsers}
@@ -119,11 +131,13 @@ export default function HomePage({
                 </div>
               </div>
             </div>
-            {isLg && (
-              <div className="flex">
-                <HomeSideBar type="landing" />
-              </div>
-            )}
+            <div className="hidden lg:flex">
+              {isLg ? (
+                <HomeSideBar type="landing" roleHint={roleHint} />
+              ) : (
+                <HomeSideBarSkeleton />
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -139,6 +153,9 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
   const cookies = req.headers.cookie || '';
 
   const cookieExists = /(^|;)\s*user-id-hint=/.test(cookies);
+  const roleHint = cookieExists
+    ? parseUserRoleHint(/(?:^|;)\s*user-role-hint=([^;]*)/.exec(cookies)?.[1])
+    : null;
 
   const [userCount, sponsorCount] = await Promise.all([
     prisma.user.count(),
@@ -149,6 +166,11 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
   const totalSponsors = Math.ceil(sponsorCount / 10) * 10;
 
   return {
-    props: { potentialSession: cookieExists, totalUsers, totalSponsors },
+    props: {
+      potentialSession: cookieExists,
+      roleHint,
+      totalUsers,
+      totalSponsors,
+    },
   };
 };

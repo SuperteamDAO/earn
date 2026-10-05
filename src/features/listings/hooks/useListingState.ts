@@ -1,4 +1,5 @@
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -151,7 +152,7 @@ export const useListingState = ({
 
       const queryString = newParams.toString();
       const newPath = `${pathname}${queryString ? `?${queryString}` : ''}`;
-      router.replace(newPath, { scroll: false });
+      void router.replace(newPath, undefined, { shallow: true, scroll: false });
     },
     [
       searchParams,

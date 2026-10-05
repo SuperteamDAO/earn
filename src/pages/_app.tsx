@@ -2,20 +2,15 @@ import '../styles/globals.css';
 import '../styles/st-globals.css';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
+import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 import Providers from '@/components/providers';
-import { ST_ROUTES } from '@/constants/ST_ROUTES';
 import { TokenListProvider } from '@/constants/tokenList';
 import { fontVariables } from '@/theme/fonts';
-import { stFontVariables } from '@/theme/fonts-st';
-
-import Footer from '@/features/stfun/components/common/Footer';
-import Header from '@/features/stfun/components/common/Header';
 
 const Toaster = dynamic(() => import('sonner').then((mod) => mod.Toaster), {
   ssr: false,
@@ -26,100 +21,22 @@ const TopLoader = dynamic(
   { ssr: false },
 );
 
-function isSTRoute(pathname: string): boolean {
-  return ST_ROUTES.includes(pathname);
-}
+type AppPropsWithLayout = AppProps & {
+  Component: NextPage & {
+    getLayout?: (page: ReactElement) => ReactNode;
+  };
+};
 
-function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
-  const isST = isSTRoute(router.pathname);
+  // Remount on path changes (e.g. /listing/a -> /listing/b) but not on
+  // query/hash changes, so shallow filter updates keep page state.
+  const pageKey = router.asPath.split(/[?#]/)[0];
 
-  useEffect(() => {
-    if (!isST || typeof window === 'undefined') {
-      return;
-    }
-
-    let observer: MutationObserver | null = null;
-
-    import('@/lib/gsap').then(({ gsap, ScrollTrigger }) => {
-      document.documentElement.style.backgroundColor = 'rgb(4, 5, 7)';
-      document.body.style.backgroundColor = 'rgb(4, 5, 7)';
-
-      gsap.registerPlugin(ScrollTrigger);
-
-      const handleImageLoad = (img: HTMLImageElement) => {
-        if (img.complete) {
-          img.classList.add('loaded');
-        } else {
-          img.addEventListener('load', () => img.classList.add('loaded'), {
-            once: true,
-          });
-        }
-      };
-
-      document.querySelectorAll('img').forEach((img) => handleImageLoad(img));
-
-      observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          mutation.addedNodes.forEach((node) => {
-            if (node instanceof HTMLImageElement) {
-              handleImageLoad(node);
-            }
-            if (node instanceof HTMLElement) {
-              node
-                .querySelectorAll('img')
-                .forEach((img) => handleImageLoad(img));
-            }
-          });
-        });
-      });
-
-      const stContainer = document.querySelector('.st-app');
-      if (stContainer) {
-        observer.observe(stContainer, { childList: true, subtree: true });
-      }
-    });
-
-    return () => {
-      observer?.disconnect();
-      document.documentElement.style.backgroundColor = '';
-      document.body.style.backgroundColor = '';
-    };
-  }, [isST]);
-
-  if (isST) {
+  if (Component.getLayout) {
     return (
       <TokenListProvider>
-        <div className={`${stFontVariables} st-app flex min-h-screen flex-col`}>
-          <TopLoader />
-          <Head>
-            <link
-              rel="icon"
-              type="image/png"
-              href="/st-favicon.png"
-              key="icon-png"
-            />
-          </Head>
-          {router.pathname === '/' && (
-            <div className="w-full bg-slate-950 text-white">
-              <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-2 text-center text-xs font-medium sm:text-sm">
-                <a
-                  href="/earn/agents"
-                  className="font-mono text-[8px] tracking-[0.2em] text-white uppercase no-underline hover:text-white sm:text-xs"
-                >
-                  If you&apos;re an AI agent, browse agent-eligible listings to
-                  earn your first crypto.
-                </a>
-              </div>
-            </div>
-          )}
-          <Header className="mx-auto px-10 md:px-[72px]" />
-          <div className="relative mx-auto grid flex-1 grid-cols-5 gap-5 px-10 md:px-[72px]">
-            <Component {...pageProps} key={router.asPath} />
-            <Footer />
-          </div>
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
-        </div>
+        {Component.getLayout(<Component {...pageProps} key={pageKey} />)}
       </TokenListProvider>
     );
   }
@@ -129,7 +46,7 @@ function App({ Component, pageProps }: AppProps) {
       <div className={fontVariables}>
         <Providers>
           <TopLoader />
-          <Component {...pageProps} key={router.asPath} />
+          <Component {...pageProps} key={pageKey} />
           <Toaster position="bottom-right" richColors />
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
         </Providers>

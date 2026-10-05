@@ -44,11 +44,21 @@
    cd earn
    ```
 
-3. Install the dependencies:
+3. Install the dependencies with the pnpm version pinned in `package.json`:
 
    ```bash
-   pnpm i
+   corepack pnpm install --frozen-lockfile
    ```
+
+   Use `corepack pnpm add <package>` for dependency changes and commit both
+   `package.json` and `pnpm-lock.yaml`. Run `corepack pnpm check:lockfile` before
+   pushing. The commit hook and CI also check that the lockfile matches the
+   manifest and overrides. Vercel uses the same pinned version and frozen install.
+
+   Do not regenerate the lockfile with a different global pnpm version: pnpm 11
+   ignores the `pnpm.overrides` field used by this repository. Upgrade pnpm
+   deliberately, migrating its configuration and validating a frozen install
+   together. If Corepack is unavailable, install it before running these commands.
 
 4. Install the MariaDB adapter (required for local MySQL development):
 

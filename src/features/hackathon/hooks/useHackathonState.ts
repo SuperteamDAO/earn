@@ -1,4 +1,5 @@
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { useCallback, useMemo } from 'react';
 
@@ -67,7 +68,7 @@ export const useHackathonState = () => {
 
       const queryString = newParams.toString();
       const newPath = `${window.location.pathname}${queryString ? `?${queryString}` : ''}`;
-      router.replace(newPath, { scroll: false });
+      void router.replace(newPath, undefined, { shallow: true, scroll: false });
     },
     [searchParams, router, defaultName],
   );

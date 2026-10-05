@@ -1,7 +1,7 @@
 import type {
   BuiltInProviderType,
   RedirectableProviderType,
-} from 'next-auth/providers';
+} from 'next-auth/providers/index';
 import { getCsrfToken, getProviders, type LiteralUnion } from 'next-auth/react';
 
 import type {

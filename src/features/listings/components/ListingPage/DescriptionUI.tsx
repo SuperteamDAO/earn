@@ -1,10 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import parse, {
-  domToReact,
-  type HTMLReactParserOptions,
-} from 'html-react-parser';
 import { ChevronDown } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import SuperteamIcon from '@/components/icons/SuperteamIcon';
 import { useExternalLinkDialog } from '@/components/shared/ExternalLinkDialogProvider';
@@ -13,12 +16,12 @@ import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/progress';
 import { type BountyType } from '@/generated/prisma/enums';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { domPurify } from '@/lib/domPurify';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { isUserEligibleForST } from '@/features/grants/utils/stGrant';
 import { userStatsQuery } from '@/features/home/queries/user-stats';
+import { getDescriptionHtml } from '@/features/listings/utils/description-html';
 import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 import { ProIntro } from '@/features/pro/components/ProIntro';
@@ -44,52 +47,20 @@ export function DescriptionUI({
   const { handleExternalLinkClick } = useExternalLinkDialog();
   const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
 
-  const options = useMemo(() => {
-    const memoizedOptions: HTMLReactParserOptions = {
-      replace: (domNode: any) => {
-        const { name, children, attribs } = domNode;
-        if (name === 'p' && (!children || children.length === 0)) {
-          return <br />;
-        }
-        if (name === 'h1') {
-          return (
-            <h2 {...attribs} className={styles.descriptionH1}>
-              {domToReact(children, memoizedOptions)}
-            </h2>
-          );
-        }
-        if (name === 'a' && attribs) {
-          const href = attribs.href ?? '';
+  const handleDescriptionClick = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (!(event.target instanceof Element)) return;
+      const anchor = event.target.closest('a');
+      if (!anchor) return;
+      handleExternalLinkClick(event, anchor.getAttribute('href') ?? '');
+    },
+    [handleExternalLinkClick],
+  );
 
-          return (
-            <a
-              {...attribs}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(event) => handleExternalLinkClick(event, href)}
-            >
-              {domToReact(children, memoizedOptions)}
-            </a>
-          );
-        }
-        return domNode;
-      },
-    };
-
-    return memoizedOptions;
-  }, [handleExternalLinkClick]);
-
-  //to resolve a chain of hydration errors
-  const [isMounted, setIsMounted] = useState(false);
   const [showMore, setShowMore] = useState(true);
   const [showCollapser, setShowCollapser] = useState(false);
   const descriptionRef = useRef<HTMLDivElement>(null);
   const isNotMD = useMediaQuery('(max-width: 767px)');
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const decideCollapser = useCallback(() => {
     if (descriptionRef.current) {
@@ -106,84 +77,12 @@ export function DescriptionUI({
       decideCollapser();
     }, 0);
     return () => clearTimeout(timer);
-  }, [decideCollapser, isMounted]);
+  }, [decideCollapser]);
 
-  const descriptionContent = useMemo(() => {
-    if (!isMounted) return null;
-
-    // Safely parse JSON-encoded descriptions with fallback
-    let normalizedDescription = description ?? '';
-    if (normalizedDescription.startsWith('"')) {
-      try {
-        normalizedDescription = JSON.parse(normalizedDescription) as string;
-      } catch {
-        // Fallback: use original string if JSON parsing fails
-        normalizedDescription = description ?? '';
-      }
-    }
-
-    return parse(
-      domPurify(normalizedDescription, {
-        ALLOWED_TAGS: [
-          'a',
-          'p',
-          'br',
-          'strong',
-          'em',
-          'b',
-          'i',
-          'u',
-          's',
-          'blockquote',
-          'pre',
-          'code',
-          'ul',
-          'ol',
-          'li',
-          'h1',
-          'h2',
-          'h3',
-          'h4',
-          'h5',
-          'h6',
-          'hr',
-          'table',
-          'thead',
-          'tbody',
-          'tr',
-          'td',
-          'th',
-          'span',
-          'img',
-        ],
-        ALLOWED_ATTR: [
-          'href',
-          'target',
-          'rel',
-          'src',
-          'alt',
-          'title',
-          'width',
-          'height',
-          'colspan',
-          'rowspan',
-          'class',
-        ],
-        FORBID_TAGS: [
-          'script',
-          'iframe',
-          'style',
-          'meta',
-          'link',
-          'object',
-          'embed',
-          'base',
-          'form',
-        ],
-      }),
-      options,
-    );
-  }, [isMounted, description, options]);
+  const descriptionHtml = useMemo(
+    () => getDescriptionHtml(description, styles.descriptionH1 ?? ''),
+    [description],
+  );
 
   const isUserSponsor = user?.currentSponsorId === sponsorId;
 
@@ -336,9 +235,9 @@ export function DescriptionUI({
         >
           <div
             className={`${styles.content} mt-4 w-full overflow-visible pb-7`}
-          >
-            {descriptionContent}
-          </div>
+            onClick={handleDescriptionClick}
+            dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+          />
           {!showMore && (
             <div
               className="pointer-events-none absolute right-0 bottom-0 left-0 h-[40%]"
