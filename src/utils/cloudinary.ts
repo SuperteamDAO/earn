@@ -66,22 +66,42 @@ export const verifyImageExists = async (url: string): Promise<boolean> => {
   }
 };
 
-export const convertToJpegUrl = (url: string): string | null => {
-  if (!url || !url.includes('res.cloudinary.com')) return null;
+const CLOUDINARY_DELIVERY_HOST = 'res.cloudinary.com';
 
-  if (url.includes('/f_jpg/') || url.includes('f_jpg')) {
-    return url;
+export const convertToJpegUrl = (value: string): string | null => {
+  if (!value) return null;
+
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return null;
   }
 
-  const parts = url.split('/upload/');
-  if (parts.length < 2) return null;
+  if (
+    url.protocol !== 'https:' ||
+    url.hostname !== CLOUDINARY_DELIVERY_HOST ||
+    url.port ||
+    url.username ||
+    url.password
+  ) {
+    return null;
+  }
 
-  const afterUpload = parts[1];
-  if (!afterUpload) return null;
+  const pathSegments = url.pathname.split('/');
+  const uploadIndex = pathSegments.indexOf('upload');
+  const firstUploadParameter = pathSegments[uploadIndex + 1];
 
-  const transformedUrl = url.replace('/upload/', '/upload/f_jpg/');
+  if (uploadIndex === -1 || !firstUploadParameter) return null;
 
-  return transformedUrl;
+  const alreadyRequestsJpeg = firstUploadParameter.split(',').includes('f_jpg');
+
+  if (!alreadyRequestsJpeg) {
+    pathSegments.splice(uploadIndex + 1, 0, 'f_jpg');
+    url.pathname = pathSegments.join('/');
+  }
+
+  return url.toString();
 };
 
 const extractPublicIdFromUrl = (url: string): string | null => {
