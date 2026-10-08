@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+import {
+  isSanctionedCountry,
+  SANCTIONED_LOCATION_MESSAGE,
+} from '@/constants/country';
 import { URL_REGEX } from '@/constants/URL_REGEX';
 
 import {
@@ -39,6 +43,10 @@ export const sponsorBaseSchema = z.object({
     .string()
     .min(1, 'Entity name is required')
     .refine(noHtmlDelimiters, noHtmlMessage),
+  location: z
+    .string({ message: 'Location is required' })
+    .min(1, 'Location is required')
+    .refine((v) => !isSanctionedCountry(v), SANCTIONED_LOCATION_MESSAGE),
 });
 
 export const userSponsorDetailsSchema = z.object({
@@ -81,6 +89,7 @@ export const transformFormToApiData = (data: SponsorFormValues) => {
     url: data.sponsor.url,
     twitter: data.sponsor.twitter,
     entityName: data.sponsor.entityName,
+    location: data.sponsor.location,
   };
 
   const userData = data.user

@@ -9,7 +9,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { countries } from '@/constants/country';
+import { countries, SANCTIONED_COUNTRY_CODES } from '@/constants/country';
 import { api } from '@/lib/api';
 
 import {
@@ -36,7 +36,7 @@ export function LocationField() {
                 locationData.country_code.toLowerCase(),
             );
 
-            if (country) {
+            if (country && !SANCTIONED_COUNTRY_CODES.includes(country.code)) {
               setValue(
                 'location',
                 newTalentSchema.shape.location.safeParse(country.name).data ||
@@ -65,6 +65,7 @@ export function LocationField() {
           <FormControl>
             <RegionCombobox
               className="h-9 w-full"
+              excludeSanctioned
               value={field.value}
               onChange={(e) => {
                 field.onChange(e);

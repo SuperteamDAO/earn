@@ -558,6 +558,7 @@ export default function EditProfilePage({
                     <FormControl>
                       <RegionCombobox
                         className="w-full"
+                        excludeSanctioned
                         value={field.value}
                         onChange={(e) => {
                           field.onChange(e);

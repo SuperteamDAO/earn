@@ -49,8 +49,17 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    const { name, slug, logo, url, industry, twitter, bio, entityName } =
-      validationResult.data;
+    const {
+      name,
+      slug,
+      logo,
+      url,
+      industry,
+      twitter,
+      bio,
+      entityName,
+      location,
+    } = validationResult.data;
 
     let finalLogo = logo;
     if (logo) {
@@ -99,6 +108,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         twitter,
         bio,
         entityName,
+        location,
       },
     });
 

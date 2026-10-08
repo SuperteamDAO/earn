@@ -8,6 +8,7 @@ interface SponsorType {
   twitter?: string;
   bio?: string;
   entityName?: string;
+  location?: string | null;
   isVerified?: boolean;
   isCaution?: boolean;
   chapter?: {
