@@ -158,7 +158,8 @@ export function normalizeTokenIcon(icon?: string | null): string {
   }
 
   if (SAME_APP_HOSTS.has(hostname)) {
-    return joinUrlParts(url.pathname, url.search, url.hash);
+    const appPath = joinUrlParts(url.pathname, url.search, url.hash);
+    return normalizeCdnPathToProxyPath(appPath) ?? appPath;
   }
 
   return normalizeRemoteIconToProxyPath(url.toString());
