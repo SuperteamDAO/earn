@@ -34,6 +34,7 @@ import {
 import bs58 from 'bs58';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { ZodError } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -47,6 +48,21 @@ import { withdrawFormSchema } from '@/features/wallet/utils/withdrawFormSchema';
 
 const LAMPORTS_PER_SOL = 1_000_000_000;
 const tokenProgramCache: Record<string, string> = {};
+
+type WithdrawalRequestErrorCode =
+  | 'AMOUNT_BELOW_ACCOUNT_SETUP_FEE'
+  | 'AMOUNT_TOO_SMALL'
+  | 'UNSUPPORTED_TOKEN';
+
+class WithdrawalRequestError extends Error {
+  constructor(
+    readonly code: WithdrawalRequestErrorCode,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'WithdrawalRequestError';
+  }
+}
 
 async function isToken2022Token(
   rpc: SolanaRpc,
@@ -195,19 +211,47 @@ async function createFeePayerATA(
 }
 
 export async function POST(request: NextRequest) {
+  let requestUserId: string | undefined;
+
   try {
     const headersList = await headers();
     const sessionResponse = await getUserSession(headersList);
 
     if (sessionResponse.status !== 200 || !sessionResponse.data) {
       logger.warn(`Authentication failed: ${sessionResponse.error}`);
+
+      if (sessionResponse.status === 401) {
+        return NextResponse.json(
+          {
+            code: 'AUTHENTICATION_REQUIRED',
+            error: 'Your session has expired. Please sign in and try again.',
+          },
+          { status: 401 },
+        );
+      }
+
+      if (sessionResponse.status === 403) {
+        return NextResponse.json(
+          {
+            code: 'WITHDRAWAL_NOT_ALLOWED',
+            error:
+              'Withdrawals are not available for this account. Please contact support@superteam.fun.',
+          },
+          { status: 403 },
+        );
+      }
+
       return NextResponse.json(
-        { error: sessionResponse.error },
-        { status: sessionResponse.status },
+        {
+          code: 'WITHDRAWAL_SERVICE_ERROR',
+          error: 'Unable to prepare the withdrawal right now.',
+        },
+        { status: 500 },
       );
     }
 
     const { userId } = sessionResponse.data;
+    requestUserId = userId;
     const body = await request.json();
 
     logger.info(`Starting withdrawal process for user ${userId}`);
@@ -245,6 +289,12 @@ export async function POST(request: NextRequest) {
       const lamportsAmount = BigInt(
         Math.floor(Number(amount) * LAMPORTS_PER_SOL),
       );
+      if (lamportsAmount <= 0n) {
+        throw new WithdrawalRequestError(
+          'AMOUNT_TOO_SMALL',
+          'The withdrawal amount is too small. Increase the amount and try again.',
+        );
+      }
 
       const transactionMessage = pipe(
         createTransactionMessage({ version: 0 }),
@@ -283,7 +333,12 @@ export async function POST(request: NextRequest) {
       : TOKEN_PROGRAM_ADDRESS;
 
     const token = await getTokenByMintAddress(tokenAddress);
-    if (!token) throw new Error('Invalid token selected');
+    if (!token) {
+      throw new WithdrawalRequestError(
+        'UNSUPPORTED_TOKEN',
+        'This token is not supported for withdrawal. Please choose another token.',
+      );
+    }
 
     const [feePayerATA] = await findAssociatedTokenPda({
       mint: tokenMint,
@@ -347,7 +402,10 @@ export async function POST(request: NextRequest) {
     let ataCreationCost = 0;
     const withdrawAmount = Math.floor(Number(amount) * 10 ** decimals);
     if (!Number.isFinite(withdrawAmount) || withdrawAmount <= 0) {
-      throw new Error('Amount is below the smallest unit');
+      throw new WithdrawalRequestError(
+        'AMOUNT_TOO_SMALL',
+        'The withdrawal amount is too small for this token. Increase the amount and try again.',
+      );
     }
 
     if (receiverATAWasMissing) {
@@ -368,8 +426,9 @@ export async function POST(request: NextRequest) {
 
       if (ataCreationCost > 0) {
         if (withdrawAmount <= ataCreationCost) {
-          throw new Error(
-            'Amount must be greater than associated token account creation fee',
+          throw new WithdrawalRequestError(
+            'AMOUNT_BELOW_ACCOUNT_SETUP_FEE',
+            'The withdrawal amount must be greater than the recipient token account setup fee.',
           );
         }
         allInstructions.push(
@@ -440,12 +499,36 @@ export async function POST(request: NextRequest) {
       receiverATAExists: !receiverATAWasMissing,
       ataCreationCost: receiverATAWasMissing ? ataCreationCost : 0,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    if (error instanceof ZodError) {
+      const message = error.issues[0]?.message ?? 'Invalid withdrawal details.';
+      logger.warn(
+        `Withdrawal validation failed for user ${requestUserId ?? 'unknown'}: ${safeStringify(error.issues)}`,
+      );
+      return NextResponse.json(
+        { code: 'INVALID_WITHDRAWAL_DETAILS', error: message },
+        { status: 400 },
+      );
+    }
+
+    if (error instanceof WithdrawalRequestError) {
+      logger.warn(
+        `Withdrawal request rejected for user ${requestUserId ?? 'unknown'}: ${error.code}`,
+      );
+      return NextResponse.json(
+        { code: error.code, error: error.message },
+        { status: 400 },
+      );
+    }
+
     logger.error(
-      `Failed to create transfer transaction: ${safeStringify(error)}`,
+      `Failed to create transfer transaction for user ${requestUserId ?? 'unknown'}: ${safeStringify(error)}`,
     );
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      {
+        code: 'WITHDRAWAL_SERVICE_ERROR',
+        error: 'Unable to prepare the withdrawal right now.',
+      },
       { status: 500 },
     );
   }
