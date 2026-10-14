@@ -261,15 +261,17 @@ export function WithdrawFundsFlow({
         const status = await rpc
           .getSignatureStatuses([signature as Signature])
           .send();
+        const transactionStatus = status.value[0];
+
+        if (transactionStatus?.err) {
+          throw new Error('Transaction failed on-chain');
+        }
         if (
-          status.value[0]?.confirmationStatus === 'confirmed' ||
-          status.value[0]?.confirmationStatus === 'finalized'
+          transactionStatus?.confirmationStatus === 'confirmed' ||
+          transactionStatus?.confirmationStatus === 'finalized'
         ) {
           transactionConfirmed = true;
           break;
-        }
-        if (status.value[0]?.err) {
-          throw new Error('Transaction failed on-chain');
         }
         await new Promise((r) => setTimeout(r, 1000));
       }
