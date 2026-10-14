@@ -8,7 +8,7 @@ import {
   TOKEN_PROGRAM_ADDRESS,
 } from '@solana-program/token';
 import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022';
-import { address, type Signature } from '@solana/kit';
+import { address, type Address, type Signature } from '@solana/kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import bs58 from 'bs58';
@@ -115,6 +115,24 @@ export function WithdrawFundsFlow({
     values: WithdrawFormData,
   ): Promise<string> {
     const rpc = getRpc();
+    let recipient: Address;
+
+    try {
+      recipient = address(values.recipientAddress);
+    } catch (e) {
+      const message =
+        e instanceof Error ? e.message : 'Unknown address validation error';
+
+      toast.error(
+        'The destination address is invalid. Please enter a valid Solana wallet address.',
+      );
+      log.error(
+        `Withdrawal recipient validation failed: ${message}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
+      );
+      posthog.capture('withdraw_failed');
+      setView('withdraw');
+      return Promise.reject(new Error('Withdrawal precheck failed'));
+    }
 
     try {
       if (
@@ -123,7 +141,6 @@ export function WithdrawFundsFlow({
         return handleWithdraw(values);
       }
 
-      const recipient = address(values.recipientAddress);
       const tokenMint = address(values.tokenAddress);
       const programId = await detectTokenProgram(values.tokenAddress);
 
@@ -169,18 +186,9 @@ export function WithdrawFundsFlow({
       return handleWithdraw(values);
     } catch (e) {
       const message =
-        e instanceof Error ? e.message : 'Unknown address validation error';
+        e instanceof Error ? e.message : 'Unknown withdrawal precheck error';
 
-      const isInvalidAddress =
-        message.includes('Non-base58') ||
-        message.includes('base58') ||
-        message.toLowerCase().includes('invalid address');
-
-      const errorMessage = isInvalidAddress
-        ? 'The destination address is invalid. Please enter a valid Solana wallet address.'
-        : SUPPORT_ERROR_MESSAGE;
-
-      toast.error(errorMessage);
+      toast.error(SUPPORT_ERROR_MESSAGE);
       log.error(
         `Withdrawal precheck failed: ${message}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
       );
