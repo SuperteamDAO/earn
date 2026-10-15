@@ -88,15 +88,14 @@ export async function updateLike(
       date: number;
     }[] | null;
 
+    const wasLiked = !!resLikes?.some((e) => e?.id === userId);
+
     let newLikes: { id: string; date: number }[];
 
-    if (resLikes?.length) {
-      const existing = resLikes.find((e) => e?.id === userId);
-      newLikes = existing
-        ? resLikes.filter((e) => e.id !== userId)
-        : [...resLikes, { id: userId, date: Date.now() }];
+    if (!wasLiked) {
+      newLikes = [...(resLikes ?? []), { id: userId, date: Date.now() }];
     } else {
-      newLikes = [{ id: userId, date: Date.now() }];
+      newLikes = resLikes.filter((e) => e.id !== userId);
     }
 
     const likeCount = newLikes.length;
@@ -109,7 +108,9 @@ export async function updateLike(
     );
 
     return {
-      likesIncremented: likeCount > (result.likeCount || 0),
+      // Derived from the toggle action itself, not from the stored likeCount:
+      // that column may already be drifted on existing rows.
+      likesIncremented: !wasLiked,
       updatedData,
     };
   });
