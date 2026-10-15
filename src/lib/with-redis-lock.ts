@@ -6,6 +6,14 @@ interface RedisLockOptions {
   readonly ttlSeconds?: number;
 }
 
+// Compare-and-delete, so a holder can only ever release its own lock.
+const RELEASE_LOCK_SCRIPT = `
+if redis.call("get", KEYS[1]) == ARGV[1] then
+  return redis.call("del", KEYS[1])
+end
+return 0
+`;
+
 export class LockNotAcquiredError extends Error {
   public constructor(key: string) {
     super(`Failed to acquire Redis lock for key="${key}"`);
@@ -30,10 +38,7 @@ export async function withRedisLock<TResult>(
     return await callback();
   } finally {
     try {
-      const currentToken = await redis.get<string>(key);
-      if (currentToken === token) {
-        await redis.del(key);
-      }
+      await redis.eval(RELEASE_LOCK_SCRIPT, [key], [token]);
     } catch (releaseError) {
       console.error(
         `Failed to release Redis lock for key="${key}":`,
