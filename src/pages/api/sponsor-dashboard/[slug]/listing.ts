@@ -77,6 +77,15 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             eligibility: true,
           },
         },
+        inKindReward: {
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            pluralName: true,
+            icon: true,
+          },
+        },
       },
     });
 

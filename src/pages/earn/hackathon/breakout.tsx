@@ -308,7 +308,9 @@ function Tracks({ tracks }: { tracks: TrackProps[] | undefined }) {
               key={track.slug}
               title={track.title}
               sponsor={track.sponsor}
+              rewardType={track.rewardType}
               token={track.token}
+              inKindReward={track.inKindReward}
               rewardAmount={track.rewardAmount}
               slug={track.slug}
             />

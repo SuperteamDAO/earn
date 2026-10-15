@@ -6,6 +6,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { type InputJsonValue } from '@/prisma/internal/prismaNamespace';
 import { type BountiesUncheckedCreateInput } from '@/prisma/models/Bounties';
+import { getActiveInKindRewardById } from '@/server/inKindRewards';
 import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { safeStringify } from '@/utils/safeStringify';
@@ -43,7 +44,9 @@ async function transformToPrismaData(
     rewardAmount,
     rewards,
     maxBonusSpots,
+    rewardType,
     token,
+    inKindRewardId,
     compensationType,
     minRewardAsk,
     maxRewardAsk,
@@ -79,7 +82,9 @@ async function transformToPrismaData(
     rewardAmount,
     rewards: rewards as InputJsonValue,
     maxBonusSpots: maxBonusSpots === undefined ? undefined : maxBonusSpots || 0,
-    token,
+    rewardType,
+    token: rewardType === 'IN_KIND' ? null : token,
+    inKindRewardId: rewardType === 'IN_KIND' ? inKindRewardId : null,
     compensationType,
     minRewardAsk,
     maxRewardAsk,
@@ -109,7 +114,7 @@ export async function POST(request: Request) {
     if ('error' in sessionResult) {
       return sessionResult.error;
     }
-    const { userId, userSponsorId } = sessionResult.session;
+    const { role, userId, userSponsorId } = sessionResult.session;
 
     let body: Partial<ListingFormData>;
     try {
@@ -171,6 +176,47 @@ export async function POST(request: Request) {
     const isDraftNotAllowed = validateDraftPermissions(listing);
     if (isDraftNotAllowed) {
       return isDraftNotAllowed;
+    }
+
+    const rewardType = body.rewardType ?? listing?.rewardType ?? 'TOKEN';
+    const inKindRewardId =
+      body.inKindRewardId ?? listing?.inKindRewardId ?? null;
+
+    if (role !== 'GOD' && listing && rewardType !== listing.rewardType) {
+      return NextResponse.json(
+        { error: 'Only GOD users can change the reward type' },
+        { status: 403 },
+      );
+    }
+
+    if (rewardType === 'IN_KIND') {
+      const isExistingInKindReward =
+        listing?.rewardType === 'IN_KIND' &&
+        listing.inKindRewardId === inKindRewardId;
+
+      if (role !== 'GOD' && !isExistingInKindReward) {
+        return NextResponse.json(
+          { error: 'Only GOD users can configure in-kind rewards' },
+          { status: 403 },
+        );
+      }
+
+      if (
+        inKindRewardId &&
+        !(await getActiveInKindRewardById(inKindRewardId))
+      ) {
+        return NextResponse.json(
+          { error: 'In-kind reward is not available' },
+          { status: 400 },
+        );
+      }
+
+      body.rewardType = rewardType;
+      body.inKindRewardId = inKindRewardId;
+      body.token = null;
+    } else {
+      body.rewardType = 'TOKEN';
+      body.inKindRewardId = null;
     }
 
     const prismaData = await transformToPrismaData(
