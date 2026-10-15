@@ -198,14 +198,6 @@ const nextConfig: NextConfig = {
         destination: 'https://api.phantom.app/:path*',
       },
       {
-        source: '/cdn/arweave/:path*',
-        destination: 'https://arweave.net/:path*',
-      },
-      {
-        source: '/cdn/ipfs-io/:path*',
-        destination: 'https://ipfs.io/:path*',
-      },
-      {
         source: '/cdn/imagedelivery/:path*',
         destination: 'https://imagedelivery.net/:path*',
       },
