@@ -314,7 +314,7 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
       : 'Superteam Earn';
 
   const feedItems = useMemo(
-    () => feed?.pages.flatMap((page) => page) ?? [],
+    () => feed?.pages.flatMap((page) => page.data) ?? [],
     [feed?.pages],
   );
 
