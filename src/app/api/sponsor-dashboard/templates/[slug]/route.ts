@@ -6,7 +6,7 @@ import { type BountiesTemplatesSelect } from '@/prisma/models/BountiesTemplates'
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
-export const publicTemplateDetailsSelect = {
+const publicTemplateDetailsSelect = {
   id: true,
   title: true,
   deadline: true,
