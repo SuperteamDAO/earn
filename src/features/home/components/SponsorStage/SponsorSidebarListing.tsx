@@ -15,6 +15,7 @@ import { dayjs } from '@/utils/dayjs';
 import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
 import { SponsorStage } from '@/features/home/types/sponsor-stage';
+import { InKindRewardDisplay } from '@/features/listings/components/InKindRewardDisplay';
 import { submissionCountQuery } from '@/features/listings/queries/submission-count';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
@@ -64,6 +65,9 @@ export function SponsorListing() {
   const statusColors = getColorStyles(status);
 
   const formattedDeadline = formatDeadlineDate(listing.deadline);
+  const inKindReward =
+    listing.rewardType === 'IN_KIND' ? listing.inKindReward : null;
+  const isInKindReward = !!inKindReward;
 
   return (
     <div className="flex flex-col gap-3">
@@ -109,13 +113,22 @@ export function SponsorListing() {
               </div>
 
               <div className="flex items-center gap-1">
-                <TokenIcon
-                  className="h-5 w-5 rounded-full"
-                  alt={listing.token || 'token'}
-                  symbol={listing.token}
-                />
+                {isInKindReward ? (
+                  <InKindRewardDisplay
+                    item={inKindReward}
+                    quantity={listing.rewardAmount ?? 0}
+                    className="text-base"
+                    iconClassName="size-5"
+                  />
+                ) : (
+                  <TokenIcon
+                    className="h-5 w-5 rounded-full"
+                    alt={listing.token || 'token'}
+                    symbol={listing.token}
+                  />
+                )}
 
-                {listing?.type === 'grant' && (
+                {!isInKindReward && listing?.type === 'grant' && (
                   <span className="text-base font-semibold whitespace-nowrap text-slate-900">
                     {grantAmount({
                       maxReward: listing?.maxRewardAsk!,
@@ -123,17 +136,21 @@ export function SponsorListing() {
                     })}
                   </span>
                 )}
-                <SponsorPrize
-                  compensationType={listing?.compensationType}
-                  maxRewardAsk={listing?.maxRewardAsk}
-                  minRewardAsk={listing?.minRewardAsk}
-                  rewardAmount={listing?.rewardAmount}
-                  className="text-base font-semibold text-slate-900"
-                />
+                {!isInKindReward && (
+                  <SponsorPrize
+                    compensationType={listing?.compensationType}
+                    maxRewardAsk={listing?.maxRewardAsk}
+                    minRewardAsk={listing?.minRewardAsk}
+                    rewardAmount={listing?.rewardAmount}
+                    className="text-base font-semibold text-slate-900"
+                  />
+                )}
 
-                <span className="text-base font-semibold text-slate-400">
-                  {listing.token}
-                </span>
+                {!isInKindReward && (
+                  <span className="text-base font-semibold text-slate-400">
+                    {listing.token}
+                  </span>
+                )}
               </div>
             </div>
           </div>

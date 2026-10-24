@@ -345,7 +345,7 @@ export default function BountySubmissions({ slug }: Props) {
       setRemainings({
         podiums: rewardsLength - (podiumWinnersSelected || 0),
         bonus:
-          (!!bounty?.rewards?.[BONUS_REWARD_POSITION]
+          (bounty?.rewards?.[BONUS_REWARD_POSITION]
             ? bounty.maxBonusSpots || 0
             : 0) - (bonusWinnerSelected || 0),
       });
@@ -469,9 +469,15 @@ export default function BountySubmissions({ slug }: Props) {
                       <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
                     </TabsTrigger>
                   )}
-                  {bounty?.isWinnersAnnounced && !bounty?.isFndnPaying && (
-                    <TabsTrigger value="payments">Payments</TabsTrigger>
-                  )}
+                  {bounty?.isWinnersAnnounced &&
+                    (bounty.rewardType === 'IN_KIND' ||
+                      !bounty.isFndnPaying) && (
+                      <TabsTrigger value="payments">
+                        {bounty.rewardType === 'IN_KIND'
+                          ? 'Fulfillment'
+                          : 'Payments'}
+                      </TabsTrigger>
+                    )}
                 </TabsList>
                 <div className="h-[1.5px] w-full bg-slate-200/70" />
               </>

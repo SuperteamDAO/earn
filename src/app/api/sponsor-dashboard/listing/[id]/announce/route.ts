@@ -56,6 +56,17 @@ export async function POST(
             return listingAuthResult.error;
           }
           const listing = listingAuthResult.listing;
+          const isInKindReward = listing.rewardType === 'IN_KIND';
+
+          if (isInKindReward && !listing.inKindRewardId) {
+            logger.error(
+              `In-kind listing ${id} is missing its reward catalog reference`,
+            );
+            return NextResponse.json(
+              { error: 'The in-kind reward is not configured correctly.' },
+              { status: 400 },
+            );
+          }
 
           if (listing?.isWinnersAnnounced) {
             logger.warn(`Winners already announced for bounty with ID: ${id}`);
@@ -270,52 +281,62 @@ export async function POST(
           const baseUsdValue = updatedListing.usdValue ?? 0;
 
           while (currentIndex < winners?.length) {
-            const winnerPosition = Number(
-              winners[currentIndex]?.winnerPosition,
-            );
+            const winner = winners[currentIndex];
+            if (!winner) {
+              currentIndex += 1;
+              continue;
+            }
+
+            const winnerPosition = Number(winner.winnerPosition);
             let amount: number = 0;
             if (winnerPosition && !isNaN(winnerPosition)) {
               amount = rewards[winnerPosition as keyof Rewards] ?? 0;
             }
 
             const rewardInUSD =
-              baseRewardAmount > 0
+              !isInKindReward && baseRewardAmount > 0
                 ? (baseUsdValue / baseRewardAmount) * amount
                 : 0;
 
             promises.push(
               prisma.submission.update({
                 where: {
-                  id: winners[currentIndex]?.id,
+                  id: winner.id,
                 },
                 data: {
                   rewardInUSD,
                   status: 'Approved',
                   label:
-                    winners[currentIndex]?.label === 'Unreviewed'
-                      ? 'Reviewed'
-                      : winners[currentIndex]?.label,
+                    winner.label === 'Unreviewed' ? 'Reviewed' : winner.label,
                 },
               }),
             );
 
-            promises.push(
-              addWinBonusCredit(
-                winners[currentIndex]?.userId || '',
-                winners[currentIndex]?.id || '',
-              ),
-            );
-
-            const inviterId = userIdToInviterId.get(
-              winners[currentIndex]?.userId || '',
-            );
-            if (inviterId) {
+            if (isInKindReward && updatedListing.inKindRewardId) {
               promises.push(
-                addReferralInviterWinBonus(
-                  inviterId,
-                  winners[currentIndex]?.id || '',
-                ),
+                prisma.inKindDelivery.upsert({
+                  where: {
+                    submissionId: winner.id,
+                  },
+                  create: {
+                    submissionId: winner.id,
+                    inKindRewardId: updatedListing.inKindRewardId,
+                    quantity: amount,
+                    status: 'PENDING',
+                  },
+                  update: {
+                    inKindRewardId: updatedListing.inKindRewardId,
+                    quantity: amount,
+                  },
+                }),
               );
+            }
+
+            promises.push(addWinBonusCredit(winner.userId, winner.id));
+
+            const inviterId = userIdToInviterId.get(winner.userId);
+            if (inviterId) {
+              promises.push(addReferralInviterWinBonus(inviterId, winner.id));
             }
 
             currentIndex += 1;
@@ -421,7 +442,11 @@ export async function POST(
                 triggeredBy: userId,
               });
 
-              if (listing.type !== 'project' && listing.isFndnPaying) {
+              if (
+                !isInKindReward &&
+                listing.type !== 'project' &&
+                listing.isFndnPaying
+              ) {
                 for (const winner of winners) {
                   const user = winner.user;
 

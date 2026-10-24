@@ -58,7 +58,7 @@ export function DefaultEligibilityQuestions() {
             TOOLTIP_CONTENT={TOOLTIP_CONTENT}
             icon={
               <TokenLabel
-                symbol={token}
+                symbol={token ?? undefined}
                 showIcon
                 classNames={{
                   amount: 'font-medium text-base ml-0',

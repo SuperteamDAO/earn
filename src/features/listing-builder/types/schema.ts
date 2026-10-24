@@ -1,7 +1,12 @@
 import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
-import { BountyType, CompensationType, status } from '@/prisma/enums';
+import {
+  BountyType,
+  CompensationType,
+  ListingRewardType,
+  status,
+} from '@/prisma/enums';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { dayjs } from '@/utils/dayjs';
@@ -218,11 +223,15 @@ export const createListingFormSchema = ({
       eligibility: z.array(eligibilityQuestionSchema).optional().nullable(),
       skills: skillsArraySchema,
 
+      rewardType: z.nativeEnum(ListingRewardType).default('TOKEN'),
       token: z
         .string()
         .trim()
         .min(1, 'Token Not Allowed')
+        .optional()
+        .nullable()
         .default(isST ? 'USDG' : 'USDC'),
+      inKindRewardId: z.string().trim().min(1).optional().nullable(),
       rewardAmount: z
         .number({
           message: 'Required',
@@ -311,6 +320,22 @@ export const createListingFormSchema = ({
       sponsorId: z.string().optional().nullable(),
     })
     .superRefine((data, ctx) => {
+      if (!isGod && pastListing) {
+        const previousRewardType = pastListing.rewardType ?? 'TOKEN';
+        const changedRewardType = data.rewardType !== previousRewardType;
+        const changedInKindReward =
+          data.rewardType === 'IN_KIND' &&
+          pastListing.inKindRewardId !== data.inKindRewardId;
+
+        if (changedRewardType || changedInKindReward) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Only GOD users can configure in-kind rewards',
+            path: ['rewardType'],
+          });
+        }
+      }
+
       createListingRefinements(data, ctx, hackathons);
     });
 };
@@ -321,6 +346,67 @@ export const createListingRefinements = async (
   hackathons?: HackathonModel[],
   pick?: ValidationFields,
 ) => {
+  if (data.rewardType === 'IN_KIND') {
+    if (!data.inKindRewardId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Please select an in-kind reward',
+        path: ['inKindRewardId'],
+      });
+    }
+    if (data.token) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Token must be empty for an in-kind reward',
+        path: ['token'],
+      });
+    }
+    if (data.compensationType !== 'fixed') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'In-kind rewards must use fixed compensation',
+        path: ['compensationType'],
+      });
+    }
+    if (
+      data.rewardAmount != null &&
+      (!Number.isInteger(data.rewardAmount) || data.rewardAmount < 1)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'In-kind reward quantity must be a positive whole number',
+        path: ['rewardAmount'],
+      });
+    }
+    if (
+      data.rewards &&
+      Object.values(data.rewards).some(
+        (quantity) => !Number.isInteger(quantity) || quantity < 1,
+      )
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Each in-kind reward quantity must be a positive whole number',
+        path: ['rewards'],
+      });
+    }
+  } else {
+    if (!data.token) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Token Not Allowed',
+        path: ['token'],
+      });
+    }
+    if (data.inKindRewardId) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Should be empty for token rewards',
+        path: ['inKindRewardId'],
+      });
+    }
+  }
+
   if (data.type === 'project') {
     if (!data.eligibility || data.eligibility.length === 0) {
       if ((!!pick && pick.eligibility) || !pick) {
@@ -485,6 +571,7 @@ export const backendListingRefinements = async (
   ctx: z.RefinementCtx,
   checkSlugFn: (slug: string, id?: string) => Promise<boolean>,
   isTokenAllowed?: (tokenSymbol: string) => Promise<boolean>,
+  isInKindRewardAllowed?: (inKindRewardId: string) => Promise<boolean>,
 ) => {
   if (data.slug) {
     const slugExists = await checkSlugFn(data.slug, data.id || undefined);
@@ -497,13 +584,29 @@ export const backendListingRefinements = async (
     }
   }
 
-  if (data.token && isTokenAllowed) {
+  if (data.rewardType === 'TOKEN' && data.token && isTokenAllowed) {
     const tokenAllowed = await isTokenAllowed(data.token);
     if (!tokenAllowed) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Token Not Allowed',
         path: ['token'],
+      });
+    }
+  }
+  if (
+    data.rewardType === 'IN_KIND' &&
+    data.inKindRewardId &&
+    isInKindRewardAllowed
+  ) {
+    const inKindRewardAllowed = await isInKindRewardAllowed(
+      data.inKindRewardId,
+    );
+    if (!inKindRewardAllowed) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'In-kind reward is not available',
+        path: ['inKindRewardId'],
       });
     }
   }

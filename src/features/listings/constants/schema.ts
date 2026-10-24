@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 import { type BountiesSelect } from '@/prisma/models/Bounties';
 
+import { inKindRewardSelect } from './inKindReward';
+
 export const ListingTabSchema = z
   .union([z.enum(['all', 'bounties', 'projects']), z.string().min(1)])
   .default('all');
@@ -51,7 +53,12 @@ export const listingSelect = {
   deadline: true,
   type: true,
   title: true,
+  rewardType: true,
   token: true,
+  inKindRewardId: true,
+  inKindReward: {
+    select: inKindRewardSelect,
+  },
   winnersAnnouncedAt: true,
   slug: true,
   isWinnersAnnounced: true,

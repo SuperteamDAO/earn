@@ -38,6 +38,11 @@ export const Podiums = () => {
       control: form.control,
       name: 'maxBonusSpots',
     }) || NaN;
+  const rewardType = useWatch({
+    control: form.control,
+    name: 'rewardType',
+  });
+  const isInKindReward = rewardType === 'IN_KIND';
 
   const podiumsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -186,17 +191,22 @@ export const Podiums = () => {
                     <FormItem className="group relative gap-2">
                       <div className="flex justify-between">
                         <FormLabel isRequired className="w-fit capitalize">
-                          {getRankLabels(position)} Prize
+                          {getRankLabels(position)}{' '}
+                          {isInKindReward ? 'Quantity' : 'Prize'}
                         </FormLabel>
                       </div>
                       <FormControl>
                         <div className="relative">
                           <TokenNumberInput
                             {...field}
-                            placeholder={`${5000 - index * 500}`}
+                            placeholder={
+                              isInKindReward ? '1' : `${5000 - index * 500}`
+                            }
                             className="pr-6"
                             value={rewards[position]}
                             max={MAX_REWARD}
+                            maxDecimals={isInKindReward ? 0 : 4}
+                            hideToken={isInKindReward}
                             onChange={(value) => {
                               field.onChange(value);
                               const updatedRewards = {
@@ -236,14 +246,18 @@ export const Podiums = () => {
                           <FormItem className="gap-2">
                             <div className="flex justify-between">
                               <FormLabel isRequired className="w-fit">
-                                Bonus Per Prize
+                                {isInKindReward
+                                  ? 'Bonus Quantity Per Winner'
+                                  : 'Bonus Per Prize'}
                               </FormLabel>
                             </div>
                             <FormControl>
                               <TokenNumberInput
                                 {...field}
-                                placeholder="10"
+                                placeholder={isInKindReward ? '1' : '10'}
                                 max={MAX_REWARD}
+                                maxDecimals={isInKindReward ? 0 : 4}
+                                hideToken={isInKindReward}
                                 className="relative rounded-r-none focus-within:z-10"
                                 value={rewards[BONUS_REWARD_POSITION]}
                                 onChange={(value) => {

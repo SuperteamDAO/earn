@@ -43,6 +43,11 @@ import type { BoostStep } from '../Boost/utils';
 import { BoostContent } from './BoostContent';
 import { Footer } from './Footer';
 import { PaymentType } from './PaymentType';
+import {
+  InKindRewardSelect,
+  RewardTypeControl,
+  useSelectedInKindReward,
+} from './RewardType';
 import { TokenLabel } from './Tokens/TokenLabel';
 import { TokenSelect } from './Tokens/TokenSelect';
 import { Fixed } from './Types/Fixed';
@@ -95,6 +100,16 @@ export function RewardsSheet() {
     control: form.control,
     name: 'token',
   });
+  const rewardType = useWatch({
+    control: form.control,
+    name: 'rewardType',
+  });
+
+  useEffect(() => {
+    if (rewardType === 'IN_KIND' && panel === 'boost') {
+      setPanel('rewards');
+    }
+  }, [panel, rewardType]);
   const compensationType = useWatch({
     control: form.control,
     name: 'compensationType',
@@ -117,7 +132,9 @@ export function RewardsSheet() {
   });
 
   const { data: tokenUsdValueData } = useQuery(
-    tokenUsdValueQuery(token as string | undefined),
+    tokenUsdValueQuery(
+      rewardType === 'TOKEN' ? (token as string | undefined) : undefined,
+    ),
   );
   const tokenUsdValue =
     typeof tokenUsdValueData === 'number' ? tokenUsdValueData : 1;
@@ -248,7 +265,7 @@ export function RewardsSheet() {
           <FormField
             control={form.control}
             name="rewards"
-            render={({}) => {
+            render={() => {
               return (
                 <FormItem className="group items-start gap-1.5">
                   <FormLabel isRequired className="">
@@ -305,8 +322,15 @@ export function RewardsSheet() {
             </SheetTitle>
             {panel === 'rewards' && (
               <>
-                <TokenSelect />
-                {type === 'project' && <PaymentType />}
+                <RewardTypeControl />
+                {rewardType === 'IN_KIND' ? (
+                  <InKindRewardSelect />
+                ) : (
+                  <TokenSelect />
+                )}
+                {type === 'project' && rewardType === 'TOKEN' && (
+                  <PaymentType />
+                )}
               </>
             )}
           </SheetHeader>
@@ -425,6 +449,13 @@ const Type = memo(() => {
     control: form.control,
     name: 'compensationType',
   });
+  const rewardType = useWatch({
+    control: form.control,
+    name: 'rewardType',
+  });
+  if (rewardType === 'IN_KIND') {
+    return <Podiums />;
+  }
   if (type !== 'project') {
     return <Podiums />;
   } else {
@@ -476,11 +507,42 @@ export const RewardsLabel = memo(
       control: form.control,
       name: 'maxRewardAsk',
     });
+    const rewardType = useWatch({
+      control: form.control,
+      name: 'rewardType',
+    });
+    const inKindReward = useSelectedInKindReward();
 
     const totalPrizes = useMemo(
       () => calculateTotalPrizes(rewards, maxBonusSpots || 0),
       [rewards, maxBonusSpots],
     );
+
+    if (rewardType === 'IN_KIND') {
+      const total = totalReward || 0;
+      const label = total === 1 ? inKindReward?.name : inKindReward?.pluralName;
+
+      return (
+        <span className="flex min-w-0 items-center gap-2">
+          {inKindReward && (
+            <img
+              src={inKindReward.icon}
+              alt=""
+              className="size-4 shrink-0 object-contain"
+              aria-hidden="true"
+            />
+          )}
+          <span className="truncate text-sm font-medium text-slate-700">
+            {total} {label || 'in-kind rewards'}
+          </span>
+          {!hideCompensationType && (
+            <TypeLabelText>
+              | {totalPrizes} {totalPrizes === 1 ? 'Prize' : 'Prizes'}
+            </TypeLabelText>
+          )}
+        </span>
+      );
+    }
 
     if (type !== 'project') {
       return (
