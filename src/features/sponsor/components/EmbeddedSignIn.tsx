@@ -53,7 +53,9 @@ export function EmbeddedSignIn({ next }: { next: string }) {
       ref={frame}
       title="Sign in"
       src={`/earn/signin/?embed=1&next=${encodeURIComponent(next)}`}
-      className="block w-full border-0"
+      // Earn's <SignIn> took its content's width (30.25rem) in the
+      // centered column; a frame can't size itself to that.
+      className="block w-full max-w-[30.25rem] border-0"
       style={{ height }}
     />
   );
