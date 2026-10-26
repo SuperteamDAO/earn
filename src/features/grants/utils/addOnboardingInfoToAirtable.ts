@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import logger from '@/lib/logger';
-import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
+import type { GrantApplicationModel } from '@/prisma/models/GrantApplication';
 import {
   airtableConfig,
   airtableInsert,

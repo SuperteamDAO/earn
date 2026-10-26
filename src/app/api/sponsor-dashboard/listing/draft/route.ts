@@ -4,8 +4,8 @@ import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type InputJsonValue } from '@/prisma/internal/prismaNamespace';
-import { type BountiesUncheckedCreateInput } from '@/prisma/models/Bounties';
+import type { InputJsonValue } from '@/prisma/internal/prismaNamespace';
+import type { BountiesUncheckedCreateInput } from '@/prisma/models/Bounties';
 import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { safeStringify } from '@/utils/safeStringify';

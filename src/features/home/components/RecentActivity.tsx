@@ -8,7 +8,7 @@ import { LocalImage } from '@/components/ui/local-image';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { homeFeedQuery } from '@/features/feed/queries/home-feed';
-import { type FeedPostType } from '@/features/feed/types';
+import type { FeedPostType } from '@/features/feed/types';
 
 interface ActivityCardProps {
   firstName: string;

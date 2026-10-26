@@ -4,8 +4,8 @@ import { TokenIcon } from '@/components/ui/token-icon';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
-import { type GrantWithApplicationCount } from '../types';
+import type { GrantApplicationWithTranchesAndUser } from '../queries/user-application';
+import type { GrantWithApplicationCount } from '../types';
 
 interface ApplicationStats {
   application: GrantApplicationWithTranchesAndUser;

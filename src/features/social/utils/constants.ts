@@ -4,7 +4,7 @@ import FaGlobe from '@/components/icons/FaGlobe';
 import FaLinkedin from '@/components/icons/FaLinkedin';
 import FaTelegram from '@/components/icons/FaTelegram';
 import FaXTwitter from '@/components/icons/FaXTwitter';
-import { type IconType } from '@/components/icons/helpers/GenIcon';
+import type { IconType } from '@/components/icons/helpers/GenIcon';
 
 export type SocialType =
   | 'discord'

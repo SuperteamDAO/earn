@@ -12,7 +12,7 @@ import TextareaAutosize, {
 } from 'react-textarea-autosize';
 import getCaretCoordinates from 'textarea-caret';
 
-import { type User } from '@/interface/user';
+import type { User } from '@/interface/user';
 import { cn } from '@/utils/cn';
 
 import { validUsernamesAtom } from '../atoms';

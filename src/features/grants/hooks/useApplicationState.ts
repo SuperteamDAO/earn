@@ -2,8 +2,8 @@ import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
-import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
-import { type Grant } from '../types';
+import type { GrantApplicationWithTranchesAndUser } from '../queries/user-application';
+import type { Grant } from '../types';
 import { isGrantApplicationInCooldown } from '../utils/grantApplicationCooldown';
 import { isAgenticEngineeringGrant } from '../utils/stGrant';
 

@@ -34,7 +34,7 @@ const FeedLoop = dynamic(
   },
 );
 import { useGetFeed } from '@/features/feed/queries/useGetFeed';
-import { type FeedDataProps } from '@/features/feed/types';
+import type { FeedDataProps } from '@/features/feed/types';
 import {
   GitHub,
   Linkedin,

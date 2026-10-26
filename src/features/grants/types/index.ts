@@ -1,7 +1,7 @@
 import type { Skills } from '@/interface/skills';
 import type { User } from '@/interface/user';
 
-import { type References } from '@/features/listings/types';
+import type { References } from '@/features/listings/types';
 
 export type GrantQuestion = {
   order: number;

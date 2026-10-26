@@ -5,9 +5,9 @@ import { useEffect, useRef } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
-import {
-  type GrantApplicationStatus,
-  type GrantTrancheStatus,
+import type {
+  GrantApplicationStatus,
+  GrantTrancheStatus,
 } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { nthLabelGenerator } from '@/utils/rank';
@@ -15,7 +15,7 @@ import { nthLabelGenerator } from '@/utils/rank';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantTrancheAtom } from '../../atoms';
-import { type GrantTrancheWithApplication } from '../../queries/tranches';
+import type { GrantTrancheWithApplication } from '../../queries/tranches';
 import { colorMap } from '../../utils/statusColorMap';
 import { MultiSelectFilter } from './MultiSelectFilter';
 

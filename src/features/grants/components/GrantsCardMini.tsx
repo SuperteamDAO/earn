@@ -5,7 +5,7 @@ import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import { type GrantWithApplicationCount } from '../types';
+import type { GrantWithApplicationCount } from '../types';
 import { grantAmount } from '../utils/grantAmount';
 
 export const GrantsCardMini = ({

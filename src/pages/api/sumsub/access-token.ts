@@ -4,10 +4,10 @@ import type { NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
+import type { NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { SUMSUB_BASE_URL } from '@/features/kyc/constants/SUMSUB_BASE_URL';
-import { type SumSubBaseResponse } from '@/features/kyc/types/SumSubBaseResponse';
+import type { SumSubBaseResponse } from '@/features/kyc/types/SumSubBaseResponse';
 import { createSumSubHeaders } from '@/features/kyc/utils/createSumSubHeaders';
 import { handleSumSubError } from '@/features/kyc/utils/handleSumSubError';
 

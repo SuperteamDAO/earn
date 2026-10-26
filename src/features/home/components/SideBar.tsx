@@ -8,12 +8,12 @@ import { useCallback } from 'react';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { type User } from '@/interface/user';
+import type { User } from '@/interface/user';
 import { type UserRoleHint, useUser } from '@/store/user';
 
 import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
 import { yourBookmarksQuery } from '@/features/listings/queries/your-bookmarks';
-import { type Listing } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 
 import { totalsQuery } from '../queries/totals';
 import { HowItWorks } from './HowItWorks';

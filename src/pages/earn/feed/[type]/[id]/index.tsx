@@ -1,4 +1,4 @@
-import { type GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { z } from 'zod';
 
 import { FeedPost } from '@/features/feed/components/FeedPost';

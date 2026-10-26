@@ -1,8 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import { type BountyTemplateWithSponsor } from '@/app/api/sponsor-dashboard/templates/route';
+import type { BountyTemplateWithSponsor } from '@/app/api/sponsor-dashboard/templates/route';
 import { api } from '@/lib/api';
-import { type BountyType } from '@/prisma/enums';
+import type { BountyType } from '@/prisma/enums';
 
 const fetchListingTemplates = async (type: BountyType) => {
   if (type === 'hackathon') return [];

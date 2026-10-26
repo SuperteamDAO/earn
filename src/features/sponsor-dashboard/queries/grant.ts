@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-import { type SponsorGrantDetailsResponse } from '../constants/sponsorGrantDetails';
+import type { SponsorGrantDetailsResponse } from '../constants/sponsorGrantDetails';
 
 export const sponsorGrantQuery = (
   slug: string,

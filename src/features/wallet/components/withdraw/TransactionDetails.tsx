@@ -4,7 +4,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { useTokenByMintAddress } from '@/constants/tokenList';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-import { type TxData } from '../../types/TxData';
+import type { TxData } from '../../types/TxData';
 
 export const TransactionDetails = ({ txData }: { txData: TxData }) => {
   const { signature, tokenAddress, amount, recipientAddress } = txData;

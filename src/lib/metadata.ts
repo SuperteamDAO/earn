@@ -1,4 +1,4 @@
-import { type Metadata } from 'next';
+import type { Metadata } from 'next';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { normalizeCanonicalUrl } from '@/utils/canonical';

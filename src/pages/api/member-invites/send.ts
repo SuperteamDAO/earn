@@ -6,7 +6,7 @@ import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 import { getURL } from '@/utils/validUrl';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import type { NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { InviteMemberTemplate } from '@/features/emails/components/inviteMemberTemplate';
 import { senderEmail, replyToEmail } from '@/features/emails/utils/fromEmails';

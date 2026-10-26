@@ -5,7 +5,7 @@ import { prisma } from '@/prisma';
 import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import type { NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {

@@ -2,10 +2,10 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type Role } from '@/prisma/enums';
+import type { Role } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import type { NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 const VALID_ROLES: ReadonlyArray<Role> = ['ADMIN', 'MEMBER'];

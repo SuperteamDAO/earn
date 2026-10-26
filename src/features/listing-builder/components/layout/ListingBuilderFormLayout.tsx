@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';

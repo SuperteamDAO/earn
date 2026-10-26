@@ -1,4 +1,4 @@
-import { type GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 
 const SponsorListingsPage = () => {
   return null;

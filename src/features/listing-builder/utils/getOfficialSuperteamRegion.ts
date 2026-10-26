@@ -1,4 +1,4 @@
-import { type SponsorType } from '@/interface/sponsor';
+import type { SponsorType } from '@/interface/sponsor';
 
 type SponsorRegionInput = Pick<SponsorType, 'chapter'> | null | undefined;
 

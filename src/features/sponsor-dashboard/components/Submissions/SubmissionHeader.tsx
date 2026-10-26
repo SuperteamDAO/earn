@@ -34,14 +34,14 @@ import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
 import { JTTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { type SubmissionWithUser } from '@/interface/submission';
+import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { SubmissionLabels, SubmissionStatus } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
-import { type Listing } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';

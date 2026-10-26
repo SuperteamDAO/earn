@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '@/lib/api';
 
 import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
-import { type GrantApplicationsReturn } from '../../queries/applications';
+import type { GrantApplicationsReturn } from '../../queries/applications';
 import {
   convertTextToNotesHTML,
   getTextCharacterCount,

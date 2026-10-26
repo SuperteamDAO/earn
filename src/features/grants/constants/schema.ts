@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type GrantsSelect } from '@/prisma/models/Grants';
+import type { GrantsSelect } from '@/prisma/models/Grants';
 
 export const GrantCategorySchema = z
   .enum(['All', 'Content', 'Design', 'Development', 'Other'])

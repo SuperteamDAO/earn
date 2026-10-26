@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
 import { api } from '@/lib/api';
-import { type SubmissionLabels } from '@/prisma/enums';
+import type { SubmissionLabels } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
 import {
@@ -20,8 +20,8 @@ import {
   selectedGrantApplicationAtom,
 } from '../../atoms';
 import { labelMenuOptionsGrants } from '../../constants';
-import { type GrantApplicationsReturn } from '../../queries/applications';
-import { type GrantApplicationWithUser } from '../../types';
+import type { GrantApplicationsReturn } from '../../queries/applications';
+import type { GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils/statusColorMap';
 
 interface Props {

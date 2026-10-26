@@ -3,11 +3,11 @@ import { Calendar } from 'lucide-react';
 import FaRegClock from '@/components/icons/FaRegClock';
 import TbBriefcase2 from '@/components/icons/TbBriefcase2';
 
-import { type HackathonSortOption } from '../../hackathon/hooks/useHackathons';
-import {
-  type ListingSortOption,
-  type ListingStatus,
-  type OrderDirection,
+import type { HackathonSortOption } from '../../hackathon/hooks/useHackathons';
+import type {
+  ListingSortOption,
+  ListingStatus,
+  OrderDirection,
 } from '../hooks/useListings';
 
 interface SortOption {

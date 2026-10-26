@@ -10,7 +10,7 @@ import { sortRank } from '@/utils/rank';
 import { getURL } from '@/utils/validUrl';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
-import { type PublicListingDetails } from '@/features/listings/types';
+import type { PublicListingDetails } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
 
 interface BountyDetailsProps {

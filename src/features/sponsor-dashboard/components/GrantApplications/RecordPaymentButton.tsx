@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { cn } from '@/utils/cn';
 
-import { type GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
+import type { GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
 import { RecordPaymentModal } from './Modals/RecordPaymentModal';
 
 interface RecordPaymentButtonProps {

@@ -3,7 +3,7 @@ import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
 
-import { type ParentSkills } from '@/interface/skills';
+import type { ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 

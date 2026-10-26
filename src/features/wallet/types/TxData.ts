@@ -1,4 +1,4 @@
-import { type WithdrawFormData } from '../utils/withdrawFormSchema';
+import type { WithdrawFormData } from '../utils/withdrawFormSchema';
 
 export interface TxData extends Omit<WithdrawFormData, 'recipientAddress'> {
   signature: string;

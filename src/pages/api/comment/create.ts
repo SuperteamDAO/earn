@@ -2,10 +2,10 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type CommentRefType, type CommentType } from '@/prisma/enums';
+import type { CommentRefType, CommentType } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
+import type { NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 

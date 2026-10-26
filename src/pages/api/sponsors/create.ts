@@ -5,7 +5,7 @@ import { prisma } from '@/prisma';
 import { verifyImageExists } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
+import type { NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { createSponsorEmailSettings } from '@/features/sponsor-dashboard/utils/createSponsorEmailSettings';

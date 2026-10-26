@@ -2,7 +2,7 @@ import { TokenIcon } from '@/components/ui/token-icon';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import { type GrantWithApplicationCount } from '../types';
+import type { GrantWithApplicationCount } from '../types';
 import { grantAmount } from '../utils/grantAmount';
 import { DollarIcon, PayoutIcon, TimeToPayIcon } from './icons';
 

@@ -1,6 +1,6 @@
-import { type IncomingMessage } from 'http';
-import { type NextApiRequest } from 'next';
-import { type NextApiRequestCookies } from 'next/dist/server/api-utils';
+import type { IncomingMessage } from 'http';
+import type { NextApiRequest } from 'next';
+import type { NextApiRequestCookies } from 'next/dist/server/api-utils';
 
 import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';

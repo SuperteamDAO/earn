@@ -3,7 +3,7 @@ import type { GetServerSideProps } from 'next';
 import { GrantPageLayout } from '@/layouts/Grants';
 
 import { getGrantBySlug } from '@/features/grants/queries/get-grant-by-slug';
-import { type GrantWithApplicationCount } from '@/features/grants/types';
+import type { GrantWithApplicationCount } from '@/features/grants/types';
 import { ReferenceCard } from '@/features/listings/components/ListingPage/ReferenceCard';
 
 interface GrantsDetailsProps {

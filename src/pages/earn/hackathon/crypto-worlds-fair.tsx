@@ -16,12 +16,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { type TrackProps } from '@/interface/hackathon';
+import type { TrackProps } from '@/interface/hackathon';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { domPurify } from '@/lib/domPurify';
 import { prisma } from '@/prisma';
-import { type HackathonGetPayload } from '@/prisma/models/Hackathon';
+import type { HackathonGetPayload } from '@/prisma/models/Hackathon';
 import {
   type Stats,
   statsDataQuery,

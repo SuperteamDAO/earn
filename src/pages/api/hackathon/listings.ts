@@ -4,7 +4,7 @@ import { prisma } from '@/prisma';
 import { status } from '@/prisma/enums';
 import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
+import type { NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 
 async function getHackathonListings(

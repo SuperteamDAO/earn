@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import type { BountyType } from '@/prisma/enums';
-import { type BountiesTemplatesGetPayload } from '@/prisma/models';
+import type { BountiesTemplatesGetPayload } from '@/prisma/models';
 import { safeStringify } from '@/utils/safeStringify';
 
 export type BountyTemplateWithSponsor = BountiesTemplatesGetPayload<{

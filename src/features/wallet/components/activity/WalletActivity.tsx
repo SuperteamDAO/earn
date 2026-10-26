@@ -6,8 +6,8 @@ import GrTransaction from '@/components/icons/GrTransaction';
 import { Button } from '@/components/ui/button';
 
 import { tokenActivityQuery } from '../../queries/fetch-activity';
-import { type TxData } from '../../types/TxData';
-import { type DrawerView } from '../../types/WalletTypes';
+import type { TxData } from '../../types/TxData';
+import type { DrawerView } from '../../types/WalletTypes';
 import { TokenSkeleton } from '../tokens/TokenSkeleton';
 import { ActivityItem } from './ActivityItem';
 

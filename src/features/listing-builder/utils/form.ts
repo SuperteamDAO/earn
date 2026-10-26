@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
-import { type CompensationType } from '@/prisma/enums';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
+import type { CompensationType } from '@/prisma/enums';
+import type { HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
 
-import { type Listing } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 
-import { type GeneratedListingData } from '../atoms';
+import type { GeneratedListingData } from '../atoms';
 import { DEADLINE_FORMAT, getDefaultListingToken } from '../constants';
-import { type ListingFormData } from '../types';
+import type { ListingFormData } from '../types';
 import { createListingFormSchema } from '../types/schema';
 import { calculateTotalRewardsForPodium } from './rewards';
 

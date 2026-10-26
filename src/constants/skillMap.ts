@@ -1,4 +1,4 @@
-import { type SkillMap } from '@/interface/skills';
+import type { SkillMap } from '@/interface/skills';
 
 export const skillMap: SkillMap[] = [
   {

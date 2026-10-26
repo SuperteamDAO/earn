@@ -8,7 +8,7 @@ import {
   Plus,
   Search,
 } from 'lucide-react';
-import { type GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, {
   useCallback,
@@ -34,7 +34,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { useUser } from '@/store/user';
 
-import { type ListingWithSubmissions } from '@/features/listings/types';
+import type { ListingWithSubmissions } from '@/features/listings/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingStatus } from '@/features/listings/utils/status';
 import { Banner } from '@/features/sponsor-dashboard/components/Banner';

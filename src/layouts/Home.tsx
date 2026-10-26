@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { type ReactNode, useMemo } from 'react';
 
-import { type ChapterDisplay } from '@/interface/chapter';
+import type { ChapterDisplay } from '@/interface/chapter';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';

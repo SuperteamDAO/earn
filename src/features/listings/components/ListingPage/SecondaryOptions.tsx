@@ -13,7 +13,7 @@ import {
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
-import { type Listing } from '../../types';
+import type { Listing } from '../../types';
 import { ReportListing } from './ReportListing';
 import { ShareListing } from './ShareListing';
 

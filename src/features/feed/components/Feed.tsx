@@ -17,7 +17,7 @@ import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop
 import { VibeCard } from '@/features/home/components/VibeCard';
 
 import { useGetFeed } from '../queries/useGetFeed';
-import { type FeedPostType } from '../types';
+import type { FeedPostType } from '../types';
 import { FeedLoop } from './FeedLoop';
 
 interface Props {

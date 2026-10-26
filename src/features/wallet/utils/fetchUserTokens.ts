@@ -1,12 +1,12 @@
 import { TOKEN_PROGRAM_ADDRESS } from '@solana-program/token';
 import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022';
-import { type Address } from '@solana/kit';
+import type { Address } from '@solana/kit';
 
 import { getTokenList } from '@/server/tokenList';
 
-import { type TokenAsset } from '../types/TokenAsset';
+import type { TokenAsset } from '../types/TokenAsset';
 import { fetchTokenUSDValue } from './fetchTokenUSDValue';
-import { type SolanaRpc } from './getConnection';
+import type { SolanaRpc } from './getConnection';
 
 export async function fetchUserTokens(
   rpc: SolanaRpc,

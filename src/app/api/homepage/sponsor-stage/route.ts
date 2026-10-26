@@ -1,8 +1,8 @@
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
-import { type Prisma } from '@/generated/prisma/client';
-import { type Skills } from '@/interface/skills';
+import type { Prisma } from '@/generated/prisma/client';
+import type { Skills } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -13,7 +13,7 @@ import {
   SponsorStage,
   type SponsorStageResponse,
 } from '@/features/home/types/sponsor-stage';
-import { type Listing, type Rewards } from '@/features/listings/types';
+import type { Listing, Rewards } from '@/features/listings/types';
 
 const PAYMENT_REMINDER_MAX_DAYS = 7;
 

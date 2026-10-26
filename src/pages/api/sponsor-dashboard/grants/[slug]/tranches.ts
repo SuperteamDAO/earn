@@ -2,10 +2,10 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type GrantApplicationWhereInput } from '@/prisma/models/GrantApplication';
+import type { GrantApplicationWhereInput } from '@/prisma/models/GrantApplication';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import type { NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 

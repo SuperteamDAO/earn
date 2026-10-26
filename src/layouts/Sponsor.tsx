@@ -16,7 +16,7 @@ import {
 } from 'react';
 
 import BiListUl from '@/components/icons/BiListUl';
-import { type IconType } from '@/components/icons/helpers/GenIcon';
+import type { IconType } from '@/components/icons/helpers/GenIcon';
 import MdList from '@/components/icons/MdList';
 import MdOutlineChatBubbleOutline from '@/components/icons/MdOutlineChatBubbleOutline';
 import RiUserSettingsLine from '@/components/icons/RiUserSettingsLine';

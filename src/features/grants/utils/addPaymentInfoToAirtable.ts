@@ -3,8 +3,8 @@ import lookup from 'country-code-lookup';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
-import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
-import { type GrantTrancheModel } from '@/prisma/models/GrantTranche';
+import type { GrantApplicationModel } from '@/prisma/models/GrantApplication';
+import type { GrantTrancheModel } from '@/prisma/models/GrantTranche';
 import {
   airtableConfig,
   airtableInsert,

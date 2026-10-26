@@ -1,12 +1,12 @@
-import { type NextApiRequest, type NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type CommentFindManyArgs } from '@/prisma/models/Comment';
-import { type GrantApplicationInclude } from '@/prisma/models/GrantApplication';
-import { type PoWGetPayload, type PoWInclude } from '@/prisma/models/PoW';
-import { type SubmissionInclude } from '@/prisma/models/Submission';
+import type { CommentFindManyArgs } from '@/prisma/models/Comment';
+import type { GrantApplicationInclude } from '@/prisma/models/GrantApplication';
+import type { PoWGetPayload, PoWInclude } from '@/prisma/models/PoW';
+import type { SubmissionInclude } from '@/prisma/models/Submission';
 import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 

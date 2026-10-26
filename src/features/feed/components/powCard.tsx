@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
 
-import { type FeedDataProps } from '../types';
+import type { FeedDataProps } from '../types';
 import { FeedCardContainer } from './FeedCardContainer';
 import { FeedCardLink } from './FeedCardLink';
 

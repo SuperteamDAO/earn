@@ -5,7 +5,7 @@ import FaCopy from '@/components/icons/FaCopy';
 import FaTelegram from '@/components/icons/FaTelegram';
 import FaWhatsapp from '@/components/icons/FaWhatsapp';
 import FaXTwitter from '@/components/icons/FaXTwitter';
-import { type IconType } from '@/components/icons/helpers/GenIcon';
+import type { IconType } from '@/components/icons/helpers/GenIcon';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { useUser } from '@/store/user';

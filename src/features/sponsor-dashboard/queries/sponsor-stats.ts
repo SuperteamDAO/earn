@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-import { type SponsorStats } from '@/features/sponsor-dashboard/types';
+import type { SponsorStats } from '@/features/sponsor-dashboard/types';
 
 const fetchSponsorStats = async (): Promise<SponsorStats> => {
   const { data } = await api.get('/api/sponsors/stats');

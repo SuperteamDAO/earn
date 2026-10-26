@@ -1,6 +1,6 @@
 import TurndownService from 'turndown';
 
-import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
+import type { GrantApplicationModel } from '@/prisma/models/GrantApplication';
 
 interface GrantApplicationWithUserAndGrant extends GrantApplicationModel {
   grant: {

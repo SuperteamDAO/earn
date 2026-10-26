@@ -2,7 +2,7 @@ import type { NextPageContext } from 'next';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { countries } from '@/constants/country';
-import { type ChapterDisplay } from '@/interface/chapter';
+import type { ChapterDisplay } from '@/interface/chapter';
 import { Home } from '@/layouts/Home';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';

@@ -2,8 +2,8 @@ import type { SponsorType } from '@/interface/sponsor';
 import { AppConfig } from '@/utils/AppConfig';
 import { getURL } from '@/utils/validUrl';
 
-import { type Grant } from '@/features/grants/types';
-import { type Listing } from '@/features/listings/types';
+import type { Grant } from '@/features/grants/types';
+import type { Listing } from '@/features/listings/types';
 
 // Base schema.org types
 interface BaseSchema {

@@ -13,7 +13,7 @@ import { GrantApplicationStatus, type SubmissionLabels } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 
 import { applicationsAtom, selectedGrantApplicationAtom } from '../atoms';
-import { type GrantApplicationStatusMutationResponse } from '../constants/grantApplicationMutation';
+import type { GrantApplicationStatusMutationResponse } from '../constants/grantApplicationMutation';
 import { useRejectGrantApplications } from '../mutations/useRejectGrantApplications';
 import {
   applicationsQuery,

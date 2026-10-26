@@ -24,7 +24,7 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
-import { type FeedDataProps } from '@/features/feed/types';
+import type { FeedDataProps } from '@/features/feed/types';
 
 const PowSchema = z.object({
   title: z.string().min(1, 'Required'),

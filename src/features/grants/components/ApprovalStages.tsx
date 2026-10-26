@@ -9,8 +9,8 @@ import {
   type ApplicationState,
   applicationStateAtom,
 } from '../atoms/applicationStateAtom';
-import { type GrantApplicationWithTranchesAndUser } from '../queries/user-application';
-import { type GrantWithApplicationCount } from '../types';
+import type { GrantApplicationWithTranchesAndUser } from '../queries/user-application';
+import type { GrantWithApplicationCount } from '../types';
 
 const STATE_ORDER: ApplicationState[] = [
   'ALLOW NEW',

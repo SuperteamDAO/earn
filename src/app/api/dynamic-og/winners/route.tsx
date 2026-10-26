@@ -6,7 +6,7 @@ import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
 import { nthLabelGenerator } from '@/utils/rank';
 
-import { type Rewards } from '@/features/listings/types';
+import type { Rewards } from '@/features/listings/types';
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',

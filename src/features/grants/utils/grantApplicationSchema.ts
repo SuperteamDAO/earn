@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants/URL_REGEX';
-import { type User } from '@/interface/user';
+import type { User } from '@/interface/user';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import { twitterRegex } from '@/features/social/utils/regex';
@@ -14,7 +14,7 @@ import {
   isHandleVerified,
 } from '@/features/social/utils/x-verification';
 
-import { type GrantQuestion } from '../types';
+import type { GrantQuestion } from '../types';
 import {
   AGENTIC_ENGINEERING_FIXED_ASK,
   extractLumaEventSlug,

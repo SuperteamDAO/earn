@@ -1,7 +1,7 @@
 import logger from '@/lib/logger';
-import { type SponsorsModel } from '@/prisma/models/Sponsors';
+import type { SponsorsModel } from '@/prisma/models/Sponsors';
 
-import { type ListingFormData } from '../types';
+import type { ListingFormData } from '../types';
 
 interface IsFndnPayingCheckProps {
   sponsor: SponsorsModel & {

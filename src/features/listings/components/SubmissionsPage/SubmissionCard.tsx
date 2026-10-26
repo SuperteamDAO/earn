@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { type ListingPageSubmission } from '@/interface/submission';
+import type { ListingPageSubmission } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { ogImageQuery } from '@/queries/og';
 import { useUser } from '@/store/user';
@@ -15,7 +15,7 @@ import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { type Rewards } from '../../types';
+import type { Rewards } from '../../types';
 import { Badge } from './Badge';
 
 interface Props {

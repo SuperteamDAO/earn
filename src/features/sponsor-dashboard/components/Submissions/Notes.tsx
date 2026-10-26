@@ -4,7 +4,7 @@ import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { type SubmissionWithUser } from '@/interface/submission';
+import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';

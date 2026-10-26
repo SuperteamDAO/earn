@@ -1,4 +1,4 @@
-import { type BountyType } from '@/prisma/enums';
+import type { BountyType } from '@/prisma/enums';
 
 export const labelMenuOptions = (type: BountyType | 'grant' | undefined) => [
   { label: 'Unreviewed', value: 'Unreviewed' },

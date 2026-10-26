@@ -12,12 +12,12 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { TokenIcon } from '@/components/ui/token-icon';
-import { type SubmissionWithUser } from '@/interface/submission';
+import type { SubmissionWithUser } from '@/interface/submission';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-import { type Listing, type Rewards } from '@/features/listings/types';
+import type { Listing, Rewards } from '@/features/listings/types';
 import { getListingStatus } from '@/features/listings/utils/status';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 

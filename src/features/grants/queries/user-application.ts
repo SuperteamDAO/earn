@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-import { type UserApplicationResponse } from '../constants/userApplication';
+import type { UserApplicationResponse } from '../constants/userApplication';
 
 export type GrantApplicationWithTranchesAndUser = UserApplicationResponse;
 

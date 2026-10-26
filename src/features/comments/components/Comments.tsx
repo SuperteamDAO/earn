@@ -14,9 +14,9 @@ import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { Comment } from '@/interface/comments';
-import { type User } from '@/interface/user';
+import type { User } from '@/interface/user';
 import { api } from '@/lib/api';
-import { type CommentRefType } from '@/prisma/enums';
+import type { CommentRefType } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
 import { validUsernamesAtom } from '../atoms';

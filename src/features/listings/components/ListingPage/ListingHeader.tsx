@@ -9,7 +9,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useServerTimeSync } from '@/hooks/use-server-time';
-import { type SponsorType } from '@/interface/sponsor';
+import type { SponsorType } from '@/interface/sponsor';
 import { useUser } from '@/store/user';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
@@ -17,7 +17,7 @@ import { dayjs } from '@/utils/dayjs';
 
 import { getHackathonPageHref } from '@/features/hackathon/utils/getHackathonPageHref';
 
-import { type Listing, type ListingHackathon } from '../../types';
+import type { Listing, ListingHackathon } from '../../types';
 import { getListingIcon } from '../../utils/getListingIcon';
 import { BookmarkListing } from './BookmarkListing';
 import { ListingTabLink } from './ListingTabLink';

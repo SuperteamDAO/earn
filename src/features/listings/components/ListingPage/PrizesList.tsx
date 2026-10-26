@@ -7,7 +7,7 @@ import { nthLabelGenerator } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 
-import { type Rewards } from '../../types';
+import type { Rewards } from '../../types';
 
 function calculateRewards(
   iterableRewards: [string, number][],

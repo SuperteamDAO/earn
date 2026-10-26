@@ -1,9 +1,6 @@
-import { type User } from '@/interface/user';
+import type { User } from '@/interface/user';
 
-import {
-  type Listing,
-  type ListingWithSubmissions,
-} from '../../listings/types';
+import type { Listing, ListingWithSubmissions } from '../../listings/types';
 import { isDeadlineOver } from '../../listings/utils/deadline';
 import { getListingStatus } from '../../listings/utils/status';
 

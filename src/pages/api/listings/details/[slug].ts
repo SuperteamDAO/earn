@@ -5,7 +5,7 @@ import { prisma } from '@/prisma';
 import { convertDatesToISO, safeStringify } from '@/utils/safeStringify';
 
 import { publicListingDetailsSelect } from '@/features/listings/constants/publicListingDetails';
-import { type PublicListingDetails } from '@/features/listings/types';
+import type { PublicListingDetails } from '@/features/listings/types';
 
 export async function getListingDetailsBySlug(
   slug: string,

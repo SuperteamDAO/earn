@@ -4,7 +4,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { FeedPageLayout } from '@/layouts/Feed';
 
 import { fetchFeedPostQuery } from '../queries/feed-post';
-import { type FeedPostType } from '../types';
+import type { FeedPostType } from '../types';
 import { FeedCardContainerSkeleton } from './FeedCardContainer';
 import { GrantCard } from './grantCard';
 import { PowCard } from './powCard';

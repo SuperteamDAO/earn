@@ -20,7 +20,7 @@ import {
   fetchSearchListings,
   useSearchListings,
 } from '../hooks/useSearchListings';
-import { type SearchResult } from '../types';
+import type { SearchResult } from '../types';
 import { getUserRegion } from '../utils/userRegionSearch';
 
 interface Props {

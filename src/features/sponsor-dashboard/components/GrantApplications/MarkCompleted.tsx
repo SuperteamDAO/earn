@@ -3,7 +3,7 @@ import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useDisclosure } from '@/hooks/use-disclosure';
 
-import { type GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
+import type { GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
 import { MarkCompleteModal } from './Modals/MarkCompletedModal';
 
 interface Props {

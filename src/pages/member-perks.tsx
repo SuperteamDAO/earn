@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { type GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Meta } from '@/layouts/Meta';

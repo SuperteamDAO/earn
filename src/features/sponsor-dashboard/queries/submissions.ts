@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import { type SubmissionWithUser } from '@/interface/submission';
+import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 
 const fetchSubmissions = async (

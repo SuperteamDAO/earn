@@ -2,9 +2,9 @@
 import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
-import { type BountiesGetPayload } from '@/prisma/models/Bounties';
+import type { BountiesGetPayload } from '@/prisma/models/Bounties';
 
-import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
+import type { ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 
 function isDraftable(
   listing:

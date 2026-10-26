@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { type z } from 'zod';
+import type { z } from 'zod';
 
 import { api } from '@/lib/api';
 
-import { type GrantContextSchema } from '../constants/schema';
-import { type GrantWithApplicationCount } from '../types';
+import type { GrantContextSchema } from '../constants/schema';
+import type { GrantWithApplicationCount } from '../types';
 
 export type GrantContext = z.infer<typeof GrantContextSchema>;
 

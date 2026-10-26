@@ -12,10 +12,10 @@ import { cn } from '@/utils/cn';
 
 import { LISTING_FILTER_OPTIONS } from '../../listings/constants/LISTING_FILTER_OPTIONS';
 import { HACKATHON_SORT_OPTIONS } from '../../listings/constants/SORT_OPTIONS';
-import {
-  type HackathonOrderDirection,
-  type HackathonSortOption,
-  type HackathonStatus,
+import type {
+  HackathonOrderDirection,
+  HackathonSortOption,
+  HackathonStatus,
 } from '../hooks/useHackathons';
 
 interface HackathonFiltersProps {

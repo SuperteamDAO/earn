@@ -30,7 +30,7 @@ import { Meta } from '@/layouts/Meta';
 import { api } from '@/lib/api';
 import { domPurify } from '@/lib/domPurify';
 import { prisma } from '@/prisma';
-import { type SubscribeHackathonModel } from '@/prisma/models/SubscribeHackathon';
+import type { SubscribeHackathonModel } from '@/prisma/models/SubscribeHackathon';
 import { useUser } from '@/store/user';
 import { TalentOlympicsHeader } from '@/svg/talent-olympics-header';
 import { cn } from '@/utils/cn';

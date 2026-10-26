@@ -1,4 +1,4 @@
-import { type NextApiRequest } from 'next';
+import type { NextApiRequest } from 'next';
 
 export interface NextApiRequestWithUser extends NextApiRequest {
   userId?: string;

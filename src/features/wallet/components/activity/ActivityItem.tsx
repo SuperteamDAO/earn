@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import { type TokenActivity } from '../../types/TokenActivity';
-import { type TxData } from '../../types/TxData';
-import { type DrawerView } from '../../types/WalletTypes';
+import type { TokenActivity } from '../../types/TokenActivity';
+import type { TxData } from '../../types/TxData';
+import type { DrawerView } from '../../types/WalletTypes';
 
 interface ActivityItemProps {
   activity: TokenActivity;

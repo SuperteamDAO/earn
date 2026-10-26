@@ -10,7 +10,7 @@ import {
 } from '@/utils/json-ld';
 
 import { getGrantBySlug } from '@/features/grants/queries/get-grant-by-slug';
-import { type GrantWithApplicationCount } from '@/features/grants/types';
+import type { GrantWithApplicationCount } from '@/features/grants/types';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
 
 interface InitialGrant {

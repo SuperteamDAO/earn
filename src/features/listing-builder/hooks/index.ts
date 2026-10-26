@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useForm, useFormContext, type UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
-import { type HackathonModel } from '@/prisma/models/Hackathon';
+import type { HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
 
 import {
@@ -22,10 +22,10 @@ import {
   skillsKeyAtom,
   submitListingMutationAtom,
 } from '../atoms';
-import {
-  type ListingFormData,
-  type SubmitListingResponse,
-  type ValidationFields,
+import type {
+  ListingFormData,
+  SubmitListingResponse,
+  ValidationFields,
 } from '../types';
 import {
   createListingFormSchema,

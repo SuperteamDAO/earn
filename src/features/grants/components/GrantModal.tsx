@@ -6,8 +6,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { applicationStateAtom } from '../atoms/applicationStateAtom';
-import { type UserApplicationResponse } from '../constants/userApplication';
-import { type Grant } from '../types';
+import type { UserApplicationResponse } from '../constants/userApplication';
+import type { Grant } from '../types';
 import { ApplicationModal } from './Modals/ApplicationModal';
 import { KYCModal } from './Modals/KYCModal';
 import { TrancheFormModal } from './Modals/TrancheFormModal';

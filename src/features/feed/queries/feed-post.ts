@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-import { type FeedDataProps, type FeedPostType } from '../types';
+import type { FeedDataProps, FeedPostType } from '../types';
 
 interface FeedPostParams {
   type: FeedPostType;

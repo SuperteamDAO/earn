@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 
-import { type GrantApplicationMutationResponse } from '@/features/sponsor-dashboard/constants/grantApplicationMutation';
+import type { GrantApplicationMutationResponse } from '@/features/sponsor-dashboard/constants/grantApplicationMutation';
 
 interface Props {
   isOpen: boolean;

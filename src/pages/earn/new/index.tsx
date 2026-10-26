@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { type GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
-import { type UserSponsorsResponse } from '@/app/api/user-sponsors/route';
+import type { UserSponsorsResponse } from '@/app/api/user-sponsors/route';
 import MdCheck from '@/components/icons/MdCheck';
 import { SponsorButton } from '@/components/ProfileSetup/SponsorButton';
 import { TalentButton } from '@/components/ProfileSetup/TalentButton';

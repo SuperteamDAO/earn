@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 
-import { type GrantApplicationMutationResponse } from '../../../constants/grantApplicationMutation';
+import type { GrantApplicationMutationResponse } from '../../../constants/grantApplicationMutation';
 
 interface RecordPaymentModalProps {
   recordPaymentIsOpen: boolean;

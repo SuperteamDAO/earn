@@ -1,4 +1,4 @@
-import { type Listing } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 
 export enum SponsorStage {
   NEW_SPONSOR = 'NEW_SPONSOR',

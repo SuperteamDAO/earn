@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import { getCookie, removeCookie, setCookie } from 'typescript-cookie';
 
 import { useForcedProfileRedirect } from '@/hooks/use-forced-profile-redirect';
-import { type User } from '@/interface/user';
+import type { User } from '@/interface/user';
 import { api } from '@/lib/api';
 
 const USER_ID_COOKIE_NAME = 'user-id-hint';

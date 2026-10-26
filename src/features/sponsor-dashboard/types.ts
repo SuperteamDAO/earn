@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { type PrismaUserWithoutKYC } from '@/interface/user';
-import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
-import { type GrantTrancheModel } from '@/prisma/models/GrantTranche';
+import type { PrismaUserWithoutKYC } from '@/interface/user';
+import type { GrantApplicationModel } from '@/prisma/models/GrantApplication';
+import type { GrantTrancheModel } from '@/prisma/models/GrantTranche';
 
 type UserWithChapter = PrismaUserWithoutKYC & {
   peopleId?: string | null;

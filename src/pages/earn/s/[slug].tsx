@@ -1,5 +1,5 @@
 import { Globe, InfoIcon, Pencil } from 'lucide-react';
-import { type GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 
@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
-import { type SponsorType } from '@/interface/sponsor';
+import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { getSponsorStats, type SponsorStats } from '@/pages/api/sponsors/stats';

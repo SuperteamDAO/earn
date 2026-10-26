@@ -2,18 +2,18 @@ import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
 import { CompensationType, status } from '@/prisma/enums';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
+import type { HackathonModel } from '@/prisma/models/Hackathon';
 import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { dayjs } from '@/utils/dayjs';
 
-import { type Listing } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 import {
   emailRegex,
   telegramRegex,
   twitterRegex,
 } from '@/features/social/utils/regex';
 
-import { type ListingFormData, type ValidationFields } from '.';
+import type { ListingFormData, ValidationFields } from '.';
 import {
   BONUS_REWARD_POSITION,
   DEADLINE_FORMAT,

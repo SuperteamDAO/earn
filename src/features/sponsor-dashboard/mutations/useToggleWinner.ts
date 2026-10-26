@@ -2,10 +2,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { toast } from 'sonner';
 
-import { type SubmissionWithUser } from '@/interface/submission';
+import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 
-import { type Listing, type Rewards } from '@/features/listings/types';
+import type { Listing, Rewards } from '@/features/listings/types';
 
 import { selectedSubmissionAtom } from '../atoms';
 

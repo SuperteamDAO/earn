@@ -6,9 +6,9 @@ import { api } from '@/lib/api';
 import { GrantApplicationStatus } from '@/prisma/enums';
 
 import { selectedGrantApplicationAtom } from '../atoms';
-import { type GrantApplicationStatusMutationResponse } from '../constants/grantApplicationMutation';
-import { type GrantApplicationsReturn } from '../queries/applications';
-import { type GrantApplicationWithUser } from '../types';
+import type { GrantApplicationStatusMutationResponse } from '../constants/grantApplicationMutation';
+import type { GrantApplicationsReturn } from '../queries/applications';
+import type { GrantApplicationWithUser } from '../types';
 
 type RejectGrantApplicationsInput =
   | string[]

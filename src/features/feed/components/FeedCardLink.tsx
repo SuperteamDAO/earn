@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { useExternalLinkDialog } from '@/components/shared/ExternalLinkDialogProvider';
 import { cn } from '@/utils/cn';

@@ -1,8 +1,8 @@
-import { type SubmissionLabels, type SubmissionStatus } from '@/prisma/enums';
+import type { SubmissionLabels, SubmissionStatus } from '@/prisma/enums';
 
 import type { Listing, Rewards } from '@/features/listings/types';
 
-import { type User } from './user';
+import type { User } from './user';
 
 interface SubmissionWithUser {
   id: string;

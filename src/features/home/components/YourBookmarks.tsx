@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { ListingCardMini } from '@/features/listings/components/ListingCardMini';
 import { yourBookmarksQuery } from '@/features/listings/queries/your-bookmarks';

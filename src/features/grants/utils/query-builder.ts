@@ -1,8 +1,8 @@
 import type { z } from 'zod';
 
 import { countries } from '@/constants/country';
-import { type JsonValue } from '@/prisma/internal/prismaNamespace';
-import { type GrantsWhereInput } from '@/prisma/models';
+import type { JsonValue } from '@/prisma/internal/prismaNamespace';
+import type { GrantsWhereInput } from '@/prisma/models';
 import {
   findChapterByRegionInput,
   getRegionsForChapterPage,
@@ -11,9 +11,9 @@ import {
   getRegionsForUserLocationUsingChapters,
 } from '@/utils/chapterRegion';
 
-import {
-  type GrantCategorySchema,
-  type GrantQueryParamsSchema,
+import type {
+  GrantCategorySchema,
+  GrantQueryParamsSchema,
 } from '@/features/grants/constants/schema';
 
 type BuildGrantsQueryArgs = z.infer<typeof GrantQueryParamsSchema>;

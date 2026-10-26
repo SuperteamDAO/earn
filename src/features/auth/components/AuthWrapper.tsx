@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { signInHref } from '@/lib/safe-next';

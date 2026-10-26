@@ -24,8 +24,8 @@ import {
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { type Comment as IComment } from '@/interface/comments';
-import { type User } from '@/interface/user';
+import type { Comment as IComment } from '@/interface/comments';
+import type { User } from '@/interface/user';
 import { api } from '@/lib/api';
 import { CommentRefType } from '@/prisma/enums';
 import { useUser } from '@/store/user';

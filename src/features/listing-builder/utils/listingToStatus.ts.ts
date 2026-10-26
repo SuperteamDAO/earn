@@ -1,4 +1,4 @@
-import { type ListingFormData, type ListingStatus } from '../types';
+import type { ListingFormData, ListingStatus } from '../types';
 import { calculateTotalPrizes } from './rewards';
 
 export const listingToStatus = (listing: ListingFormData): ListingStatus => {

@@ -5,7 +5,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/prisma';
 
 import { getUserSession } from '@/features/auth/utils/getUserSession';
-import { type TokenActivity } from '@/features/wallet/types/TokenActivity';
+import type { TokenActivity } from '@/features/wallet/types/TokenActivity';
 import { fetchWalletActivity } from '@/features/wallet/utils/fetchWalletActivity';
 import { getRpc } from '@/features/wallet/utils/getConnection';
 

@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import { type SponsorType } from '@/interface/sponsor';
+import type { SponsorType } from '@/interface/sponsor';
 import { api } from '@/lib/api';
 
 const fetchSponsorData = async (): Promise<SponsorType> => {

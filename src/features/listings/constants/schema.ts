@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type BountiesSelect } from '@/prisma/models/Bounties';
+import type { BountiesSelect } from '@/prisma/models/Bounties';
 
 export const ListingTabSchema = z
   .union([z.enum(['all', 'bounties']), z.string().min(1)])

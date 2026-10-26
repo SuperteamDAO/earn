@@ -19,7 +19,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from '@/components/ui/select';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
+import type { HackathonModel } from '@/prisma/models/Hackathon';
 import { BountyIcon } from '@/svg/bounty-icon';
 
 import { getVisibleHackathons } from '@/features/hackathon/utils/getVisibleHackathons';

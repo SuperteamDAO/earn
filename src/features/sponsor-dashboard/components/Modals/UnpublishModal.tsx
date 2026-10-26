@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 
-import { type ListingWithSubmissions } from '@/features/listings/types';
+import type { ListingWithSubmissions } from '@/features/listings/types';
 
 interface UnpublishModalProps {
   unpublishIsOpen: boolean;

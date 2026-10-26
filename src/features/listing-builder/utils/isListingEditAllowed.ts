@@ -2,9 +2,9 @@
 import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
-import { type UserModel } from '@/prisma/models/User';
+import type { UserModel } from '@/prisma/models/User';
 
-import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
+import type { ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 
 export function validateUpdatePermissions(

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type BountiesTemplatesSelect } from '@/prisma/models/BountiesTemplates';
+import type { BountiesTemplatesSelect } from '@/prisma/models/BountiesTemplates';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 

@@ -4,7 +4,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { ListingPageSubmission } from '@/interface/submission';
 import { dayjs } from '@/utils/dayjs';
 
-import { type Listing } from '../../types';
+import type { Listing } from '../../types';
 import { SubmissionCard } from './SubmissionCard';
 
 interface Props {

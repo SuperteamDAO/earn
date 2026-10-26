@@ -1,5 +1,5 @@
 import type { Ratelimit } from '@upstash/ratelimit';
-import { type NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';

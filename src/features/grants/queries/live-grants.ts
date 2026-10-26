@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-import { type GrantWithApplicationCount } from '@/features/grants/types';
+import type { GrantWithApplicationCount } from '@/features/grants/types';
 
 interface GetGrantsParams {
   take?: number;

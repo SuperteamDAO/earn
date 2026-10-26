@@ -3,7 +3,7 @@ import { cn } from '@/utils/cn';
 
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 
-import { type ListingContext, type ListingTab } from '../hooks/useListings';
+import type { ListingContext, ListingTab } from '../hooks/useListings';
 
 const TABS = [
   { id: 'all', title: 'All', posthog: 'all_listings' },

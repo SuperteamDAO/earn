@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
-import { type SubmissionLabels } from '@/prisma/enums';
+import type { SubmissionLabels } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 import { cleanRewards } from '@/utils/rank';
 

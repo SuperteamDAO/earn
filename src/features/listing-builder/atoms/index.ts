@@ -1,21 +1,21 @@
 import { atom, createStore } from 'jotai';
 import { atomWithMutation } from 'jotai-tanstack-query';
 
-import { type TRewardsGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
-import { type TTitleGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/title/route';
-import { type TTokenGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/token/route';
-import { type BountyType } from '@/generated/prisma/enums';
-import { type Skills } from '@/interface/skills';
+import type { TRewardsGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
+import type { TTitleGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/title/route';
+import type { TTokenGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/token/route';
+import type { BountyType } from '@/generated/prisma/enums';
+import type { Skills } from '@/interface/skills';
 import { api } from '@/lib/api';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
+import type { HackathonModel } from '@/prisma/models/Hackathon';
 import { convertUndefinedToNull } from '@/utils/undefinedToNull';
 
-import {
-  type ListingFormData,
-  type ListingStatus,
-  type SubmitListingResponse,
+import type {
+  ListingFormData,
+  ListingStatus,
+  SubmitListingResponse,
 } from '../types';
-import { type TEligibilityQuestion } from '../types/schema';
+import type { TEligibilityQuestion } from '../types/schema';
 
 export interface GeneratedListingData {
   description?: string;

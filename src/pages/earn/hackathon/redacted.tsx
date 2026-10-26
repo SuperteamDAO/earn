@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { type GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { Outfit } from 'next/font/google';
 import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
@@ -17,7 +17,7 @@ import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { domPurify } from '@/lib/domPurify';
 import { prisma } from '@/prisma';
-import { type HackathonGetPayload } from '@/prisma/models/Hackathon';
+import type { HackathonGetPayload } from '@/prisma/models/Hackathon';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RedactedLogo } from '@/svg/redacted';
 import { dayjs } from '@/utils/dayjs';

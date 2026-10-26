@@ -1,5 +1,5 @@
 import { createHmac } from 'crypto';
-import { type NextApiRequest, type NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
 

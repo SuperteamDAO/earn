@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 import { updateLike } from '@/services/likeService';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
+import type { NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 
 async function grantApplication(

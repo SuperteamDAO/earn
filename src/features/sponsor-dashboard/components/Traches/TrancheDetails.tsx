@@ -15,7 +15,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
-import { type Grant, type GrantQuestion } from '@/features/grants/types';
+import type { Grant, GrantQuestion } from '@/features/grants/types';
 import {
   AGENTIC_ENGINEERING_GRANT_COPY,
   isAgenticEngineeringGrant,
@@ -29,7 +29,7 @@ import {
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantTrancheAtom } from '../../atoms';
-import { type GrantTrancheWithApplication } from '../../queries/tranches';
+import type { GrantTrancheWithApplication } from '../../queries/tranches';
 import { ImageGallery } from '../ImageGallery';
 import { InfoBox } from '../InfoBox';
 

@@ -17,7 +17,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
-import { type Grant, type GrantQuestion } from '@/features/grants/types';
+import type { Grant, GrantQuestion } from '@/features/grants/types';
 import {
   AGENTIC_ENGINEERING_GRANT_COPY,
   COINDCX_GRANT_ID,
@@ -34,9 +34,9 @@ import {
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantApplicationAtom } from '../../atoms';
-import { type GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
-import { type GrantApplicationsReturn } from '../../queries/applications';
-import { type GrantApplicationWithUser } from '../../types';
+import type { GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
+import type { GrantApplicationsReturn } from '../../queries/applications';
+import type { GrantApplicationWithUser } from '../../types';
 import { InfoBox } from '../InfoBox';
 import { MarkCompleted } from './MarkCompleted';
 import { Notes } from './Notes';

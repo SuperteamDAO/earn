@@ -1,5 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { type UIMessage } from 'ai';
+import type { UIMessage } from 'ai';
 import { ArrowLeft, ArrowUp, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState } from 'react';

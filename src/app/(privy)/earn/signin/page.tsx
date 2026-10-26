@@ -1,4 +1,4 @@
-import { type Metadata } from 'next';
+import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 
 import { safeNext } from '@/lib/safe-next';

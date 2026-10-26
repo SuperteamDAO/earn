@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import { type TrackProps } from '@/interface/hackathon';
+import type { TrackProps } from '@/interface/hackathon';
 import { api } from '@/lib/api';
 
 export interface Stats {

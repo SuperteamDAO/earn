@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
+import type { HackathonModel } from '@/prisma/models/Hackathon';
 import Sparkle from '@/svg/sparkle';
 
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';

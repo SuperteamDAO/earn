@@ -1,4 +1,4 @@
-import { type GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';

@@ -12,7 +12,7 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 
-import { type NewTalentFormData } from '@/features/talent/schema';
+import type { NewTalentFormData } from '@/features/talent/schema';
 
 interface Props {
   skillsRefreshKey: number;

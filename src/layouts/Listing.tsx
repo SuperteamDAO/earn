@@ -8,7 +8,7 @@ import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
-import { type User } from '@/interface/user';
+import type { User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { normalizeCanonicalUrl } from '@/utils/canonical';
 import { cn } from '@/utils/cn';
@@ -21,7 +21,7 @@ import { ListingHeader } from '@/features/listings/components/ListingPage/Listin
 import { RightSideBar } from '@/features/listings/components/ListingPage/RightSideBar';
 import { SubmissionActionButton } from '@/features/listings/components/Submission/SubmissionActionButton';
 import { submissionCountQuery } from '@/features/listings/queries/submission-count';
-import { type PublicListing } from '@/features/listings/types';
+import type { PublicListing } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
 import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
 

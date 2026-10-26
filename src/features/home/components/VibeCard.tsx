@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
-import { type TConductorInstance } from 'react-canvas-confetti/dist/types';
+import type { TConductorInstance } from 'react-canvas-confetti/dist/types';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';

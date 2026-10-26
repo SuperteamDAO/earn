@@ -3,7 +3,7 @@ import type { NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
+import type { NextApiRequestWithUser } from '@/features/auth/types';
 import { handleInviteAcceptance } from '@/features/auth/utils/handleInvite';
 import { withAuth } from '@/features/auth/utils/withAuth';
 

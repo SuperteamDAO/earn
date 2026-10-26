@@ -1,13 +1,13 @@
 import { franc } from 'franc';
 
 import logger from '@/lib/logger';
-import { type BountiesUncheckedUpdateInput } from '@/prisma/models/Bounties';
-import { type SponsorsModel } from '@/prisma/models/Sponsors';
+import type { BountiesUncheckedUpdateInput } from '@/prisma/models/Bounties';
+import type { SponsorsModel } from '@/prisma/models/Sponsors';
 import { getTokenBySymbol } from '@/server/tokenList';
 import { cleanSkills } from '@/utils/cleanSkills';
 
-import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
-import { type ListingFormData } from '@/features/listing-builder/types';
+import type { ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
+import type { ListingFormData } from '@/features/listing-builder/types';
 import { isFndnPayingCheck } from '@/features/listing-builder/utils/isFndnPayingCheck';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 

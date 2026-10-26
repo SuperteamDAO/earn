@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-import { type ListingWithSubmissions } from '@/features/listings/types';
+import type { ListingWithSubmissions } from '@/features/listings/types';
 
 const fetchListings = async (): Promise<ListingWithSubmissions[]> => {
   const { data } = await api.get('/api/sponsor-dashboard/listings');

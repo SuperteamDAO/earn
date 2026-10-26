@@ -1,7 +1,7 @@
-import { type IncomingMessage } from 'http';
+import type { IncomingMessage } from 'http';
 import { buffer } from 'micro';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { type WebhookRequiredHeaders } from 'svix';
+import type { WebhookRequiredHeaders } from 'svix';
 
 import logger from '@/lib/logger';
 import { webhook } from '@/lib/webhook';

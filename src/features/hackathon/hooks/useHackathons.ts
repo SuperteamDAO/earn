@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { type z } from 'zod';
+import type { z } from 'zod';
 
 import { api } from '@/lib/api';
 
-import { type Listing } from '../../listings/types';
-import {
-  type HackathonContextSchema,
-  type HackathonOrderDirectionSchema,
-  type HackathonSortOptionSchema,
-  type HackathonStatusSchema,
+import type { Listing } from '../../listings/types';
+import type {
+  HackathonContextSchema,
+  HackathonOrderDirectionSchema,
+  HackathonSortOptionSchema,
+  HackathonStatusSchema,
 } from '../constants/schema';
 
 export type HackathonStatus = z.infer<typeof HackathonStatusSchema>;

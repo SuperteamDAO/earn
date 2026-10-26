@@ -1,10 +1,10 @@
 // used for api route, dont add use client here.
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
-import { type UserModel } from '@/prisma/models/User';
+import type { HackathonModel } from '@/prisma/models/Hackathon';
+import type { UserModel } from '@/prisma/models/User';
 
-import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
+import type { ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 
 type UserWithMembership = UserModel & {
   people?: { type?: string | null } | null;

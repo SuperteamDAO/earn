@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { TokenIcon } from '@/components/ui/token-icon';
-import { type TrackProps } from '@/interface/hackathon';
+import type { TrackProps } from '@/interface/hackathon';
 
 export const TrackBox = ({
   title,

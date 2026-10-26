@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-import { type Listing } from '../types';
+import type { Listing } from '../types';
 
 interface ListingsParams {
   take?: number;

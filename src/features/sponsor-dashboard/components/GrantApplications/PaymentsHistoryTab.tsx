@@ -13,17 +13,17 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { TokenIcon } from '@/components/ui/token-icon';
-import { type GrantTrancheModel } from '@/prisma/models/GrantTranche';
+import type { GrantTrancheModel } from '@/prisma/models/GrantTranche';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-import { type Grant } from '@/features/grants/types';
+import type { Grant } from '@/features/grants/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { type GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
+import type { GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
 import { approvedGranteesQuery } from '../../queries/approved-grantees';
-import { type GrantApplicationWithUser } from '../../types';
+import type { GrantApplicationWithUser } from '../../types';
 import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface GrantPaymentDetailProps {

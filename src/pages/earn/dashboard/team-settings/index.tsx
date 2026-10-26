@@ -41,7 +41,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import type { UserSponsor } from '@/interface/userSponsor';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { api } from '@/lib/api';
-import { type Role } from '@/prisma/enums';
+import type { Role } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 
 import { Banner } from '@/features/sponsor-dashboard/components/Banner';

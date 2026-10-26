@@ -1,8 +1,8 @@
-import { type GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
 
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
-import { type SponsorType } from '@/interface/sponsor';
+import type { SponsorType } from '@/interface/sponsor';
 import { Default } from '@/layouts/Default';
 import { prisma } from '@/prisma';
 import { getURL } from '@/utils/validUrl';

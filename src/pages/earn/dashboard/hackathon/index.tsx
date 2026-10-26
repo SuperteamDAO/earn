@@ -37,7 +37,7 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
-import { type ListingWithSubmissions } from '@/features/listings/types';
+import type { ListingWithSubmissions } from '@/features/listings/types';
 import { formatDeadline } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingStatus } from '@/features/listings/utils/status';
@@ -45,7 +45,7 @@ import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
 import { ListingTableSkeleton } from '@/features/sponsor-dashboard/components/ListingTableSkeleton';
 import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/active-hackathons';
-import { type SponsorStats } from '@/features/sponsor-dashboard/types';
+import type { SponsorStats } from '@/features/sponsor-dashboard/types';
 
 export default function Hackathon() {
   const router = useRouter();

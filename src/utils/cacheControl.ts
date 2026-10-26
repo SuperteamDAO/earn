@@ -1,4 +1,4 @@
-import { type NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 
 // NOTE: This supercedes react query, i.e react query canont override API Headers,
 // good practice to not set stale time in react query call or keep it same as API header.

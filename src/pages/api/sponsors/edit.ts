@@ -11,7 +11,7 @@ import {
 import { verifyImageExists } from '@/utils/cloudinary';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import type { NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { sponsorBaseSchema } from '@/features/sponsor/utils/sponsorFormSchema';

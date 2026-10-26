@@ -10,7 +10,7 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { type TrackProps } from '@/interface/hackathon';
+import type { TrackProps } from '@/interface/hackathon';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type BountiesGetPayload } from '@/prisma/models/Bounties';
+import type { BountiesGetPayload } from '@/prisma/models/Bounties';
 
 export type ListingWithSponsor = BountiesGetPayload<{
   include: { sponsor: { include: { chapter: true } } };

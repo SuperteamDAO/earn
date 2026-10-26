@@ -18,7 +18,7 @@ import { ApprovalStages } from '@/features/grants/components/ApprovalStages';
 import { GrantsHeader } from '@/features/grants/components/GrantsHeader';
 import { GrantStats } from '@/features/grants/components/GrantStats';
 import { userApplicationQuery } from '@/features/grants/queries/user-application';
-import { type GrantWithApplicationCount } from '@/features/grants/types';
+import type { GrantWithApplicationCount } from '@/features/grants/types';
 import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
 import { LiveGrants } from '@/features/home/components/LiveGrants';

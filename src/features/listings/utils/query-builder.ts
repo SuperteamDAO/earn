@@ -1,10 +1,10 @@
 import type { z } from 'zod';
 
 import { countries } from '@/constants/country';
-import { type JsonValue } from '@/prisma/internal/prismaNamespace';
-import {
-  type BountiesOrderByWithRelationInput,
-  type BountiesWhereInput,
+import type { JsonValue } from '@/prisma/internal/prismaNamespace';
+import type {
+  BountiesOrderByWithRelationInput,
+  BountiesWhereInput,
 } from '@/prisma/models/Bounties';
 import {
   findChapterByRegionInput,
@@ -15,10 +15,10 @@ import {
 } from '@/utils/chapterRegion';
 
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
-import {
-  type ListingCategorySchema,
-  type ListingStatusSchema,
-  type QueryParamsSchema,
+import type {
+  ListingCategorySchema,
+  ListingStatusSchema,
+  QueryParamsSchema,
 } from '@/features/listings/constants/schema';
 
 type BuildListingQueryArgs = z.infer<typeof QueryParamsSchema>;

@@ -21,7 +21,7 @@ import {
 
 import { useApplicationState } from '../hooks/useApplicationState';
 import { userApplicationQuery } from '../queries/user-application';
-import { type Grant } from '../types';
+import type { Grant } from '../types';
 import { grantApplicationCooldownTooltip } from '../utils/grantApplicationCooldown';
 import { isUserEligibleForST } from '../utils/stGrant';
 import { GrantModal } from './GrantModal';

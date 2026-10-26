@@ -1,4 +1,4 @@
-import { type HackathonModel } from '@/prisma/models/Hackathon';
+import type { HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
 
 export function getVisibleHackathons(hackathons?: HackathonModel[]) {

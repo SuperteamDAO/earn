@@ -23,7 +23,7 @@ import {
 } from '@/features/social/components/SocialIcons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { type LocalProfile } from '../../queries/local-profiles';
+import type { LocalProfile } from '../../queries/local-profiles';
 import { UserDrawer } from './UserDrawer';
 
 interface SortState {

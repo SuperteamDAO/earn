@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { JTTG } from '@/constants/Telegram';
 import { type Token, useTokenList } from '@/constants/tokenList';
-import { type SubmissionWithUser } from '@/interface/submission';
+import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
@@ -29,7 +29,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
-import { type ListingWithSubmissions } from '@/features/listings/types';
+import type { ListingWithSubmissions } from '@/features/listings/types';
 import { submissionsQuery } from '@/features/sponsor-dashboard/queries/submissions';
 
 import {

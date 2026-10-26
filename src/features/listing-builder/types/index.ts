@@ -1,6 +1,6 @@
-import { type z } from 'zod';
+import type { z } from 'zod';
 
-import { type createListingFormSchema } from './schema';
+import type { createListingFormSchema } from './schema';
 
 type ListingFormSchema = ReturnType<typeof createListingFormSchema>;
 export type ListingFormData = z.infer<ListingFormSchema>;

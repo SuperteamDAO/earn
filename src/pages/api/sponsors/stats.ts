@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { status } from '@/prisma/enums';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import type { NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
 export type SponsorStats = {

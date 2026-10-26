@@ -2,7 +2,7 @@ import debounce from 'lodash.debounce';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { type User } from '@/interface/user';
+import type { User } from '@/interface/user';
 import { api } from '@/lib/api';
 import { cn } from '@/utils/cn';
 

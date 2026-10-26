@@ -27,7 +27,7 @@ import { useDisclosure } from '@/hooks/use-disclosure';
 import { api } from '@/lib/api';
 import { getURL } from '@/utils/validUrl';
 
-import { type Grant } from '@/features/grants/types';
+import type { Grant } from '@/features/grants/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';

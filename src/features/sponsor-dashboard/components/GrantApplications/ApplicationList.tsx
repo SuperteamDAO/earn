@@ -7,10 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
-import {
-  type GrantApplicationStatus,
-  type SubmissionLabels,
-} from '@/prisma/enums';
+import type { GrantApplicationStatus, SubmissionLabels } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
 import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
@@ -18,7 +15,7 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantApplicationAtom } from '../../atoms';
 import { labelMenuOptionsGrants } from '../../constants';
-import { type GrantApplicationWithUser } from '../../types';
+import type { GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils/statusColorMap';
 import { MultiSelectFilter } from './MultiSelectFilter';
 import { SelectLabel } from './SelectLabel';

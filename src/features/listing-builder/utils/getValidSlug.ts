@@ -4,7 +4,7 @@ import slugify from 'slugify';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type BountiesGetPayload } from '@/prisma/models/Bounties';
+import type { BountiesGetPayload } from '@/prisma/models/Bounties';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { fetchSlugCheck } from '../queries/slug-check';

@@ -9,10 +9,10 @@ import {
   HackathonSortOptionSchema,
   HackathonStatusSchema,
 } from '../constants/schema';
-import {
-  type HackathonOrderDirection,
-  type HackathonSortOption,
-  type HackathonStatus,
+import type {
+  HackathonOrderDirection,
+  HackathonSortOption,
+  HackathonStatus,
 } from './useHackathons';
 
 const DEFAULT_STATUS_VALUE: HackathonStatus =

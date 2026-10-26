@@ -3,8 +3,8 @@ import { AlertTriangle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToken } from '@/constants/tokenList';
 
-import { type TokenAsset } from '../../types/TokenAsset';
-import { type WithdrawFormData } from '../../utils/withdrawFormSchema';
+import type { TokenAsset } from '../../types/TokenAsset';
+import type { WithdrawFormData } from '../../utils/withdrawFormSchema';
 
 interface ATAConfirmationProps {
   selectedToken?: TokenAsset;

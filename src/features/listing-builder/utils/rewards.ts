@@ -1,6 +1,6 @@
 import { cleanRewards } from '@/utils/rank';
 
-import { type Rewards } from '@/features/listings/types';
+import type { Rewards } from '@/features/listings/types';
 
 import { BONUS_REWARD_POSITION } from '../constants';
 

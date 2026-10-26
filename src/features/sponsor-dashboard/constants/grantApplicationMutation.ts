@@ -1,6 +1,6 @@
-import {
-  type GrantApplicationGetPayload,
-  type GrantApplicationSelect,
+import type {
+  GrantApplicationGetPayload,
+  GrantApplicationSelect,
 } from '@/prisma/models/GrantApplication';
 
 export const grantApplicationMutationSelect = {

@@ -2,10 +2,10 @@
 import earncognitoClient from '@/lib/earncognitoClient';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type BountiesModel } from '@/prisma/models/Bounties';
+import type { BountiesModel } from '@/prisma/models/Bounties';
 import { dayjs } from '@/utils/dayjs';
 
-import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
+import type { ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 
 interface PostSaveParams {

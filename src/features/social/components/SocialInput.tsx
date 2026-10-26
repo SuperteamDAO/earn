@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { type Control } from 'react-hook-form';
+import type { Control } from 'react-hook-form';
 
 import { VerifiedXIcon } from '@/components/icons/VerifiedXIcon';
 import { Button } from '@/components/ui/button';

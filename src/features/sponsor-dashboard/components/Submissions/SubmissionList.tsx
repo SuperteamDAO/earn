@@ -7,12 +7,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { type BountyType, type SubmissionLabels } from '@/prisma/enums';
+import type { BountyType, SubmissionLabels } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { getRankLabels } from '@/utils/rank';
 
-import { type Listing } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedSubmissionAtom } from '../../atoms';

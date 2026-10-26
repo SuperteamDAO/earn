@@ -1,4 +1,4 @@
-import { type ListingStatus } from '../hooks/useListings';
+import type { ListingStatus } from '../hooks/useListings';
 
 interface FilterOption {
   readonly label: string;

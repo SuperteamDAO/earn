@@ -13,7 +13,7 @@ import { ListingHeaderSeparator } from '@/features/listings/components/ListingPa
 import { ShareListing } from '@/features/listings/components/ListingPage/ShareListing';
 import { StatusBadge } from '@/features/listings/components/ListingPage/StatusBadge';
 
-import { type GrantWithApplicationCount } from '../types';
+import type { GrantWithApplicationCount } from '../types';
 
 interface Props {
   grant: GrantWithApplicationCount;

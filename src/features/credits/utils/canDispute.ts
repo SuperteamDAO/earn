@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 
 import { dayjs } from '@/utils/dayjs';
 
-import { type CreditEntry } from '../components/CreditLog';
+import type { CreditEntry } from '../components/CreditLog';
 
 const isSpamEntry = (entry: CreditEntry) => {
   return entry.type === 'SPAM_PENALTY' || entry.type === 'GRANT_SPAM_PENALTY';

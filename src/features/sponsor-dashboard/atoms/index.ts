@@ -1,9 +1,9 @@
 import { atom } from 'jotai';
 
-import { type SubmissionWithUser } from '@/interface/submission';
+import type { SubmissionWithUser } from '@/interface/submission';
 
-import { type GrantTrancheWithApplication } from '../queries/tranches';
-import { type GrantApplicationWithUser } from '../types';
+import type { GrantTrancheWithApplication } from '../queries/tranches';
+import type { GrantApplicationWithUser } from '../types';
 
 type Updater<T> = (prev: T) => T;
 export const selectedSubmissionIdsAtom = atom<Set<string>>(new Set<string>());

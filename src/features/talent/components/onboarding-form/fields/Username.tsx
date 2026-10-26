@@ -16,7 +16,7 @@ import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { usernameRandomQuery } from '@/features/talent/queries/random-username';
-import { type NewTalentFormData } from '@/features/talent/schema';
+import type { NewTalentFormData } from '@/features/talent/schema';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
 export function UsernameField({

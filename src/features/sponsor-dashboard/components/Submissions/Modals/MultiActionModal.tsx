@@ -10,7 +10,7 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
-import { type Listing } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 import { selectedSubmissionAtom } from '@/features/sponsor-dashboard/atoms';
 import { useRejectSubmissions } from '@/features/sponsor-dashboard/mutations/useRejectSubmissions';
 import { useToggleWinner } from '@/features/sponsor-dashboard/mutations/useToggleWinner';

@@ -12,7 +12,7 @@ import {
   getCombinedRegion,
   getParentRegions,
 } from '@/features/listings/utils/region';
-import { type GrantsSearch, type ListingSearch } from '@/features/search/types';
+import type { GrantsSearch, ListingSearch } from '@/features/search/types';
 
 // GOTTA SAVE FROM SQL INJECTION
 function checkInvalidItems(obj: object, arr: string[]): boolean {

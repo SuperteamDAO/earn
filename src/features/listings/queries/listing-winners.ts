@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import { type ListingWinner } from '@/interface/submission';
+import type { ListingWinner } from '@/interface/submission';
 import { api } from '@/lib/api';
 
 const fetchWinners = async (id: string): Promise<ListingWinner[]> => {

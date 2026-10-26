@@ -2,7 +2,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { getRankLabels } from '@/utils/rank';
 
-import { type Rewards } from '@/features/listings/types';
+import type { Rewards } from '@/features/listings/types';
 
 export const WinnerFeedImage = ({
   token,

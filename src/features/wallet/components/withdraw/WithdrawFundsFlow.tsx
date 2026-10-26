@@ -23,9 +23,9 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { classifySolanaError } from '@/utils/solanaTransactionHelpers';
 
-import { type TokenAsset } from '../../types/TokenAsset';
-import { type TxData } from '../../types/TxData';
-import { type DrawerView } from '../../types/WalletTypes';
+import type { TokenAsset } from '../../types/TokenAsset';
+import type { TxData } from '../../types/TxData';
+import type { DrawerView } from '../../types/WalletTypes';
 import { fetchTokenUSDValue } from '../../utils/fetchTokenUSDValue';
 import { getRpc } from '../../utils/getConnection';
 import {

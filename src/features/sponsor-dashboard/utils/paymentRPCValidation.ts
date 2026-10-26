@@ -1,6 +1,6 @@
 import { signature } from '@solana/kit';
 
-import { type Token } from '@/constants/tokenList';
+import type { Token } from '@/constants/tokenList';
 import logger from '@/lib/logger';
 
 import { getRpc } from '@/features/wallet/utils/getConnection';

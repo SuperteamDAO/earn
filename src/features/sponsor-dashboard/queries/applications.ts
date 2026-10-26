@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
+import type { GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
 export interface GrantApplicationsReturn {
   data: GrantApplicationWithUser[];

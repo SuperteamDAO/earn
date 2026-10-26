@@ -5,7 +5,7 @@ import {
   MAX_REWARD,
 } from '@/features/listing-builder/constants';
 
-import { type RewardInputSchema } from './route';
+import type { RewardInputSchema } from './route';
 
 export function generateListingRewardsPrompt({
   description,

@@ -1,6 +1,6 @@
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
-import { type Listing, type ListingWithSubmissions } from '../types';
+import type { Listing, ListingWithSubmissions } from '../types';
 import { isDeadlineOver } from './deadline';
 
 export const getListingDraftStatus = (

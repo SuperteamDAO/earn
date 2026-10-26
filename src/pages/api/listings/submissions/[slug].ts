@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { type ListingPageSubmission } from '@/interface/submission';
+import type { ListingPageSubmission } from '@/interface/submission';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { convertDatesToISO, safeStringify } from '@/utils/safeStringify';
 
 import { publicListingDetailsSelect } from '@/features/listings/constants/publicListingDetails';
-import { type PublicListingDetails } from '@/features/listings/types';
+import type { PublicListingDetails } from '@/features/listings/types';
 
 const sortSubmissions = (
   a: { readonly winnerPosition: number | null; readonly createdAt: Date },

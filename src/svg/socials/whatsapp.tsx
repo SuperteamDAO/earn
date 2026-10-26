@@ -1,4 +1,4 @@
-import { type CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 export const Whatsapp = ({ styles }: { styles?: CSSProperties }) => {
   return (
     <svg

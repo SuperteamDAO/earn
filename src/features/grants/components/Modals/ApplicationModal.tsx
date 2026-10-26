@@ -5,7 +5,7 @@ import { Check, Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { type z } from 'zod';
+import type { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -47,9 +47,9 @@ import {
   isHandleVerified,
 } from '@/features/social/utils/x-verification';
 
-import { type UserApplicationResponse } from '../../constants/userApplication';
+import type { UserApplicationResponse } from '../../constants/userApplication';
 import { userApplicationQuery } from '../../queries/user-application';
-import { type Grant, type GrantQuestion } from '../../types';
+import type { Grant, GrantQuestion } from '../../types';
 import {
   grantApplicationSchema,
   normalizeGrantQuestionLinkAnswer,

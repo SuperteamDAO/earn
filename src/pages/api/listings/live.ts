@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type BountiesFindManyArgs } from '@/prisma/models/Bounties';
+import type { BountiesFindManyArgs } from '@/prisma/models/Bounties';
 import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { getChapterRegions } from '@/utils/chapterRegion';
 

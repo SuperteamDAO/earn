@@ -6,7 +6,7 @@ import { getURL } from '@/utils/validUrl';
 
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
 import { ListingWinners } from '@/features/listings/components/ListingPage/ListingWinners';
-import { type Listing } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 
 interface BountyDetailsProps {
   bounty: Listing | null;

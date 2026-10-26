@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
 import { UserFlag } from '@/components/shared/UserFlag';
-import { type ChapterDisplay } from '@/interface/chapter';
+import type { ChapterDisplay } from '@/interface/chapter';
 
 const customBannerPosition: Partial<
   Record<string, Partial<React.CSSProperties>>

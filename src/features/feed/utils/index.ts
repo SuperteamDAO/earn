@@ -1,6 +1,6 @@
-import { type CommentRefType } from '@/prisma/enums';
+import type { CommentRefType } from '@/prisma/enums';
 
-import { type FeedPostType } from '../types';
+import type { FeedPostType } from '../types';
 
 export const convertFeedPostTypeToCommentRefType = (
   feedPostType: FeedPostType,

@@ -1,16 +1,16 @@
 import type { NextApiResponse } from 'next';
 
-import { type PrismaUserWithoutKYC } from '@/interface/user';
+import type { PrismaUserWithoutKYC } from '@/interface/user';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { sql } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import type { NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { type GrantApplicationsReturn } from '@/features/sponsor-dashboard/queries/applications';
-import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
+import type { GrantApplicationsReturn } from '@/features/sponsor-dashboard/queries/applications';
+import type { GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 
 interface ApplicationIdWithEarnings {
   id: string;

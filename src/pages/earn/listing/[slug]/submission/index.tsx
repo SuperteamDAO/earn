@@ -8,7 +8,7 @@ import { api } from '@/lib/api';
 import { getSubmissionsData } from '@/pages/api/listings/submissions/[slug]';
 
 import { SubmissionList } from '@/features/listings/components/SubmissionsPage/SubmissionList';
-import { type PublicListingDetails } from '@/features/listings/types';
+import type { PublicListingDetails } from '@/features/listings/types';
 
 const SubmissionPage = ({
   slug,

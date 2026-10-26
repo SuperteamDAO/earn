@@ -4,7 +4,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithUser } from '@/features/auth/types';
+import type { NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import { consumeCredit } from '@/features/credits/utils/allocateCredits';
 import { canUserSubmit } from '@/features/credits/utils/canUserSubmit';
@@ -13,7 +13,7 @@ import {
   sanitizeGrantApplicationAnswers,
   sanitizeGrantApplicationHtml,
 } from '@/features/grants/utils/sanitizeGrantApplicationHtml';
-import { type SubmissionMutationResponse } from '@/features/listings/types';
+import type { SubmissionMutationResponse } from '@/features/listings/types';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 

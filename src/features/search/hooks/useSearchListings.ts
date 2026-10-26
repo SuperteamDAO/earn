@@ -2,7 +2,7 @@ import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-import { type SearchSkills, type SearchStatus } from '../constants/schema';
+import type { SearchSkills, SearchStatus } from '../constants/schema';
 import type { SearchResult } from '../types';
 
 interface SearchListingsParams {

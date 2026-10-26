@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { type GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import NProgress from 'nprogress';
 import { useEffect, useMemo, useState } from 'react';

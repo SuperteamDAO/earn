@@ -1,13 +1,9 @@
-import { type NextApiRequest, type NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-import {
-  type ParentSkills,
-  type Skills,
-  type SubSkillsType,
-} from '@/interface/skills';
+import type { ParentSkills, Skills, SubSkillsType } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type BountyType } from '@/prisma/enums';
+import type { BountyType } from '@/prisma/enums';
 import { empty, join, raw, sql } from '@/prisma/internal/prismaNamespace';
 import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { getRegionNameForLocation } from '@/utils/chapterRegion';

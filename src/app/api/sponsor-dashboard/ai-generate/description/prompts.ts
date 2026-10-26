@@ -1,4 +1,4 @@
-import { type AutoGenerateChatInput } from '@/features/listing-builder/components/AutoGenerate/schema';
+import type { AutoGenerateChatInput } from '@/features/listing-builder/components/AutoGenerate/schema';
 import {
   MAX_BONUS_SPOTS,
   MAX_PODIUMS,

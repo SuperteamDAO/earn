@@ -46,7 +46,7 @@ import { Switch } from '@/components/ui/switch';
 import { cn } from '@/utils/cn';
 
 import { useListingForm, type UseListingFormReturn } from '../../../hooks';
-import { type ListingFormData } from '../../../types';
+import type { ListingFormData } from '../../../types';
 
 const questionTypes = [
   { value: 'text', label: 'Text', icon: Baseline },

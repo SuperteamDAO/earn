@@ -1,10 +1,10 @@
-import { type Address } from '@solana/kit';
+import type { Address } from '@solana/kit';
 
 import { getTokenList } from '@/server/tokenList';
 
-import { type TokenActivity } from '../types/TokenActivity';
+import type { TokenActivity } from '../types/TokenActivity';
 import { fetchTokenUSDValue } from './fetchTokenUSDValue';
-import { type SolanaRpc } from './getConnection';
+import type { SolanaRpc } from './getConnection';
 
 export async function fetchWalletActivity(
   rpc: SolanaRpc,

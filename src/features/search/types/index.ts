@@ -1,5 +1,5 @@
-import { type GrantWithApplicationCount } from '@/features/grants/types';
-import { type Listing } from '@/features/listings/types';
+import type { GrantWithApplicationCount } from '@/features/grants/types';
+import type { Listing } from '@/features/listings/types';
 
 export type GrantsSearch = GrantWithApplicationCount & {
   approvedApplications: number;

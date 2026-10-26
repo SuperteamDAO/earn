@@ -1,18 +1,18 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { type z } from 'zod';
+import type { z } from 'zod';
 
 import { api } from '@/lib/api';
 
-import {
-  type ListingCategorySchema,
-  type ListingContextSchema,
-  type ListingSortOptionSchema,
-  type ListingStatusSchema,
-  type ListingTabSchema,
-  type OrderDirectionSchema,
+import type {
+  ListingCategorySchema,
+  ListingContextSchema,
+  ListingSortOptionSchema,
+  ListingStatusSchema,
+  ListingTabSchema,
+  OrderDirectionSchema,
 } from '@/features/listings/constants/schema';
 
-import { type Listing } from '../types';
+import type { Listing } from '../types';
 
 export type ListingTab = z.infer<typeof ListingTabSchema>;
 export type ListingCategory = z.infer<typeof ListingCategorySchema>;

@@ -1,4 +1,4 @@
-import { type BountiesSelect } from '@/prisma/models/Bounties';
+import type { BountiesSelect } from '@/prisma/models/Bounties';
 
 export const publicListingDetailsSelect = {
   id: true,

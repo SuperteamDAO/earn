@@ -1,19 +1,19 @@
 // activity feed
-import { type NextApiRequest, type NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type GrantApplicationInclude } from '@/prisma/models';
-import { type CommentFindManyArgs } from '@/prisma/models/Comment';
-import { type PoWGetPayload, type PoWInclude } from '@/prisma/models/PoW';
-import { type SubmissionInclude } from '@/prisma/models/Submission';
+import type { GrantApplicationInclude } from '@/prisma/models';
+import type { CommentFindManyArgs } from '@/prisma/models/Comment';
+import type { PoWGetPayload, PoWInclude } from '@/prisma/models/PoW';
+import type { SubmissionInclude } from '@/prisma/models/Submission';
 import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
-import { type FeedPostType } from '@/features/feed/types';
+import type { FeedPostType } from '@/features/feed/types';
 
 export default async function handler(
   req: NextApiRequest,

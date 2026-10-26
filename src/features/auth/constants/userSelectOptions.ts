@@ -1,4 +1,4 @@
-import { type UserSelect } from '@/prisma/models/User';
+import type { UserSelect } from '@/prisma/models/User';
 
 export const userSelectOptions: UserSelect = {
   firstName: true,

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
@@ -14,7 +14,7 @@ import {
 } from '@/features/social/components/SocialIcons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { type LocalProfile } from '../../queries/local-profiles';
+import type { LocalProfile } from '../../queries/local-profiles';
 
 export const UserDrawer = ({
   isOpen,

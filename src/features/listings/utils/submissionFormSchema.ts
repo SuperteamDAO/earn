@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants/URL_REGEX';
-import { type User } from '@/interface/user';
+import type { User } from '@/interface/user';
 
 import { tweetLinkRegex } from '@/features/social/utils/regex';
 import {
@@ -12,7 +12,7 @@ import {
   isXUrl,
 } from '@/features/social/utils/x-verification';
 
-import { type Listing } from '../types';
+import type { Listing } from '../types';
 
 const submissionSchema = (listing: Listing, user: User | null) =>
   z

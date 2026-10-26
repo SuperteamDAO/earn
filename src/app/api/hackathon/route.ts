@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { prisma } from '@/prisma';
-import { type JsonValue } from '@/prisma/internal/prismaNamespace';
+import type { JsonValue } from '@/prisma/internal/prismaNamespace';
 
 import { HackathonQueryParamsSchema } from '@/features/hackathon/constants/schema';
 import { buildHackathonQuery } from '@/features/hackathon/utils/query-builder';

@@ -3,7 +3,7 @@ import '@/styles/st-globals.css';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
 import * as Clock from 'effect/Clock';
-import { type Metadata, type Viewport } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
 
 import { ExternalLinkDialogProvider } from '@/components/shared/ExternalLinkDialogProvider';

@@ -7,7 +7,7 @@ import posthog from 'posthog-js';
 import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { type z } from 'zod';
+import type { z } from 'zod';
 
 import { VerifiedXIcon } from '@/components/icons/VerifiedXIcon';
 import { RichEditor } from '@/components/shared/RichEditor';
@@ -46,7 +46,7 @@ import {
 
 import { submissionCountQuery } from '../../queries/submission-count';
 import { userSubmissionQuery } from '../../queries/user-submission-status';
-import { type Listing, type SubmissionMutationResponse } from '../../types';
+import type { Listing, SubmissionMutationResponse } from '../../types';
 import { getCombinedRegion } from '../../utils/region';
 import { submissionSchema } from '../../utils/submissionFormSchema';
 import { SubmissionTerms } from './SubmissionTerms';

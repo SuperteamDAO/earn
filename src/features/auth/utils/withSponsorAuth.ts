@@ -1,9 +1,9 @@
-import { type NextApiHandler, type NextApiResponse } from 'next';
+import type { NextApiHandler, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
-import { type NextApiRequestWithSponsor } from '../types';
+import type { NextApiRequestWithSponsor } from '../types';
 import { getPrivyToken } from './getPrivyToken';
 
 type Handler = (

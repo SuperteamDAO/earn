@@ -1,4 +1,4 @@
-import { type GetServerSideProps } from 'next';
+import type { GetServerSideProps } from 'next';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Home } from '@/layouts/Home';

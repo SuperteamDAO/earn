@@ -1,6 +1,6 @@
-import { type GrantsSelect } from '@/prisma/models/Grants';
+import type { GrantsSelect } from '@/prisma/models/Grants';
 
-import { type Grant } from '@/features/grants/types';
+import type { Grant } from '@/features/grants/types';
 
 export const sponsorGrantDetailsSelect = {
   id: true,

@@ -10,7 +10,7 @@ import { getTokenBySymbol } from '@/server/tokenList';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { type NextApiRequestWithSponsor } from '@/features/auth/types';
+import type { NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { addGrantWinBonusCredit } from '@/features/credits/utils/allocateCredits';
@@ -18,7 +18,7 @@ import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { convertGrantApplicationToAirtable } from '@/features/grants/utils/convertGrantApplicationToAirtable';
 import { createTranche } from '@/features/grants/utils/createTranche';
 import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
-import { type GrantApplicationStatusMutationResponse } from '@/features/sponsor-dashboard/constants/grantApplicationMutation';
+import type { GrantApplicationStatusMutationResponse } from '@/features/sponsor-dashboard/constants/grantApplicationMutation';
 import { validateCustomEmailNote } from '@/features/sponsor-dashboard/utils/customEmailSanitizer';
 import {
   getGrantApprovedEmailBody,

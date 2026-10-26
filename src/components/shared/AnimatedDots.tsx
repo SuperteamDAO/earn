@@ -1,4 +1,4 @@
-import { type ClassNameValue } from 'cn';
+import type { ClassNameValue } from 'cn';
 import { useState } from 'react';
 
 import { cn } from '@/utils/cn';

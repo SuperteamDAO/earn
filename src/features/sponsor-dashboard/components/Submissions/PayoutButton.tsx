@@ -49,7 +49,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { getTokenBySymbol } from '@/constants/tokenList';
-import { type SubmissionWithUser } from '@/interface/submission';
+import type { SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -60,7 +60,7 @@ import {
 import { toBaseUnits } from '@/utils/to-base-units';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-import { type Listing, type Rewards } from '@/features/listings/types';
+import type { Listing, Rewards } from '@/features/listings/types';
 import { getRpc } from '@/features/wallet/utils/getConnection';
 
 const payoutsInFlight = new Set<string>();

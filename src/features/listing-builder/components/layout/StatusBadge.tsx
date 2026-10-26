@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/utils/cn';
 
 import { listingStatusAtom } from '../../atoms';
-import { type ListingStatus } from '../../types';
+import type { ListingStatus } from '../../types';
 
 interface StatusBadgeProps {
   className?: string;

@@ -28,9 +28,9 @@ import { X } from '@/svg/socials/x';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
-import { type Grant } from '@/features/grants/types';
+import type { Grant } from '@/features/grants/types';
 
-import { type Listing } from '../../types';
+import type { Listing } from '../../types';
 
 type SourceType =
   | {

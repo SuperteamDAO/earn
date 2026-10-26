@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 import * as AppConfig from '@/server/app-config';
 import { runtime } from '@/server/runtime';
 
-import { type PrivyProps } from './privy-auth-provider';
+import type { PrivyProps } from './privy-auth-provider';
 
 // What a Privy page hands the provider it mounts where Privy is used.
 export async function privyProps(): Promise<PrivyProps> {

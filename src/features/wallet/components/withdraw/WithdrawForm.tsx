@@ -1,5 +1,5 @@
 import { Loader2 } from 'lucide-react';
-import { type UseFormReturn } from 'react-hook-form';
+import type { UseFormReturn } from 'react-hook-form';
 
 import { AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -13,8 +13,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { type TokenAsset } from '../../types/TokenAsset';
-import { type WithdrawFormData } from '../../utils/withdrawFormSchema';
+import type { TokenAsset } from '../../types/TokenAsset';
+import type { WithdrawFormData } from '../../utils/withdrawFormSchema';
 import { TokenAmountInput } from './TokenAmountInput';
 
 interface WithdrawFormProps {

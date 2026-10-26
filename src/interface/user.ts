@@ -1,7 +1,7 @@
 import type { SponsorType } from '@/interface/sponsor';
 import type { UserSponsor } from '@/interface/userSponsor';
 import type { EmailSettingsModel } from '@/prisma/models/EmailSettings';
-import { type UserGetPayload, type UserSelect } from '@/prisma/models/User';
+import type { UserGetPayload, UserSelect } from '@/prisma/models/User';
 
 import type { PoW } from './pow';
 import type { SubmissionWithUser } from './submission';

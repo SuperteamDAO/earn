@@ -28,7 +28,7 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
-import { type HackathonGetPayload } from '@/prisma/models/Hackathon';
+import type { HackathonGetPayload } from '@/prisma/models/Hackathon';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';

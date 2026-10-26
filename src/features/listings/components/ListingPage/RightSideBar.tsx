@@ -10,7 +10,7 @@ import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { useServerTimeSync } from '@/hooks/use-server-time';
-import { type ParentSkills } from '@/interface/skills';
+import type { ParentSkills } from '@/interface/skills';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';

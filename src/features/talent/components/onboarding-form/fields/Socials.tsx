@@ -15,8 +15,8 @@ import { Label } from '@/components/ui/label';
 import { Tooltip } from '@/components/ui/tooltip';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
-import { type SocialType } from '@/features/social/utils/constants';
-import { type NewTalentFormData } from '@/features/talent/schema';
+import type { SocialType } from '@/features/social/utils/constants';
+import type { NewTalentFormData } from '@/features/talent/schema';
 import { hasDevSkills } from '@/features/talent/utils/skills';
 
 const ALL_SOCIALS: SocialType[] = [

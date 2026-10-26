@@ -15,9 +15,9 @@ import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-import { type TokenAsset } from '../types/TokenAsset';
-import { type TxData } from '../types/TxData';
-import { type DrawerView } from '../types/WalletTypes';
+import type { TokenAsset } from '../types/TokenAsset';
+import type { TxData } from '../types/TxData';
+import type { DrawerView } from '../types/WalletTypes';
 import { WalletActivity } from './activity/WalletActivity';
 import { TokenList } from './tokens/TokenList';
 import { WithdrawFundsFlow } from './withdraw/WithdrawFundsFlow';

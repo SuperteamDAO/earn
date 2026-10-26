@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import { GrantsCardMini } from '@/features/grants/components/GrantsCardMini';
 import { liveGrantsQuery } from '@/features/grants/queries/live-grants';

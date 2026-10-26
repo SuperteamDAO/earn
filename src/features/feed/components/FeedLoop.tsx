@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 
-import { type FeedDataProps } from '../types';
+import type { FeedDataProps } from '../types';
 import { FeedCardContainerSkeleton } from './FeedCardContainer';
 import { GrantCard } from './grantCard';
 import { PowCard } from './powCard';

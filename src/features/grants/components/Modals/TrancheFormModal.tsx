@@ -28,7 +28,7 @@ import { validateSolAddress } from '@/utils/validateSolAddress';
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 
 import { userApplicationQuery } from '../../queries/user-application';
-import { type Grant } from '../../types';
+import type { Grant } from '../../types';
 import {
   AGENTIC_ENGINEERING_GRANT_COPY,
   extractGithubRepoPath,

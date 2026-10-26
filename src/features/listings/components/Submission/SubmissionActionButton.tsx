@@ -19,7 +19,7 @@ import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { CreditIcon } from '@/features/credits/icon/credit';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
-import { type Listing } from '../../types';
+import type { Listing } from '../../types';
 import { isDeadlineOver } from '../../utils/deadline';
 import {
   getLocationCooldown,

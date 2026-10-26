@@ -4,11 +4,11 @@ import { useEffect, useRef } from 'react';
 
 import { Form } from '@/components/ui/form';
 import { Meta } from '@/layouts/Meta';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
+import type { HackathonModel } from '@/prisma/models/Hackathon';
 import { useUser } from '@/store/user';
 import { HydrateAtoms, useInitAtom } from '@/utils/atoms';
 
-import { type Listing } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 import { Header } from '@/features/navbar/components/Header';
 
 import {
@@ -24,7 +24,7 @@ import {
   store,
 } from '../atoms';
 import { useListingForm } from '../hooks';
-import { type ListingFormData } from '../types';
+import type { ListingFormData } from '../types';
 import {
   getListingDefaults,
   transformListingToFormListing,

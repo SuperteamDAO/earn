@@ -24,7 +24,7 @@ import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
 import { listingWinnersQuery } from '@/features/listings/queries/listing-winners';
 import { submissionCountQuery } from '@/features/listings/queries/submission-count';
-import { type PublicListingDetails } from '@/features/listings/types';
+import type { PublicListingDetails } from '@/features/listings/types';
 
 const ListingWinners = dynamic(
   () =>

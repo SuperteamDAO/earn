@@ -1,5 +1,5 @@
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
-import { type ClassNameValue } from 'cn';
+import type { ClassNameValue } from 'cn';
 import { CheckIcon } from 'lucide-react';
 import * as React from 'react';
 

@@ -18,7 +18,7 @@ import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { Comments } from '@/features/comments/components/Comments';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { type FeedDataProps } from '../types';
+import type { FeedDataProps } from '../types';
 import { convertFeedPostTypeToCommentRefType } from '../utils';
 import { FeedCardHeader } from './FeedCardHeader';
 

@@ -4,7 +4,7 @@ import { prisma } from '@/prisma';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 
-import { type ListingFormData } from '../types';
+import type { ListingFormData } from '../types';
 import { calculateTotalPrizes } from './rewards';
 
 async function resetExcessWinners(

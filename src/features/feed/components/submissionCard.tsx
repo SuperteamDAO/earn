@@ -7,7 +7,7 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip } from '@/components/ui/tooltip';
 import { getURL } from '@/utils/validUrl';
 
-import { type FeedDataProps } from '../types';
+import type { FeedDataProps } from '../types';
 import { FeedCardContainer } from './FeedCardContainer';
 import { FeedCardLink } from './FeedCardLink';
 import { WinnerFeedImage } from './WinnerFeedImage';

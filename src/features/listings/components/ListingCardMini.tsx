@@ -8,7 +8,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import { timeAgoShort } from '@/utils/timeAgo';
 
-import { type Listing } from '../types';
+import type { Listing } from '../types';
 import { getListingIcon } from '../utils/getListingIcon';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 

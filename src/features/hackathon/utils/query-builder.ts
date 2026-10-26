@@ -1,9 +1,9 @@
 import type { z } from 'zod';
 
-import { type JsonValue } from '@/prisma/internal/prismaNamespace';
-import {
-  type BountiesOrderByWithRelationInput,
-  type BountiesWhereInput,
+import type { JsonValue } from '@/prisma/internal/prismaNamespace';
+import type {
+  BountiesOrderByWithRelationInput,
+  BountiesWhereInput,
 } from '@/prisma/models/Bounties';
 import { getChapterRegions } from '@/utils/chapterRegion';
 

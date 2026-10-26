@@ -15,7 +15,7 @@ import { addWinBonusCredit } from '@/features/credits/utils/allocateCredits';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
-import { type Rewards } from '@/features/listings/types';
+import type { Rewards } from '@/features/listings/types';
 import { createPayment } from '@/features/listings/utils/createPayment';
 
 export const maxDuration = 300;

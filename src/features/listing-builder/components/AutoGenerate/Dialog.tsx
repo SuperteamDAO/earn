@@ -8,21 +8,21 @@ import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-  type RewardInputSchema,
-  type TRewardsGenerateResponse,
+import type {
+  RewardInputSchema,
+  TRewardsGenerateResponse,
 } from '@/app/api/sponsor-dashboard/ai-generate/rewards/route';
-import { type TTitleGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/title/route';
-import { type TTokenGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/token/route';
+import type { TTitleGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/title/route';
+import type { TTokenGenerateResponse } from '@/app/api/sponsor-dashboard/ai-generate/token/route';
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { getTokenBySymbol } from '@/constants/tokenList';
-import { type Skills } from '@/interface/skills';
+import type { Skills } from '@/interface/skills';
 import { api } from '@/lib/api';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
+import type { HackathonModel } from '@/prisma/models/Hackathon';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
@@ -34,7 +34,7 @@ import {
   isAutoGenerateOpenAtom,
 } from '../../atoms';
 import { getDefaultListingToken } from '../../constants';
-import { type TEligibilityQuestion } from '../../types/schema';
+import type { TEligibilityQuestion } from '../../types/schema';
 import { AutoGenerateChat } from './Chat';
 import { prepareCompanyInfo } from './company-info';
 import { AutoGenerateForm } from './Form';

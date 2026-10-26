@@ -8,7 +8,7 @@ import { useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { type SponsorStats } from '../types';
+import type { SponsorStats } from '../types';
 import { HelpBanner } from './HelpBanner';
 
 interface StatsTooltipProps {

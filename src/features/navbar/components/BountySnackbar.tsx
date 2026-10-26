@@ -2,7 +2,7 @@ import { atom, useAtom } from 'jotai';
 import { Pencil } from 'lucide-react';
 import { useRouter } from 'next/router';
 
-import { type status } from '@/prisma/enums';
+import type { status } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';

@@ -5,7 +5,7 @@ import posthog from 'posthog-js';
 import { Button } from '@/components/ui/button';
 import { JTTG } from '@/constants/Telegram';
 
-import { type Listing } from '@/features/listings/types';
+import type { Listing } from '@/features/listings/types';
 
 interface PaymentPendingBannerProps {
   listing: Listing;
