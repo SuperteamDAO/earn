@@ -2,9 +2,7 @@ import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { FeedPageLayout } from '@/layouts/Feed';
 
 import type { FeedDataProps } from '../types';
-import { GrantCard } from './grantCard';
-import { PowCard } from './powCard';
-import { SubmissionCard } from './submissionCard';
+import { FeedPostCards } from './FeedPostCards';
 
 interface Props {
   // The post and, for a submission, the others on its listing; null when
@@ -35,24 +33,7 @@ export const FeedPost = ({ data }: Props) => {
   }
   return (
     <FeedPageLayout>
-      {
-        <>
-          {data.map((item, index) => {
-            switch (item.type) {
-              case 'submission':
-                return (
-                  <SubmissionCard key={index} sub={item} type="activity" />
-                );
-              case 'pow':
-                return <PowCard key={index} pow={item} type="activity" />;
-              case 'grant-application':
-                return <GrantCard type="activity" grant={item} key={index} />;
-              default:
-                return null;
-            }
-          })}
-        </>
-      }
+      <FeedPostCards data={data} />
     </FeedPageLayout>
   );
 };

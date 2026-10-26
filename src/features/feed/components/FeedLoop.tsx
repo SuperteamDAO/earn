@@ -2,6 +2,7 @@
 
 import { forwardRef } from 'react';
 
+import { useMounted } from '../hooks/use-mounted';
 import type { FeedDataProps } from '../types';
 import { FeedCardContainerSkeleton } from './FeedCardContainer';
 import { GrantCard } from './grantCard';
@@ -19,9 +20,10 @@ interface Props {
 
 export const FeedLoop = forwardRef<HTMLDivElement, Omit<Props, 'ref'>>(
   ({ feed: feedItems, isLoading, isFetchingNextPage, children, type }, ref) => {
+    const mounted = useMounted();
     return (
       <>
-        {isLoading ? (
+        {isLoading || !mounted ? (
           Array.from({ length: 2 }).map((_, index) => (
             <FeedCardContainerSkeleton key={index} />
           ))
