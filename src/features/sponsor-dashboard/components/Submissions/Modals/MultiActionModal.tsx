@@ -1,19 +1,21 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+'use client';
+
 import { AlertTriangle, Flag } from 'lucide-react';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import type { SubmissionWithUser } from '@/interface/submission';
-import { api } from '@/lib/api';
+import { SubmissionLabels } from '@/prisma/enums';
 
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
-import type { Listing } from '@/features/listings/types';
-import { selectedSubmissionAtom } from '@/features/sponsor-dashboard/atoms';
-import { useRejectSubmissions } from '@/features/sponsor-dashboard/mutations/useRejectSubmissions';
-import { useToggleWinner } from '@/features/sponsor-dashboard/mutations/useToggleWinner';
+import { BONUS_POSITION } from '../../../utils/review-rules';
+import {
+  useRejectSubmissions,
+  useReview,
+  useToggleWinner,
+  useUpdateLabel,
+} from '../review-state';
 
 type ActionType = 'bonus' | 'spam' | 'shortlist';
 
@@ -31,25 +33,21 @@ interface MultiActionModalProps {
   isOpen: boolean;
   onClose: () => void;
   submissionIds: string[];
-  setSelectedSubmissionIds: (ids: Set<string>) => void;
   actionType: ActionType;
-  listing: Listing | undefined;
 }
 
 export const MultiActionModal = ({
   isOpen,
   onClose,
   submissionIds,
-  setSelectedSubmissionIds,
   actionType,
-  listing,
 }: MultiActionModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const queryClient = useQueryClient();
-  const [, setSelectedSubmission] = useAtom(selectedSubmissionAtom);
+  const { setSelectedIds: setSelectedSubmissionIds } = useReview();
 
-  const rejectSubmissions = useRejectSubmissions(listing?.slug || '');
-  const { mutateAsync: toggleWinner } = useToggleWinner(listing);
+  const rejectSubmissions = useRejectSubmissions();
+  const toggleWinner = useToggleWinner();
+  const updateLabel = useUpdateLabel();
 
   const isMultiple = submissionIds.length > 1;
 
@@ -88,7 +86,7 @@ export const MultiActionModal = ({
         };
 
       default:
-        throw new Error(`Unknown action type: ${actionType}`);
+        throw new Error(`Unknown action type: ${String(actionType)}`);
     }
   };
 
@@ -97,70 +95,25 @@ export const MultiActionModal = ({
     try {
       switch (actionType) {
         case 'bonus':
-          const bonusSubmissions = submissionIds.map((s) => ({
-            id: s,
-            isWinner: true,
-            winnerPosition: BONUS_REWARD_POSITION,
-          }));
-          await toggleWinner(bonusSubmissions);
+          await toggleWinner(
+            submissionIds.map((s) => ({
+              id: s,
+              isWinner: true,
+              winnerPosition: BONUS_POSITION,
+            })),
+          );
           setSelectedSubmissionIds(new Set());
           break;
         case 'spam':
-          await api.post(`/api/sponsor-dashboard/submission/update-label/`, {
-            ids: submissionIds,
-            label: 'Spam',
-          });
-          rejectSubmissions.mutate(submissionIds);
-
-          queryClient.setQueryData<SubmissionWithUser[]>(
-            ['sponsor-submissions', listing?.slug],
-            (old) => {
-              if (!old) return old;
-              return old.map((submission) => {
-                if (submissionIds.includes(submission.id)) {
-                  return { ...submission, label: 'Spam' as any };
-                }
-                return submission;
-              });
-            },
-          );
-
-          setSelectedSubmission((prev) => {
-            if (prev && submissionIds.includes(prev.id)) {
-              return { ...prev, label: 'Spam' as any };
-            }
-            return prev;
-          });
-
+          await updateLabel(submissionIds, SubmissionLabels.Spam);
+          void rejectSubmissions(submissionIds);
           setSelectedSubmissionIds(new Set());
           break;
         case 'shortlist':
-          await api.post(`/api/sponsor-dashboard/submission/update-label/`, {
-            ids: submissionIds,
-            label: 'Shortlisted',
-          });
-
-          queryClient.setQueryData<SubmissionWithUser[]>(
-            ['sponsor-submissions', listing?.slug],
-            (old) => {
-              if (!old) return old;
-              return old.map((submission) => {
-                if (submissionIds.includes(submission.id)) {
-                  return { ...submission, label: 'Shortlisted' as any };
-                }
-                return submission;
-              });
-            },
-          );
-
-          setSelectedSubmission((prev) => {
-            if (prev && submissionIds.includes(prev.id)) {
-              return { ...prev, label: 'Shortlisted' as any };
-            }
-            return prev;
-          });
-
+          await updateLabel(submissionIds, SubmissionLabels.Shortlisted);
           setSelectedSubmissionIds(new Set());
+          break;
+        default:
           break;
       }
     } catch (error) {
@@ -199,7 +152,7 @@ export const MultiActionModal = ({
             <Button
               className={`flex-1 ${config.buttonClass}`}
               disabled={loading}
-              onClick={handleAction}
+              onClick={() => void handleAction()}
             >
               {loading ? (
                 <>

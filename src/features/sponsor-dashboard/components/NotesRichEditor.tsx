@@ -1,7 +1,9 @@
+'use client';
+
 import { CharacterCount, Placeholder } from '@tiptap/extensions';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
-import StarterKit from '@tiptap/starter-kit';
+import { StarterKit } from '@tiptap/starter-kit';
 import { Bold, Italic, List, ListOrdered } from 'lucide-react';
 import * as React from 'react';
 
@@ -24,13 +26,11 @@ const useNotesEditor = ({
   onChange,
   placeholder = 'Start typing to create a bullet point...',
   maxLength,
-  id,
 }: {
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
   maxLength?: number;
-  id?: string;
 }) => {
   const editor = useEditor({
     immediatelyRender: false,
@@ -70,25 +70,25 @@ const useNotesEditor = ({
       },
     },
 
-    onUpdate: ({ editor }) => {
-      const text = editor.getText();
+    onUpdate: ({ editor: updated }) => {
+      const text = updated.getText();
 
       if (!text.trim()) {
         onChange?.('');
         return;
       }
 
-      onChange?.(editor.getHTML());
+      onChange?.(updated.getHTML());
     },
-    onCreate: ({ editor }) => {
+    onCreate: ({ editor: created }) => {
       if (value) {
-        editor.commands.setContent(value);
+        created.commands.setContent(value);
       }
     },
   });
 
   React.useEffect(() => {
-    if (!editor) return;
+    if (!editor) return undefined;
 
     const handleUpdate = () => {
       const text = editor.getText().trim();
@@ -108,10 +108,10 @@ const useNotesEditor = ({
     return () => {
       editor.off('update', handleUpdate);
     };
-  }, [editor, id]);
+  }, [editor]);
 
   React.useEffect(() => {
-    if (!editor) return;
+    if (!editor) return undefined;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Enter' && !event.shiftKey) {
@@ -136,7 +136,7 @@ const useNotesEditor = ({
   }, [editor]);
 
   React.useEffect(() => {
-    if (!editor) return;
+    if (!editor) return undefined;
 
     const handleInput = () => {
       const { state } = editor;
@@ -160,7 +160,7 @@ const useNotesEditor = ({
   }, [editor]);
 
   React.useEffect(() => {
-    if (!editor || !maxLength) return;
+    if (!editor || !maxLength) return undefined;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
@@ -282,8 +282,8 @@ const NotesSelectionMenu = ({ editor }: { editor: Editor }) => {
   return (
     <BubbleMenu
       editor={editor}
-      shouldShow={({ editor }) =>
-        editor.isEditable && !editor.state.selection.empty
+      shouldShow={({ editor: shown }) =>
+        shown.isEditable && !shown.state.selection.empty
       }
     >
       <div className="bg-background text-muted-foreground flex h-8 overflow-hidden rounded-md border shadow-md">
@@ -326,7 +326,6 @@ export const NotesRichEditor: React.FC<NotesRichEditorProps> = ({
     onChange,
     placeholder,
     maxLength,
-    id,
   });
 
   React.useEffect(() => {

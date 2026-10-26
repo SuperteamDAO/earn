@@ -1,3 +1,5 @@
+'use client';
+
 import {
   getSetComputeUnitLimitInstruction,
   getSetComputeUnitPriceInstruction,
@@ -19,6 +21,7 @@ import {
   appendTransactionMessageInstructions,
   compileTransaction,
   createNoopSigner,
+  createSolanaRpc,
   createTransactionMessage,
   getTransactionEncoder,
   type Instruction,
@@ -29,13 +32,16 @@ import {
   type TransactionSigner,
 } from '@solana/kit';
 import { useWallet } from '@solana/wallet-adapter-react';
-import type { SolanaSignAndSendTransactionFeature } from '@solana/wallet-standard-features';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import type {
+  SolanaSignAndSendTransactionFeature,
+  SolanaSignAndSendTransactionInput,
+} from '@solana/wallet-standard-features';
 import bs58 from 'bs58';
 import { Loader2 } from 'lucide-react';
 import { log } from 'next-axiom';
 import dynamic from 'next/dynamic';
-import posthog from 'posthog-js';
+import { useRouter } from 'next/navigation';
+import { posthog } from 'posthog-js';
 import { useState } from 'react';
 
 import {
@@ -49,9 +55,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { getTokenBySymbol } from '@/constants/tokenList';
-import type { SubmissionWithUser } from '@/interface/submission';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson } from '@/lib/fetch-json';
+import { publicEnv } from '@/lib/public-env';
+import { useViewer } from '@/lib/viewer';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import {
   classifySolanaError,
@@ -60,14 +66,64 @@ import {
 import { toBaseUnits } from '@/utils/to-base-units';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-import type { Listing, Rewards } from '@/features/listings/types';
-import { getRpc } from '@/features/wallet/utils/getConnection';
+import type {
+  ReviewListing,
+  ReviewPayment,
+  ReviewSubmission,
+} from '../../utils/review-rules';
+import { useReview } from './review-state';
 
 const payoutsInFlight = new Set<string>();
 
+const getRpc = () => createSolanaRpc(`https://${publicEnv.rpcUrl}`);
+
+type SignAndSend =
+  SolanaSignAndSendTransactionFeature['solana:signAndSendTransaction'];
+type WalletAccount = SolanaSignAndSendTransactionInput['account'];
+
+interface StandardWallet {
+  readonly features: Readonly<Record<string, unknown>>;
+  readonly accounts: ReadonlyArray<WalletAccount>;
+}
+
+// The Wallet Standard wallet behind an adapter, when it is one.
+const isStandardWallet = (value: unknown): value is StandardWallet =>
+  typeof value === 'object' &&
+  value !== null &&
+  'features' in value &&
+  'accounts' in value &&
+  Array.isArray(value.accounts);
+
+const isSignAndSend = (value: unknown): value is SignAndSend =>
+  typeof value === 'object' &&
+  value !== null &&
+  'signAndSendTransaction' in value &&
+  typeof value.signAndSendTransaction === 'function';
+
+const DynamicWalletMultiButton = dynamic(
+  async () =>
+    (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
+  { ssr: false },
+);
+
+const detectTokenProgram = async (mintAddress: string): Promise<Address> => {
+  const rpc = getRpc();
+  try {
+    const accountInfo = await rpc
+      .getAccountInfo(address(mintAddress), { encoding: 'base64' })
+      .send();
+    if (accountInfo.value?.owner === TOKEN_2022_PROGRAM_ADDRESS) {
+      return TOKEN_2022_PROGRAM_ADDRESS;
+    }
+    return TOKEN_PROGRAM_ADDRESS;
+  } catch {
+    return TOKEN_PROGRAM_ADDRESS;
+  }
+};
+
 interface Props {
-  bounty: Listing | null;
-  submission: SubmissionWithUser;
+  bounty: ReviewListing | null;
+  submission: ReviewSubmission;
 }
 
 export const PayoutButton = ({ bounty, submission }: Props) => {
@@ -77,12 +133,13 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
     signature?: string;
   } | null>(null);
 
-  const { user } = useUser();
+  const user = useViewer();
+  const router = useRouter();
+  const { updateSubmissions } = useReview();
   const { connected, publicKey, wallet } = useWallet();
-  const queryClient = useQueryClient();
 
   const totalPrizeAmount =
-    bounty?.rewards?.[submission?.winnerPosition as keyof Rewards] || 0;
+    bounty?.rewards?.[String(submission.winnerPosition)] || 0;
 
   const totalPaidAmount =
     submission?.paymentDetails?.reduce(
@@ -92,54 +149,36 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
 
   const remainingAmount = totalPrizeAmount - totalPaidAmount;
 
-  const DynamicWalletMultiButton = dynamic(
-    async () =>
-      (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
-    { ssr: false },
-  );
-
-  const detectTokenProgram = async (mintAddress: string): Promise<Address> => {
-    const rpc = getRpc();
+  const addPayment = async ({
+    id,
+    paymentDetails,
+  }: {
+    id: string;
+    paymentDetails: ReadonlyArray<ReviewPayment>;
+  }) => {
     try {
-      const accountInfo = await rpc
-        .getAccountInfo(address(mintAddress), { encoding: 'base64' })
-        .send();
-      if (accountInfo.value?.owner === TOKEN_2022_PROGRAM_ADDRESS) {
-        return TOKEN_2022_PROGRAM_ADDRESS;
-      }
-      return TOKEN_PROGRAM_ADDRESS;
-    } catch {
-      return TOKEN_PROGRAM_ADDRESS;
-    }
-  };
-
-  const { mutateAsync: addPayment } = useMutation({
-    mutationFn: ({ id, paymentDetails }: { id: string; paymentDetails: any }) =>
-      api.post(`/api/sponsor-dashboard/submission/add-payment/`, {
+      const updatedSubmission = await postJson<{
+        isPaid: boolean;
+        paymentDetails: ReadonlyArray<ReviewPayment>;
+      }>('/api/sponsor-dashboard/submission/add-payment/', {
         id,
         paymentDetails,
-      }),
-    onSuccess: (response, variables) => {
-      const updatedSubmission = response.data;
-
-      queryClient.setQueryData<SubmissionWithUser[]>(
-        ['sponsor-submissions', bounty?.slug],
-        (old) =>
-          old?.map((sub) =>
-            sub.id === variables.id
-              ? {
-                  ...sub,
-                  isPaid: updatedSubmission.isPaid,
-                  paymentDetails: updatedSubmission.paymentDetails,
-                }
-              : sub,
-          ),
+      });
+      updateSubmissions((sub) =>
+        sub.id === id
+          ? {
+              ...sub,
+              isPaid: updatedSubmission.isPaid,
+              paymentDetails: updatedSubmission.paymentDetails,
+            }
+          : sub,
       );
-    },
-    onError: (error) => {
+      router.refresh();
+    } catch (error) {
       console.error('Payment record update failed', error);
-    },
-  });
+      throw error;
+    }
+  };
 
   const handlePayout = async ({
     id,
@@ -201,8 +240,8 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           }),
         );
       } else {
-        const mintAddress = tokenDetails?.mintAddress as string;
-        const decimals = tokenDetails?.decimals as number;
+        if (!tokenDetails) throw new Error(`Unknown token ${token}`);
+        const { mintAddress, decimals } = tokenDetails;
         const mint = address(mintAddress);
         const tokenProgramId = await detectTokenProgram(mintAddress);
         const isToken2022 = tokenProgramId === TOKEN_2022_PROGRAM_ADDRESS;
@@ -266,14 +305,9 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       const txEncoder = getTransactionEncoder();
       const txBytes = txEncoder.encode(compiledTx);
 
-      const standardWallet = (wallet.adapter as any)?.wallet as
-        | {
-            features: Record<string, unknown>;
-            accounts: Array<{ address: string; publicKey: Uint8Array }>;
-          }
-        | undefined;
+      const standardWallet: unknown = Reflect.get(wallet.adapter, 'wallet');
 
-      if (!standardWallet) {
+      if (!isStandardWallet(standardWallet)) {
         throw new Error('Wallet not available');
       }
 
@@ -286,25 +320,23 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         throw new Error('Wallet not available');
       }
 
-      const signAndSend = standardWallet.features[
-        'solana:signAndSendTransaction'
-      ] as
-        | SolanaSignAndSendTransactionFeature['solana:signAndSendTransaction']
-        | undefined;
+      const signAndSend =
+        standardWallet.features['solana:signAndSendTransaction'];
 
-      if (!signAndSend) {
+      if (!isSignAndSend(signAndSend)) {
         throw new Error('Wallet does not support signAndSendTransaction');
       }
 
       payoutStage = 'wallet-sign-and-send';
       const results = await signAndSend.signAndSendTransaction({
-        account: account as any,
-        transaction: txBytes as Uint8Array,
+        account,
+        transaction: new Uint8Array(txBytes),
         chain: 'solana:mainnet',
         options: { skipPreflight: true },
-      } as any);
+      });
 
-      const result = Array.isArray(results) ? results[0] : results;
+      const result = results[0];
+      if (!result) throw new Error('Wallet returned no signature');
       txSignature = bs58.encode(result.signature);
 
       payoutStage = 'confirm-transaction';
@@ -351,10 +383,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       );
 
       const firstName: string = (() => {
-        const name =
-          (submission as any)?.user?.name ||
-          (submission as any)?.user?.firstName ||
-          'the winner';
+        const name = submission.user.firstName || 'the winner';
         return typeof name === 'string' && name.trim().length > 0
           ? (name.trim().split(' ')[0] ?? 'the winner')
           : 'the winner';
@@ -373,8 +402,9 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         },
       });
 
-      if (errorType === 'user-rejected') {
-      } else if (errorType === 'timeout' || errorType === 'rpc') {
+      // Cancelled in the wallet: nothing was sent.
+      if (errorType === 'user-rejected') return;
+      if (errorType === 'timeout' || errorType === 'rpc') {
         setWarning({ firstName, signature: txSignature || undefined });
       } else if (txSignature) {
         setWarning({ firstName, signature: txSignature });
@@ -424,13 +454,13 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           disabled={
             !bounty?.isWinnersAnnounced || remainingAmount <= 0 || isPaying
           }
-          onClick={async () => {
+          onClick={() => {
             if (!submission?.user.walletAddress) {
               console.error('Public key is null, cannot proceed with payment');
               return;
             }
             posthog.capture('pay winner_sponsor');
-            handlePayout({
+            void handlePayout({
               id: submission.id,
               token: bounty?.token ?? 'SOL',
               amount: remainingAmount,

@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom, useSetAtom } from 'jotai';
+'use client';
+
 import { ChevronDown } from 'lucide-react';
 
 import {
@@ -9,88 +9,43 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
-import type { SubmissionWithUser } from '@/interface/submission';
-import { api } from '@/lib/api';
-import type { BountyType, SubmissionLabels } from '@/prisma/enums';
+import { SubmissionLabels, type BountyType } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
-import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';
+import type { ReviewSubmission } from '../../utils/review-rules';
 import { colorMap } from '../../utils/statusColorMap';
+import { useReview, useUpdateLabel } from './review-state';
 
 interface Props {
-  listingSlug: string;
   type: BountyType | 'grant' | undefined;
-  submission: SubmissionWithUser | undefined;
+  submission: ReviewSubmission | undefined;
 }
 
-export const SelectLabel = ({
-  listingSlug,
-  type,
-  submission: propSubmission,
-}: Props) => {
-  const queryClient = useQueryClient();
-  const [selectedSubmissionAtomValue, setSelectedSubmission] = useAtom(
-    selectedSubmissionAtom,
-  );
+const isLabel = (value: string): value is SubmissionLabels =>
+  Object.values<string>(SubmissionLabels).includes(value);
 
-  const targetSubmission = propSubmission || selectedSubmissionAtomValue;
+const colorsOf = (value: string) =>
+  isLabel(value) ? colorMap[value] : { color: '', bg: '', border: '' };
 
-  const setLabelsUpdating = useSetAtom(isStateUpdatingAtom);
+export const SelectLabel = ({ type, submission: propSubmission }: Props) => {
+  const { selected, setUpdating } = useReview();
+  const updateLabel = useUpdateLabel();
 
-  const selectLabel = async (
-    label: SubmissionLabels,
-    id: string | undefined,
-  ) => {
-    if (!id) return;
-    updateLabel({ id, label });
+  const targetSubmission = propSubmission || selected;
+
+  const selectLabel = (label: string, id: string | undefined) => {
+    if (!id || !isLabel(label)) return;
+    setUpdating(true);
+    updateLabel([id], label)
+      .catch((e: unknown) => console.error(e))
+      .finally(() => setUpdating(false));
   };
 
   let bg, color, border;
   if (targetSubmission) {
-    ({ bg, color, border } =
-      colorMap[targetSubmission?.label as SubmissionLabels]);
+    ({ bg, color, border } = colorMap[targetSubmission.label]);
   }
-
-  const { mutate: updateLabel } = useMutation({
-    mutationFn: ({ id, label }: { id: string; label: SubmissionLabels }) =>
-      api.post(`/api/sponsor-dashboard/submission/update-label/`, {
-        id,
-        label,
-      }),
-    onSuccess: (_response) => {
-      setLabelsUpdating(false);
-    },
-    onMutate: (variables) => {
-      queryClient.setQueryData<SubmissionWithUser[]>(
-        ['sponsor-submissions', listingSlug],
-        (old) => {
-          if (!old) return old;
-          return old.map((submission) => {
-            if (submission.id === variables.id) {
-              return { ...submission, label: variables.label };
-            }
-            return submission;
-          });
-        },
-      );
-
-      setSelectedSubmission((prev) => {
-        if (prev && prev.id === variables.id) {
-          return { ...prev, label: variables.label };
-        }
-        return prev;
-      });
-
-      setLabelsUpdating(true);
-    },
-    onError: (e) => {
-      console.log(e);
-    },
-    onSettled: () => {
-      setLabelsUpdating(false);
-    },
-  });
 
   return (
     <div onClick={(e) => e.stopPropagation()}>
@@ -121,21 +76,12 @@ export const SelectLabel = ({
               <DropdownMenuItem
                 key={option.value}
                 className="cursor-pointer px-1.5 py-1 text-center text-[0.7rem]"
-                onClick={() =>
-                  selectLabel(
-                    option.value as SubmissionLabels,
-                    targetSubmission?.id,
-                  )
-                }
+                onClick={() => selectLabel(option.value, targetSubmission?.id)}
               >
                 <StatusPill
-                  color={colorMap[option.value as SubmissionLabels].color}
-                  backgroundColor={
-                    colorMap[option.value as SubmissionLabels].bg
-                  }
-                  borderColor={
-                    colorMap[option.value as SubmissionLabels].border
-                  }
+                  color={colorsOf(option.value).color}
+                  backgroundColor={colorsOf(option.value).bg}
+                  borderColor={colorsOf(option.value).border}
                   className="w-fit text-[10px]"
                 >
                   {option.label}

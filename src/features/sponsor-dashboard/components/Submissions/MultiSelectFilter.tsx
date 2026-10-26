@@ -1,3 +1,5 @@
+'use client';
+
 import { LucideListFilter } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -9,18 +11,23 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
 import { Switch } from '@/components/ui/switch';
-import type { BountyType, SubmissionLabels } from '@/prisma/enums';
+import { type BountyType, SubmissionLabels } from '@/prisma/enums';
 
 import { labelMenuOptions } from '../../constants';
+import type { ReviewFilter } from '../../utils/review-rules';
 import { colorMap } from '../../utils/statusColorMap';
 
 interface Props {
-  selectedFilters: Set<SubmissionLabels | 'Winner' | 'Rejected'>;
-  onFilterChange: (
-    filters: Set<SubmissionLabels | 'Winner' | 'Rejected'>,
-  ) => void;
+  selectedFilters: Set<ReviewFilter>;
+  onFilterChange: (filters: Set<ReviewFilter>) => void;
   listingType?: BountyType | 'grant' | undefined;
 }
+
+const getFilterColor = (value: ReviewFilter) => {
+  if (value === 'Winner') return colorMap.Winner;
+  if (value === 'Rejected') return colorMap.Rejected;
+  return colorMap[value];
+};
 
 export const MultiSelectFilter = ({
   selectedFilters,
@@ -31,10 +38,12 @@ export const MultiSelectFilter = ({
     () => [
       { label: 'Winner', value: 'Winner' as const },
       { label: 'Rejected', value: 'Rejected' as const },
-      ...labelMenuOptions(listingType).map((option) => ({
-        label: option.label,
-        value: option.value as SubmissionLabels,
-      })),
+      ...labelMenuOptions(listingType).flatMap((option) => {
+        const value = Object.values(SubmissionLabels).find(
+          (label) => label === option.value,
+        );
+        return value ? [{ label: option.label, value }] : [];
+      }),
     ],
     [listingType],
   );
@@ -46,7 +55,7 @@ export const MultiSelectFilter = ({
 
   const hasActiveFilters = selectedFilters.size > 0;
 
-  const toggleFilter = (value: SubmissionLabels | 'Winner' | 'Rejected') => {
+  const toggleFilter = (value: ReviewFilter) => {
     const newFilters = new Set(selectedFilters);
     if (newFilters.has(value)) {
       newFilters.delete(value);
@@ -54,18 +63,6 @@ export const MultiSelectFilter = ({
       newFilters.add(value);
     }
     onFilterChange(newFilters);
-  };
-
-  const getFilterColor = (value: SubmissionLabels | 'Winner' | 'Rejected') => {
-    if (value === 'Winner') return colorMap.Winner;
-    if (value === 'Rejected') return colorMap.Rejected;
-    return (
-      colorMap[value as keyof typeof colorMap] || {
-        bg: 'bg-slate-100',
-        color: 'text-slate-600',
-        border: 'border-slate-200',
-      }
-    );
   };
 
   return (

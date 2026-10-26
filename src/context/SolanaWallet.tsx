@@ -1,6 +1,7 @@
+'use client';
+
 import '@solana/wallet-adapter-react-ui/styles.css';
 
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 import {
   ConnectionProvider,
@@ -10,16 +11,15 @@ import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare';
 import { useMemo } from 'react';
 
+import { publicEnv } from '@/lib/public-env';
+
 export function SolanaWalletProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const network = WalletAdapterNetwork.Mainnet;
-
-  const rpc = `https://${process.env.NEXT_PUBLIC_RPC_URL}`;
-
-  const endpoint = useMemo(() => rpc, [network]);
+  // Mainnet: sponsors pay winners from their own wallets.
+  const endpoint = `https://${publicEnv.rpcUrl}`;
 
   const wallets = useMemo(
     () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],

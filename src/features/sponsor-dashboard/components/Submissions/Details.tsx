@@ -1,18 +1,17 @@
-import { useAtomValue } from 'jotai';
+'use client';
 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
-import type { Listing } from '@/features/listings/types';
-
-import { selectedSubmissionAtom } from '../../atoms';
+import type { ReviewListing } from '../../utils/review-rules';
 import { InfoBox } from '../InfoBox';
 import { Notes } from './Notes';
+import { useReview } from './review-state';
 import { TweetStats } from './TweetStats';
 
 interface Props {
-  bounty: Listing | undefined;
+  bounty: ReviewListing;
   isHackathonPage?: boolean;
 }
 
@@ -41,8 +40,8 @@ const isTweetStatusUrl = (url: string | undefined | null): boolean => {
   }
 };
 
-export const Details = ({ bounty, isHackathonPage }: Props) => {
-  const selectedSubmission = useAtomValue(selectedSubmissionAtom);
+export const Details = ({ isHackathonPage }: Props) => {
+  const { selected: selectedSubmission } = useReview();
 
   return (
     <div className="flex max-h-[39.7rem] w-full">
@@ -66,6 +65,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
             {selectedSubmission &&
               isTweetStatusUrl(selectedSubmission.link) && (
                 <TweetStats
+                  key={`${selectedSubmission.id}-link`}
                   source="link"
                   submissionId={selectedSubmission.id}
                 />
@@ -81,6 +81,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
             {selectedSubmission &&
               isTweetStatusUrl(selectedSubmission.tweet) && (
                 <TweetStats
+                  key={`${selectedSubmission.id}-tweet`}
                   source="tweet"
                   submissionId={selectedSubmission.id}
                 />
@@ -88,7 +89,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
           </>
         }
         {selectedSubmission?.eligibilityAnswers &&
-          selectedSubmission.eligibilityAnswers.map((answer: any) => (
+          selectedSubmission.eligibilityAnswers.map((answer) => (
             <InfoBox
               key={answer.question}
               label={answer.question}
@@ -105,7 +106,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
       {!isHackathonPage && (
         <div className="w-1/3 max-w-[22.5rem] p-4">
           {selectedSubmission && !isHackathonPage && (
-            <Notes key={selectedSubmission.id} slug={bounty?.slug} />
+            <Notes key={selectedSubmission.id} />
           )}
         </div>
       )}

@@ -1,4 +1,5 @@
-import { useAtom } from 'jotai';
+'use client';
+
 import { ChevronDown, Trophy, X } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -11,16 +12,17 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
-import { cleanRewards, nthLabelGenerator, sortRank } from '@/utils/rank';
+import { nthLabelGenerator } from '@/utils/rank';
 
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
-import type { Listing, Rewards } from '@/features/listings/types';
-
-import { selectedSubmissionAtom } from '../../atoms';
-import { useToggleWinner } from '../../mutations/useToggleWinner';
+import {
+  BONUS_POSITION as BONUS_REWARD_POSITION,
+  prizePositions,
+  type ReviewListing,
+} from '../../utils/review-rules';
+import { useReview, useToggleWinner } from './review-state';
 
 interface Props {
-  bounty: Listing | undefined;
+  bounty: ReviewListing;
   usedPositions: number[];
   isHackathonPage?: boolean;
   isMultiSelectOn: boolean;
@@ -32,15 +34,15 @@ export const SelectWinner = ({
   isHackathonPage,
   isMultiSelectOn,
 }: Props) => {
-  const rewards = sortRank(cleanRewards(bounty?.rewards));
+  const rewards = prizePositions(bounty.rewards);
 
-  const [selectedSubmission] = useAtom(selectedSubmissionAtom);
+  const { selected: selectedSubmission } = useReview();
 
-  const { mutateAsync: toggleWinner } = useToggleWinner(bounty);
+  const toggleWinner = useToggleWinner();
 
-  const selectWinner = async (position: number, id: string | undefined) => {
+  const selectWinner = (position: number, id: string | undefined) => {
     if (!id) return;
-    toggleWinner([
+    void toggleWinner([
       {
         id,
         isWinner: !!position,
@@ -67,7 +69,7 @@ export const SelectWinner = ({
                   <Button
                     variant="outline"
                     disabled={
-                      !!bounty?.isWinnersAnnounced ||
+                      bounty.isWinnersAnnounced ||
                       isHackathonPage ||
                       isMultiSelectOn
                     }
@@ -126,9 +128,7 @@ export const SelectWinner = ({
                                 <p className="font-semibold text-slate-700">
                                   {bounty?.rewards &&
                                     formatNumberWithSuffix(
-                                      bounty?.rewards[
-                                        reward as keyof Rewards
-                                      ] ?? 0,
+                                      bounty.rewards[reward] ?? 0,
                                       1,
                                       false,
                                     )}
@@ -151,7 +151,7 @@ export const SelectWinner = ({
               <Button
                 variant="outline"
                 disabled={
-                  !!bounty?.isWinnersAnnounced ||
+                  bounty.isWinnersAnnounced ||
                   isHackathonPage ||
                   isMultiSelectOn
                 }
@@ -181,7 +181,7 @@ export const SelectWinner = ({
                             <>
                               {formatNumberWithSuffix(
                                 bounty.rewards[
-                                  selectedSubmission.winnerPosition as keyof Rewards
+                                  selectedSubmission.winnerPosition
                                 ] ?? 0,
                                 1,
                                 false,

@@ -1,45 +1,34 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+'use client';
+
 import { LucideFlag } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import type { SubmissionWithUser } from '@/interface/submission';
-import { api } from '@/lib/api';
 import { SubmissionLabels } from '@/prisma/enums';
 
-import { selectedSubmissionAtom } from '../../atoms';
-import { useRejectSubmissions } from '../../mutations/useRejectSubmissions';
+import {
+  useRejectSubmissions,
+  useReview,
+  useUpdateLabel,
+} from './review-state';
 import { SpamConfirmationDialog } from './SpamConfirmationDialog';
 
 interface Props {
-  listingSlug: string;
   isMultiSelectOn: boolean;
 }
 
-interface UpdateLabelResponse {
-  data: {
-    id: string;
-    label: SubmissionLabels;
-    autoFixed?: boolean;
-    [key: string]: any;
-  };
-}
-
-export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
-  const queryClient = useQueryClient();
-  const [selectedSubmission, setSelectedSubmission] = useAtom(
-    selectedSubmissionAtom,
-  );
+export const SpamButton = ({ isMultiSelectOn }: Props) => {
+  const { selected: selectedSubmission } = useReview();
   const [isSpamDialogOpen, setIsSpamDialogOpen] = useState(false);
   const [pendingSpamLabel, setPendingSpamLabel] = useState<{
     id: string;
     label: SubmissionLabels;
   } | null>(null);
 
-  const rejectSubmissions = useRejectSubmissions(listingSlug);
+  const rejectSubmissions = useRejectSubmissions();
+  const updateLabel = useUpdateLabel();
 
-  const handleSpamClick = async () => {
+  const handleSpamClick = () => {
     if (!selectedSubmission?.id) return;
 
     setPendingSpamLabel({
@@ -51,55 +40,14 @@ export const SpamButton = ({ listingSlug, isMultiSelectOn }: Props) => {
     }, 0);
   };
 
+  // Spam is rejected too.
   const handleSpamConfirm = (id: string, label: SubmissionLabels) => {
-    updateLabel({ id, label });
+    updateLabel([id], label)
+      .then(() =>
+        label === SubmissionLabels.Spam ? rejectSubmissions([id]) : undefined,
+      )
+      .catch((e: unknown) => console.error(e));
   };
-
-  const { mutate: updateLabel } = useMutation({
-    mutationFn: ({ id, label }: { id: string; label: SubmissionLabels }) =>
-      api.post(`/api/sponsor-dashboard/submission/update-label/`, {
-        id,
-        label,
-      }),
-    onSuccess: (
-      _: UpdateLabelResponse,
-      variables: { id: string; label: SubmissionLabels },
-    ) => {
-      if (variables.label === SubmissionLabels.Spam) {
-        rejectSubmissions.mutate([variables.id]);
-      }
-    },
-    onMutate: (variables) => {
-      queryClient.setQueryData<SubmissionWithUser[]>(
-        ['sponsor-submissions', listingSlug],
-        (old) => {
-          if (!old) return old;
-          return old.map((submission) => {
-            if (submission.id === variables.id) {
-              if (variables.label === 'Spam') {
-                return {
-                  ...submission,
-                  label: variables.label,
-                };
-              }
-              return { ...submission, label: variables.label };
-            }
-            return submission;
-          });
-        },
-      );
-
-      setSelectedSubmission((prev) => {
-        if (prev && prev.id === variables.id) {
-          return { ...prev, label: variables.label };
-        }
-        return prev;
-      });
-    },
-    onError: (e) => {
-      console.log(e);
-    },
-  });
 
   const isMarkedAsSpam = selectedSubmission?.label === SubmissionLabels.Spam;
 

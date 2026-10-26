@@ -1,3 +1,5 @@
+'use client';
+
 import { useWallet } from '@solana/wallet-adapter-react';
 import { ExternalLink } from 'lucide-react';
 import React from 'react';
@@ -12,15 +14,15 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { TokenIcon } from '@/components/ui/token-icon';
-import type { SubmissionWithUser } from '@/interface/submission';
+import { publicEnv } from '@/lib/public-env';
 import { cn } from '@/utils/cn';
 import { getRankLabels } from '@/utils/rank';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
-import type { Listing, Rewards } from '@/features/listings/types';
 import { getListingStatus } from '@/features/listings/utils/status';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import type { ReviewListing, ReviewSubmission } from '../../utils/review-rules';
 import { PayoutButton } from './PayoutButton';
 import { WalletConnectionBadge } from './WalletConnectionBadge';
 
@@ -28,8 +30,8 @@ export const PayoutSection = ({
   submissions,
   bounty,
 }: {
-  submissions: SubmissionWithUser[];
-  bounty: Listing;
+  submissions: ReadonlyArray<ReviewSubmission>;
+  bounty: ReviewListing;
 }) => {
   const { connected: walletConnected } = useWallet();
 
@@ -125,7 +127,7 @@ export const PayoutSection = ({
                       <div className="flex items-center gap-2">
                         <EarnAvatar
                           id={submission.user.id}
-                          avatar={submission.user.photo}
+                          avatar={submission.user.photo ?? undefined}
                           className="size-8"
                         />
                         <div>
@@ -143,7 +145,7 @@ export const PayoutSection = ({
                     </TableCell>
                     <TableCell>
                       <span className="font-medium text-slate-800 capitalize">
-                        {getRankLabels(submission.winnerPosition!)}
+                        {getRankLabels(submission.winnerPosition ?? 0)}
                       </span>
                     </TableCell>
                     <TableCell>
@@ -171,7 +173,7 @@ export const PayoutSection = ({
                         <span className="font-medium text-slate-900">
                           {!!bounty.rewards &&
                             bounty.rewards[
-                              submission.winnerPosition as keyof Rewards
+                              String(submission.winnerPosition)
                             ]}{' '}
                           <span className="text-slate-400">{bounty.token}</span>
                         </span>
@@ -188,7 +190,7 @@ export const PayoutSection = ({
                                   submission.paymentDetails?.[0]?.txId;
                                 if (txId) {
                                   window.open(
-                                    `https://solscan.io/tx/${txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
+                                    `https://solscan.io/tx/${txId}?cluster=${publicEnv.paymentCluster}`,
                                     '_blank',
                                   );
                                 }

@@ -1,132 +1,71 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom, useSetAtom } from 'jotai';
+'use client';
+
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import type { SubmissionWithUser } from '@/interface/submission';
-import { api } from '@/lib/api';
+import { postJson } from '@/lib/fetch-json';
 
-import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 import { getTextCharacterCount } from '../../utils/convertTextToNotesHTML';
 import { NotesRichEditor } from '../NotesRichEditor';
+import { useReview } from './review-state';
 
 const MAX_CHARACTERS = 1000;
 
-type Props = {
-  slug: string | undefined;
-};
-
-export const Notes = ({ slug }: Props) => {
-  const [selectedSubmission, setSelectedSubmission] = useAtom(
-    selectedSubmissionAtom,
-  );
-  const setNotesUpdating = useSetAtom(isStateUpdatingAtom);
+// The sponsor's private notes on the open submission, saved a second after
+// they stop typing. Mounted per submission (keyed by its id).
+export const Notes = () => {
+  const {
+    selected: selectedSubmission,
+    updateSubmissions,
+    setUpdating: setNotesUpdating,
+  } = useReview();
   const [notes, setNotes] = useState(() => selectedSubmission?.notes);
-
-  const queryClient = useQueryClient();
-  const submissionId = useMemo(
-    () => selectedSubmission?.id,
-    [selectedSubmission],
-  );
-
-  const { mutate: updateNotes, isPending: isSaving } = useMutation({
-    mutationFn: (content: string) =>
-      api.post('/api/sponsor-dashboard/submission/update-notes', {
-        id: submissionId,
-        notes: content,
-      }),
-    onSuccess: (_, variables) => {
-      queryClient.setQueriesData<SubmissionWithUser[]>(
-        {
-          predicate: (query) =>
-            query.queryKey[0] === 'sponsor-submissions' &&
-            query.queryKey.includes(slug),
-        },
-        (old) => {
-          if (!old) return old;
-          const data = old?.map((submission) =>
-            submission.id === submissionId
-              ? { ...submission, notes: variables }
-              : submission,
-          );
-          return data;
-        },
-      );
-      if (selectedSubmission) {
-        setSelectedSubmission({
-          ...selectedSubmission,
-          notes: variables,
-        });
-      }
-    },
-    onError: (error) => {
-      console.error('Error saving notes:', error);
-    },
-    onSettled: () => {
-      setNotesUpdating(false);
-    },
-  });
+  const [isSaving, setIsSaving] = useState(false);
+  const submissionId = selectedSubmission?.id;
 
   const debouncedUpdateNotesRef = useRef<
-    ReturnType<typeof debounce> | undefined
+    ReturnType<typeof debounce<(content: string) => void>> | undefined
   >(undefined);
-  const previousSubmissionIdRef = useRef<string | undefined>(
-    selectedSubmission?.id,
-  );
 
   useEffect(() => {
-    debouncedUpdateNotesRef.current = debounce(
-      (content: string) => updateNotes(content),
-      1000,
-    );
+    const updateNotes = (content: string) => {
+      if (!submissionId) return;
+      setIsSaving(true);
+      postJson('/api/sponsor-dashboard/submission/update-notes/', {
+        id: submissionId,
+        notes: content,
+      })
+        .catch((error: unknown) => {
+          console.error('Error saving notes:', error);
+        })
+        .finally(() => {
+          setIsSaving(false);
+          setNotesUpdating(false);
+        });
+    };
+    debouncedUpdateNotesRef.current = debounce(updateNotes, 1000);
 
     return () => {
       debouncedUpdateNotesRef.current?.cancel();
     };
-  }, [submissionId, updateNotes]);
-
-  // Sync notes when submission changes (only when ID changes, not on every render)
-  useEffect(() => {
-    if (previousSubmissionIdRef.current !== selectedSubmission?.id) {
-      previousSubmissionIdRef.current = selectedSubmission?.id;
-      // Setting state here is necessary to sync local state when submission changes
-      // The editor component has a key prop that will remount it when ID changes
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setNotes(selectedSubmission?.notes);
-    }
-  }, [selectedSubmission?.id, selectedSubmission?.notes]);
+  }, [submissionId, setNotesUpdating]);
 
   const handleChange = (value: string) => {
     // Extract plain text for character counting
     const textLength = getTextCharacterCount(value);
 
     if (textLength <= MAX_CHARACTERS) {
-      if (selectedSubmission) {
-        setSelectedSubmission({
-          ...selectedSubmission,
-          notes: value,
-        });
-      }
+      updateSubmissions((submission) =>
+        submission.id === submissionId
+          ? { ...submission, notes: value }
+          : submission,
+      );
       setNotes(value);
       debouncedUpdateNotesRef.current?.(value);
       setNotesUpdating(true);
     }
   };
-
-  useEffect(() => {
-    // Only update notes when submission ID changes (not when notes content changes)
-    if (previousSubmissionIdRef.current !== selectedSubmission?.id) {
-      previousSubmissionIdRef.current = selectedSubmission?.id;
-      // Use setTimeout to defer state update and avoid cascading renders
-      const timeoutId = setTimeout(() => {
-        setNotes(selectedSubmission?.notes);
-      }, 0);
-      return () => clearTimeout(timeoutId);
-    }
-    // Return no-op cleanup function if condition is false
-    return () => {};
-  }, [selectedSubmission?.id, selectedSubmission?.notes]);
 
   return (
     <div className="flex w-full flex-col items-start rounded-xl border border-slate-200 py-5 pr-1 pl-4">

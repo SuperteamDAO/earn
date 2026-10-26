@@ -1,5 +1,6 @@
+'use client';
+
 import { TooltipArrow } from '@radix-ui/react-tooltip';
-import { useMutation } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import {
   AlertTriangle,
@@ -13,7 +14,8 @@ import {
   Sheet,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { ShinyButton } from '@/components/shared/ShinyButton';
@@ -34,30 +36,46 @@ import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
 import { JTTG } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import type { SubmissionWithUser } from '@/interface/submission';
-import { api } from '@/lib/api';
+import { getJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 import { SubmissionLabels, SubmissionStatus } from '@/prisma/enums';
-import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
-import type { Listing } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
 import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 
+import type {
+  Remainings,
+  ReviewListing,
+  ReviewSubmission,
+} from '../../utils/review-rules';
 import { ExportSheetsModal } from '../Modals/ExportSheetsModal';
 
 interface Props {
-  bounty: Listing | undefined;
+  bounty: ReviewListing;
   isHackathonPage?: boolean;
-  remainings: { podiums: number; bonus: number } | null;
-  submissions: SubmissionWithUser[];
+  remainings: Remainings | null;
+  submissions: ReadonlyArray<ReviewSubmission>;
   onWinnersAnnounceOpen: () => void;
   activeTab: string;
 }
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text).then(
+    () => {
+      toast.success('Link Copied', {
+        duration: 3000,
+      });
+    },
+    (err) => {
+      console.error('Failed to copy text: ', err);
+    },
+  );
+};
 
 export const SubmissionHeader = ({
   bounty,
@@ -68,7 +86,7 @@ export const SubmissionHeader = ({
   activeTab,
 }: Props) => {
   const router = useRouter();
-  const { user } = useUser();
+  const user = useViewer();
 
   const {
     isOpen: verifyPaymentIsOpen,
@@ -91,23 +109,18 @@ export const SubmissionHeader = ({
   const bountyStatus = getListingStatus(bounty);
 
   const afterAnnounceDate =
-    bounty?.type === 'hackathon'
-      ? dayjs().isAfter(bounty?.Hackathon?.announceDate)
+    bounty.type === 'hackathon'
+      ? dayjs().isAfter(bounty.hackathonAnnounceDate)
       : true;
 
-  const exportMutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.get(
-        `/api/sponsor-dashboard/submission/export/`,
-        {
-          params: {
-            listingId: bounty?.id,
-          },
-        },
+  const [isExporting, setIsExporting] = useState(false);
+
+  const exportCsv = async () => {
+    setIsExporting(true);
+    try {
+      const data = await getJson<{ url?: string }>(
+        `/api/sponsor-dashboard/submission/export/?listingId=${encodeURIComponent(bounty.id)}`,
       );
-      return response.data;
-    },
-    onSuccess: async (data) => {
       const url = data?.url || '';
       if (url) {
         try {
@@ -129,7 +142,7 @@ export const SubmissionHeader = ({
 
           const link = document.createElement('a');
           link.href = blobUrl;
-          link.setAttribute('download', `${bounty?.slug || 'submissions'}.csv`);
+          link.setAttribute('download', `${bounty.slug || 'submissions'}.csv`);
 
           document.body.appendChild(link);
           link.click();
@@ -145,53 +158,35 @@ export const SubmissionHeader = ({
       } else {
         toast.error('Export URL is empty');
       }
-    },
-    onError: (error) => {
+    } catch (error) {
       console.error('Export error:', error);
       toast.error('Failed to export CSV. Please try again.');
-    },
-  });
-
-  const exportSubmissionsCsv = () => {
-    exportMutation.mutate();
+    } finally {
+      setIsExporting(false);
+    }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(
-      () => {
-        toast.success('Link Copied', {
-          duration: 3000,
-        });
-      },
-      (err) => {
-        console.error('Failed to copy text: ', err);
-      },
-    );
+  const exportSubmissionsCsv = () => {
+    void exportCsv();
   };
 
   const getEditText = () => {
-    if (bounty?.type === 'grant') return null;
     if (bounty?.type === 'bounty') return 'Edit Bounty';
     if (bounty?.type === 'hackathon') return 'Edit Track';
     return 'Edit';
   };
 
   const getListingUrl = () => {
-    if (bounty?.type === 'grant') {
-      return `${getURL()}earn/grants/${bounty.slug}`;
-    }
     return `${getURL()}earn/listing/${bounty?.slug}`;
   };
 
-  const pastDeadline = isDeadlineOver(bounty?.deadline);
+  const pastDeadline = isDeadlineOver(bounty.deadline ?? undefined);
   const isCoreMember = user?.people?.type?.toUpperCase() === 'CORE';
-  const canCoreMemberEditInReview = Boolean(
+  const canCoreMemberEditInReview =
     isCoreMember &&
     bounty?.isPublished &&
     !bounty?.isWinnersAnnounced &&
-    pastDeadline &&
-    bounty?.type !== 'grant',
-  );
+    pastDeadline;
 
   const totalPodiumSpots = remainings
     ? remainings.podiums + remainings.bonus
@@ -226,7 +221,7 @@ export const SubmissionHeader = ({
         </Breadcrumb>
         <div className="mb-2 flex items-center gap-2">
           <div className="ml-1 flex items-center gap-2">
-            {getListingIcon(bounty?.type!, 'size-5')}
+            {getListingIcon(bounty.type, 'size-5')}
             <p className="text-xl font-bold text-slate-800">{bounty?.title}</p>
           </div>
           <DropdownMenu>
@@ -239,11 +234,11 @@ export const SubmissionHeader = ({
               {!isHackathonPage && (
                 <>
                   <DropdownMenuItem
-                    disabled={exportMutation.isPending}
+                    disabled={isExporting}
                     onClick={() => exportSubmissionsCsv()}
                     className="cursor-pointer"
                   >
-                    {exportMutation.isPending ? (
+                    {isExporting ? (
                       <>
                         <span className="loading loading-spinner" />
                         Exporting...
@@ -267,9 +262,7 @@ export const SubmissionHeader = ({
               )}
 
               <DropdownMenuItem
-                onClick={() =>
-                  window.open(`${router.basePath}/${listingPath}`, '_blank')
-                }
+                onClick={() => window.open(`/${listingPath}`, '_blank')}
                 className="cursor-pointer"
               >
                 <ExternalLink className="size-4" />
@@ -284,13 +277,9 @@ export const SubmissionHeader = ({
                 Copy Link
               </DropdownMenuItem>
 
-              {!!(
-                (user?.role === 'GOD' && bounty?.type !== 'grant') ||
-                (bounty?.isPublished &&
-                  !pastDeadline &&
-                  bounty.type !== 'grant') ||
-                canCoreMemberEditInReview
-              ) &&
+              {(user?.role === 'GOD' ||
+                (bounty?.isPublished && !pastDeadline) ||
+                canCoreMemberEditInReview) &&
                 !isHackathonPage &&
                 getEditText() && (
                   <DropdownMenuItem className="cursor-pointer" asChild>
@@ -338,7 +327,7 @@ export const SubmissionHeader = ({
                     !afterAnnounceDate ||
                     isHackathonPage ||
                     remainings?.podiums !== 0 ||
-                    (remainings?.bonus > 0 &&
+                    ((remainings?.bonus ?? 0) > 0 &&
                       submissions.filter((s) => !s.isWinner).length > 0)
                   }
                   onClick={onWinnersAnnounceOpen}
@@ -371,7 +360,7 @@ export const SubmissionHeader = ({
                 !bounty?.isWinnersAnnounced &&
                 !isHackathonPage && (
                   <div className="flex w-full py-1 text-xs">
-                    {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
+                    {remainings.bonus > 0 || remainings.podiums > 0 ? (
                       <p className="flex w-full items-center justify-center rounded-md bg-red-100 px-2 py-1 text-[#f55151]">
                         <AlertTriangle className="mr-1 inline-block h-3 w-3" />
                         {remainings.podiums > 0 && (
@@ -411,7 +400,7 @@ export const SubmissionHeader = ({
             }}
             onClick={() => {
               router.push(
-                `/earn/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
+                `/earn/dashboard/listings/${bounty?.slug}/submissions/?tab=payments`,
               );
             }}
           >

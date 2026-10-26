@@ -1,8 +1,10 @@
+'use client';
+
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { ChevronDown, LogOut, RefreshCw, Wallet } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -28,7 +30,8 @@ interface WalletConnectionBadgeProps {
 export function WalletConnectionBadge({
   className,
 }: WalletConnectionBadgeProps) {
-  const { connected, publicKey, disconnect, wallet } = useWallet();
+  const walletState = useWallet();
+  const { connected, publicKey, wallet } = walletState;
   const { setVisible } = useWalletModal();
 
   const handleSwitchWallet = () => {
@@ -39,7 +42,7 @@ export function WalletConnectionBadge({
   const handleDisconnect = async () => {
     posthog.capture('disconnect_wallet_payments_tab');
     try {
-      await disconnect();
+      await walletState.disconnect();
     } catch (error) {
       console.error('Failed to disconnect wallet:', error);
     }
@@ -110,7 +113,7 @@ export function WalletConnectionBadge({
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={handleDisconnect}
+            onClick={() => void handleDisconnect()}
             className="cursor-pointer text-red-600 focus:text-red-600"
           >
             <LogOut className="mr-2 h-4 w-4" />

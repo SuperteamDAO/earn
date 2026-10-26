@@ -1,63 +1,35 @@
-import { headers } from 'next/headers';
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
+import * as Effect from 'effect/Effect';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { json, readerSponsor } from '@/lib/route-guard';
+import * as Review from '@/server/review';
+import { runtime } from '@/server/runtime';
 
-import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
-import { validateSession } from '@/features/auth/utils/getSponsorSession';
+import { refusal } from '../../../submission/refusal';
 
-const ParamsSchema = z.object({
-  id: z.string().uuid(),
-});
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export async function GET(
-  _: Request,
-  props: { params: Promise<{ id: string }> },
+// How many of the listing's winners are paid.
+export function GET(
+  request: NextRequest,
+  {
+    params,
+  }: RouteContext<'/api/sponsor-dashboard/listing/[id]/total-payments-made'>,
 ) {
-  const params = await props.params;
-  logger.debug(`Request params: ${safeStringify(params)}`);
-  try {
-    const result = ParamsSchema.safeParse(params);
-    if (!result.success) {
-      return NextResponse.json(
-        { error: 'Invalid listing ID' },
-        { status: 400 },
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const { id } = yield* Effect.promise(() => params);
+      if (!UUID.test(id)) return json(400, { error: 'Invalid listing ID' });
+      const writer = yield* readerSponsor(request);
+      if (writer instanceof NextResponse) return writer;
+      return yield* Review.Review.use((review) =>
+        review.totalPaymentsMade(writer, id),
+      ).pipe(
+        Effect.map((totalPaymentsMade) =>
+          json(200, { listingId: id, totalPaymentsMade }),
+        ),
+        Effect.catch((error) => Effect.succeed(refusal(error))),
       );
-    }
-    const { id } = result.data;
-    const sessionResult = await validateSession(await headers());
-    if ('error' in sessionResult) {
-      return sessionResult.error;
-    }
-
-    const { userSponsorId } = sessionResult.session;
-    const listingAuthResult = await validateListingSponsorAuth(
-      userSponsorId,
-      id,
-    );
-    if ('error' in listingAuthResult) {
-      return listingAuthResult.error;
-    }
-
-    const totalPaymentsMade = await prisma.submission.count({
-      where: {
-        listingId: id,
-        isPaid: true,
-      },
-    });
-    const response = {
-      listingId: id,
-      totalPaymentsMade,
-    };
-
-    return NextResponse.json(response);
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch total payments' },
-      { status: 500 },
-    );
-  }
+    }),
+  );
 }

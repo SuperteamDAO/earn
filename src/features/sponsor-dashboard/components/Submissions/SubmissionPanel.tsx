@@ -1,16 +1,16 @@
-import { useAtom } from 'jotai';
+'use client';
+
 import { ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 import MdOutlineAccountBalanceWallet from '@/components/icons/MdOutlineAccountBalanceWallet';
 import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
-import type { SubmissionWithUser } from '@/interface/submission';
+import { publicEnv } from '@/lib/public-env';
 import { SubmissionLabels } from '@/prisma/enums';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
-import type { Listing } from '@/features/listings/types';
 import {
   GitHub,
   Telegram,
@@ -19,15 +19,16 @@ import {
 } from '@/features/social/components/SocialIcons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { selectedSubmissionAtom } from '../../atoms';
+import type { ReviewListing, ReviewSubmission } from '../../utils/review-rules';
 import { Details } from './Details';
+import { useReview } from './review-state';
 import { SelectLabel } from './SelectLabel';
 import { SelectWinner } from './SelectWinner';
 import { SpamButton } from './SpamButton';
 
 interface Props {
-  bounty: Listing | undefined;
-  submissions: SubmissionWithUser[];
+  bounty: ReviewListing;
+  submissions: ReadonlyArray<ReviewSubmission>;
   usedPositions: number[];
   isHackathonPage?: boolean;
   isMultiSelectOn?: boolean;
@@ -40,7 +41,7 @@ export const SubmissionPanel = ({
   isHackathonPage,
   isMultiSelectOn,
 }: Props) => {
-  const [selectedSubmission] = useAtom(selectedSubmissionAtom);
+  const { selected: selectedSubmission } = useReview();
   const shouldHideTxLinks = bounty?.isFndnPaying;
   const paymentTxId = selectedSubmission?.paymentDetails?.[0]?.txId;
 
@@ -76,11 +77,7 @@ export const SubmissionPanel = ({
                     !bounty?.isWinnersAnnounced &&
                     !selectedSubmission.isWinner &&
                     selectedSubmission?.label !== SubmissionLabels.Spam && (
-                      <SelectLabel
-                        type={bounty?.type}
-                        listingSlug={bounty?.slug!}
-                        submission={undefined}
-                      />
+                      <SelectLabel type={bounty.type} submission={undefined} />
                     )}
                 </div>
               </div>
@@ -90,10 +87,7 @@ export const SubmissionPanel = ({
                     ? selectedSubmission?.label === SubmissionLabels.Spam
                     : selectedSubmission?.status === 'Pending' ||
                       selectedSubmission?.label === SubmissionLabels.Spam) && (
-                    <SpamButton
-                      listingSlug={bounty?.slug!}
-                      isMultiSelectOn={!!isMultiSelectOn}
-                    />
+                    <SpamButton isMultiSelectOn={!!isMultiSelectOn} />
                   )}
                 {!bounty?.isWinnersAnnounced && !isHackathonPage && (
                   <SelectWinner
@@ -112,7 +106,7 @@ export const SubmissionPanel = ({
                       className="mr-4 border-slate-300 text-slate-600"
                       onClick={() => {
                         window.open(
-                          `https://solscan.io/tx/${paymentTxId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
+                          `https://solscan.io/tx/${paymentTxId}?cluster=${publicEnv.paymentCluster}`,
                           '_blank',
                         );
                       }}
@@ -165,7 +159,7 @@ export const SubmissionPanel = ({
 
                 <GitHub
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
-                  link={selectedSubmission?.user?.github || ''}
+                  link={''}
                 />
 
                 <Website

@@ -1,28 +1,30 @@
-import { useQueryClient } from '@tanstack/react-query';
+'use client';
+
 import { AlertTriangle, Check, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import { useEffect, useState } from 'react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { api } from '@/lib/api';
+import { postJson } from '@/lib/fetch-json';
 import { dayjs } from '@/utils/dayjs';
-import { cleanRewards } from '@/utils/rank';
 
-import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
-
-import type { Listing } from '../../listings/types';
+import {
+  type Remainings,
+  type ReviewListing,
+  totalPrizes,
+} from '../utils/review-rules';
 
 interface Props {
   onClose: () => void;
   isOpen: boolean;
   totalWinners: number;
   totalPaymentsMade: number;
-  bounty: Listing | undefined;
-  remainings: { podiums: number; bonus: number } | null;
+  bounty: ReviewListing | undefined;
+  remainings: Remainings | null;
   submissionsLeft: number;
 }
 
@@ -41,11 +43,10 @@ export function PublishResults({
   );
 
   const router = useRouter();
-  const queryClient = useQueryClient();
   const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
-  const rewards =
-    cleanRewards(bounty?.rewards, true).length +
-    (bounty?.rewards?.[BONUS_REWARD_POSITION] ? bounty?.maxBonusSpots || 0 : 0);
+  const rewards = bounty
+    ? totalPrizes(bounty.rewards, bounty.maxBonusSpots)
+    : 0;
   const notEnoughSubmissionsForBonus =
     remainings && remainings.bonus > 0 && submissionsLeft < remainings.bonus;
   const isWinnersAllSelected =
@@ -86,7 +87,7 @@ export function PublishResults({
     if (!bounty?.id) return;
     setIsPublishingResults(true);
     try {
-      await api.post(`/api/sponsor-dashboard/listing/${bounty?.id}/announce/`);
+      await postJson(`/api/sponsor-dashboard/listing/${bounty.id}/announce/`);
       setIsWinnersAnnounced(true);
       setIsPublishingResults(false);
     } catch (e) {
@@ -95,26 +96,20 @@ export function PublishResults({
   };
 
   useEffect(() => {
-    if (!isWinnersAnnounced || bounty?.isWinnersAnnounced) return;
+    if (!isWinnersAnnounced || bounty?.isWinnersAnnounced) return undefined;
     const timer = setTimeout(() => {
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-submissions', bounty?.slug],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-dashboard-listing', bounty?.slug],
-      });
       router.push(
-        `/earn/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
+        `/earn/dashboard/listings/${bounty?.slug}/submissions/?tab=payments`,
       );
+      router.refresh();
       onClose();
     }, 1500);
     return () => clearTimeout(timer);
   }, [
     isWinnersAnnounced,
     bounty?.slug,
-    bounty?.id,
+    bounty?.isWinnersAnnounced,
     router,
-    queryClient,
     onClose,
   ]);
 
@@ -208,7 +203,7 @@ export function PublishResults({
                   }
                   onClick={() => {
                     posthog.capture('announce winners_sponsor');
-                    publishResults();
+                    void publishResults();
                   }}
                 >
                   {isPublishingResults ? (

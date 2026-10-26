@@ -1,4 +1,5 @@
-import { useAtom } from 'jotai';
+'use client';
+
 import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
 import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
@@ -6,29 +7,29 @@ import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
-import type { SubmissionWithUser } from '@/interface/submission';
-import type { BountyType, SubmissionLabels } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { getRankLabels } from '@/utils/rank';
 
-import type { Listing } from '@/features/listings/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { selectedSubmissionAtom } from '../../atoms';
 import { labelMenuOptions } from '../../constants';
+import type {
+  ReviewFilter,
+  ReviewListing,
+  ReviewSubmission,
+} from '../../utils/review-rules';
 import { colorMap } from '../../utils/statusColorMap';
 import { MultiSelectFilter } from './MultiSelectFilter';
+import { useReview } from './review-state';
 import { SelectLabel } from './SelectLabel';
 
 interface Props {
-  listing?: Listing;
-  submissions: SubmissionWithUser[];
+  listing?: ReviewListing;
+  submissions: ReadonlyArray<ReviewSubmission>;
   setSearchText: Dispatch<SetStateAction<string>>;
-  selectedFilters: Set<SubmissionLabels | 'Winner' | 'Rejected'>;
-  onFilterChange: (
-    filters: Set<SubmissionLabels | 'Winner' | 'Rejected'>,
-  ) => void;
+  selectedFilters: Set<ReviewFilter>;
+  onFilterChange: (filters: Set<ReviewFilter>) => void;
   toggleSubmission?: (id: string) => void;
   isToggled?: (id: string) => boolean;
   toggleAllSubmissions?: () => void;
@@ -36,6 +37,22 @@ interface Props {
   isMultiSelectDisabled: boolean;
   isHackathonPage: boolean | undefined;
 }
+
+const getSubmissionColors = (submission: ReviewSubmission) => {
+  if (submission?.isWinner) {
+    return colorMap.Winner;
+  } else if (submission.status === 'Rejected') {
+    return colorMap.Rejected;
+  } else if (submission?.label && submission.label in colorMap) {
+    return colorMap[submission.label];
+  } else {
+    return {
+      bg: 'bg-slate-100',
+      color: 'text-slate-600',
+      border: 'border-slate-200',
+    };
+  }
+};
 
 export const SubmissionList = ({
   listing,
@@ -50,9 +67,7 @@ export const SubmissionList = ({
   isMultiSelectDisabled,
   isHackathonPage,
 }: Props) => {
-  const [selectedSubmission, setSelectedSubmission] = useAtom(
-    selectedSubmissionAtom,
-  );
+  const { selected: selectedSubmission, setSelectedId } = useReview();
 
   const debouncedSetSearchTextRef = useRef<
     ReturnType<typeof debounce> | undefined
@@ -81,7 +96,7 @@ export const SubmissionList = ({
     }
   }, [selectedSubmission?.id]);
 
-  const getSubmissionLabel = (submission: SubmissionWithUser) => {
+  const getSubmissionLabel = (submission: ReviewSubmission) => {
     if (submission?.isWinner && submission?.winnerPosition) {
       return getRankLabels(submission.winnerPosition);
     } else if (submission?.label === 'Spam') {
@@ -92,22 +107,6 @@ export const SubmissionList = ({
       )?.label;
     } else {
       return '';
-    }
-  };
-
-  const getSubmissionColors = (submission: SubmissionWithUser) => {
-    if (submission?.isWinner) {
-      return colorMap.Winner;
-    } else if (submission.status === 'Rejected') {
-      return colorMap.Rejected;
-    } else if (submission?.label && colorMap[submission.label]) {
-      return colorMap[submission.label];
-    } else {
-      return {
-        bg: 'bg-slate-100',
-        color: 'text-slate-600',
-        border: 'border-slate-200',
-      };
     }
   };
 
@@ -160,7 +159,7 @@ export const SubmissionList = ({
                   : 'bg-transparent',
               )}
               onClick={() => {
-                setSelectedSubmission(submission);
+                setSelectedId(submission.id);
               }}
             >
               <div className="flex items-center">
@@ -202,11 +201,7 @@ export const SubmissionList = ({
                 !submission.isWinner &&
                 submission?.label !== 'Spam' &&
                 listing?.slug ? (
-                  <SelectLabel
-                    type={listing?.type as BountyType | 'grant' | undefined}
-                    listingSlug={listing.slug}
-                    submission={submission}
-                  />
+                  <SelectLabel type={listing.type} submission={submission} />
                 ) : (
                   <StatusPill
                     className="ml-auto w-fit px-2 py-0.5 text-[10px]"

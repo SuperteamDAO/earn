@@ -1,10 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
-import { Eye, Heart, Repeat, MessageSquare, AlertCircle } from 'lucide-react';
+'use client';
+
+import { AlertCircle, Eye, Heart, MessageSquare, Repeat } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { api } from '@/lib/api';
+import { getJson, RequestError } from '@/lib/fetch-json';
 
 interface TweetMetrics {
   views: number;
@@ -16,15 +17,43 @@ interface TweetMetrics {
 
 type TweetSource = 'link' | 'tweet';
 
+type StatsBySource = Record<TweetSource, TweetMetrics | null>;
+
 interface TweetStatsResponse {
-  data: Record<TweetSource, TweetMetrics | null>;
+  data: StatsBySource;
 }
 
 const TWEET_STATS_CACHE_TIME = 24 * 60 * 60 * 1000;
 
+// Stats already fetched this visit, by submission, for a day.
+const cache = new Map<
+  string,
+  { readonly at: number; readonly data: Promise<StatsBySource> }
+>();
+
+const fetchStats = (submissionId: string, refresh = false) => {
+  const cached = cache.get(submissionId);
+  if (!refresh && cached && Date.now() - cached.at < TWEET_STATS_CACHE_TIME) {
+    return cached.data;
+  }
+  const data = getJson<TweetStatsResponse>(
+    `/api/twitter/tweet-stats/?submissionId=${encodeURIComponent(submissionId)}`,
+  ).then((response) => response.data);
+  cache.set(submissionId, { at: Date.now(), data });
+  data.catch(() => cache.delete(submissionId));
+  return data;
+};
+
 const getTweetStatsErrorMessage = (error: unknown): string => {
-  if (isAxiosError<{ message?: string }>(error)) {
-    return error.response?.data?.message || 'Failed to fetch tweet statistics';
+  if (error instanceof RequestError) {
+    const body = error.body;
+    const message =
+      typeof body === 'object' && body !== null && 'message' in body
+        ? body.message
+        : undefined;
+    return typeof message === 'string' && message
+      ? message
+      : 'Failed to fetch tweet statistics';
   }
 
   return error instanceof Error ? error.message : 'Error loading stats';
@@ -37,30 +66,37 @@ export const TweetStats = ({
   submissionId: string;
   source: TweetSource;
 }) => {
-  const {
-    data: statsBySource,
-    error,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ['tweet-stats', submissionId],
-    queryFn: async ({ signal }): Promise<TweetStatsResponse['data']> => {
-      const response = await api.get<TweetStatsResponse>(
-        '/api/twitter/tweet-stats',
-        {
-          params: { submissionId },
-          signal,
-        },
-      );
+  const [statsBySource, setStatsBySource] = useState<StatsBySource>();
+  const [error, setError] = useState<unknown>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-      return response.data.data;
+  const load = useCallback(
+    (refresh: boolean) => {
+      let live = true;
+      fetchStats(submissionId, refresh)
+        .then((data) => {
+          if (live) setStatsBySource(data);
+        })
+        .catch((cause: unknown) => {
+          if (live) setError(cause);
+        })
+        .finally(() => {
+          if (live) setIsLoading(false);
+        });
+      return () => {
+        live = false;
+      };
     },
-    staleTime: TWEET_STATS_CACHE_TIME,
-    gcTime: TWEET_STATS_CACHE_TIME,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    retry: false,
-  });
+    [submissionId],
+  );
+
+  useEffect(() => load(false), [load]);
+
+  const refetch = () => {
+    setIsLoading(true);
+    setError(null);
+    load(true);
+  };
 
   if (isLoading) {
     return <TweetStatsSkeleton source={source} />;
@@ -80,7 +116,9 @@ export const TweetStats = ({
           {getTweetStatsErrorMessage(error)}
         </p>
         <Button
-          onClick={() => void refetch()}
+          onClick={() => {
+            refetch();
+          }}
           size="sm"
           type="button"
           variant="outline"
@@ -157,6 +195,16 @@ const TweetStatsSkeleton = ({ source }: { source: TweetSource }) => {
   );
 };
 
+const formatNumber = (num: number) => {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K';
+  }
+  return num.toLocaleString();
+};
+
 const TweetStatsCard = ({
   metrics,
   source,
@@ -164,16 +212,6 @@ const TweetStatsCard = ({
   metrics: TweetMetrics;
   source: TweetSource;
 }) => {
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + 'M';
-    }
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'K';
-    }
-    return num.toLocaleString();
-  };
-
   return (
     <div className="group relative mb-4 max-w-md overflow-hidden rounded-xl border border-slate-100 bg-white p-3 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-200 hover:border-slate-200/80 hover:bg-slate-50/30 hover:shadow-md dark:border-slate-800 dark:bg-slate-950 dark:hover:border-slate-700 dark:hover:bg-slate-900/40">
       <div className="mb-2 flex items-center justify-between">

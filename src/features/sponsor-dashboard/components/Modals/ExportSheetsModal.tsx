@@ -1,18 +1,19 @@
-import { useMutation } from '@tanstack/react-query';
+'use client';
+
 import { Check, ExternalLink, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { JTTG } from '@/constants/Telegram';
-import { api } from '@/lib/api';
+import { getJson } from '@/lib/fetch-json';
 
 interface ExportSheetsModalProps {
   isOpen: boolean;
   onClose: () => void;
   apiEndpoint: string;
-  queryParams: Record<string, any>;
+  queryParams: Record<string, string | number | boolean | null | undefined>;
   entityName?: string;
 }
 
@@ -30,27 +31,32 @@ export const ExportSheetsModal = ({
   const [sheetUrl, setSheetUrl] = useState<string | null>(null);
   const hasTriggeredRef = useRef(false);
 
-  const exportMutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.get(apiEndpoint, {
-        params: queryParams,
-      });
-      return response.data;
-    },
-    onSuccess: (data) => {
-      const url = data?.url || '';
-      if (url) {
-        setSheetUrl(url);
-        setStatus('success');
-      } else {
+  // A newer export (or closing) makes an older one's answer moot.
+  const attemptRef = useRef(0);
+
+  const runExport = useCallback(() => {
+    const attempt = ++attemptRef.current;
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined && value !== null) params.set(key, String(value));
+    }
+    getJson<{ url?: string }>(`${apiEndpoint}?${params.toString()}`)
+      .then((data) => {
+        if (attempt !== attemptRef.current) return;
+        const url = data?.url || '';
+        if (url) {
+          setSheetUrl(url);
+          setStatus('success');
+        } else {
+          setStatus('error');
+        }
+      })
+      .catch((error: unknown) => {
+        if (attempt !== attemptRef.current) return;
+        console.error('Export error:', error);
         setStatus('error');
-      }
-    },
-    onError: (error) => {
-      console.error('Export error:', error);
-      setStatus('error');
-    },
-  });
+      });
+  }, [apiEndpoint, queryParams]);
 
   useEffect(() => {
     if (isOpen && !hasTriggeredRef.current) {
@@ -62,15 +68,14 @@ export const ExportSheetsModal = ({
       setCountdown(15);
 
       setSheetUrl(null);
-      exportMutation.reset();
-      exportMutation.mutate();
+      runExport();
     } else if (!isOpen) {
       hasTriggeredRef.current = false;
     }
-  }, [isOpen]);
+  }, [isOpen, runExport]);
 
   useEffect(() => {
-    if (status !== 'loading' || !isOpen) return;
+    if (status !== 'loading' || !isOpen) return undefined;
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
@@ -88,15 +93,14 @@ export const ExportSheetsModal = ({
     setStatus('loading');
     setCountdown(15);
     setSheetUrl(null);
-    exportMutation.reset();
-    exportMutation.mutate();
+    runExport();
   };
 
   const handleClose = () => {
     setStatus('loading');
     setCountdown(15);
     setSheetUrl(null);
-    exportMutation.reset();
+    attemptRef.current += 1;
     onClose();
   };
 
@@ -181,7 +185,7 @@ export const ExportSheetsModal = ({
           </div>
         );
 
-      case 'error':
+      default:
         return (
           <div className="flex h-full flex-col">
             <div className="py-8">
