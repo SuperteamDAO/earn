@@ -1,5 +1,7 @@
+'use client';
+
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 import type { IconType } from '@/components/icons/helpers/GenIcon';
@@ -22,8 +24,7 @@ export const NavItem = ({
   className,
   onClick,
 }: NavItemProps) => {
-  const router = useRouter();
-  const currentPath = router.asPath.split('?')[0];
+  const currentPath = usePathname();
   const isExternalLink = link?.startsWith('https://');
   const resolvedLink = isExternalLink ? link : `/earn/dashboard${link}`;
   const isActiveLink = resolvedLink

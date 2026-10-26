@@ -1,7 +1,9 @@
+'use client';
+
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { motion } from 'motion/react';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+import { useRouter } from 'next/navigation';
+import { posthog } from 'posthog-js';
 import { useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -9,39 +11,44 @@ import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import type { HackathonModel } from '@/prisma/models/Hackathon';
+import type { ActiveHackathon } from '@/server/sponsor-dashboard';
 import { BountyIcon } from '@/svg/bounty-icon';
 
 import { getVisibleHackathons } from '@/features/hackathon/utils/getVisibleHackathons';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
 export const CreateListingModal = ({
-  isOpen = false,
+  isOpen,
   onClose,
   hackathons,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  hackathons?: HackathonModel[];
+  hackathons?: ReadonlyArray<ActiveHackathon>;
 }) => {
   const router = useRouter();
 
   useEffect(() => {
     if (isOpen) {
-      router.prefetch('/earn/dashboard/new');
+      router.prefetch('/earn/dashboard/new/');
     }
   }, [isOpen, router]);
 
   const handleCreateBounty = () => {
     posthog.capture('create new bounty_sponsor');
-    router.push('/earn/dashboard/new?type=bounty');
+    router.push('/earn/dashboard/new/?type=bounty');
   };
 
   const handleCreateHackathon = (hackathon: string) => {
     posthog.capture('create new hackathon_sponsor');
-    router.push(`/earn/dashboard/new?type=hackathon&hackathon=${hackathon}`);
+    router.push(`/earn/dashboard/new/?type=hackathon&hackathon=${hackathon}`);
   };
 
-  const visibleHackathons = getVisibleHackathons(hackathons);
+  const visibleHackathons = getVisibleHackathons(
+    // Every field the helper reads; dates survive the trip from the server.
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+    hackathons as HackathonModel[] | undefined,
+  );
 
   const isMD = useMediaQuery('(min-width: 768px)');
 

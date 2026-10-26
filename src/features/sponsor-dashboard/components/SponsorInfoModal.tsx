@@ -1,7 +1,10 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -11,15 +14,71 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Form, FormLabel } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { getJson, postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import {
   type UserSponsorDetails,
   userSponsorDetailsSchema,
 } from '@/features/sponsor/utils/sponsorFormSchema';
-import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
+import { USERNAME_PATTERN } from '@/features/talent/constants';
+
+// Earn's useUsernameValidation, reading the viewer instead of its old
+// store; `report` gets the field's error, or null once it's fine.
+function useUsernameValidation(
+  current: string | null | undefined,
+  report: (message: string | null) => void,
+) {
+  const [username, setUsernameValue] = useState('');
+  const [isInvalid, setIsInvalid] = useState(false);
+
+  const settle = useCallback(
+    (message: string | null) => {
+      setIsInvalid(message !== null);
+      report(message);
+    },
+    [report],
+  );
+
+  const check = useMemo(
+    () =>
+      debounce(async (value: string) => {
+        if (!USERNAME_PATTERN.test(value)) {
+          settle("Username can only contain letters, numbers, '_', and '-'");
+          return;
+        }
+        try {
+          const { available } = await getJson<{ available: boolean }>(
+            `/api/user/username/?username=${encodeURIComponent(value)}`,
+          );
+          settle(
+            available
+              ? null
+              : 'Username is unavailable! Please try another one.',
+          );
+        } catch {
+          settle('An error occurred while checking username availability.');
+        }
+      }, 300),
+    [settle],
+  );
+
+  useEffect(() => () => check.cancel(), [check]);
+
+  const setUsername = (value: string) => {
+    setUsernameValue(value);
+    check.cancel();
+    if (!value) return;
+    if (value.toLowerCase() === current?.toLowerCase()) {
+      settle(null);
+      return;
+    }
+    void check(value);
+  };
+
+  return { setUsername, isInvalid, username };
+}
 
 export const SponsorInfoModal = ({
   isOpen,
@@ -28,8 +87,10 @@ export const SponsorInfoModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { user, refetchUser } = useUser();
+  const user = useViewer();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPending, setIsPending] = useState<boolean>(false);
   const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
 
   const form = useForm<UserSponsorDetails>({
@@ -47,41 +108,34 @@ export const SponsorInfoModal = ({
     user?.photo?.includes('googleusercontent.com') || false,
   );
 
+  const reportUsername = useCallback(
+    (message: string | null) => {
+      if (message) form.setError('username', { message });
+      else form.clearErrors('username');
+    },
+    [form],
+  );
   const {
     setUsername,
     isInvalid: isUsernameInvalid,
-    validationErrorMessage: usernameValidationError,
     username,
-  } = useUsernameValidation();
-  useEffect(() => {
-    if (isUsernameInvalid) {
-      form.setError('username', {
-        message: usernameValidationError,
-      });
-    } else form.clearErrors('username');
-  }, [usernameValidationError, isUsernameInvalid]);
+  } = useUsernameValidation(user?.username, reportUsername);
 
-  const updateUserMutation = useMutation({
-    mutationFn: async (data: UserSponsorDetails) => {
-      const response = await api.post(
-        '/api/sponsors/usersponsor-details/',
-        data,
-      );
-      return response.data;
-    },
-    onSuccess: async () => {
-      await refetchUser();
+  const updateUser = async (data: UserSponsorDetails) => {
+    setIsPending(true);
+    try {
+      await postJson('/api/sponsors/usersponsor-details/', data);
+      router.refresh();
       toast.success('Profile updated successfully');
       onClose();
-    },
-    onError: (error) => {
+    } catch (error) {
       console.error('Error updating user details:', error);
       toast.error('Failed to update profile. Please try again.');
-    },
-    onSettled: () => {
+    } finally {
+      setIsPending(false);
       setIsLoading(false);
-    },
-  });
+    }
+  };
 
   const onSubmit = async (data: UserSponsorDetails) => {
     setIsLoading(true);
@@ -90,9 +144,9 @@ export const SponsorInfoModal = ({
     const finalPhoto =
       uploadedPhotoUrl || (isGooglePhoto ? user?.photo : data.photo);
 
-    updateUserMutation.mutate({
+    void updateUser({
       ...data,
-      photo: finalPhoto,
+      photo: finalPhoto ?? undefined,
     });
   };
 
@@ -103,7 +157,10 @@ export const SponsorInfoModal = ({
           Complete Your Profile
         </h2>
         <Form {...form}>
-          <form className="w-full" onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            className="w-full"
+            onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}
+          >
             <div className="mb-5 flex w-full justify-between gap-4">
               <FormFieldWrapper
                 control={form.control}
@@ -168,10 +225,10 @@ export const SponsorInfoModal = ({
 
             <Button
               className="w-full"
-              disabled={isLoading || updateUserMutation.isPending}
+              disabled={isLoading || isPending}
               type="submit"
             >
-              {isLoading || updateUserMutation.isPending ? (
+              {isLoading || isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   <span>Submitting</span>

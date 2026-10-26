@@ -1,131 +1,116 @@
-import { useSetAtom } from 'jotai';
-import { useEffect, useState } from 'react';
-import { components } from 'react-select';
+'use client';
+
+import { useRouter } from 'next/navigation';
+import {
+  components,
+  type OptionProps,
+  type SingleValueProps,
+} from 'react-select';
 import AsyncSelect from 'react-select/async';
 
-import type { SponsorType } from '@/interface/sponsor';
-import { api } from '@/lib/api';
-import { useUpdateUser, useUser } from '@/store/user';
+import { getJson, postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { hackathonSponsorAtom } from './SelectSponsor';
-
-interface HackathonOptionType extends SponsorType {
-  role?: string;
+interface Option {
+  readonly value?: string;
+  readonly label?: string;
+  readonly hackathon?: {
+    readonly name?: string;
+    readonly altLogo?: string | null;
+    readonly role?: string;
+  };
 }
 
-interface HackathonOption {
-  value?: string;
-  label?: string;
-  hackathon?: HackathonOptionType;
+function SingleValue(props: SingleValueProps<Option, false>) {
+  const { data, selectProps } = props;
+
+  if (selectProps.menuIsOpen) {
+    return <components.SingleValue {...props}></components.SingleValue>;
+  }
+
+  return (
+    <components.SingleValue {...props}>
+      <div className="flex items-center py-1">
+        <EarnAvatar
+          id={data?.hackathon?.name}
+          avatar={data?.hackathon?.altLogo ?? undefined}
+          className="h-6 w-6 rounded-sm"
+        />
+        <div className="ml-2 hidden md:block">
+          <p className="text-sm text-slate-800">{data?.hackathon?.name}</p>
+          <p className="text-xs text-slate-400">{data?.hackathon?.role}</p>
+        </div>
+      </div>
+    </components.SingleValue>
+  );
 }
 
+function HackathonOptionRow(props: OptionProps<Option, false>) {
+  const { data } = props;
+  return (
+    <components.Option {...props}>
+      <div className="flex items-center">
+        <EarnAvatar
+          className="rounded-sm"
+          id={data?.hackathon?.name}
+          avatar={data?.hackathon?.altLogo ?? undefined}
+        />
+        <div className="ml-2 hidden md:block">
+          <p className="text-sm text-slate-800">{data?.hackathon?.name}</p>
+          <p className="text-xs text-slate-400">{data?.hackathon?.role}</p>
+        </div>
+      </div>
+    </components.Option>
+  );
+}
+
+const loadHackathons = (
+  inputValue: string,
+  callback: (options: Option[]) => void,
+) => {
+  getJson<Option[]>(
+    `/earn/dashboard/hackathon-switch/?searchString=${encodeURIComponent(inputValue)}`,
+  )
+    .then((options) => callback([...(options || [])]))
+    .catch(() => callback([]));
+};
+
+// Switches the hackathon the dashboard shows (God mode).
 export function SelectHackathon({
-  type,
   isExpanded = false,
 }: {
-  type?: string;
   isExpanded?: boolean;
 }) {
-  const [selectedHackathon, setSelectedHackathon] =
-    useState<HackathonOption | null>(null);
-  const setHackathonSponsor = useSetAtom(hackathonSponsorAtom);
+  const user = useViewer();
+  const router = useRouter();
 
-  const { user } = useUser();
-  const updateUser = useUpdateUser();
-
-  useEffect(() => {
-    if (type !== 'hackathon' && user?.hackathonId) {
-      setSelectedHackathon({
+  const selectedHackathon: Option | null = user?.hackathonId
+    ? {
         value: user?.Hackathon?.id,
         label: user?.Hackathon?.name,
-        hackathon: user?.Hackathon,
-      });
-    }
-  }, [user]);
+        hackathon: user?.Hackathon ?? undefined,
+      }
+    : null;
 
-  const loadHackathons = (
-    inputValue: string,
-    callback: (options: HackathonOption[]) => void,
-  ) => {
-    api
-      .get(`/api/hackathon/list/`, {
-        params: {
-          searchString: inputValue,
-        },
-      })
-      .then((response) => {
-        const options = [...(response?.data || [])];
-        callback(options);
-      });
-  };
-
-  const updateSponsor = async (hackathonId: string) => {
+  const handleChange = async (option: Option | null) => {
+    if (!option?.value) return;
     try {
-      await updateUser.mutateAsync({ hackathonId });
+      await postJson('/earn/dashboard/hackathon-switch/', {
+        hackathonId: option.value,
+      });
+      router.refresh();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
-  };
-
-  const handleChange = async (option?: any) => {
-    if (type === 'hackathon') {
-      setHackathonSponsor(option.value);
-      setSelectedHackathon(option);
-    } else {
-      await updateSponsor(option.value);
-    }
-  };
-
-  const SingleValue = ({ children, ...props }: any) => {
-    const { data, selectProps } = props;
-
-    if (selectProps.menuIsOpen) {
-      return <components.SingleValue {...props}></components.SingleValue>;
-    }
-
-    return (
-      <components.SingleValue {...props}>
-        <div className="flex items-center py-1">
-          <EarnAvatar
-            id={data?.hackathon?.name}
-            avatar={data?.hackathon?.altLogo}
-            className="h-6 w-6 rounded-sm"
-          />
-          <div className="ml-2 hidden md:block">
-            <p className="text-sm text-slate-800">{data?.hackathon?.name}</p>
-            <p className="text-xs text-slate-400">{data?.hackathon?.role}</p>
-          </div>
-        </div>
-      </components.SingleValue>
-    );
-  };
-
-  const Option = (props: any) => {
-    const { data } = props;
-    return (
-      <components.Option {...props}>
-        <div className="flex items-center">
-          <EarnAvatar
-            className="rounded-sm"
-            id={data?.hackathon?.name}
-            avatar={data?.hackathon?.altLogo}
-          />
-          <div className="ml-2 hidden md:block">
-            <p className="text-sm text-slate-800">{data?.hackathon?.name}</p>
-            <p className="text-xs text-slate-400">{data?.hackathon?.role}</p>
-          </div>
-        </div>
-      </components.Option>
-    );
   };
 
   return (
     <AsyncSelect
-      components={{ SingleValue, Option }}
+      components={{ SingleValue, Option: HackathonOptionRow }}
       value={selectedHackathon}
-      onChange={(e) => handleChange(e)}
+      onChange={(option) => void handleChange(option)}
       placeholder="Select Hackathon"
       loadOptions={loadHackathons}
       defaultOptions

@@ -1,75 +1,120 @@
-import { atom, useSetAtom } from 'jotai';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { components } from 'react-select';
+'use client';
+
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import {
+  components,
+  type OptionProps,
+  type SingleValueProps,
+} from 'react-select';
 import AsyncSelect from 'react-select/async';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import type { SponsorType } from '@/interface/sponsor';
-import { api } from '@/lib/api';
-import { useUpdateUser, useUser } from '@/store/user';
+import { getJson, postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
+import type { SponsorOption } from '@/server/sponsor-switch';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-interface SponsorOptionType extends SponsorType {
-  role?: string;
+type CurrentSponsor = Pick<SponsorOption['sponsor'], 'name' | 'logo'> & {
+  readonly role?: string;
+  readonly isVerified?: boolean;
+};
+
+interface Option {
+  readonly value: string;
+  readonly label: string;
+  readonly sponsor: CurrentSponsor;
 }
 
-interface SponsorOption {
-  value: string;
-  label: string;
-  sponsor: SponsorOptionType;
+function SingleValue(props: SingleValueProps<Option, false>) {
+  const { data, selectProps } = props;
+
+  if (selectProps.menuIsOpen) {
+    return <components.SingleValue {...props}></components.SingleValue>;
+  }
+
+  return (
+    <components.SingleValue {...props}>
+      <div className="flex items-center py-1">
+        <EarnAvatar
+          id={data?.sponsor?.name}
+          avatar={data?.sponsor?.logo ?? undefined}
+          className="h-6 w-6 rounded-sm"
+        />
+        <div className="ml-2 hidden md:block">
+          <div className="flex">
+            <p className="text-sm text-slate-800">{data?.sponsor?.name}</p>
+          </div>
+          <p className="text-xs text-slate-400">{data?.sponsor?.role}</p>
+        </div>
+      </div>
+    </components.SingleValue>
+  );
 }
 
-export const hackathonSponsorAtom = atom<string | null>(null);
+function SponsorOptionRow(props: OptionProps<Option, false>) {
+  const { data } = props;
+  return (
+    <components.Option {...props}>
+      <div className="flex items-center">
+        <EarnAvatar
+          id={data?.sponsor?.name}
+          avatar={data?.sponsor?.logo ?? undefined}
+          className="rounded-sm"
+        />
+        <div className="ml-2 hidden md:block">
+          <div className="flex flex-wrap items-center">
+            <p className="text-sm text-slate-800">{data?.sponsor?.name}</p>
+          </div>
+          <div className="flex items-center gap-1">
+            <p className="text-xs text-slate-400">{data?.sponsor?.role}</p>
+            {data?.sponsor?.isVerified && <VerifiedBadge />}
+          </div>
+        </div>
+      </div>
+    </components.Option>
+  );
+}
 
+const loadSponsors = (
+  inputValue: string,
+  callback: (options: Option[]) => void,
+) => {
+  getJson<Option[]>(
+    `/earn/dashboard/sponsor-switch/?searchString=${encodeURIComponent(inputValue)}`,
+  )
+    .then((options) => callback([...(options || [])]))
+    .catch(() => callback([]));
+};
+
+// Switches the sponsor they act for: their own, or any in God mode.
 export function SelectSponsor({
-  type,
   isExpanded = false,
 }: {
-  type?: string;
   isExpanded?: boolean;
 }) {
-  const { user } = useUser();
-  const updateUser = useUpdateUser();
-  const router = useRouter();
+  const user = useViewer();
+  const pathname = usePathname() ?? '';
 
-  const [selectedSponsor, setSelectedSponsor] = useState<SponsorOption | null>(
-    null,
-  );
+  // Picked, while the page reloads for the new sponsor.
+  const [picked, setPicked] = useState<Option | null>(null);
   const [isSwitchingSponsor, setIsSwitchingSponsor] = useState(false);
-  const setHackathonSponsor = useSetAtom(hackathonSponsorAtom);
-
-  useEffect(() => {
-    if (type !== 'hackathon' && user?.currentSponsor?.id) {
-      setSelectedSponsor({
-        value: user?.currentSponsor?.id,
-        label: user?.currentSponsor?.name,
-        sponsor: user?.currentSponsor,
-      });
-    }
-  }, [user]);
-
-  const loadSponsors = (
-    inputValue: string,
-    callback: (options: SponsorOption[]) => void,
-  ) => {
-    api
-      .get(`/api/sponsors/list/`, {
-        params: {
-          searchString: inputValue,
-        },
-      })
-      .then((response) => {
-        const options = [...(response?.data || [])];
-        callback(options);
-      });
-  };
+  const current = user?.currentSponsor;
+  const selectedSponsor: Option | null =
+    picked ??
+    (current
+      ? {
+          value: current.id,
+          label: current.name,
+          sponsor: current,
+        }
+      : null);
 
   const updateSponsor = async (sponsorId: string) => {
     try {
       setIsSwitchingSponsor(true);
-      await updateUser.mutateAsync({ currentSponsorId: sponsorId });
+      await postJson('/earn/dashboard/sponsor-switch/', { sponsorId });
       return true;
     } catch (error) {
       console.error(error);
@@ -78,81 +123,26 @@ export function SelectSponsor({
     }
   };
 
-  const handleChange = async (option?: any) => {
+  const handleChange = async (option: Option | null) => {
     if (!option || isSwitchingSponsor) return;
 
-    if (type === 'hackathon') {
-      setHackathonSponsor(option.value);
-      setSelectedSponsor(option);
-    } else {
-      setSelectedSponsor(option);
-      const didSwitch = await updateSponsor(option.value);
-      if (!didSwitch) return;
+    setPicked(option);
+    const didSwitch = await updateSponsor(option.value);
+    if (!didSwitch) return;
 
-      if (router.asPath.startsWith('/earn/dashboard/')) {
-        window.location.assign('/earn/dashboard/listings/');
-        return;
-      }
-
-      window.location.reload();
-    }
-  };
-
-  const SingleValue = (props: any) => {
-    const { data, selectProps } = props;
-
-    if (selectProps.menuIsOpen) {
-      return <components.SingleValue {...props}></components.SingleValue>;
+    if (pathname.startsWith('/earn/dashboard/')) {
+      window.location.assign('/earn/dashboard/listings/');
+      return;
     }
 
-    return (
-      <components.SingleValue {...props}>
-        <div className="flex items-center py-1">
-          <EarnAvatar
-            id={data?.sponsor?.name}
-            avatar={data?.sponsor?.logo}
-            className="h-6 w-6 rounded-sm"
-          />
-          <div className="ml-2 hidden md:block">
-            <div className="flex">
-              <p className="text-sm text-slate-800">{data?.sponsor?.name}</p>
-            </div>
-            <p className="text-xs text-slate-400">{data?.sponsor?.role}</p>
-          </div>
-        </div>
-      </components.SingleValue>
-    );
-  };
-
-  const Option = (props: any) => {
-    const { data } = props;
-    return (
-      <components.Option {...props}>
-        <div className="flex items-center">
-          <EarnAvatar
-            id={data?.sponsor?.name}
-            avatar={data?.sponsor?.logo}
-            className="rounded-sm"
-          />
-          <div className="ml-2 hidden md:block">
-            <div className="flex flex-wrap items-center">
-              <p className="text-sm text-slate-800">{data?.sponsor?.name}</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <p className="text-xs text-slate-400">{data?.sponsor?.role}</p>
-              {data?.sponsor?.isVerified && <VerifiedBadge />}
-            </div>
-          </div>
-        </div>
-      </components.Option>
-    );
+    window.location.reload();
   };
 
   return (
     <AsyncSelect
-      components={{ SingleValue, Option }}
+      components={{ SingleValue, Option: SponsorOptionRow }}
       value={selectedSponsor}
-      onChange={(e) => handleChange(e)}
+      onChange={(option) => void handleChange(option)}
       placeholder="Select Sponsor"
       loadOptions={loadSponsors}
       defaultOptions
