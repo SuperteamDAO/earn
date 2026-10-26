@@ -57,7 +57,7 @@ const EMBEDS =
 // Analytics (PostHog goes through /docs-keep on Earn's own origin), uploads
 // and the like, which every page may reach.
 const CONNECT =
-  'https://www.google-analytics.com https://*.google-analytics.com https://api.cloudinary.com https://res.cloudinary.com https://ipapi.co';
+  'https://www.google-analytics.com https://*.google-analytics.com https://api.cloudinary.com https://res.cloudinary.com https://ipapi.co wss://earn-vibe-production.up.railway.app';
 
 interface Document {
   readonly privy: boolean;
