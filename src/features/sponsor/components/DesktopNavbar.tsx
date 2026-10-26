@@ -6,21 +6,20 @@ import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
-import { ResumingAccount } from '@/lib/auth/resume-session';
-import { signInHref } from '@/lib/safe-next';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { UserMenu } from '@/features/navbar/components/UserMenu';
 
+import { useSessionReady } from '../hooks/useSessionReady';
 import { NAV_LINKS } from '../utils/constants';
 
-// `resuming`: a lapsed session renews in place, where Earn showed a
-// skeleton while Privy got ready.
+// `resuming`: a lapsed session renews in place (see useSessionReady).
 export const DesktopNavbar = ({ resuming }: { resuming: boolean }) => {
   const user = useViewer();
   const authenticated = !!user;
-  const ready = !resuming;
+  const ready = useSessionReady(resuming);
 
   const pathname = usePathname() ?? '';
 
@@ -68,7 +67,12 @@ export const DesktopNavbar = ({ resuming }: { resuming: boolean }) => {
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-4 py-2">
-          {!ready && <ResumingAccount signIn={signInHref(pathname)} />}
+          {!ready && (
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="h-4 w-20" />
+            </div>
+          )}
 
           <div className="flex gap-2">
             <div className="flex items-center">

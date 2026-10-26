@@ -10,13 +10,12 @@ import { LocalImage } from '@/components/ui/local-image';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { ResumingAccount } from '@/lib/auth/resume-session';
-import { signInHref } from '@/lib/safe-next';
 import { useViewer } from '@/lib/viewer';
 import type { Viewer } from '@/server/users';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import { useSessionReady } from '../hooks/useSessionReady';
 import { NAV_LINKS } from '../utils/constants';
 
 const MobileSponsorDrawer = ({
@@ -119,7 +118,7 @@ export const MobileNavbar = ({ resuming }: { resuming: boolean }) => {
 
   const user = useViewer();
   const authenticated = !!user;
-  const ready = !resuming;
+  const ready = useSessionReady(resuming);
 
   const btnRef = useRef<HTMLButtonElement>(null);
 
@@ -182,11 +181,6 @@ export const MobileNavbar = ({ resuming }: { resuming: boolean }) => {
           ) : (
             <Menu className="size-6 text-slate-500" />
           )}
-        </div>
-      )}
-      {!ready && (
-        <div className="mr-2">
-          <ResumingAccount signIn={signInHref('/earn/sponsor/')} />
         </div>
       )}
       {ready && !authenticated && (
