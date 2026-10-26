@@ -151,7 +151,7 @@ const rustTrack: TrackProps[] = [
 
 interface Props {
   countryLeaders: ReadonlyArray<CountryLeader>;
-  rankings: { user: OlympicsProfile; rating: number }[];
+  rankings: ReadonlyArray<{ user: OlympicsProfile; rating: number }>;
   // Who's subscribed to updates.
   subscriptions: ReadonlyArray<SubscriptionRow>;
 }
@@ -796,7 +796,7 @@ function Leaderboard({ leaders }: { leaders: ReadonlyArray<CountryLeader> }) {
 function Rankings({
   rankings,
 }: {
-  rankings: { user: OlympicsProfile; rating: number }[];
+  rankings: ReadonlyArray<{ user: OlympicsProfile; rating: number }>;
 }) {
   return (
     <div className="mx-auto hidden w-full flex-col items-center gap-8 py-8">

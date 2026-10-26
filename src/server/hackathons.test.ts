@@ -59,7 +59,26 @@ const fake = () => {
     },
     user: {
       findUnique: async () => ({ isTalentFilled: true, location: 'Serbia' }),
+      findMany: async () => [
+        {
+          id: 'u1',
+          username: 'ada',
+          firstName: 'Ada',
+          lastName: null,
+          photo: null,
+          email: 'ada@example.com',
+        },
+        {
+          id: 'u2',
+          username: 'bo',
+          firstName: 'Bo',
+          lastName: null,
+          photo: null,
+          email: 'bo@example.com',
+        },
+      ],
     },
+    $queryRaw: async () => [{ location: 'Serbia', submission_count: 3n }],
     subscribeHackathon: {
       findFirst: async ({
         where,
@@ -153,7 +172,9 @@ describe('hackathonListQuery', () => {
     );
     assert.strictEqual(take, 10);
     assert.deepStrictEqual(where.region, { in: ['Global'] });
-    assert.deepStrictEqual(where.AND?.[1], { isWinnersAnnounced: true });
+    assert.deepStrictEqual(Array.isArray(where.AND) ? where.AND[1] : null, {
+      isWinnersAnnounced: true,
+    });
   });
 
   it('sorts by submissions and filters one hackathon', () => {
@@ -260,6 +281,34 @@ describe('Hackathons.toggleSubscription', () => {
       );
       assert.isTrue(Exit.isFailure(exit));
       assert.strictEqual(db.subs.length, 0);
+    }).pipe(Effect.provide(db.layer));
+  });
+});
+
+describe('Hackathons.talentOlympics', () => {
+  it.effect('ranks profiles by rating and returns no emails', () => {
+    const db = fake();
+    return Effect.gen(function* () {
+      const hackathons = yield* Hackathons.Hackathons;
+      const { rankings, countryLeaders } = yield* hackathons.talentOlympics([
+        { email: 'ada@example.com', rating: 50 },
+        { email: 'missing@example.com', rating: 99 },
+        { email: 'bo@example.com', rating: 70 },
+      ]);
+      assert.deepStrictEqual(
+        rankings.map((item) => [item.user.id, item.rating]),
+        [
+          ['u2', 70],
+          ['u1', 50],
+        ],
+      );
+      for (const { user } of rankings) assert.isFalse('email' in user);
+      assert.isFalse(JSON.stringify(rankings).includes('@example.com'));
+      assert.deepStrictEqual(countryLeaders[0], {
+        location: 'Serbia',
+        submission_count: 3,
+      });
+      assert.strictEqual(countryLeaders.length, 10);
     }).pipe(Effect.provide(db.layer));
   });
 });

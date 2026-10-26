@@ -17,10 +17,10 @@ export const metadata = pageMetadata({
 });
 
 export default async function Page() {
-  const [{ countryLeaders, profiles }, subscriptions] = await Promise.all([
+  const [{ countryLeaders, rankings }, subscriptions] = await Promise.all([
     runtime.runPromise(
       Hackathons.Hackathons.use((hackathons) =>
-        hackathons.talentOlympics(rankedUsers.map((u) => u.email)),
+        hackathons.talentOlympics(rankedUsers),
       ),
     ),
     runtime.runPromise(
@@ -29,14 +29,6 @@ export default async function Page() {
       ).pipe(Effect.orElseSucceed(() => [])),
     ),
   ]);
-
-  // Ranked people without an Earn account are left out.
-  const rankings = rankedUsers
-    .flatMap((u) => {
-      const user = profiles.find((p) => p.email === u.email);
-      return user ? [{ user, rating: u.rating }] : [];
-    })
-    .toSorted((a, b) => b.rating - a.rating);
 
   return (
     <TalentOlympicsView

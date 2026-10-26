@@ -250,11 +250,20 @@ export class Hackathons extends Context.Service<
       slug: string,
     ) => Effect.Effect<unknown, HackathonNotFound | Database.DatabaseError>;
     // Talent Olympics' leaderboards: submissions per country (padded with
-    // chapter countries to ten) and the profiles behind ranked emails.
-    readonly talentOlympics: (emails: ReadonlyArray<string>) => Effect.Effect<
+    // chapter countries to ten) and the ranked people's public profiles,
+    // highest rating first. Emails only match them here; none is returned.
+    readonly talentOlympics: (
+      ranked: ReadonlyArray<{
+        readonly email: string;
+        readonly rating: number;
+      }>,
+    ) => Effect.Effect<
       {
         readonly countryLeaders: ReadonlyArray<CountryLeader>;
-        readonly profiles: ReadonlyArray<OlympicsProfile>;
+        readonly rankings: ReadonlyArray<{
+          readonly user: OlympicsProfile;
+          readonly rating: number;
+        }>;
       },
       Database.DatabaseError
     >;
@@ -272,7 +281,6 @@ export interface OlympicsProfile {
   readonly firstName: string | null;
   readonly lastName: string | null;
   readonly photo: string | null;
-  readonly email: string;
 }
 
 export type HackathonWithSponsor = HackathonGetPayload<{
@@ -602,7 +610,7 @@ const make = Effect.gen(function* () {
   );
 
   const talentOlympics = Effect.fn('Hackathons.talentOlympics')(function* (
-    emails: ReadonlyArray<string>,
+    ranked: ReadonlyArray<{ readonly email: string; readonly rating: number }>,
   ) {
     const leaders = yield* database.query(
       'olympicsCountryLeaders',
@@ -664,7 +672,7 @@ LIMIT 10;
     }
     const profiles = yield* database.query('olympicsProfiles', (client) =>
       client.user.findMany({
-        where: { email: { in: [...emails] } },
+        where: { email: { in: ranked.map((item) => item.email) } },
         select: {
           id: true,
           username: true,
@@ -675,7 +683,22 @@ LIMIT 10;
         },
       }),
     );
-    return { countryLeaders, profiles };
+    // Ranked people without an Earn account are left out.
+    const rankings = ranked
+      .flatMap(({ email, rating }) => {
+        const found = profiles.find((profile) => profile.email === email);
+        if (!found) return [];
+        const user: OlympicsProfile = {
+          id: found.id,
+          username: found.username,
+          firstName: found.firstName,
+          lastName: found.lastName,
+          photo: found.photo,
+        };
+        return [{ user, rating }];
+      })
+      .toSorted((a, b) => b.rating - a.rating);
+    return { countryLeaders, rankings };
   });
 
   return Hackathons.of({
