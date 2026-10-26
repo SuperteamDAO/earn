@@ -29,14 +29,6 @@ const features: Feature[] = [
   },
   {
     imageLink:
-      'https://res.cloudinary.com/dgvnuwspr/image/upload/v1762377712/assets/home/sponsor-stages/ai-review-feature.webp',
-    title: 'AI Review',
-    subtext:
-      'Save hours in time reviewing by using our reliable AI Review agent',
-    ctaLink: 'https://x.com/SuperteamEarn/status/1948718195214581841',
-  },
-  {
-    imageLink:
       'https://res.cloudinary.com/dgvnuwspr/image/upload/v1762377726/assets/home/sponsor-stages/boost-feature.webp',
     title: 'Boost',
     subtext:

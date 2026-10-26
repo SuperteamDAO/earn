@@ -284,36 +284,6 @@ export function SponsorListing() {
               </Button>
             )}
 
-            {data.stage === SponsorStage.REVIEW_AI && (
-              <Button
-                variant="outline"
-                className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
-                asChild
-              >
-                <Link
-                  href={`/earn/dashboard/listings/${listing.slug}/submissions`}
-                  onClick={() => {
-                    posthog.capture(
-                      'view submissions_sponsor sidebar listing',
-                      {
-                        stage: 'REVIEW_AI',
-                        listing_type: listing.type,
-                        listing_slug: listing.slug,
-                      },
-                    );
-                    posthog.capture('click_sponsor sidebar listing', {
-                      stage: 'REVIEW_AI',
-                      listing_type: listing.type,
-                      listing_slug: listing.slug,
-                    });
-                  }}
-                >
-                  <Eye className="mr-1 h-4 w-4" />
-                  {listing.type === 'bounty' ? 'Submissions' : 'Applications'}
-                </Link>
-              </Button>
-            )}
-
             {data.stage === SponsorStage.REVIEW && (
               <Button
                 variant="outline"

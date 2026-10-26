@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -29,7 +29,6 @@ interface Props {
 function GrantApplications({ slug }: Props) {
   const { user } = useUser();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<string>('applications');
 
   const {
     data: grant,
@@ -79,15 +78,8 @@ function GrantApplications({ slug }: Props) {
         <SubmissionsPageSkeleton />
       ) : (
         <>
-          <ApplicationHeader
-            grant={grant}
-            applications={applications}
-            showAiReview={activeTab === 'applications'}
-          />
-          <Tabs
-            defaultValue="applications"
-            onValueChange={(value) => setActiveTab(value)}
-          >
+          <ApplicationHeader grant={grant} />
+          <Tabs defaultValue="applications">
             <TabsList className="gap-2 font-medium text-slate-400 focus-visible:ring-0">
               <TabsTrigger value="applications">
                 Applications

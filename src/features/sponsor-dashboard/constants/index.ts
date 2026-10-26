@@ -11,22 +11,6 @@ export const labelMenuOptions = (type: BountyType | 'grant' | undefined) => [
       ]
     : []),
   { label: 'Spam', value: 'Spam', hidden: true },
-  ...(type === 'bounty'
-    ? [
-        {
-          label: 'Inaccessible',
-          value: 'Inaccessible',
-          hidden: true,
-          aiOnly: true,
-        },
-        {
-          label: 'Needs Review',
-          value: 'Needs_Review',
-          hidden: true,
-          aiOnly: true,
-        },
-      ]
-    : []),
 ];
 
 export const labelMenuOptionsGrants = [

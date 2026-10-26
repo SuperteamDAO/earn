@@ -5,7 +5,6 @@ import { prisma } from '@/prisma';
 import { type BountiesModel } from '@/prisma/models/Bounties';
 import { dayjs } from '@/utils/dayjs';
 
-import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 
@@ -40,8 +39,6 @@ export async function handlePostSaveOperations(context: PostSaveParams) {
         listingId,
       });
     }
-
-    await handleAgentJobQueuing(result);
 
     if (!isEditing) {
       await handleTelegramNotifications(result);
@@ -178,36 +175,6 @@ async function handleDeadlineChanges({
       id: listingId,
       error: err,
     });
-  }
-}
-
-async function handleAgentJobQueuing(result: BountiesModel) {
-  if (result.type !== 'project' && result.type !== 'bounty') return;
-
-  const agentType =
-    result.type === 'project'
-      ? 'generateContextProject'
-      : 'generateContextBounty';
-  try {
-    await queueAgent({
-      type: agentType,
-      id: result.id,
-    });
-
-    logger.info(
-      `Successfully queued agent job for ${agentType} with id ${result.id}`,
-    );
-    console.log(
-      `Successfully queued agent job for ${agentType} with id ${result.id}`,
-    );
-  } catch (err) {
-    logger.error(
-      `Failed to queue agent job for ${agentType} with id ${result.id}`,
-      err,
-    );
-    console.log(
-      `Failed to queue agent job for ${agentType} with id ${result.id}`,
-    );
   }
 }
 

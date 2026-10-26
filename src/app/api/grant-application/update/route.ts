@@ -7,7 +7,6 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { grantApplicationSchema } from '@/features/grants/utils/grantApplicationSchema';
 import {
@@ -216,18 +215,6 @@ export async function POST(request: NextRequest) {
 
     waitUntil(
       (async () => {
-        try {
-          await queueAgent({
-            type: 'autoReviewGrantApplication',
-            id: result.id,
-          });
-        } catch (error) {
-          logger.error('Failed to update AI review for grant application: ', {
-            error,
-            grantId,
-            userId,
-          });
-        }
         if (grant.airtableId) {
           try {
             await syncGrantApplicationWithAirtable(result);

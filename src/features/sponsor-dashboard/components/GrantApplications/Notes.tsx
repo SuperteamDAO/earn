@@ -5,10 +5,6 @@ import { Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { api } from '@/lib/api';
-import { Wand } from '@/svg/wand';
-import { cn } from '@/utils/cn';
-
-import { type GrantApplicationAi } from '@/features/grants/types';
 
 import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
 import { type GrantApplicationsReturn } from '../../queries/applications';
@@ -128,21 +124,10 @@ export const Notes = ({ slug }: Props) => {
     }
   };
 
-  const isAiCommited = useMemo(
-    () => (selectedApplication?.ai as GrantApplicationAi)?.commited,
-    [selectedApplication],
-  );
-
   return (
     <div className="flex h-full min-h-0 w-full flex-col items-start rounded-xl border border-slate-200 py-5 pr-1 pl-4">
-      <div
-        className={cn(
-          'mb-2 flex w-full items-center justify-between pr-3 text-slate-400',
-          isAiCommited && 'text-slate-600',
-        )}
-      >
+      <div className="mb-2 flex w-full items-center justify-between pr-3 text-slate-400">
         <div className="flex items-center gap-1">
-          {isAiCommited && <Wand />}
           <span className="font-extrabold">Notes</span>
         </div>
         {isSaving ? (

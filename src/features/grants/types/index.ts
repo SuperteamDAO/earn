@@ -56,64 +56,11 @@ interface Grant {
   airtableId?: string;
   emailSalutation?: string | null;
   isNative?: boolean;
-  ai?: GrantsAi;
   isST?: boolean;
 }
 
 interface GrantWithApplicationCount extends Grant {
   totalApplications: number;
-}
-
-import { type SubmissionLabels } from '@/prisma/enums';
-
-interface GrantsAiContxt {
-  totalInputTokens: number;
-  totalOutputTokens: number;
-  domainSummary: string[];
-  shortlistCriterias: string[];
-  totalTimeinMs: number;
-  totalCostInUSD: number;
-}
-
-export interface GrantsAi {
-  context?: GrantsAiContxt;
-}
-
-type EvaluationResult = {
-  predictedLabel: SubmissionLabels;
-  recommendation?: 'Accept' | 'Reject' | 'Needs_Review';
-  confidence?: 'low' | 'medium' | 'high';
-  reasoning: string;
-  decisionReason?: string;
-  risks?: string[];
-  colosseum?: {
-    enabled: boolean;
-    summary: string;
-    error?: string;
-  };
-  solanaTechnical?: {
-    isSolanaTechnical: boolean;
-    capabilityAreas: string[];
-    technicalCoherence: 'low' | 'medium' | 'high' | 'not_applicable';
-    missingImplementationDetails: string[];
-    reviewerRisks: string[];
-    summary: string;
-  };
-  totalCostInUSD: number;
-  totalTimeinMs: number;
-  shortNote: string;
-  scores?: {
-    pow: number;
-    activity: number;
-    core: number;
-    feasibility: number;
-    impact: number;
-  };
-};
-
-export interface GrantApplicationAi {
-  review?: EvaluationResult;
-  commited?: boolean;
 }
 
 export type { Grant, GrantWithApplicationCount };

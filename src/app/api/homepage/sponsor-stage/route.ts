@@ -26,12 +26,7 @@ import {
   amountToStep,
   getTotalImpressionsForValue,
 } from '@/features/listing-builder/components/Form/Boost/utils';
-import {
-  type BountiesAi,
-  type Listing,
-  type ProjectApplicationAi,
-  type Rewards,
-} from '@/features/listings/types';
+import { type Listing, type Rewards } from '@/features/listings/types';
 
 const PAYMENT_REMINDER_MAX_DAYS = 7;
 
@@ -53,7 +48,6 @@ const listingSelectForStage = {
   usdValue: true,
   publishedAt: true,
   status: true,
-  ai: true,
   updatedAt: true,
   skills: true,
   region: true,
@@ -94,7 +88,6 @@ const isListingReviewable = (listing: BountyWithStageFields) =>
 function determineSponsorStage(
   listing: BountyWithStageFields,
   hasUnpaidWinners: boolean,
-  hasUncommittedProjectAiReviews: boolean,
   isFeatureAvailable: boolean,
   emailImpressions: number,
 ): { stage: SponsorStage; sortDate: Date } | null {
@@ -142,18 +135,7 @@ function determineSponsorStage(
   }
 
   if (deadline && deadline.isBefore(now) && isReviewableListing) {
-    const hasAiReview =
-      listing.type === 'bounty'
-        ? (listing.ai as BountiesAi)?.evaluationCompleted === true
-        : listing.type === 'project'
-          ? hasUncommittedProjectAiReviews
-          : false;
-
-    if (hasAiReview) {
-      return { stage: SponsorStage.REVIEW_AI, sortDate: deadline.toDate() };
-    } else {
-      return { stage: SponsorStage.REVIEW, sortDate: deadline.toDate() };
-    }
+    return { stage: SponsorStage.REVIEW, sortDate: deadline.toDate() };
   }
 
   const isActiveListing =
@@ -230,7 +212,6 @@ function applyPriorityAndTiebreaker(
   const stagePriority: Record<SponsorStage, number> = {
     [SponsorStage.REVIEW_URGENT]: 1,
     [SponsorStage.PAYMENT_PENDING]: 2,
-    [SponsorStage.REVIEW_AI]: 3,
     [SponsorStage.REVIEW]: 4,
     [SponsorStage.BOOST]: 5,
     [SponsorStage.BOOSTED]: 6,
@@ -242,7 +223,6 @@ function applyPriorityAndTiebreaker(
   const showOldestFirst: Record<SponsorStage, boolean> = {
     [SponsorStage.REVIEW_URGENT]: true,
     [SponsorStage.PAYMENT_PENDING]: true,
-    [SponsorStage.REVIEW_AI]: true,
     [SponsorStage.REVIEW]: true,
     [SponsorStage.BOOST]: false,
     [SponsorStage.BOOSTED]: false,
@@ -393,51 +373,25 @@ export async function GET(_request: NextRequest) {
 
     const listingIds = listings.map((l) => l.id);
     const unpaidWinnersMap = new Map<string, boolean>();
-    const uncommittedProjectAiReviewsMap = new Map<string, boolean>();
-    const projectListings = listings.filter((l) => l.type === 'project');
-    const projectListingIds = projectListings.map((l) => l.id);
 
     const parallelQueriesStartTime = performance.now();
-    const [unpaidWinners, projectSubmissions, isFeatureAvailable] =
-      await Promise.all([
-        prisma.submission.groupBy({
-          by: ['listingId'],
-          where: {
-            listingId: { in: listingIds },
-            isWinner: true,
-            isPaid: false,
-          },
-          _count: { id: true },
-        }),
-        projectListingIds.length > 0
-          ? prisma.submission.findMany({
-              where: {
-                listingId: { in: projectListingIds },
-                status: 'Pending',
-                label: {
-                  in: ['Unreviewed', 'Pending'],
-                },
-              },
-              select: {
-                listingId: true,
-                ai: true,
-              },
-            })
-          : Promise.resolve([]),
-        getFeaturedAvailability(),
-      ]);
+    const [unpaidWinners, isFeatureAvailable] = await Promise.all([
+      prisma.submission.groupBy({
+        by: ['listingId'],
+        where: {
+          listingId: { in: listingIds },
+          isWinner: true,
+          isPaid: false,
+        },
+        _count: { id: true },
+      }),
+      getFeaturedAvailability(),
+    ]);
     const parallelQueriesEndTime = performance.now();
 
     unpaidWinners.forEach((item) => {
       if (item._count.id > 0) {
         unpaidWinnersMap.set(item.listingId, true);
-      }
-    });
-
-    projectSubmissions.forEach((submission) => {
-      const aiData = submission.ai as ProjectApplicationAi | null;
-      if (aiData?.review?.predictedLabel && !aiData.commited) {
-        uncommittedProjectAiReviewsMap.set(submission.listingId, true);
       }
     });
 
@@ -505,8 +459,6 @@ export async function GET(_request: NextRequest) {
 
     const processListing = (listing: BountyWithStageFields) => {
       const hasUnpaidWinners = unpaidWinnersMap.get(listing.id) || false;
-      const hasUncommittedProjectAiReviews =
-        uncommittedProjectAiReviewsMap.get(listing.id) || false;
 
       let emailImpressions = DEFAULT_EMAIL_IMPRESSIONS;
       if (listing.skills && Array.isArray(listing.skills)) {
@@ -531,7 +483,6 @@ export async function GET(_request: NextRequest) {
       return determineSponsorStage(
         listing,
         hasUnpaidWinners,
-        hasUncommittedProjectAiReviews,
         isFeatureAvailable,
         emailImpressions,
       );

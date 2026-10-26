@@ -7,7 +7,6 @@ import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { getUserSession } from '@/features/auth/utils/getUserSession';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
 import { isGrantApplicationInCooldown } from '@/features/grants/utils/grantApplicationCooldown';
@@ -243,19 +242,6 @@ export async function POST(request: NextRequest) {
               grantId,
             });
           }
-        }
-
-        try {
-          await queueAgent({
-            type: 'autoReviewGrantApplication',
-            id: result.id,
-          });
-        } catch (error) {
-          logger.error('Failed to create AI review for grant application: ', {
-            error,
-            grantId,
-            userId,
-          });
         }
 
         if (grant.airtableId) {

@@ -1,11 +1,7 @@
 import type { Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
 import { type User } from '@/interface/user';
-import {
-  type BountyType,
-  type status,
-  type SubmissionLabels,
-} from '@/prisma/enums';
+import { type BountyType, type status } from '@/prisma/enums';
 
 import { type ListingContext } from '../hooks/useListings';
 
@@ -58,16 +54,13 @@ export interface Listing {
   isFndnPaying?: boolean;
   usdValue?: number;
   referredBy?: string;
-  ai?: ProjectAi | BountiesAi;
 }
 
 /**
  * Listing data that is safe to expose on the public listing details route.
- *
- * Keep internal review configuration out of this contract. The API route also
- * enforces this boundary with an explicit Prisma select.
+ * The API route enforces this boundary with an explicit Prisma select.
  */
-export type PublicListing = Omit<Listing, 'ai'>;
+export type PublicListing = Listing;
 
 type PublicListingDetailsFields =
   | 'id'
@@ -164,90 +157,3 @@ export interface ListingTabsProps {
   category?: string;
   defaultTab?: 'bounties' | 'projects';
 }
-
-type ProjectContextQuestionsType = {
-  type: 'pow' | 'qualitative' | 'yesno' | 'contact';
-  question: string;
-  order: number;
-}[];
-
-type ProjectContextSummary = {
-  projectSummary: string;
-  skills: string;
-  responsibilities: string;
-  experience: string;
-  companyInfo: string;
-};
-
-interface ProjectAi {
-  context?: {
-    summary?: ProjectContextSummary;
-    questionTypes?: ProjectContextQuestionsType;
-  };
-}
-
-type ProjectApplicationEvaluation = {
-  predictedLabel?: SubmissionLabels;
-  shortNote?: string;
-  scores?: Scores;
-};
-
-export interface ProjectApplicationAi {
-  review?: ProjectApplicationEvaluation;
-  commited?: boolean;
-}
-
-type Scores = {
-  skills: number;
-  experience: number;
-  application: number;
-};
-export interface BountySubmissionAi {
-  analytics?: TwitterAnalytics;
-  invalidTwitterLink?: boolean;
-  evaluation?: BountySubmissionEvaluation;
-  commited?: boolean;
-}
-
-type BountySubmissionEvaluation = {
-  finalLabel?: SubmissionLabels;
-  notes?: string;
-  criteriaScore?: number;
-  qualityScore?: number;
-  totalScore?: number;
-};
-
-type TwitterAnalytics = {
-  totalViews: number;
-  totalLikes: number;
-  totalRetweets: number;
-  totalReplies: number;
-  totalBookmarks: number;
-  lastSynced: string;
-};
-export interface BountiesAi {
-  analytics?: TwitterAnalytics;
-  invalidTwitterLinkCount?: number;
-  context?: {
-    criterias?: JudgingCriterias['criterias'];
-    checks?: Checks;
-    summary?: string;
-    category?: Category;
-  };
-  evaluationCompleted?: boolean;
-}
-
-type Category = 'tweet' | 'feedback' | 'blog' | 'other';
-type Checks = {
-  tweets_shouldTag: string[];
-  language?: string | null | undefined;
-  template?: string | null | undefined;
-  tweets_minimum?: number | null | undefined;
-  tweets_maximum?: number | null | undefined;
-};
-type JudgingCriterias = {
-  criterias: {
-    criterion: string;
-    weightage: number;
-  }[];
-};

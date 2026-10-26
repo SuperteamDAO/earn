@@ -6,7 +6,6 @@ import { checkAndApplyRateLimitPages } from '@/lib/rateLimiterService';
 import { createSubmission } from '@/pages/api/submission/create';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { type NextApiRequestWithAgent } from '@/features/auth/types';
 import { withAgentAuth } from '@/features/auth/utils/withAgentAuth';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
@@ -78,19 +77,6 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       listing,
       { isAgent: true, agentId },
     );
-
-    try {
-      if (listing.type === 'project') {
-        await queueAgent({
-          type: 'autoReviewProjectApplication',
-          id: result.id,
-        });
-      }
-    } catch (err) {
-      logger.error(
-        `[AgentSubmission] Failed to queue agent job for autoReviewProjectApplication with id ${result.id}`,
-      );
-    }
 
     return res.status(200).json(result);
   } catch (error: any) {

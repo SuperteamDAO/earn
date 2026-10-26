@@ -42,7 +42,6 @@ export function SponsorStageSnackbar() {
 
   if (
     stage !== SponsorStage.REVIEW &&
-    stage !== SponsorStage.REVIEW_AI &&
     stage !== SponsorStage.REVIEW_URGENT &&
     stage !== SponsorStage.PAYMENT_PENDING
   ) {
@@ -137,8 +136,7 @@ export function SponsorStageSnackbar() {
   );
 
   const handleSnackbarClick = () => {
-    const stageValue =
-      stage === SponsorStage.REVIEW_AI ? 'REVIEW_AI' : 'REVIEW';
+    const stageValue = 'REVIEW';
     posthog.capture('announce winners_sponsor stage snackbar', {
       stage: stageValue,
       listing_type: listing.type,

@@ -20,7 +20,6 @@ export const sponsorGrantDetailsSelect = {
   references: true,
   airtableId: true,
   isNative: true,
-  ai: true,
   emailSalutation: true,
   isST: true,
   sponsor: {
@@ -59,7 +58,6 @@ export type SponsorGrantDetailsResponse = Pick<
   | 'references'
   | 'airtableId'
   | 'isNative'
-  | 'ai'
   | 'emailSalutation'
   | 'isST'
   | 'sponsor'

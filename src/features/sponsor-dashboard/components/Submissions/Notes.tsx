@@ -6,10 +6,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
-import { Wand } from '@/svg/wand';
-import { cn } from '@/utils/cn';
-
-import { type ProjectApplicationAi } from '@/features/listings/types';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 import { getTextCharacterCount } from '../../utils/convertTextToNotesHTML';
@@ -132,21 +128,10 @@ export const Notes = ({ slug }: Props) => {
     return () => {};
   }, [selectedSubmission?.id, selectedSubmission?.notes]);
 
-  const isAiCommited = useMemo(
-    () => (selectedSubmission?.ai as ProjectApplicationAi)?.commited,
-    [selectedSubmission],
-  );
-
   return (
     <div className="flex w-full flex-col items-start rounded-xl border border-slate-200 py-5 pr-1 pl-4">
-      <div
-        className={cn(
-          'mb-2 flex w-full items-center justify-between pr-3 text-slate-400',
-          isAiCommited && 'text-slate-600',
-        )}
-      >
+      <div className="mb-2 flex w-full items-center justify-between pr-3 text-slate-400">
         <div className="flex items-center gap-1">
-          {isAiCommited && <Wand />}
           <span className="font-extrabold">Notes</span>
         </div>
         {isSaving ? (

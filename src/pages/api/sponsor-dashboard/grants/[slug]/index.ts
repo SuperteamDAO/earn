@@ -95,7 +95,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         [],
       airtableId: grant.airtableId ?? undefined,
       isNative: grant.isNative,
-      ai: grant.ai as SponsorGrantDetailsResponse['ai'],
       emailSalutation: grant.emailSalutation,
       isST: grant.isST,
       sponsor: {

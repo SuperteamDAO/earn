@@ -4,7 +4,6 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { queueAgent } from '@/features/agents/utils/queueAgent';
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
 import {
@@ -114,22 +113,6 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       submissionData,
       listing,
     );
-
-    try {
-      if (listing.type === 'project') {
-        await queueAgent({
-          type: 'autoReviewProjectApplication',
-          id: result.id,
-        });
-      }
-    } catch (err) {
-      logger.error(
-        `Failed to queue agent job for autoReviewProjectApplication with id ${result.id}`,
-      );
-      console.log(
-        `Failed to queue agent job for autoReviewProjectApplication with id ${result.id}`,
-      );
-    }
 
     const response: SubmissionMutationResponse = {
       success: true,

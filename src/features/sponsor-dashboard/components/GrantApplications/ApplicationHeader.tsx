@@ -33,24 +33,15 @@ import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
 import { ExportSheetsModal } from '@/features/sponsor-dashboard/components/Modals/ExportSheetsModal';
 
-import { type GrantApplicationWithUser } from '../../types';
-import AiReviewModal from './Modals/AiReview';
-
 interface GrantWithApplicationCount extends Grant {
   totalApplications: number;
 }
 
 interface Props {
   grant: GrantWithApplicationCount | undefined;
-  applications: GrantApplicationWithUser[] | undefined;
-  showAiReview?: boolean;
 }
 
-export const ApplicationHeader = ({
-  grant,
-  applications,
-  showAiReview = true,
-}: Props) => {
+export const ApplicationHeader = ({ grant }: Props) => {
   const listingPath = `earn/grants/${grant?.slug}`;
   const grantStatus = getListingStatus(grant, true);
   const router = useRouter();
@@ -221,12 +212,6 @@ export const ApplicationHeader = ({
           </StatusPill>
         </div>
       </div>
-      {showAiReview && (
-        <div>
-          <AiReviewModal applications={applications} grant={grant} />
-        </div>
-      )}
-
       <ExportSheetsModal
         isOpen={exportSheetsIsOpen}
         onClose={exportSheetsOnClose}

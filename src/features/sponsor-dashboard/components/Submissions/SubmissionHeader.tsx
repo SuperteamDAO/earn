@@ -51,8 +51,6 @@ import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Moda
 
 import { ExportSheetsModal } from '../Modals/ExportSheetsModal';
 import { UnpublishModal } from '../Modals/UnpublishModal';
-import AiReviewBountiesSubmissionsModal from './Modals/AiReviewBounties';
-import AiReviewProjectApplicationsModal from './Modals/AiReviewProjects';
 
 interface Props {
   bounty: Listing | undefined;
@@ -330,19 +328,6 @@ export const SubmissionHeader = ({
           </StatusPill>
 
           <BoostButton listing={bounty!} />
-
-          <div className="ml-4 -translate-y-2.5">
-            <AiReviewProjectApplicationsModal
-              listing={bounty}
-              applications={submissions}
-            />
-          </div>
-          <div className="ml-4 -translate-y-2.5">
-            <AiReviewBountiesSubmissionsModal
-              listing={bounty}
-              submissions={submissions}
-            />
-          </div>
         </div>
       </div>
       {!isProject && !bounty?.isWinnersAnnounced && (

@@ -14,7 +14,6 @@ import { BoostedBanner } from './BoostedBanner';
 import { NewSponsorBanner } from './NewSponsorBanner';
 import { NextListingBanner } from './NextListingBanner';
 import { PaymentPendingBanner } from './PaymentPendingBanner';
-import { ReviewAiBanner } from './ReviewAiBanner';
 import { ReviewBanner } from './ReviewBanner';
 import { ReviewUrgentBanner } from './ReviewUrgentBanner';
 import { UnderVerificationBanner } from './UnderVerificationBanner';
@@ -49,9 +48,6 @@ export function SponsorStageBanner() {
 
     case SponsorStage.BOOSTED:
       return listing ? <BoostedBanner listing={listing} /> : null;
-
-    case SponsorStage.REVIEW_AI:
-      return listing ? <ReviewAiBanner listing={listing} /> : null;
 
     case SponsorStage.REVIEW:
       return listing ? <ReviewBanner listing={listing} /> : null;
