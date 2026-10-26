@@ -23,6 +23,10 @@ import type { TokenActivity } from '@/features/wallet/types/TokenActivity';
 import type { TokenAsset } from '@/features/wallet/types/TokenAsset';
 import type { TxData } from '@/features/wallet/types/TxData';
 import type { DrawerView } from '@/features/wallet/types/WalletTypes';
+import {
+  WALLET_CHANGED,
+  WALLET_SIGN_IN,
+} from '@/features/wallet/utils/wallet-messages';
 
 import { PrivyAuthProvider, type PrivyProps } from '../../privy-auth-provider';
 import { useTurn } from '../../turn';
@@ -47,7 +51,13 @@ interface WalletState {
   readonly txData: TxData;
   readonly setTxData: (txData: TxData) => void;
   readonly onWithdrawn: () => Promise<void>;
+  // Framed by the wallet drawer.
+  readonly embed: boolean;
 }
+
+// Tells the drawer framing this page something (WalletDrawer.tsx).
+const tellDrawer = (type: string) =>
+  window.parent.postMessage({ type }, window.location.origin);
 
 const HERE = '/earn/wallet/';
 
@@ -58,10 +68,12 @@ export function WalletView({
   privy,
   assets,
   activity,
+  embed,
 }: {
   privy: PrivyProps;
   assets: TokenAsset[] | null;
   activity: Promise<TokenActivity[] | null>;
+  embed: boolean;
 }) {
   const { started, ready } = useTurn();
   const [tokens, setTokens] = useState<TokenAsset[] | null>(assets);
@@ -87,6 +99,7 @@ export function WalletView({
     ]);
     if (nextTokens) setTokens(nextTokens);
     setFreshActivity(nextActivity);
+    if (embed) tellDrawer(WALLET_CHANGED);
   };
 
   const state: WalletState = {
@@ -99,6 +112,7 @@ export function WalletView({
     txData,
     setTxData,
     onWithdrawn,
+    embed,
   };
 
   if (!started) return <WalletContent state={state} privy={null} />;
@@ -172,7 +186,8 @@ function WalletContent({
     if (!privy?.ready) return;
     // Privy's session ended: signing needs it, so sign in and come back.
     if (!privy.authenticated) {
-      window.location.assign(signInHref(HERE));
+      if (state.embed) tellDrawer(WALLET_SIGN_IN);
+      else window.location.assign(signInHref(HERE));
       return;
     }
     posthog.capture('withdraw_start');
@@ -219,7 +234,13 @@ function WalletContent({
   };
 
   return (
-    <div className="mx-auto flex w-full flex-1 flex-col sm:w-120 sm:border-x">
+    <div
+      className={
+        state.embed
+          ? 'flex min-h-dvh flex-col'
+          : 'mx-auto flex w-full flex-1 flex-col sm:w-120 sm:border-x'
+      }
+    >
       <div
         className={cn('items-center border-b bg-slate-50 py-5 pb-4', padding)}
       >

@@ -19,6 +19,8 @@ import { runtime } from '@/server/runtime';
 import * as Tokens from '@/server/tokens';
 import { fontVariables } from '@/theme/fonts';
 
+import { WalletDrawerProvider } from '@/features/wallet/components/WalletDrawerProvider';
+
 export const metadata: Metadata = {
   metadataBase: new URL(publicEnv.siteUrl),
   title: 'Superteam Earn',
@@ -48,15 +50,21 @@ export default async function RootLayout({
     ),
   ]);
   return (
-    <html lang="en" data-theme="light" className={fontVariables}>
+    <html lang="en" data-theme="light">
       <body>
-        <ViewerProvider viewer={viewer}>
-          <TokenListProvider tokens={tokens}>
-            <ExternalLinkDialogProvider>
-              <SignInDialogProvider>{children}</SignInDialogProvider>
-            </ExternalLinkDialogProvider>
-          </TokenListProvider>
-        </ViewerProvider>
+        {/* On a wrapper, not <html>, as Earn's _app had it: body text keeps
+            the font it has always rendered in. */}
+        <div className={fontVariables}>
+          <ViewerProvider viewer={viewer}>
+            <TokenListProvider tokens={tokens}>
+              <ExternalLinkDialogProvider>
+                <SignInDialogProvider>
+                  <WalletDrawerProvider>{children}</WalletDrawerProvider>
+                </SignInDialogProvider>
+              </ExternalLinkDialogProvider>
+            </TokenListProvider>
+          </ViewerProvider>
+        </div>
         <Toaster position="bottom-right" richColors />
         {/* By the server's clock; a reissued session starts it over. Without
             Privy's cookie (gone, or held back on a link from another site)
