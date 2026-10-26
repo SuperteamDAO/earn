@@ -1,7 +1,8 @@
-import { usePrivy } from '@privy-io/react-auth';
+'use client';
+
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+import dynamic from 'next/dynamic';
+import { posthog } from 'posthog-js';
 import React, { useState } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
@@ -16,23 +17,30 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { generateTelegramBotUrl } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { useLogout, useUser } from '@/store/user';
+import { ResumingAccount } from '@/lib/auth/resume-session';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
-import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
 
 import {
   CATEGORY_NAV_ITEMS,
   LISTING_NAV_ITEMS,
   renderLabel,
 } from '../constants';
+import { useLogout } from '../hooks/use-logout';
+import { useShellNavigate } from './ShellLink';
+
+const EmailSettingsModal = dynamic(() =>
+  import('./EmailSettingsModal').then((mod) => mod.EmailSettingsModal),
+);
 
 interface MobileDrawerProps {
   isDrawerOpen: boolean;
   onDrawerClose: () => void;
-  onLoginOpen: () => void;
+  signIn: string;
+  resuming: boolean;
 }
 
 interface NavItemProps {
@@ -58,19 +66,19 @@ const NavItem = ({ onClick, label, className }: NavItemProps) => {
 export const MobileDrawer = ({
   isDrawerOpen,
   onDrawerClose,
-  onLoginOpen,
+  signIn,
+  resuming,
 }: MobileDrawerProps) => {
-  const router = useRouter();
-  const { authenticated, ready } = usePrivy();
+  const navigate = useShellNavigate();
   const [categoriesOpen, setCategoriesOpen] = useState(true);
   const [skillsOpen, setSkillsOpen] = useState(false);
   const logout = useLogout();
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const { user } = useUser();
+  const user = useViewer();
 
-  const isLoggedIn = !!user && authenticated && ready;
+  const isLoggedIn = !!user;
 
   return (
     <Sheet open={isDrawerOpen} onOpenChange={onDrawerClose}>
@@ -83,21 +91,21 @@ export const MobileDrawer = ({
         {/* Hidden element to prevent auto-focus */}
         <div tabIndex={-1} className="sr-only" />
 
-        <EmailSettingsModal isOpen={isOpen} onClose={onClose} />
+        {isOpen && <EmailSettingsModal isOpen={isOpen} onClose={onClose} />}
 
         {isLoggedIn && (
           <div>
             <div
               className="flex items-center gap-1.5 px-4 py-3 select-none sm:gap-2 sm:py-4"
               onClick={() => {
-                router.push(`/earn/t/${user?.username}`);
+                navigate(`/earn/t/${user?.username}/`);
                 onDrawerClose();
               }}
             >
               <EarnAvatar
                 className="size-8 sm:size-9"
                 id={user?.id}
-                avatar={user?.photo}
+                avatar={user?.photo ?? undefined}
               />
               <p className="line-clamp-1 text-lg text-slate-600">
                 {user?.firstName} {user?.lastName}
@@ -108,29 +116,33 @@ export const MobileDrawer = ({
         )}
 
         <div className="px-4 py-3">
-          {ready && !authenticated && (
+          {resuming && !user && (
+            <div className="mb-3 ml-2">
+              <ResumingAccount signIn={signIn} />
+            </div>
+          )}
+          {!resuming && !user && (
             <div className="ph-no-capture mb-3 ml-2 flex items-center gap-3">
-              <div
+              {/* Plain <a>: sign-in is a Privy document with its own CSP. */}
+              <a
+                href={signIn}
                 className="text-semibold cursor-pointer p-0 text-slate-600 hover:text-slate-900"
                 onClick={() => {
                   posthog.capture('login_navbar');
-                  onDrawerClose();
-                  onLoginOpen();
                 }}
               >
                 Login
-              </div>
+              </a>
               <Separator orientation="vertical" className="h-5 bg-slate-300" />
-              <div
+              <a
+                href={signIn}
                 className="text-semibold text-brand-purple hover:text-brand-purple-dark cursor-pointer"
                 onClick={() => {
                   posthog.capture('signup_navbar');
-                  onDrawerClose();
-                  onLoginOpen();
                 }}
               >
                 Sign Up
-              </div>
+              </a>
             </div>
           )}
           {user && !user.currentSponsorId && !user.isTalentFilled && (
@@ -138,7 +150,7 @@ export const MobileDrawer = ({
               variant="ghost"
               className="text-semibold text-brand-purple hover:text-brand-purple-dark cursor-pointer"
               onClick={() => {
-                router.push('/earn/new');
+                navigate('/earn/new/');
               }}
             >
               Complete your Profile
@@ -157,7 +169,7 @@ export const MobileDrawer = ({
                 </div>
               }
               onClick={() => {
-                router.push(`/earn/hackathon/${hackathon.slug}`);
+                navigate(`/earn/hackathon/${hackathon.slug}/`);
               }}
             />
           ))}
@@ -166,18 +178,18 @@ export const MobileDrawer = ({
               <>
                 <NavItem
                   label="Profile"
-                  onClick={() => router.push(`/earn/t/${user?.username}`)}
+                  onClick={() => navigate(`/earn/t/${user?.username}/`)}
                 />
                 <NavItem
                   label="Edit Profile"
-                  onClick={() => router.push(`/earn/t/${user?.username}/edit`)}
+                  onClick={() => navigate(`/earn/t/${user?.username}/edit/`)}
                 />
                 <NavItem label="Email Preferences" onClick={onOpen} />
                 <NavItem
                   label="Bookmarks"
                   onClick={() => {
                     posthog.capture('bookmarks_user menu');
-                    router.push(`/earn/bookmarks`);
+                    navigate(`/earn/bookmarks/`);
                   }}
                 />
               </>
@@ -210,7 +222,7 @@ export const MobileDrawer = ({
                       <NavItem
                         onClick={() => {
                           posthog.capture(navItem.posthog);
-                          router.push(navItem.href);
+                          navigate(navItem.href);
                           onDrawerClose();
                         }}
                         key={navItem.label}
@@ -249,7 +261,7 @@ export const MobileDrawer = ({
                       <NavItem
                         onClick={() => {
                           posthog.capture(navItem.posthog);
-                          router.push(navItem.href);
+                          navigate(navItem.href);
                           onDrawerClose();
                         }}
                         key={navItem.label}
@@ -263,7 +275,7 @@ export const MobileDrawer = ({
 
             <NavItem
               label="Activity Feed"
-              onClick={() => router.push(`/earn/feed`)}
+              onClick={() => navigate(`/earn/feed/`)}
             />
             <SupportFormDialog>
               <NavItem
@@ -287,7 +299,7 @@ export const MobileDrawer = ({
                 label="Logout"
                 onClick={() => {
                   posthog.capture('logout_user menu');
-                  logout();
+                  void logout();
                 }}
                 className="text-red-500"
               />

@@ -1,11 +1,15 @@
+'use client';
+
 import { atom, useAtom } from 'jotai';
 import { Pencil } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { usePathname, useSearchParams } from 'next/navigation';
 
+import { useViewer } from '@/lib/viewer';
 import type { status } from '@/prisma/enums';
-import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+
+import { useShellNavigate } from './ShellLink';
 
 type BountySnackbarType = {
   isCaution: boolean | undefined;
@@ -22,11 +26,11 @@ type BountySnackbarType = {
 export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
 
 export const BountySnackbar = () => {
-  const router = useRouter();
+  const navigate = useShellNavigate();
   const [bountySnackbar] = useAtom(bountySnackbarAtom);
-  const user = useUser();
-
-  const { asPath, query } = router;
+  const user = { user: useViewer() };
+  const asPath = usePathname() ?? '';
+  const searchParams = useSearchParams();
 
   const showSnackbar =
     asPath.split('/')[1] === 'earn' && asPath.split('/')[2] === 'listings';
@@ -44,9 +48,9 @@ export const BountySnackbar = () => {
     slug,
   } = bountySnackbar;
 
-  const isPreview = !!query['preview'];
+  const isPreview = !!searchParams?.get('preview');
   // nsb == no snackbar, but only for previews or drafts, solves edge case of isCaution listing snackbar
-  if (!!query['nsb'] && !isPublished) return null;
+  if (!!searchParams?.get('nsb') && !isPublished) return null;
 
   const isExpired = deadline && dayjs(deadline).isBefore(dayjs());
 
@@ -110,7 +114,7 @@ export const BountySnackbar = () => {
         )}
         onClick={() => {
           if (!isPreviewSponsor) return;
-          router.push(`/earn/dashboard/listings/${slug}/edit`);
+          navigate(`/earn/dashboard/listings/${slug}/edit/`);
         }}
       >
         {isPreviewSponsor && <Pencil className="h-4 w-4" />}

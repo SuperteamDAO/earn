@@ -1,8 +1,8 @@
-import { usePrivy } from '@privy-io/react-auth';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
-import { useEffect, useMemo, useState } from 'react';
+'use client';
+
+import { usePathname } from 'next/navigation';
+import { posthog } from 'posthog-js';
+import { useMemo } from 'react';
 
 import IoSearchOutline from '@/components/icons/IoSearchOutline';
 import IoWalletOutline from '@/components/icons/IoWalletOutline';
@@ -10,9 +10,8 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { LocalImage } from '@/components/ui/local-image';
 import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useCreditBalance } from '@/store/credit';
-import { useUser } from '@/store/user';
+import { ResumingAccount } from '@/lib/auth/resume-session';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
@@ -20,47 +19,43 @@ import { CreditIcon } from '@/features/credits/icon/credit';
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 
 import { LISTING_NAV_ITEMS } from '../constants';
+import { useAsPath } from '../hooks/use-here';
 import { LogoContextMenu } from './LogoContextMenu';
 import { NavLink } from './NavLink';
+import { ShellLink, useShellNavigate } from './ShellLink';
 import { UserMenu } from './UserMenu';
 
 interface Props {
-  onLoginOpen: () => void;
+  signIn: string;
+  resuming: boolean;
   onSearchOpen: () => void;
-  onWalletOpen: () => void;
   walletBalance: number;
+  creditBalance: number;
   onCreditOpen: () => void;
 }
 
 export const DesktopNavbar = ({
-  onLoginOpen,
+  signIn,
+  resuming,
   onSearchOpen,
-  onWalletOpen,
   onCreditOpen,
   walletBalance,
+  creditBalance,
 }: Props) => {
-  const { authenticated, ready } = usePrivy();
-  const router = useRouter();
+  const navigate = useShellNavigate();
+  const pathname = usePathname() ?? '';
+  const asPath = useAsPath();
 
-  const { user, isLoading } = useUser();
-  const { creditBalance } = useCreditBalance();
-
-  const [authUiReady, setAuthUiReady] = useState(() => ready);
-  useEffect(() => {
-    if (!ready) {
-      setAuthUiReady(false);
-      return;
-    }
-    setAuthUiReady(true);
-  }, [ready, authenticated]);
+  const user = useViewer();
+  const authenticated = !!user;
 
   const isDashboardRoute = useMemo(
-    () => router.pathname.startsWith('/earn/dashboard'),
-    [router.pathname],
+    () => pathname.startsWith('/earn/dashboard'),
+    [pathname],
   );
   const isNewTalentRoute = useMemo(
-    () => router.pathname.startsWith('/earn/new/talent'),
-    [router.pathname],
+    () => pathname.startsWith('/earn/new/talent'),
+    [pathname],
   );
 
   const maxWidth = useMemo(() => {
@@ -111,8 +106,8 @@ export const DesktopNavbar = ({
       >
         <div className="ph-no-capture flex w-fit items-center gap-3 lg:gap-5">
           <LogoContextMenu>
-            <Link
-              href="/earn"
+            <ShellLink
+              href="/earn/"
               className="flex items-center gap-3 hover:no-underline"
               onClick={() => {
                 posthog.capture('homepage logo click_universal');
@@ -130,15 +125,15 @@ export const DesktopNavbar = ({
                   <p className="text-sm tracking-[1.5px]">SPONSORS</p>
                 </>
               )}
-            </Link>
+            </ShellLink>
           </LogoContextMenu>
 
           <Separator orientation="vertical" className="h-6" />
 
-          {!router.pathname.startsWith('/earn/new/') && (
+          {!pathname.startsWith('/earn/new/') && (
             <>
               {LISTING_NAV_ITEMS?.map((navItem) => {
-                const isCurrent = `${navItem.href}` === router.asPath;
+                const isCurrent = navItem.href === asPath;
                 return (
                   <NavLink
                     className="ph-no-capture"
@@ -154,8 +149,8 @@ export const DesktopNavbar = ({
               })}
 
               {HACKATHONS.map((hackathon) => (
-                <Link
-                  href={`/earn/hackathon/${hackathon.slug}`}
+                <ShellLink
+                  href={`/earn/hackathon/${hackathon.slug}/`}
                   key={hackathon.slug}
                   className={cn('flex items-center py-2 font-medium', 'h-7')}
                   prefetch={false}
@@ -165,13 +160,13 @@ export const DesktopNavbar = ({
                     alt={hackathon.label}
                     className="h-full object-contain"
                   />
-                </Link>
+                </ShellLink>
               ))}
             </>
           )}
 
-          {!router.pathname.startsWith('/earn/search') &&
-            !router.pathname.startsWith('/earn/new/') && (
+          {!pathname.startsWith('/earn/search') &&
+            !pathname.startsWith('/earn/new/') && (
               <div
                 className="flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 px-2 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                 onClick={onSearchOpen}
@@ -182,14 +177,9 @@ export const DesktopNavbar = ({
         </div>
 
         <div className="flex items-center gap-4 py-1.5">
-          {((!authUiReady && !authenticated) || (isLoading && !user)) && (
-            <div className="flex items-center gap-2">
-              <Skeleton className="size-7 rounded-full" />
-              <Skeleton className="mr-4 h-3 w-20" />
-            </div>
-          )}
+          {resuming && !authenticated && <ResumingAccount signIn={signIn} />}
 
-          {authUiReady && authenticated && (
+          {authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
               {user?.currentSponsorId && !isDashboardRoute && (
                 <Button
@@ -201,10 +191,10 @@ export const DesktopNavbar = ({
                   }}
                   asChild
                 >
-                  <Link href="/earn/dashboard/listings">
+                  <ShellLink href="/earn/dashboard/listings/">
                     <span>Dashboard</span>
                     <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
-                  </Link>
+                  </ShellLink>
                 </Button>
               )}
 
@@ -222,9 +212,13 @@ export const DesktopNavbar = ({
                     </p>
                   </div>
                   <div className="relative">
-                    <div
+                    {/* Plain <a>: the wallet is a Privy document with its
+                        own CSP. */}
+                    {/* oxlint-disable-next-line nextjs/no-html-link-for-pages */}
+                    <a
+                      href="/earn/wallet/"
                       className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
-                      onClick={onWalletOpen}
+                      onClick={() => posthog.capture('open_wallet_drawer')}
                     >
                       <IoWalletOutline
                         className={cn('size-6', 'text-brand-purple')}
@@ -237,7 +231,7 @@ export const DesktopNavbar = ({
                       >
                         ${formatNumberWithSuffix(walletBalance || 0, 1, false)}
                       </span>
-                    </div>
+                    </a>
                   </div>
                 </div>
               )}
@@ -245,7 +239,7 @@ export const DesktopNavbar = ({
             </div>
           )}
 
-          {authUiReady && !authenticated && (
+          {!authenticated && !resuming && (
             <div className="ph-no-capture flex items-center gap-2">
               <div className="flex items-center gap-0">
                 <Button
@@ -254,34 +248,43 @@ export const DesktopNavbar = ({
                   className="text-xs font-semibold"
                   onClick={() => {
                     posthog.capture('create a listing_navbar');
-                    router.push('/earn/sponsor');
+                    navigate('/earn/sponsor/');
                   }}
                 >
                   <span>Become a Sponsor</span>
                   <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                 </Button>
+                {/* Plain <a>: sign-in is a Privy document with its own CSP. */}
                 <Button
                   variant="ghost"
                   size="sm"
                   className="text-xs font-semibold"
-                  onClick={() => {
-                    posthog.capture('login_navbar');
-                    onLoginOpen();
-                  }}
+                  asChild
                 >
-                  Login
+                  <a
+                    href={signIn}
+                    onClick={() => {
+                      posthog.capture('login_navbar');
+                    }}
+                  >
+                    Login
+                  </a>
                 </Button>
               </div>
               <Button
                 variant="default"
                 size="sm"
                 className="my-1 w-full px-4 text-xs font-semibold"
-                onClick={() => {
-                  posthog.capture('signup_navbar');
-                  onLoginOpen();
-                }}
+                asChild
               >
-                Sign Up
+                <a
+                  href={signIn}
+                  onClick={() => {
+                    posthog.capture('signup_navbar');
+                  }}
+                >
+                  Sign Up
+                </a>
               </Button>
             </div>
           )}

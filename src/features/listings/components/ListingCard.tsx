@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 
 import IoIosStar from '@/components/icons/IoIosStar';
@@ -6,12 +8,13 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useServerTimeSync } from '@/hooks/use-server-time';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
 
-import type { Listing } from '../types';
+import { InnerLink } from '@/features/home/components/InnerLink';
+import type { ListingCardData } from '@/features/home/types/cards';
+
 import { getListingIcon } from '../utils/getListingIcon';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
@@ -39,7 +42,15 @@ export const ListingCardSkeleton = () => {
   );
 };
 
-export const ListingCard = ({ bounty }: { bounty: Listing }) => {
+// `now`: the server's clock when the list was loaded, so the server and
+// the browser render the same deadline text.
+export const ListingCard = ({
+  bounty,
+  now,
+}: {
+  bounty: ListingCardData;
+  now: number;
+}) => {
   const {
     rewardAmount,
     deadline,
@@ -55,13 +66,16 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     _count,
   } = bounty;
 
-  const { serverTime } = useServerTimeSync();
+  const serverTime = () => now;
   const isBeforeDeadline = dayjs(serverTime()).isBefore(dayjs(deadline));
 
   const targetDate =
     isWinnersAnnounced && winnersAnnouncedAt ? winnersAnnouncedAt : deadline;
 
-  const formattedDeadline = timeAgoShort(targetDate!, serverTime());
+  const formattedDeadline = timeAgoShort(
+    targetDate ?? new Date(now),
+    serverTime(),
+  );
 
   let deadlineText;
 
@@ -79,7 +93,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
 
   return (
     <Link
-      href={`/earn/listing/${slug}`}
+      href={`/earn/listing/${slug}/`}
       className={cn(
         'block w-full rounded-md px-2 py-4 no-underline hover:bg-gray-100 sm:px-4',
         isFeatured && isBeforeDeadline ? 'bg-purple-50' : '',
@@ -97,16 +111,15 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             <p className="line-clamp-1 text-sm font-semibold text-slate-700 sm:text-base">
               {title}
             </p>
-            <Link
-              href={`/earn/s/${sponsor?.slug}`}
-              onClick={(e) => e.stopPropagation()}
+            <InnerLink
+              href={`/earn/s/${sponsor?.slug}/`}
               className="flex w-min items-center gap-1 hover:underline"
             >
               <p className="w-full text-xs whitespace-nowrap text-slate-500 md:text-sm">
                 {sponsor?.name}
               </p>
-              <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </Link>
+              <div>{sponsor?.isVerified && <VerifiedBadge />}</div>
+            </InnerLink>
             <div className="mt-px flex items-center gap-1 sm:gap-2">
               <div className="flex items-center justify-start sm:hidden">
                 {
@@ -119,7 +132,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                 <div className="flex items-baseline">
                   <CompensationAmount
                     compensationType={compensationType}
-                    rewardAmount={rewardAmount}
+                    rewardAmount={rewardAmount ?? undefined}
                     className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
                   />
 
@@ -128,7 +141,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
                 <p className="ml-1 text-[10px] text-slate-300">|</p>
               </div>
               <div className="flex items-center gap-1">
-                {getListingIcon(type!)}
+                {getListingIcon(type)}
                 <p
                   className={cn(
                     'hidden text-xs font-medium text-gray-500 sm:flex',
@@ -196,7 +209,7 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
           <div className="flex items-baseline gap-1">
             <CompensationAmount
               compensationType={compensationType}
-              rewardAmount={rewardAmount}
+              rewardAmount={rewardAmount ?? undefined}
               className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
             />
 

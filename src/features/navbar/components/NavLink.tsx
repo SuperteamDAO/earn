@@ -1,9 +1,14 @@
-import Link from 'next/link';
+'use client';
+
 import React, { type JSX } from 'react';
 
 import { cn } from '@/utils/cn';
 
-interface NavLinkProps extends React.ComponentPropsWithoutRef<typeof Link> {
+import { ShellLink } from './ShellLink';
+
+interface NavLinkProps extends React.ComponentPropsWithoutRef<
+  typeof ShellLink
+> {
   href: string;
   label: string | JSX.Element;
   isActive: boolean;
@@ -18,7 +23,7 @@ export const NavLink = ({
   ...props
 }: NavLinkProps) => {
   return (
-    <Link
+    <ShellLink
       href={href}
       className={cn(
         'flex items-center py-2 font-medium',
@@ -33,6 +38,6 @@ export const NavLink = ({
       {...props}
     >
       {label}
-    </Link>
+    </ShellLink>
   );
 };

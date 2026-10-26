@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
@@ -5,14 +7,12 @@ import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import type { GrantWithApplicationCount } from '../types';
+import { InnerLink } from '@/features/home/components/InnerLink';
+import type { GrantCardData } from '@/features/home/types/cards';
+
 import { grantAmount } from '../utils/grantAmount';
 
-export const GrantsCardMini = ({
-  grant,
-}: {
-  grant: GrantWithApplicationCount;
-}) => {
+export const GrantsCardMini = ({ grant }: { grant: GrantCardData }) => {
   const {
     sponsor,
     slug,
@@ -30,7 +30,7 @@ export const GrantsCardMini = ({
   return (
     <Link
       className="block w-full rounded-md bg-white px-2 py-4 hover:bg-gray-100 hover:no-underline"
-      href={`/earn/grants/${slug}`}
+      href={`/earn/grants/${slug}/`}
     >
       <div className="ph-no-capture flex w-full items-center justify-between">
         <div className="flex w-full">
@@ -43,16 +43,15 @@ export const GrantsCardMini = ({
             <p className="ph-no-capture line-clamp-1 text-sm font-semibold text-slate-700 hover:underline">
               {title}
             </p>
-            <Link
-              href={`/earn/s/${sponsor?.slug}`}
-              onClick={(e) => e.stopPropagation()}
+            <InnerLink
+              href={`/earn/s/${sponsor?.slug}/`}
               className="flex w-fit items-center gap-1 hover:underline"
             >
               <p className="w-full text-xs whitespace-normal text-slate-500">
                 {sponsor?.name}
               </p>
-              <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </Link>
+              <div>{sponsor?.isVerified && <VerifiedBadge />}</div>
+            </InnerLink>
             <div className="mt-px flex items-center gap-1 sm:gap-3">
               <div className="flex items-center justify-start gap-1">
                 <TokenIcon
@@ -63,8 +62,8 @@ export const GrantsCardMini = ({
                 <div className="flex items-baseline gap-0.5">
                   <p className="text-xs font-semibold whitespace-nowrap text-slate-600">
                     {grantAmount({
-                      maxReward: maxReward!,
-                      minReward: minReward!,
+                      maxReward: maxReward ?? 0,
+                      minReward: minReward ?? 0,
                     })}
                   </p>
                   <p className="text-xs font-medium text-gray-400">{token}</p>

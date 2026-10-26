@@ -1,26 +1,26 @@
+'use client';
+
 import { X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 
 import { isBrowserOutdated } from '@/utils/browser-detection';
 
+const DISMISSED = 'browser-warning-dismissed';
+
+const subscribe = () => () => {};
+
 export const OutdatedBrowserWarning = () => {
-  const [isOutdated, setIsOutdated] = useState(false);
+  // Only the browser knows: nothing on the server's render.
+  const isOutdated = useSyncExternalStore(
+    subscribe,
+    () => localStorage.getItem(DISMISSED) !== 'true' && isBrowserOutdated(),
+    () => false,
+  );
   const [isDismissed, setIsDismissed] = useState(false);
-
-  useEffect(() => {
-    const dismissed = localStorage.getItem('browser-warning-dismissed');
-    if (dismissed === 'true') {
-      setIsDismissed(true);
-      return;
-    }
-
-    const outdated = isBrowserOutdated();
-    setIsOutdated(outdated);
-  }, []);
 
   const handleDismiss = () => {
     setIsDismissed(true);
-    localStorage.setItem('browser-warning-dismissed', 'true');
+    localStorage.setItem(DISMISSED, 'true');
   };
 
   if (!isOutdated || isDismissed) {

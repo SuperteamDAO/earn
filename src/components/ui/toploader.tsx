@@ -1,6 +1,39 @@
-import Router from 'next/router';
+'use client';
+
+import { usePathname, useSearchParams } from 'next/navigation';
 import { configure, done, start } from 'nprogress';
 import { useEffect } from 'react';
+
+// Earn's bar along the top while a page loads. The App Router has no route
+// events: a click on a link to another page here starts it, and arriving
+// (a new path or query) finishes it. Code that navigates itself calls
+// `startTopLoader`.
+export const startTopLoader = () => start();
+
+const isPageLink = (event: MouseEvent): string | null => {
+  if (
+    event.defaultPrevented ||
+    event.button !== 0 ||
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey
+  ) {
+    return null;
+  }
+  const target = event.target;
+  if (!(target instanceof Element)) return null;
+  const anchor = target.closest('a');
+  if (!anchor || (anchor.target && anchor.target !== '_self')) return null;
+  if (anchor.hasAttribute('download')) return null;
+  const url = new URL(anchor.href, window.location.href);
+  if (url.origin !== window.location.origin) return null;
+  const here = window.location;
+  if (url.pathname === here.pathname && url.search === here.search) {
+    return null;
+  }
+  return url.href;
+};
 
 export const TopLoader = () => {
   const color = '#6366F1';
@@ -10,6 +43,9 @@ export const TopLoader = () => {
 
   const positionStyle = 'top: 0;';
   const spinnerPositionStyle = 'top: 15px;';
+
+  const pathname = usePathname();
+  const search = useSearchParams()?.toString();
 
   const styles = (
     <style>
@@ -29,19 +65,18 @@ export const TopLoader = () => {
         '<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>',
     });
 
-    const progressStarted = () => start();
-    const progressComplete = () => done(true);
-
-    Router.events.on('routeChangeStart', progressStarted);
-    Router.events.on('routeChangeComplete', progressComplete);
-    Router.events.on('routeChangeError', progressComplete);
-
-    return () => {
-      Router.events.off('routeChangeStart', progressStarted);
-      Router.events.off('routeChangeComplete', progressComplete);
-      Router.events.off('routeChangeError', progressComplete);
+    const onClick = (event: MouseEvent) => {
+      if (isPageLink(event)) start();
     };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
   }, []);
+
+  // Arrived: a new path or query.
+  useEffect(() => {
+    done(true);
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- they're the trigger
+  }, [pathname, search]);
 
   return styles;
 };

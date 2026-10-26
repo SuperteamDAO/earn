@@ -1,3 +1,5 @@
+'use client';
+
 import dayjs from 'dayjs';
 import Link from 'next/link';
 
@@ -5,14 +7,21 @@ import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { LocalImage } from '@/components/ui/local-image';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useServerTimeSync } from '@/hooks/use-server-time';
 import { timeAgoShort } from '@/utils/timeAgo';
 
-import type { Listing } from '../types';
+import { InnerLink } from '@/features/home/components/InnerLink';
+import type { ListingCardData } from '@/features/home/types/cards';
+
 import { getListingIcon } from '../utils/getListingIcon';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
-export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
+export const ListingCardMini = ({
+  bounty,
+  now,
+}: {
+  bounty: ListingCardData;
+  now: number;
+}) => {
   const {
     rewardAmount,
     deadline,
@@ -26,13 +35,16 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
     isWinnersAnnounced,
   } = bounty;
 
-  const { serverTime } = useServerTimeSync();
+  const serverTime = () => now;
   const isBeforeDeadline = dayjs(serverTime()).isBefore(dayjs(deadline));
 
   const targetDate =
     isWinnersAnnounced && winnersAnnouncedAt ? winnersAnnouncedAt : deadline;
 
-  const formattedDeadline = timeAgoShort(targetDate!, serverTime());
+  const formattedDeadline = timeAgoShort(
+    targetDate ?? new Date(now),
+    serverTime(),
+  );
 
   let deadlineText;
   if (isBeforeDeadline) {
@@ -46,13 +58,13 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
   return (
     <Link
       className="ph-no-capture w-full rounded-md px-2 py-4 hover:bg-gray-100 hover:no-underline"
-      href={`/earn/listing/${slug}`}
+      href={`/earn/listing/${slug}/`}
     >
       <div className="ph-no-capture flex w-full items-center justify-between">
         <div className="flex w-full">
           <LocalImage
             className="mr-3 h-14 w-14 rounded-md"
-            alt={sponsor?.name!}
+            alt={sponsor?.name}
             src={
               sponsor?.logo
                 ? sponsor.logo.replace(
@@ -66,16 +78,15 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
             <p className="ph-no-capture line-clamp-1 text-sm font-semibold text-slate-700 hover:underline">
               {title}
             </p>
-            <Link
-              href={`/earn/s/${sponsor?.slug}`}
-              onClick={(e) => e.stopPropagation()}
+            <InnerLink
+              href={`/earn/s/${sponsor?.slug}/`}
               className="flex w-min items-center gap-1 hover:underline"
             >
               <p className="w-full text-xs whitespace-nowrap text-slate-500">
                 {sponsor?.name}
               </p>
-              <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </Link>
+              <div>{sponsor?.isVerified && <VerifiedBadge />}</div>
+            </InnerLink>
             <div className="mt-px flex flex-wrap items-center gap-1">
               <div className="flex items-center justify-start">
                 {
@@ -88,14 +99,14 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                 <div className="flex items-baseline">
                   <CompensationAmount
                     compensationType={compensationType}
-                    rewardAmount={rewardAmount}
+                    rewardAmount={rewardAmount ?? undefined}
                     className="text-xs font-semibold whitespace-nowrap text-slate-600"
                   />
                   {<p className="text-xs font-medium text-gray-400">{token}</p>}
                 </div>
                 <p className="ml-1 text-xs text-slate-300 md:text-sm">|</p>
               </div>
-              {getListingIcon(type!)}
+              {getListingIcon(type)}
               <p className="flex text-xs text-slate-300 md:text-sm">|</p>
 
               <div className="flex items-center gap-1">

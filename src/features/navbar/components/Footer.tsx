@@ -1,20 +1,22 @@
-import { useQuery } from '@tanstack/react-query';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+'use client';
+
+import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 
 import MdOutlineMail from '@/components/icons/MdOutlineMail';
-import { RegionCombobox } from '@/components/shared/RegionCombobox';
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { LocalImage } from '@/components/ui/local-image';
 import { cn } from '@/utils/cn';
 
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import {
   findCountryBySlug,
   getRegionSlug,
 } from '@/features/listings/utils/region';
 import { GitHub, Twitter } from '@/features/social/components/SocialIcons';
+
+import { useShellData } from '../shell-data';
+import { FooterRegionCombobox } from './FooterRegionCombobox';
+import { ShellLink, useShellNavigate } from './ShellLink';
 
 const FooterColumn = ({
   title,
@@ -29,7 +31,7 @@ const FooterColumn = ({
       {links
         .filter((s) => !!s.href)
         .map((link) => (
-          <Link
+          <ShellLink
             key={link.text}
             href={link.href || ''}
             className="text-sm text-slate-500 hover:text-slate-600"
@@ -37,7 +39,7 @@ const FooterColumn = ({
             rel="noopener noreferrer"
           >
             {link.text}
-          </Link>
+          </ShellLink>
         ))}
       {links
         .filter((s) => !!s.supportForm)
@@ -52,15 +54,17 @@ const FooterColumn = ({
   </div>
 );
 
+// When this module loaded; a new year shows after the next deploy.
+const currentYear = new Date().getFullYear();
+
 export const Footer = () => {
-  const currentYear = new Date().getFullYear();
-  const router = useRouter();
-  const { data: chapters = [] } = useQuery(chaptersQuery);
+  const { chapters } = useShellData();
+  const navigate = useShellNavigate();
+  const pathname = usePathname() ?? '';
 
-  const [selectedRegion, setSelectedRegion] = useState<string>('Global');
-
-  useEffect((): void => {
-    const path = router.asPath.toLowerCase();
+  // The region of the region page they're on, else Global.
+  const selectedRegion = useMemo((): string => {
+    const path = pathname.toLowerCase();
 
     // Check if it's a Superteam region page
     const matchedSuperteam = chapters.find((team) =>
@@ -68,7 +72,7 @@ export const Footer = () => {
     );
 
     if (matchedSuperteam) {
-      setSelectedRegion(matchedSuperteam.region);
+      return matchedSuperteam.region;
     } else if (path.includes('/regions/')) {
       // Extract the slug from the path and try to match it to a country/region
       const slugMatch = path.match(/\/regions\/([^/?]+)/);
@@ -76,26 +80,24 @@ export const Footer = () => {
         const slug = slugMatch[1];
         const country = findCountryBySlug(slug || '', chapters);
         if (country) {
-          setSelectedRegion(country.name);
+          return country.name;
         } else {
-          setSelectedRegion('Global');
+          return 'Global';
         }
       }
     } else {
-      setSelectedRegion('Global');
+      return 'Global';
     }
-  }, [router.asPath, chapters]);
+    return 'Global';
+  }, [pathname, chapters]);
 
   const handleRegionChange = (value: string): void => {
     if (value === 'Global') {
-      setSelectedRegion('Global');
-      router.push('/earn');
+      navigate('/earn/');
       return;
     }
 
-    setSelectedRegion(value);
-
-    router.push(`/earn/regions/${getRegionSlug(value, chapters)}`);
+    navigate(`/earn/regions/${getRegionSlug(value, chapters)}/`);
   };
 
   const opportunities = [
@@ -184,7 +186,8 @@ export const Footer = () => {
                 <p className="mr-2 text-sm font-medium text-slate-500">
                   REGION
                 </p>
-                <RegionCombobox
+                <FooterRegionCombobox
+                  chapters={chapters}
                   placeholder="Region"
                   value={selectedRegion}
                   onChange={handleRegionChange}

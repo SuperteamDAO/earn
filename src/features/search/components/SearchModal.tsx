@@ -1,27 +1,20 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+'use client';
+
 import debounce from 'lodash.debounce';
 import { ArrowRight, Search } from 'lucide-react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { GrantsCard } from '@/features/grants/components/GrantsCard';
 import { ListingCard } from '@/features/listings/components/ListingCard';
 
-import {
-  fetchSearchListings,
-  useSearchListings,
-} from '../hooks/useSearchListings';
-import type { SearchResult } from '../types';
-import { getUserRegion } from '../utils/userRegionSearch';
+import { useSearchTypeahead } from '../hooks/use-search-typeahead';
 
 interface Props {
   isOpen: boolean;
@@ -30,15 +23,6 @@ interface Props {
 
 export function SearchModal({ isOpen, onClose }: Props) {
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const { user } = useUser();
-  const { data: chapters = [] } = useQuery(chaptersQuery);
-
-  const userRegion = useMemo(() => {
-    if (!user) return null;
-    return getUserRegion(user.location, chapters);
-  }, [chapters, user]);
 
   const searchParams = useSearchParams();
 
@@ -62,51 +46,12 @@ export function SearchModal({ isOpen, onClose }: Props) {
     };
   }, [inputValue, debouncedSetSearchTerm]);
 
-  const { data, isFetching } = useSearchListings({
-    query: debouncedSearchTerm,
-    status: [],
-    skills: [],
-    bountiesLimit: 5,
-    grantsLimit: 2,
-    userRegion: userRegion || undefined,
-  });
-
-  const results: SearchResult[] = useMemo(() => {
-    return data?.pages.flatMap((page) => page.results) ?? [];
-  }, [data]);
+  const { results, isFetching, now } = useSearchTypeahead(debouncedSearchTerm);
 
   // Makes sure that search page loads instantly and avoids initial flicker
-  const prefetchSearchPageData = useCallback(
-    (query: string) => {
-      router.prefetch(`/earn/search?q=${encodeURIComponent(query)}`);
-      if (query.trim()) {
-        queryClient.prefetchInfiniteQuery({
-          queryKey: [
-            'search-listings',
-            query.trim(),
-            [],
-            [],
-            10,
-            3,
-            userRegion,
-          ],
-          queryFn: ({ pageParam = { bountiesOffset: 0, grantsOffset: 0 } }) =>
-            fetchSearchListings({
-              query: query.trim(),
-              status: [],
-              skills: [],
-              bountiesLimit: 10,
-              grantsLimit: 3,
-              userRegion: userRegion || undefined,
-              bountiesOffset: pageParam.bountiesOffset,
-              grantsOffset: pageParam.grantsOffset,
-            }),
-          initialPageParam: { bountiesOffset: 0, grantsOffset: 0 },
-        });
-      }
-    },
-    [queryClient, userRegion, router],
-  );
+  const prefetchSearchPageData = (query: string) => {
+    router.prefetch(`/earn/search/?q=${encodeURIComponent(query)}`);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -119,12 +64,12 @@ export function SearchModal({ isOpen, onClose }: Props) {
         )}
       >
         <form
-          onSubmit={async (e) => {
+          onSubmit={(e) => {
             e.preventDefault();
 
             prefetchSearchPageData(inputValue);
 
-            router.push(`/earn/search?q=${encodeURIComponent(inputValue)}`);
+            router.push(`/earn/search/?q=${encodeURIComponent(inputValue)}`);
           }}
           className="relative"
         >
@@ -164,7 +109,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
                   className="flex w-full justify-between p-0"
                 >
                   {listing.searchType === 'listing' && (
-                    <ListingCard bounty={listing} />
+                    <ListingCard bounty={listing} now={now} />
                   )}
                   {listing.searchType === 'grants' && (
                     <GrantsCard grant={listing} />
@@ -173,7 +118,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
               ))}
             </div>
             <Link
-              href={`/earn/search?q=${encodeURIComponent(inputValue)}`}
+              href={`/earn/search/?q=${encodeURIComponent(inputValue)}`}
               className="w-full"
               onClick={() => prefetchSearchPageData(inputValue)}
             >

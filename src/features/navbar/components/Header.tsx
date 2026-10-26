@@ -1,29 +1,28 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import posthog from 'posthog-js';
-import { useEffect } from 'react';
+import { posthog } from 'posthog-js';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
+import { getJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 
-import { tokenAssetsQuery } from '@/features/wallet/queries/fetch-assets';
+import type { TokenAsset } from '@/features/wallet/types/TokenAsset';
 
-const Login = dynamic(
-  () => import('@/features/auth/components/Login').then((mod) => mod.Login),
-  { ssr: false },
-);
+import { useSignInHref } from '../hooks/use-here';
+import { useShellData } from '../shell-data';
+import { BottomBar } from './BottomBar';
+import { BountySnackbar } from './BountySnackbar';
+import { DesktopNavbar } from './DesktopNavbar';
+import { GrantSnackbar } from './GrantSnackbar';
+import { MobileNavbar } from './MobileNavbar';
+
 const CreditDrawer = dynamic(
   () =>
     import('@/features/credits/components/CreditDrawer').then(
       (mod) => mod.CreditDrawer,
-    ),
-  { ssr: false },
-);
-const WalletDrawer = dynamic(
-  () =>
-    import('@/features/wallet/components/WalletDrawer').then(
-      (mod) => mod.WalletDrawer,
     ),
   { ssr: false },
 );
@@ -33,47 +32,42 @@ const SearchModal = dynamic(() =>
     (mod) => mod.SearchModal,
   ),
 );
-const BottomBar = dynamic(() =>
-  import('./BottomBar').then((mod) => mod.BottomBar),
-);
-const BountySnackbar = dynamic(() =>
-  import('./BountySnackbar').then((mod) => mod.BountySnackbar),
-);
-const GrantSnackbar = dynamic(() =>
-  import('./GrantSnackbar').then((mod) => mod.GrantSnackbar),
-);
-const SponsorStageSnackbar = dynamic(() =>
-  import('@/features/home/components/SponsorStage/SponsorStageSnackbar').then(
-    (mod) => mod.SponsorStageSnackbar,
-  ),
-);
-const DesktopNavbar = dynamic(() =>
-  import('./DesktopNavbar').then((mod) => mod.DesktopNavbar),
-);
-const MobileNavbar = dynamic(() =>
-  import('./MobileNavbar').then((mod) => mod.MobileNavbar),
-);
 
-export const Header = () => {
-  const { authenticated, ready } = usePrivy();
+interface HeaderProps {
+  // The sponsor's stage snackbar, on the homepage only.
+  readonly snackbar?: ReactNode;
+}
+
+// What their wallet holds, priced, for the header's badge. Loaded after
+// the page: it asks the chain, too slow to hold the page for.
+function useWalletBalance(enabled: boolean): number {
+  const [balance, setBalance] = useState(0);
+  useEffect(() => {
+    if (!enabled) return () => {};
+    const controller = new AbortController();
+    getJson<TokenAsset[]>('/api/wallet/assets', controller.signal)
+      .then((tokens) =>
+        setBalance(
+          tokens.reduce((acc, token) => acc + (token.usdValue || 0), 0),
+        ),
+      )
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, [enabled]);
+  return balance;
+}
+
+export const Header = ({ snackbar }: HeaderProps = {}) => {
+  const viewer = useViewer();
+  const { resuming, creditBalance } = useShellData();
+  const authenticated = !!viewer;
   const searchParams = useSearchParams();
-
-  const {
-    isOpen: isLoginOpen,
-    onOpen: onLoginOpen,
-    onClose: onLoginClose,
-  } = useDisclosure();
+  const signIn = useSignInHref();
 
   const {
     isOpen: isSearchOpen,
     onOpen: onSearchOpen,
     onClose: onSearchClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isWalletOpen,
-    onOpen: onWalletOpen,
-    onClose: onWalletClose,
   } = useDisclosure();
 
   const {
@@ -87,104 +81,73 @@ export const Header = () => {
     onSearchOpen();
   }
 
-  const openWalletWithEvent = () => {
-    posthog.capture('open_wallet_drawer');
-    onWalletOpen();
-  };
-
-  const openCreditWithEvent = () => {
+  const openCreditWithEvent = useCallback(() => {
     posthog.capture('open_credits');
     onCreditOpen();
-  };
+  }, [onCreditOpen]);
+
+  // Links into a signed-in feature (emails, wallet, disputes, `?login`):
+  // signed out, they sign in first and come back here.
+  useEffect(() => {
+    if (authenticated || resuming) return;
+    const hash = window.location.hash;
+    if (
+      hash === '#emailPreferences' ||
+      hash === '#wallet' ||
+      hash.startsWith('#dispute-submission-') ||
+      searchParams?.get('login') !== null
+    ) {
+      window.location.assign(`${signIn}${encodeURIComponent(hash)}`);
+    }
+  }, [authenticated, resuming, searchParams, signIn]);
 
   useEffect(() => {
-    const checkHashAndOpenModal = () => {
-      const hashHasEmail = window.location.hash === '#emailPreferences';
-      const hashHasWallet = window.location.hash === '#wallet';
-      const hashHasDispute =
-        window.location.hash.startsWith('#dispute-submission-') || false;
-      const hasLoginParam = searchParams?.get('login') !== null;
+    const url = window.location.href;
+    const hashIndex = url.indexOf('#');
+    const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
+    const [hashValue] = afterHash.split('?');
+    if (hashValue === 'wallet' && authenticated) {
+      posthog.capture('open_wallet_drawer');
+      // The wallet is its own page now (a Privy document).
+      window.location.assign('/earn/wallet/');
+    } else if (hashValue?.startsWith('dispute-submission-') && authenticated) {
+      openCreditWithEvent();
+    }
+  }, [authenticated, openCreditWithEvent]);
 
-      if (
-        (hashHasEmail || hashHasWallet || hashHasDispute || hasLoginParam) &&
-        ready &&
-        !authenticated
-      ) {
-        onLoginOpen();
-      }
-    };
-
-    checkHashAndOpenModal();
-  }, [isLoginOpen, onLoginOpen, ready, authenticated, searchParams]);
-
-  useEffect(() => {
-    const checkHashAndOpenModal = () => {
-      const url = window.location.href;
-      const hashIndex = url.indexOf('#');
-      const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
-      const [hashValue] = afterHash.split('?');
-      const hashHasWallet = hashValue === 'wallet';
-      const hashHasDispute =
-        hashValue?.startsWith('dispute-submission-') || false;
-
-      if (hashHasWallet) {
-        openWalletWithEvent();
-      } else if (hashHasDispute && authenticated) {
-        openCreditWithEvent();
-      }
-    };
-
-    checkHashAndOpenModal();
-  }, [isWalletOpen, onWalletOpen, authenticated, onCreditOpen]);
-
-  const {
-    data: tokens,
-    isLoading,
-    error,
-  } = useQuery({
-    ...tokenAssetsQuery,
-    enabled: authenticated,
-  });
-
-  const walletBalance = tokens?.reduce((acc, token) => {
-    return acc + (token.usdValue || 0);
-  }, 0);
+  const walletBalance = useWalletBalance(!!viewer?.isTalentFilled);
 
   return (
     <>
-      <Login isOpen={isLoginOpen} onClose={onLoginClose} onOpen={onLoginOpen} />
       <BountySnackbar />
       <GrantSnackbar />
       <div className="sticky top-0 z-40">
         <DesktopNavbar
-          onLoginOpen={onLoginOpen}
+          signIn={signIn}
+          resuming={resuming}
           onSearchOpen={searchOpenWithEvent}
-          onWalletOpen={openWalletWithEvent}
-          walletBalance={walletBalance || 0}
+          walletBalance={walletBalance}
+          creditBalance={creditBalance}
           onCreditOpen={openCreditWithEvent}
         />
-        <SponsorStageSnackbar />
+        {snackbar}
       </div>
       <MobileNavbar
-        onLoginOpen={onLoginOpen}
+        signIn={signIn}
+        resuming={resuming}
+        creditBalance={creditBalance}
         onCreditOpen={openCreditWithEvent}
       />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
       <div className="fixed bottom-0 z-60 w-full">
         <BottomBar
           onSearchOpen={searchOpenWithEvent}
-          onWalletOpen={openWalletWithEvent}
-          walletBalance={walletBalance || 0}
+          walletBalance={walletBalance}
         />
       </div>
-      <WalletDrawer
-        tokens={tokens || []}
-        isLoading={isLoading}
-        error={error}
-        isOpen={isWalletOpen}
-        onClose={onWalletClose}
-      />
-      <CreditDrawer isOpen={isCreditOpen} onClose={onCreditClose} />
+      {isCreditOpen && (
+        <CreditDrawer isOpen={isCreditOpen} onClose={onCreditClose} />
+      )}
     </>
   );
 };

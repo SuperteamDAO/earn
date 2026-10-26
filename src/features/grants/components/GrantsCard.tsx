@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 
 import { SuperteamBadge } from '@/components/shared/SuperteamBadge';
@@ -7,10 +9,12 @@ import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
-import type { GrantWithApplicationCount } from '../types';
+import { InnerLink } from '@/features/home/components/InnerLink';
+import type { GrantCardData } from '@/features/home/types/cards';
+
 import { grantAmount } from '../utils/grantAmount';
 
-export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
+export const GrantsCard = ({ grant }: { grant: GrantCardData }) => {
   const {
     sponsor,
     slug,
@@ -30,41 +34,40 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
   return (
     <Link
       className="block w-full rounded-md px-2 py-4 hover:bg-gray-100 hover:no-underline sm:px-4"
-      href={`/earn/grants/${slug}`}
+      href={`/earn/grants/${slug}/`}
     >
       <div className="flex w-full items-center justify-between">
         <div className="flex w-full">
           <LocalImage
             className="mr-3 h-14 w-14 rounded-md sm:mr-5 sm:h-16 sm:w-16"
-            alt={sponsor?.name!}
+            alt={sponsor?.name}
             src={sponsorLogo}
           />
           <div className="flex w-full flex-col justify-between">
             <p className="line-clamp-1 text-sm font-semibold text-slate-700 sm:text-base">
               {title}
             </p>
-            <Link
-              href={`/earn/s/${sponsor?.slug}`}
-              onClick={(e) => e.stopPropagation()}
+            <InnerLink
+              href={`/earn/s/${sponsor?.slug}/`}
               className="flex w-min items-center gap-1 hover:underline"
             >
               <p className="w-full text-xs whitespace-nowrap text-slate-500 md:text-sm">
                 {sponsor?.name}
               </p>
-              <div>{!!sponsor?.isVerified && <VerifiedBadge />}</div>
-            </Link>
+              <div>{sponsor?.isVerified && <VerifiedBadge />}</div>
+            </InnerLink>
             <div className="mt-px flex items-center gap-1 sm:gap-2">
               <div className="flex items-center justify-start sm:hidden">
                 <TokenIcon
                   className="mr-0.5 h-3.5 w-3.5 rounded-full"
-                  alt={token!}
+                  alt={token ?? 'token'}
                   symbol={token}
                 />
                 <div className="flex items-baseline">
                   <p className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base">
                     {grantAmount({
-                      maxReward: maxReward!,
-                      minReward: minReward!,
+                      maxReward: maxReward ?? 0,
+                      minReward: minReward ?? 0,
                     })}
                   </p>
                   <p className="ml-0.5 text-xs font-medium text-gray-400">
@@ -88,10 +91,7 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
                     $
                     {formatNumberWithSuffix(
                       Number(
-                        (
-                          Number(approvedAmountTotal) /
-                          Number(totalApplications)
-                        ).toFixed(2),
+                        (approvedAmountTotal / totalApplications).toFixed(2),
                       ),
                     )}
                     <span className="word-spacing-tight ml-0.3 text-[11px] font-medium text-gray-400 sm:text-xs">
@@ -117,14 +117,14 @@ export const GrantsCard = ({ grant }: { grant: GrantWithApplicationCount }) => {
         <div className="mr-3 hidden items-center justify-start sm:flex">
           <TokenIcon
             className="mr-1 h-4 w-4 rounded-full"
-            alt={token!}
+            alt={token ?? 'token'}
             symbol={token}
           />
           <div className="flex items-baseline gap-1">
             <p className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base">
               {grantAmount({
-                maxReward: maxReward!,
-                minReward: minReward!,
+                maxReward: maxReward ?? 0,
+                minReward: minReward ?? 0,
               })}
             </p>
             <p className="text-xs font-medium text-gray-400 sm:text-base">

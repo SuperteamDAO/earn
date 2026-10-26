@@ -12,6 +12,9 @@ export function generateTelegramBotUrl(
   if (!email) {
     return TELEGRAM_BOT_URL;
   }
-  const encodedEmail = Buffer.from(email).toString('base64');
+  // UTF-8 then base64, like Buffer's, but in browsers too.
+  const encodedEmail = btoa(
+    String.fromCharCode(...new TextEncoder().encode(email)),
+  );
   return `${TELEGRAM_BOT_URL}?start=${encodedEmail}`;
 }

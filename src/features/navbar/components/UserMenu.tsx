@@ -1,8 +1,10 @@
+'use client';
+
 import { ChevronDown } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
-import { useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import { usePathname } from 'next/navigation';
+import { posthog } from 'posthog-js';
+import { useEffect, useSyncExternalStore } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { Button } from '@/components/ui/button';
@@ -16,23 +18,53 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { generateTelegramBotUrl } from '@/constants/Telegram';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { useLogout, useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
-import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
+
+import { useLogout } from '../hooks/use-logout';
+import { ShellLink, useShellNavigate } from './ShellLink';
+
+const EmailSettingsModal = dynamic(() =>
+  import('./EmailSettingsModal').then((mod) => mod.EmailSettingsModal),
+);
+
+// Whether they've opened Telegram Alerts before (a dot until they do).
+// The server can't see localStorage: it renders them as seen.
+const TELEGRAM_SEEN = 'telegram-alerts-shown';
+const seenListeners = new Set<() => void>();
+const subscribeSeen = (listener: () => void) => {
+  seenListeners.add(listener);
+  window.addEventListener('storage', listener);
+  return () => {
+    seenListeners.delete(listener);
+    window.removeEventListener('storage', listener);
+  };
+};
+
+const markSeen = () => {
+  localStorage.setItem(TELEGRAM_SEEN, 'true');
+  for (const listener of seenListeners) listener();
+};
+
+export function useSeenTelegramAlerts() {
+  const seen = useSyncExternalStore(
+    subscribeSeen,
+    () => localStorage.getItem(TELEGRAM_SEEN) === 'true',
+    () => true,
+  );
+  return [seen, markSeen] as const;
+}
 
 export function UserMenu() {
-  const router = useRouter();
+  const navigate = useShellNavigate();
+  const pathname = usePathname() ?? '';
 
-  const { user, isLoading } = useUser();
+  const user = useViewer();
   const logout = useLogout();
   const { isOpen, onClose, onOpen } = useDisclosure();
-
-  // Check if user has clicked on telegram alerts before
-  const hasSeenTelegramAlerts = () => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('telegram-alerts-shown') === 'true';
-  };
+  const [hasSeenTelegramAlerts, markTelegramAlertsSeen] =
+    useSeenTelegramAlerts();
 
   useEffect(() => {
     const checkHashAndOpenModal = () => {
@@ -47,43 +79,37 @@ export function UserMenu() {
     };
 
     checkHashAndOpenModal();
-  }, [isOpen, onOpen]);
+  }, [onOpen]);
 
-  const handleClose = async () => {
-    console.log('close -', router);
-    await router.replace(
-      router.asPath.replace('#emailPreferences', ''),
-      undefined,
-      { shallow: true },
-    );
+  const handleClose = () => {
+    if (window.location.hash === '#emailPreferences') {
+      window.history.replaceState(
+        window.history.state,
+        '',
+        window.location.pathname + window.location.search,
+      );
+    }
     onClose();
   };
 
   const handleTelegramAlertsClick = () => {
-    // Mark telegram alerts as shown in localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('telegram-alerts-shown', 'true');
-    }
+    markTelegramAlertsSeen();
     posthog.capture('telegram notifications_user menu');
   };
 
-  if (isLoading) {
-    return <></>;
-  }
-
   return (
     <>
-      <EmailSettingsModal isOpen={isOpen} onClose={handleClose} />
+      {isOpen && <EmailSettingsModal isOpen={isOpen} onClose={handleClose} />}
       {user &&
         !user.currentSponsorId &&
         !user.isTalentFilled &&
-        !router.pathname.startsWith('/earn/new') && (
+        !pathname.startsWith('/earn/new') && (
           <Button
             variant="ghost"
             size="sm"
             onClick={() => {
               posthog.capture('complete profile_nav bar');
-              router.push('/earn/new');
+              navigate('/earn/new/');
             }}
             className="ph-no-capture flex text-xs"
           >
@@ -99,13 +125,17 @@ export function UserMenu() {
           }}
         >
           <div className="flex items-center gap-1.5">
-            <EarnAvatar className="size-7" id={user?.id} avatar={user?.photo} />
+            <EarnAvatar
+              className="size-7"
+              id={user?.id}
+              avatar={user?.photo ?? undefined}
+            />
             <div className="flex items-center">
               <p className="text-sm font-medium tracking-tight text-slate-600">
                 {user?.firstName ?? user?.email ?? ''}
               </p>
             </div>
-            {!hasSeenTelegramAlerts() && (
+            {!hasSeenTelegramAlerts && (
               <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
             )}
             <ChevronDown className="block size-4 text-slate-400" />
@@ -119,41 +149,41 @@ export function UserMenu() {
           {user?.isTalentFilled && (
             <>
               <DropdownMenuItem asChild>
-                <Link
-                  href={`/earn/t/${user?.username}`}
+                <ShellLink
+                  href={`/earn/t/${user?.username}/`}
                   onClick={() => {
                     posthog.capture('profile_user menu');
                   }}
                   className="text-sm tracking-tight text-slate-500"
                 >
                   Profile
-                </Link>
+                </ShellLink>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link
-                  href={`/earn/t/${user?.username}/edit`}
+                <ShellLink
+                  href={`/earn/t/${user?.username}/edit/`}
                   onClick={() => {
                     posthog.capture('edit profile_user menu');
                   }}
                   className="text-sm tracking-tight text-slate-500"
                 >
                   Edit Profile
-                </Link>
+                </ShellLink>
               </DropdownMenuItem>
             </>
           )}
 
           {!!user?.currentSponsorId && (
             <DropdownMenuItem asChild>
-              <Link
-                href="/earn/dashboard/listings"
+              <ShellLink
+                href="/earn/dashboard/listings/"
                 onClick={() => {
                   posthog.capture('sponsor dashboard_user menu');
                 }}
                 className="text-sm tracking-tight text-slate-500"
               >
                 Dashboard
-              </Link>
+              </ShellLink>
             </DropdownMenuItem>
           )}
 
@@ -165,12 +195,12 @@ export function UserMenu() {
                 God Mode
               </DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link
-                  href="/earn/new/sponsor"
+                <ShellLink
+                  href="/earn/new/sponsor/"
                   className="text-sm tracking-tight text-slate-500"
                 >
                   Create New Sponsor
-                </Link>
+                </ShellLink>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </div>
@@ -190,20 +220,20 @@ export function UserMenu() {
 
           {user?.isTalentFilled && (
             <DropdownMenuItem asChild>
-              <Link
-                href="/earn/bookmarks"
+              <ShellLink
+                href="/earn/bookmarks/"
                 onClick={() => {
                   posthog.capture('bookmarks_user menu');
                 }}
                 className="text-sm tracking-tight text-slate-500"
               >
                 Bookmarks
-              </Link>
+              </ShellLink>
             </DropdownMenuItem>
           )}
 
           <DropdownMenuItem asChild>
-            <Link
+            <ShellLink
               href={generateTelegramBotUrl(user?.email)}
               target="_blank"
               onClick={handleTelegramAlertsClick}
@@ -211,11 +241,11 @@ export function UserMenu() {
             >
               <div className="flex items-center gap-2">
                 <span>Telegram Alerts</span>
-                {!hasSeenTelegramAlerts() && (
+                {!hasSeenTelegramAlerts && (
                   <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                 )}
               </div>
-            </Link>
+            </ShellLink>
           </DropdownMenuItem>
 
           <SupportFormDialog>
@@ -233,7 +263,7 @@ export function UserMenu() {
           <DropdownMenuItem
             onClick={() => {
               posthog.capture('logout_user menu');
-              logout();
+              void logout();
             }}
             className="text-sm tracking-tight text-red-500"
           >

@@ -1,26 +1,26 @@
-import { usePrivy } from '@privy-io/react-auth';
+'use client';
+
 import { Menu } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { useCreditBalance } from '@/store/credit';
-import { useUser } from '@/store/user';
+import { ResumingAccount } from '@/lib/auth/resume-session';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { CreditIcon } from '@/features/credits/icon/credit';
 
+import { ShellLink } from './ShellLink';
+
 interface Props {
-  onLoginOpen: () => void;
+  signIn: string;
+  resuming: boolean;
+  creditBalance: number;
   onCreditOpen: () => void;
 }
-
-// const AnnouncementBar = dynamic(() =>
-//   import('@/features/navbar').then((mod) => mod.AnnouncementBar),
-// );
 
 const MobileDrawer = dynamic(
   () => import('./MobileDrawer').then((mod) => mod.MobileDrawer),
@@ -29,17 +29,20 @@ const MobileDrawer = dynamic(
   },
 );
 
-export const MobileNavbar = ({ onLoginOpen, onCreditOpen }: Props) => {
+export const MobileNavbar = ({
+  signIn,
+  resuming,
+  creditBalance,
+  onCreditOpen,
+}: Props) => {
   const {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,
     onClose: onDrawerClose,
   } = useDisclosure();
 
-  const { authenticated, ready } = usePrivy();
-
-  const { user } = useUser();
-  const { creditBalance } = useCreditBalance();
+  const user = useViewer();
+  const authenticated = !!user;
 
   const openCreditDrawer = () => {
     posthog.capture('open_credits');
@@ -53,15 +56,14 @@ export const MobileNavbar = ({ onLoginOpen, onCreditOpen }: Props) => {
 
   return (
     <>
-      {/* {router.pathname === '/' && <AnnouncementBar />} */}
       <div className="sticky top-0 z-50">
         <div className="flex min-h-12 items-center justify-between border-b border-black/20 bg-white px-1 py-1 lg:hidden">
           <div className="flex items-center gap-3">
             <div onClick={openDrawer} className="ml-1 cursor-pointer">
               <Menu className="size-5 text-gray-400" />
             </div>
-            <Link
-              href="/earn"
+            <ShellLink
+              href="/earn/"
               className="flex items-center hover:no-underline"
               onClick={() => {
                 posthog.capture('homepage logo click_universal');
@@ -73,17 +75,18 @@ export const MobileNavbar = ({ onLoginOpen, onCreditOpen }: Props) => {
                 src="/assets/logo.svg"
                 loading="eager"
               />
-            </Link>
+            </ShellLink>
           </div>
 
           <MobileDrawer
             isDrawerOpen={isDrawerOpen}
             onDrawerClose={onDrawerClose}
-            onLoginOpen={onLoginOpen}
+            signIn={signIn}
+            resuming={resuming}
           />
 
           <div className="flex items-center gap-1">
-            {ready && authenticated && user?.isTalentFilled && (
+            {authenticated && user?.isTalentFilled && (
               <div className="flex items-center gap-1">
                 <div className="relative">
                   <div
@@ -99,16 +102,26 @@ export const MobileNavbar = ({ onLoginOpen, onCreditOpen }: Props) => {
               </div>
             )}
           </div>
-          {ready && !authenticated && (
+          {resuming && !authenticated && (
+            <div className="mr-2">
+              <ResumingAccount signIn={signIn} />
+            </div>
+          )}
+          {!authenticated && !resuming && (
+            // Plain <a>: sign-in is a Privy document with its own CSP.
             <Button
               variant="ghost"
               className="ph-no-capture text-brand-purple mr-2 text-base"
-              onClick={() => {
-                posthog.capture('login_navbar');
-                onLoginOpen();
-              }}
+              asChild
             >
-              Login
+              <a
+                href={signIn}
+                onClick={() => {
+                  posthog.capture('login_navbar');
+                }}
+              >
+                Login
+              </a>
             </Button>
           )}
         </div>

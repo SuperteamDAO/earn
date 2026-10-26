@@ -1,3 +1,5 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import IsoDomPurify, { type Config } from 'isomorphic-dompurify';
 import posthog from 'posthog-js';
@@ -25,7 +27,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 
 const hardDomPurify = (dirty: string | Node, cfg?: Config) =>
   IsoDomPurify.sanitize(dirty, {
@@ -56,7 +58,7 @@ interface ModalFormProps {
 }
 
 export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
-  const { user } = useUser();
+  const user = useViewer();
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
