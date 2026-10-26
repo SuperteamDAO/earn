@@ -21,7 +21,6 @@ import {
 } from '@/utils/json-ld';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
-import { ListingPop } from '@/features/conversion-popups/components/ListingPop';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
 import { listingWinnersQuery } from '@/features/listings/queries/listing-winners';
 import { submissionCountQuery } from '@/features/listings/queries/submission-count';
@@ -74,7 +73,6 @@ function ListingDetails({
           <JsonLd data={[jobPostingSchema, breadcrumbSchema]} />
         )}
         <ListingPageLayout listing={initialListing}>
-          <ListingPop listing={initialListing} />
           {initialListing?.isWinnersAnnounced && (
             <div className="mt-6 hidden w-full md:block">
               <ListingWinners bounty={initialListing} />

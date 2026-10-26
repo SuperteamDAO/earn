@@ -53,7 +53,6 @@ const draftQueueAtom = atom<SaveQueueState>({
 const confirmModalAtom = atom<
   'SUCCESS' | 'VERIFICATION_SHOW_FORM' | 'VERIFICATION_SHOW_MODAL' | undefined
 >(undefined);
-const showFirstPublishSurveyAtom = atom(false);
 const previewAtom = atom(false);
 
 const saveDraftMutationAtom = atomWithMutation(() => ({
@@ -113,7 +112,6 @@ export {
   listingStatusAtom,
   previewAtom,
   saveDraftMutationAtom,
-  showFirstPublishSurveyAtom,
   skillsKeyAtom,
   store,
   submitListingMutationAtom,

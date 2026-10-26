@@ -5,7 +5,6 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
 
-import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
 import { GrantEntry } from '@/features/grants/components/GrantEntry';
 import { useGrants } from '@/features/grants/hooks/useGrants';
 
@@ -30,7 +29,6 @@ function Grants() {
         />
       }
     >
-      <GrantsPop />
       <div className="relative flex min-h-screen w-full flex-col justify-center bg-neutral-100">
         <ExternalImage
           className="absolute top-0 right-0 left-0 h-full w-full"

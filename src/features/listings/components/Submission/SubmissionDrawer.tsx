@@ -61,7 +61,6 @@ interface Props {
   isTemplate?: boolean;
   isSubmitDisabled: boolean;
   showEasterEgg: () => void;
-  onSurveyOpen: () => void;
 }
 
 type FormData = z.infer<ReturnType<typeof submissionSchema>>;
@@ -74,7 +73,6 @@ export const SubmissionDrawer = ({
   isTemplate = false,
   isSubmitDisabled,
   showEasterEgg,
-  onSurveyOpen,
 }: Props) => {
   const {
     id,
@@ -478,9 +476,7 @@ export const SubmissionDrawer = ({
         });
       }
 
-      const latestSubmissionNumber = (user?.Submission?.length ?? 0) + 1;
       if (!editMode) showEasterEgg();
-      if (!editMode && latestSubmissionNumber % 3 !== 0) onSurveyOpen();
 
       toast.success(
         editMode

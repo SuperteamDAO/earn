@@ -28,7 +28,6 @@ import {
   isSTAtom,
   listingStatusAtom,
   previewAtom,
-  showFirstPublishSurveyAtom,
   submitListingMutationAtom,
 } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
@@ -48,7 +47,6 @@ export function PrePublish() {
 
   const isDraftSaving = useAtomValue(isDraftSavingAtom);
   const setConfirmModal = useSetAtom(confirmModalAtom);
-  const setShowFirstPublishSurvey = useSetAtom(showFirstPublishSurveyAtom);
   const setShowPreview = useSetAtom(previewAtom);
 
   const isEditing = useAtomValue(isEditingAtom);
@@ -214,7 +212,6 @@ export function PrePublish() {
             onClick={async () => {
               if (await form.trigger()) {
                 try {
-                  setShowFirstPublishSurvey(false);
                   const data = await form.submitListing();
                   if (isEditing) {
                     posthog.capture('update listing_sponsor');
@@ -227,10 +224,8 @@ export function PrePublish() {
                     if (isUpdate) posthog.capture('update listing_sponsor');
                     else posthog.capture('publish listing_sponsor');
                     if (data.status === 'VERIFYING') {
-                      setShowFirstPublishSurvey(false);
                       setConfirmModal('VERIFICATION_SHOW_FORM');
                     } else {
-                      setShowFirstPublishSurvey(!!data.isFirstPublishedListing);
                       setConfirmModal('SUCCESS');
                     }
                   }

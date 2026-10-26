@@ -12,7 +12,6 @@ import {
 } from '@/utils/json-ld';
 import { getURL } from '@/utils/validUrl';
 
-import { RegionPop } from '@/features/conversion-popups/components/RegionPop';
 import { GrantsSection } from '@/features/grants/components/GrantsSection';
 import { ListingsSection } from '@/features/listings/components/ListingsSection';
 
@@ -70,7 +69,6 @@ const RegionsPage = ({ slug, st, countryData }: RegionsPageProps) => {
         }
       >
         <div className="w-full">
-          <RegionPop st={st} />
           <ListingsSection type="region" region={st.region} />
 
           <GrantsSection type="region" region={st.region} />

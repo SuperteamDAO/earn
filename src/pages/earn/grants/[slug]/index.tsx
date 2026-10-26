@@ -9,7 +9,6 @@ import {
   generateMonetaryGrantSchema,
 } from '@/utils/json-ld';
 
-import { GrantsPop } from '@/features/conversion-popups/components/GrantsPop';
 import { getGrantBySlug } from '@/features/grants/queries/get-grant-by-slug';
 import { type GrantWithApplicationCount } from '@/features/grants/types';
 import { DescriptionUI } from '@/features/listings/components/ListingPage/DescriptionUI';
@@ -40,7 +39,6 @@ function Grants({ grant: initialGrant }: InitialGrant) {
       {monetaryGrantSchema && breadcrumbSchema && (
         <JsonLd data={[monetaryGrantSchema, breadcrumbSchema]} />
       )}
-      <GrantsPop />
       <DescriptionUI
         description={(initialGrant?.description as string) ?? ''}
         sponsorId={initialGrant?.sponsorId ?? ''}

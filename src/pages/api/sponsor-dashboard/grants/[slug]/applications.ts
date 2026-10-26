@@ -174,7 +174,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             emailVerified: true,
             hackathonId: true,
             featureModalShown: true,
-            surveysShown: true,
             stRecommended: true,
             acceptedTOS: true,
             isBlocked: true,

@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { Check, ChevronRight, Copy } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback } from 'react';
@@ -11,14 +11,11 @@ import { useClipboard } from '@/hooks/use-clipboard';
 import { tweetEmbedLink } from '@/utils/socialEmbeds';
 import { getURL } from '@/utils/validUrl';
 
-import { confirmModalAtom, showFirstPublishSurveyAtom } from '../../atoms';
+import { confirmModalAtom } from '../../atoms';
 import { useListingForm } from '../../hooks';
-import { Survey } from './Survey';
 
 export const ListingSuccessModal = () => {
   const [confirmModal] = useAtom(confirmModalAtom);
-  const shouldShowSurvey = useAtomValue(showFirstPublishSurveyAtom);
-  const setShowFirstPublishSurvey = useSetAtom(showFirstPublishSurveyAtom);
 
   const form = useListingForm();
   const slug = useWatch({
@@ -99,13 +96,6 @@ export const ListingSuccessModal = () => {
             </div>
           </div>
         </div>
-
-        {shouldShowSurvey && (
-          <Survey
-            open={confirmModal === 'SUCCESS' && shouldShowSurvey}
-            setOpen={(open) => setShowFirstPublishSurvey(open)}
-          />
-        )}
       </DialogContent>
     </Dialog>
   );

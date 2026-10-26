@@ -17,7 +17,6 @@ import { cn } from '@/utils/cn';
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { CreditIcon } from '@/features/credits/icon/credit';
-import { SurveyModal } from '@/features/listings/components/Submission/Survey';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
@@ -332,17 +331,6 @@ export const SubmissionActionButton = ({
     buttonBG = 'bg-gray-500';
   }
 
-  const {
-    isOpen: isSurveyOpen,
-    onOpen: onSurveyOpen,
-    onClose: onSurveyClose,
-  } = useDisclosure();
-
-  const surveyId =
-    process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
-      ? '018c6743-c893-0000-a90e-f35d31c16692'
-      : '';
-
   const requiresCredits =
     (isProject || isBounty) &&
     user &&
@@ -373,18 +361,8 @@ export const SubmissionActionButton = ({
           showEasterEgg={() => {
             setEasterEggOpen(true);
           }}
-          onSurveyOpen={onSurveyOpen}
         />
       )}
-      {isSurveyOpen &&
-        surveyId &&
-        (!user?.surveysShown || !(surveyId in user.surveysShown)) && (
-          <SurveyModal
-            isOpen={isSurveyOpen}
-            onClose={onSurveyClose}
-            surveyId={surveyId}
-          />
-        )}
       {isEasterEggOpen && (
         <EasterEgg
           isOpen={isEasterEggOpen}
