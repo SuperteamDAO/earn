@@ -7,7 +7,7 @@ import {
 } from '@privy-io/react-auth';
 import { ArrowLeft } from 'lucide-react';
 import { posthog } from 'posthog-js';
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 import MdOutlineEmail from '@/components/icons/MdOutlineEmail';
 import { Button } from '@/components/ui/button';
@@ -145,7 +145,36 @@ export function LoginCard({
   );
 }
 
+// Pages that embed the form under their own heading (Earn's inline sign-in
+// on the invite and new-sponsor pages) leave this one out.
+const HeadingContext = createContext(true);
+
+export function HeadingProvider({
+  heading,
+  children,
+}: {
+  heading: boolean;
+  children: React.ReactNode;
+}) {
+  return <HeadingContext value={heading}>{children}</HeadingContext>;
+}
+
 function Header({ onBack }: { onBack?: () => void }) {
+  const heading = useContext(HeadingContext);
+  if (!heading) {
+    return onBack ? (
+      <div className="px-6 pt-2 pb-4">
+        <button
+          type="button"
+          aria-label="Back"
+          className="text-slate-500"
+          onClick={onBack}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+      </div>
+    ) : null;
+  }
   return (
     <div className="relative py-5">
       {onBack && (

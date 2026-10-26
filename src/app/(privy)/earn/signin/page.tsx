@@ -28,6 +28,7 @@ export default async function SignInPage({
     'sign-out': signOut,
     embed,
     google,
+    heading,
   } = await searchParams;
   const privy = await privyProps();
   // A public page renewing the session in a hidden frame; nothing to show.
@@ -58,6 +59,8 @@ export default async function SignInPage({
       expectingSession={expectingSession}
       embed={embed === '1'}
       google={google === '1'}
+      // `heading=0`: framed under the page's own heading.
+      heading={!(embed === '1' && heading === '0')}
     />
   );
   // Framed by Earn's sign-in dialog (src/lib/auth/sign-in-dialog.tsx): just

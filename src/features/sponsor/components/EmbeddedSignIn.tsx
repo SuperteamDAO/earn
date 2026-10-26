@@ -52,7 +52,7 @@ export function EmbeddedSignIn({ next }: { next: string }) {
     <iframe
       ref={frame}
       title="Sign in"
-      src={`/earn/signin/?embed=1&next=${encodeURIComponent(next)}`}
+      src={`/earn/signin/?embed=1&heading=0&next=${encodeURIComponent(next)}`}
       // Earn's <SignIn> took its content's width (30.25rem) in the
       // centered column; a frame can't size itself to that.
       className="block w-full max-w-[30.25rem] border-0"

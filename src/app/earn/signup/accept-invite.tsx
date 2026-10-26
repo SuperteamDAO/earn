@@ -63,7 +63,7 @@ function EmbeddedSignIn({ next }: { next: string }) {
     <iframe
       ref={frame}
       title="Sign in"
-      src={`/earn/signin/?embed=1&next=${encodeURIComponent(next)}`}
+      src={`/earn/signin/?embed=1&heading=0&next=${encodeURIComponent(next)}`}
       className="block w-full border-0"
       style={{ height }}
     />
