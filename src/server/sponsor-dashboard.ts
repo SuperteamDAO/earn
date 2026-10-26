@@ -97,7 +97,7 @@ export class NoHackathon extends Schema.TaggedError<NoHackathon>()(
 
 // Five published listings past their deadline without winners lock the
 // "Create New Listing" button, as Earn's is-create-allowed decides.
-export const IN_REVIEW_LIMIT = 5;
+const IN_REVIEW_LIMIT = 5;
 
 export const TRACKS_PER_PAGE = 15;
 

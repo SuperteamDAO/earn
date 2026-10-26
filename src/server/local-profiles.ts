@@ -36,12 +36,6 @@ export interface LocalProfile {
   readonly createdAt: string;
 }
 
-export interface Chapter {
-  readonly id: string;
-  readonly region: string;
-  readonly countries: ReadonlyArray<string>;
-}
-
 export class NoChapter extends Schema.TaggedError<NoChapter>()(
   'NoChapter',
   {},

@@ -15,7 +15,7 @@ import type * as Users from '@/server/users';
 import type { Role } from './team-members';
 
 // Earn's invites last a week.
-export const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 // A second accept of the same link soon after the first (a double click, a
 // retry) is the same success.
 const DUPLICATE_ACCEPT_GRACE_MS = 90 * 1000;
