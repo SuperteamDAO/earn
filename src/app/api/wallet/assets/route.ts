@@ -1,52 +1,28 @@
-import { address } from '@solana/kit';
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import { prisma } from '@/prisma';
+import { json, readerUser } from '@/lib/route-guard';
+import { runtime } from '@/server/runtime';
+import * as Wallet from '@/server/wallet';
 
-import { getUserSession } from '@/features/auth/utils/getUserSession';
-import type { TokenAsset } from '@/features/wallet/types/TokenAsset';
-import { fetchUserTokens } from '@/features/wallet/utils/fetchUserTokens';
-import { getRpc } from '@/features/wallet/utils/getConnection';
-
-interface ErrorResponse {
-  error: string;
-}
-
-export async function GET(
-  _request: NextRequest,
-): Promise<NextResponse<TokenAsset[] | ErrorResponse>> {
-  try {
-    const headersList = await headers();
-    const sessionResponse = await getUserSession(headersList);
-
-    if (sessionResponse.status !== 200 || !sessionResponse.data) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: sessionResponse.status },
+// The signed-in account's wallet balances (the wallet page after a
+// withdrawal; the header's wallet value).
+export function GET(request: NextRequest) {
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const writer = yield* readerUser(request);
+      if (writer instanceof NextResponse) return writer;
+      return yield* Wallet.Wallet.use((wallet) =>
+        wallet.assets(writer.userId),
+      ).pipe(
+        Effect.map((assets) => json(200, assets)),
+        Effect.catchTag('NoWallet', () =>
+          Effect.succeed(json(401, { error: 'Unauthorized' })),
+        ),
+        Effect.orElseSucceed(() =>
+          json(500, { error: 'Failed to fetch token data' }),
+        ),
       );
-    }
-
-    const { userId } = sessionResponse.data;
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { walletAddress: true },
-    });
-
-    const walletAddress = user?.walletAddress;
-
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const rpc = getRpc();
-    const assets = await fetchUserTokens(rpc, address(walletAddress));
-    return NextResponse.json(assets);
-  } catch (error) {
-    console.error('Error fetching token data:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch token data' },
-      { status: 500 },
-    );
-  }
+    }),
+  );
 }

@@ -9,12 +9,12 @@ export async function creditAggregate(
 ) {
   const effectiveMonth = dayjs.utc().startOf('month').toDate();
 
-  const creditAggregate = await client.creditLedger.aggregate({
+  const aggregate = await client.creditLedger.aggregate({
     where: { userId, effectiveMonth },
     _sum: { change: true },
   });
 
-  const ledgerSum = creditAggregate._sum.change ?? 0;
+  const ledgerSum = aggregate._sum.change ?? 0;
   const baseCredits = 3;
   const effectiveBalance = baseCredits + ledgerSum;
 

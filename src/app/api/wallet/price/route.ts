@@ -1,75 +1,30 @@
-import { NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import type { NextRequest } from 'next/server';
 
-interface PriceV3Response {
-  [key: string]: {
-    usdPrice: number;
-    blockId: number;
-    decimals: number;
-    priceChange24h: number;
-  };
-}
+import { json } from '@/lib/route-guard';
+import { runtime } from '@/server/runtime';
+import * as WalletPrices from '@/server/wallet-prices';
 
-const STABLE_MINTS = new Set<string>([
-  // USDC
-  'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-  // USDT
-  'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
-  // USDG
-  '2u1tszSeqZ3qBWF3uNGPFc8TzMk2tdiwknnRMWGWjGWH',
-]);
-
-export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const mintAddress = searchParams.get('mintAddress');
-
-    if (!mintAddress) {
-      return NextResponse.json(
-        { error: 'Mint address is required' },
-        { status: 400 },
-      );
-    }
-
-    if (STABLE_MINTS.has(mintAddress)) {
-      return NextResponse.json({ price: 1 });
-    }
-
-    const baseUrl = 'https://api.jup.ag/price/v3';
-    const apiKey = process.env.JUPITER_API_KEY;
-
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: 'Jupiter API key is not configured' },
-        { status: 500 },
-      );
-    }
-
-    const response = await fetch(`${baseUrl}?ids=${mintAddress}`, {
-      headers: { 'x-api-key': apiKey },
-      next: { revalidate: 60 },
-    });
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = (await response.json()) as PriceV3Response;
-
-    if (!data || !data[mintAddress]) {
-      return NextResponse.json(
-        { error: `No price data found for token: ${mintAddress}` },
-        { status: 404 },
-      );
-    }
-
-    const price = data[mintAddress].usdPrice;
-
-    return NextResponse.json({ price });
-  } catch (error) {
-    console.error('Error fetching token price:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch token price' },
-      { status: 500 },
-    );
+// A token's dollar price (`?mintAddress=`), from Jupiter. Public: the
+// listing builder and other servers ask it too.
+export function GET(request: NextRequest) {
+  const mintAddress = request.nextUrl.searchParams.get('mintAddress');
+  if (!mintAddress) {
+    return json(400, { error: 'Mint address is required' });
   }
+  return runtime.runPromise(
+    WalletPrices.WalletPrices.use((prices) => prices.usd(mintAddress)).pipe(
+      Effect.map((price) => json(200, { price })),
+      Effect.catchTags({
+        PriceNotFound: (error) =>
+          Effect.succeed(json(404, { error: error.message })),
+        PriceUnavailable: (error) =>
+          Effect.succeed(
+            error.reason === 'config'
+              ? json(500, { error: 'Jupiter API key is not configured' })
+              : json(500, { error: 'Failed to fetch token price' }),
+          ),
+      }),
+    ),
+  );
 }

@@ -157,7 +157,7 @@ export async function refundCredits(listingId: string) {
             submissionId: submission.id,
             type: CreditEventType.CREDIT_REFUND,
             effectiveMonth: nextMonth,
-            change: +1,
+            change: 1,
           },
         }),
       ),

@@ -1,34 +1,24 @@
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import { getUserSession } from '@/features/auth/utils/getUserSession';
-import { creditAggregate } from '@/features/credits/utils/creditAggregate';
+import { json, readerUser } from '@/lib/route-guard';
+import * as Credits from '@/server/credits';
+import { runtime } from '@/server/runtime';
 
-export async function GET(_request: NextRequest) {
-  try {
-    const headersList = await headers();
-    const sessionResponse = await getUserSession(headersList);
-
-    if (sessionResponse.status !== 200 || !sessionResponse.data) {
-      return NextResponse.json(
-        { error: sessionResponse.error },
-        { status: sessionResponse.status },
+// The signed-in account's submission credits left this month.
+export function GET(request: NextRequest) {
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const writer = yield* readerUser(request);
+      if (writer instanceof NextResponse) return writer;
+      return yield* Credits.Credits.use((credits) =>
+        credits.balance(writer.userId),
+      ).pipe(
+        Effect.map((balance) => json(200, { balance })),
+        Effect.catchTag('DatabaseError', () =>
+          Effect.succeed(json(500, { error: 'Internal Server Error' })),
+        ),
       );
-    }
-
-    const { userId } = sessionResponse.data;
-
-    if (!userId) {
-      return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
-    }
-
-    const balance = await creditAggregate(userId);
-
-    return NextResponse.json({ balance });
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 },
-    );
-  }
+    }),
+  );
 }

@@ -5,4 +5,6 @@ export interface TokenAsset {
   amount: number;
   usdValue: number;
   tokenName: string;
+  // The mint's decimals, for the withdraw form and its setup fee.
+  decimals: number;
 }

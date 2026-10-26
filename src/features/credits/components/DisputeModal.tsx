@@ -1,7 +1,8 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -21,7 +22,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { api } from '@/lib/api';
+import { postJson, RequestError } from '@/lib/fetch-json';
 import { dayjs } from '@/utils/dayjs';
 
 import { CreditIcon } from '../icon/credit';
@@ -47,6 +48,7 @@ interface DisputeModalProps {
   isOpen: boolean;
   onClose: () => void;
   entry: CreditEntry | null;
+  onDisputed: () => Promise<void>;
 }
 
 const disputeFormSchema = z.object({
@@ -55,11 +57,15 @@ const disputeFormSchema = z.object({
 
 type DisputeFormData = z.infer<typeof disputeFormSchema>;
 
-export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
+export function DisputeModal({
+  isOpen,
+  onClose,
+  entry,
+  onDisputed,
+}: DisputeModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isDesktop = useBreakpoint('md');
   const maxCharacters = 1000;
-  const queryClient = useQueryClient();
 
   const listingType = entry?.type === 'SPAM_PENALTY' ? 'BOUNTY' : 'GRANT';
 
@@ -73,36 +79,29 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
   const {
     register,
     handleSubmit,
-    watch,
     reset,
     formState: { errors, isValid },
   } = form;
-  const description = watch('description');
+  const description = useWatch({ control: form.control, name: 'description' });
 
   useEffect(() => {
     if (!isOpen || !entry) {
       reset();
     }
-  }, [isOpen, entry?.id, reset]);
+  }, [isOpen, entry, reset]);
 
   const handleFormSubmit = async (data: DisputeFormData) => {
     if (!entry) return;
 
     setIsSubmitting(true);
     try {
-      const response = await api.post('/api/spam-dispute', {
+      await postJson('/api/spam-dispute/', {
         description: data.description,
         listingType,
         submissionId: entry.submission.id,
       });
 
-      if (response.status !== 200) {
-        throw new Error('Failed to submit dispute');
-      }
-
-      await queryClient.invalidateQueries({
-        queryKey: ['creditHistory'],
-      });
+      await onDisputed();
 
       reset();
       onClose();
@@ -114,13 +113,19 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
           description: 'text-xs',
         },
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error submitting dispute:', error);
 
       let errorMessage = 'Failed to submit dispute. Please try again.';
 
-      if (error.response?.data?.error) {
-        errorMessage = error.response.data.error;
+      if (
+        error instanceof RequestError &&
+        typeof error.body === 'object' &&
+        error.body !== null &&
+        'error' in error.body &&
+        typeof error.body.error === 'string'
+      ) {
+        errorMessage = error.body.error;
       }
 
       toast.error(errorMessage, {
@@ -159,7 +164,10 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
   if (!entry) return null;
 
   const content = (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+    <form
+      onSubmit={(event) => void handleSubmit(handleFormSubmit)(event)}
+      className="space-y-4"
+    >
       <div className="mb-6 flex items-center gap-2">
         <div className="relative">
           <div className="flex size-10 items-center justify-center overflow-hidden rounded-full">

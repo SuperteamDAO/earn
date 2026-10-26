@@ -7,7 +7,7 @@ import { TokenSkeleton } from './TokenSkeleton';
 interface TokenListProps {
   tokens: TokenAsset[];
   isLoading: boolean;
-  error: Error | null;
+  error: boolean;
 }
 
 export function TokenList({ tokens, isLoading, error }: TokenListProps) {

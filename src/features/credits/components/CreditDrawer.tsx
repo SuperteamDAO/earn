@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import { Info, X } from 'lucide-react';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
@@ -9,15 +9,81 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
-import { api } from '@/lib/api';
-import { useCreditBalance } from '@/store/credit';
-import { useUser } from '@/store/user';
+import { getJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { CreditIcon } from '../icon/credit';
 import { canDispute } from '../utils/canDispute';
-import { CreditHistoryCard } from './CreditLog';
+import { type CreditEntry, CreditHistoryCard } from './CreditLog';
+
+const processEntries = (entries: CreditEntry[] = []) => {
+  return entries.map((entry) => ({
+    ...entry,
+    submission: entry.submission || {
+      listing: {
+        title:
+          entry.type === 'MONTHLY_CREDIT'
+            ? 'Monthly Credit Renewal'
+            : entry.type === 'CREDIT_EXPIRY'
+              ? 'Monthly Credit Expiration'
+              : '',
+        type: '',
+        sponsor: { logo: '' },
+      },
+    },
+  }));
+};
+
+// A dispute link (#dispute-submission-…) opens that penalty's dispute, if it
+// can still be disputed; otherwise the link is dropped. The submission to
+// dispute, or null.
+function checkForDisputeHash(history: CreditEntry[]): string | null {
+  const url = window.location.href;
+  const hashIndex = url.indexOf('#');
+  const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
+  const [hashValue] = afterHash.split('?');
+
+  if (hashValue?.startsWith('dispute-submission-')) {
+    const submissionId = hashValue.replace('dispute-submission-', '');
+
+    const allEntries = processEntries(history);
+    const entryToDispute = allEntries.find(
+      (entry) =>
+        entry.submission?.id === submissionId &&
+        (entry.type === 'SPAM_PENALTY' || entry.type === 'GRANT_SPAM_PENALTY'),
+    );
+
+    const dispute =
+      entryToDispute && canDispute(entryToDispute, allEntries, true);
+
+    if (entryToDispute && dispute) return submissionId;
+    window.history.replaceState(
+      window.history.state,
+      '',
+      window.location.pathname + window.location.search,
+    );
+  }
+  return null;
+}
+
+// Read when the drawer opens, and again after a dispute.
+async function fetchCredits() {
+  const [history, balance] = await Promise.all([
+    getJson<CreditEntry[]>('/api/user/credit/history/').catch(() => null),
+    getJson<{ balance: number }>('/api/user/credit/balance/').catch(() => null),
+  ]);
+  return { history, balance };
+}
+
+// When this month's credits run out: its last second, UTC.
+const monthEndUtc = () => {
+  const now = new Date();
+  return new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59),
+  );
+};
 
 export function CreditDrawer({
   isOpen,
@@ -26,61 +92,37 @@ export function CreditDrawer({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const { user } = useUser();
-  const { creditBalance } = useCreditBalance();
-  const router = useRouter();
+  const user = useViewer();
   const [disputeSubmissionId, setDisputeSubmissionId] = useState<string | null>(
     null,
   );
 
-  const { data: creditHistory, isLoading } = useQuery({
-    queryKey: ['creditHistory', user?.id],
-    queryFn: () => api.get('/api/user/credit/history'),
-    enabled: !!user?.id && isOpen,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-  });
-
+  const [creditBalance, setCreditBalance] = useState(0);
+  const [creditHistory, setCreditHistory] = useState<{
+    data: CreditEntry[];
+  } | null>(null);
+  const [renewsAt] = useState(monthEndUtc);
+  const userId = user?.id;
+  const isLoading = isOpen && !!userId && creditHistory === null;
+  const apply = useCallback(
+    ({ history, balance }: Awaited<ReturnType<typeof fetchCredits>>) => {
+      if (history) setCreditHistory({ data: history });
+      if (balance) setCreditBalance(balance.balance);
+      return history;
+    },
+    [],
+  );
+  const reload = useCallback(async () => {
+    apply(await fetchCredits());
+  }, [apply]);
   useEffect(() => {
-    const checkForDisputeHash = () => {
-      const url = window.location.href;
-      const hashIndex = url.indexOf('#');
-      const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
-      const [hashValue] = afterHash.split('?');
-
-      if (hashValue?.startsWith('dispute-submission-')) {
-        const submissionId = hashValue.replace('dispute-submission-', '');
-
-        if (creditHistory?.data) {
-          const allEntries = processEntries(creditHistory.data);
-          const entryToDispute = allEntries.find(
-            (entry) =>
-              entry.submission?.id === submissionId &&
-              (entry.type === 'SPAM_PENALTY' ||
-                entry.type === 'GRANT_SPAM_PENALTY'),
-          );
-
-          const dispute = canDispute(entryToDispute, allEntries, true);
-
-          if (entryToDispute && dispute) {
-            setDisputeSubmissionId(submissionId);
-          } else {
-            const pathWithoutHash =
-              router.asPath.split('#')[0] || router.pathname;
-            router.replace(pathWithoutHash, undefined, { shallow: true });
-          }
-        }
-      } else {
-        setDisputeSubmissionId(null);
-      }
-    };
-
-    if (isOpen) {
-      checkForDisputeHash();
-    }
-  }, [isOpen, creditHistory?.data, router, canDispute]);
+    if (!userId || !isOpen) return;
+    void fetchCredits()
+      .then(apply)
+      .then((history) => {
+        if (history) setDisputeSubmissionId(checkForDisputeHash(history));
+      });
+  }, [userId, isOpen, apply]);
 
   const handleClose = () => {
     const currentPath = window.location.hash;
@@ -89,7 +131,11 @@ export function CreditDrawer({
       currentPath === '#wallet' ||
       currentPath.startsWith('#dispute-submission-')
     ) {
-      router.push(window.location.pathname, undefined, { shallow: true });
+      window.history.replaceState(
+        window.history.state,
+        '',
+        window.location.pathname + window.location.search,
+      );
     }
 
     setDisputeSubmissionId(null);
@@ -98,41 +144,23 @@ export function CreditDrawer({
 
   const padding = 'px-6 sm:px-8';
 
-  const processEntries = (entries: any[] = []) => {
-    return entries.map((entry) => ({
-      ...entry,
-      submission: entry.submission || {
-        listing: {
-          title:
-            entry.type === 'MONTHLY_CREDIT'
-              ? 'Monthly Credit Renewal'
-              : entry.type === 'CREDIT_EXPIRY'
-                ? 'Monthly Credit Expiration'
-                : '',
-          type: '',
-          sponsor: { logo: '' },
-        },
-      },
-    }));
-  };
-
   const currentMonthStart = dayjs().utc().startOf('month');
   const nextMonthStart = currentMonthStart.add(1, 'month');
 
   const currentMonthEntries = processEntries(
-    creditHistory?.data?.filter((entry: any) =>
+    creditHistory?.data?.filter((entry) =>
       dayjs(entry.effectiveMonth).utc().isSame(currentMonthStart, 'month'),
     ),
   );
 
   const upcomingMonthEntries = processEntries(
-    creditHistory?.data?.filter((entry: any) =>
+    creditHistory?.data?.filter((entry) =>
       dayjs(entry.effectiveMonth).utc().isSame(nextMonthStart, 'month'),
     ),
   );
 
   const pastMonthEntries = processEntries(
-    creditHistory?.data?.filter((entry: any) =>
+    creditHistory?.data?.filter((entry) =>
       dayjs(entry.effectiveMonth).utc().isBefore(currentMonthStart, 'month'),
     ),
   );
@@ -184,18 +212,7 @@ export function CreditDrawer({
                 </p>
                 <p className="mt-1.5 text-base font-medium text-slate-800 sm:text-lg">
                   <Countdown
-                    date={
-                      new Date(
-                        Date.UTC(
-                          new Date().getUTCFullYear(),
-                          new Date().getUTCMonth() + 1,
-                          0,
-                          23,
-                          59,
-                          59,
-                        ),
-                      )
-                    }
+                    date={renewsAt}
                     renderer={CountDownRenderer}
                     zeroPadDays={1}
                   />
@@ -240,6 +257,7 @@ export function CreditDrawer({
                     }
                     entries={upcomingMonthEntries}
                     disputeSubmissionId={disputeSubmissionId}
+                    onDisputed={reload}
                   />
                 )}
                 {currentMonthEntries.length > 0 && (
@@ -247,6 +265,7 @@ export function CreditDrawer({
                     title={<h2 className="text-sm font-medium">This Month</h2>}
                     entries={currentMonthEntries}
                     disputeSubmissionId={disputeSubmissionId}
+                    onDisputed={reload}
                   />
                 )}
                 {pastMonthEntries.length > 0 && (
@@ -256,6 +275,7 @@ export function CreditDrawer({
                     }
                     entries={pastMonthEntries}
                     disputeSubmissionId={disputeSubmissionId}
+                    onDisputed={reload}
                   />
                 )}
               </div>

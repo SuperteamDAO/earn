@@ -1,10 +1,9 @@
 import { AlertTriangle, Loader2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { useToken } from '@/constants/tokenList';
 
 import type { TokenAsset } from '../../types/TokenAsset';
-import type { WithdrawFormData } from '../../utils/withdrawFormSchema';
+import type { WithdrawFormData } from '../../utils/withdrawal';
 
 interface ATAConfirmationProps {
   selectedToken?: TokenAsset;
@@ -23,9 +22,8 @@ export const ATAConfirmation = ({
   ataCreationCost,
   isProcessing,
 }: ATAConfirmationProps) => {
-  const tokenDetails = useToken(selectedToken?.tokenSymbol);
   const ataCreationCostInTokens =
-    ataCreationCost / 10 ** (tokenDetails?.decimals || 0);
+    ataCreationCost / 10 ** (selectedToken?.decimals || 0);
 
   const token = selectedToken?.tokenSymbol;
   const ataLink =

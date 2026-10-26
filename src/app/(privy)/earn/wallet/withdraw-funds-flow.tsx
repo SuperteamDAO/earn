@@ -1,4 +1,5 @@
-import { zodResolver } from '@hookform/resolvers/zod';
+'use client';
+
 import {
   useSignAndSendTransaction,
   useWallets,
@@ -8,33 +9,81 @@ import {
   TOKEN_PROGRAM_ADDRESS,
 } from '@solana-program/token';
 import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022';
-import { address, type Address, type Signature } from '@solana/kit';
-import { useQueryClient } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
+import {
+  address,
+  type Address,
+  type Base64EncodedWireTransaction,
+  createSolanaRpc,
+  getBase64Encoder,
+  signature as toSignature,
+} from '@solana/kit';
 import bs58 from 'bs58';
-import { log } from 'next-axiom';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { type Resolver, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { getTokenBySymbol } from '@/constants/tokenList';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { getJson, postJson, RequestError } from '@/lib/fetch-json';
+import { publicEnv } from '@/lib/public-env';
+import { useViewer } from '@/lib/viewer';
 import { classifySolanaError } from '@/utils/solanaTransactionHelpers';
 
-import type { TokenAsset } from '../../types/TokenAsset';
-import type { TxData } from '../../types/TxData';
-import type { DrawerView } from '../../types/WalletTypes';
-import { fetchTokenUSDValue } from '../../utils/fetchTokenUSDValue';
-import { getRpc } from '../../utils/getConnection';
+import { ATAConfirmation } from '@/features/wallet/components/withdraw/ATAConfirmation';
+import { TransactionDetails } from '@/features/wallet/components/withdraw/TransactionDetails';
+import { WithdrawForm } from '@/features/wallet/components/withdraw/WithdrawForm';
+import type { TokenAsset } from '@/features/wallet/types/TokenAsset';
+import type { TxData } from '@/features/wallet/types/TxData';
+import type { DrawerView } from '@/features/wallet/types/WalletTypes';
 import {
   type WithdrawFormData,
-  withdrawFormSchema,
-} from '../../utils/withdrawFormSchema';
-import { ATAConfirmation } from './ATAConfirmation';
-import { TransactionDetails } from './TransactionDetails';
-import { WithdrawForm } from './WithdrawForm';
+  withdrawalErrors,
+} from '@/features/wallet/utils/withdrawal';
+
+// Earn's RPC, which the browser simulates against and polls for
+// confirmation (the page's CSP allows it).
+let rpcInstance: ReturnType<typeof createSolanaRpc> | null = null;
+function getRpc() {
+  rpcInstance ??= createSolanaRpc(`https://${publicEnv.rpcUrl}`);
+  return rpcInstance;
+}
+
+async function fetchTokenUSDValue(mintAddress: string): Promise<number> {
+  const { price } = await getJson<{ price: number }>(
+    `/api/wallet/price/?mintAddress=${encodeURIComponent(mintAddress)}`,
+  );
+  return price;
+}
+
+async function detectTokenProgram(mintAddress: string) {
+  if (mintAddress === 'So11111111111111111111111111111111111111112') {
+    return TOKEN_PROGRAM_ADDRESS;
+  }
+  const rpc = getRpc();
+  try {
+    const mintInfo = await rpc
+      .getAccountInfo(address(mintAddress), { encoding: 'base64' })
+      .send();
+    if (mintInfo.value?.owner === TOKEN_2022_PROGRAM_ADDRESS) {
+      return TOKEN_2022_PROGRAM_ADDRESS;
+    }
+    return TOKEN_PROGRAM_ADDRESS;
+  } catch {
+    return TOKEN_PROGRAM_ADDRESS;
+  }
+}
+
+// The same checks the server makes, as react-hook-form's resolver.
+const resolver: Resolver<WithdrawFormData> = (values) => {
+  const errors = withdrawalErrors(values);
+  const entries = Object.entries(errors);
+  if (entries.length === 0) return { values, errors: {} };
+  return {
+    values: {},
+    errors: Object.fromEntries(
+      entries.map(([field, message]) => [field, { type: 'validate', message }]),
+    ),
+  };
+};
 
 interface WithdrawFlowProps {
   tokens: TokenAsset[];
@@ -42,6 +91,8 @@ interface WithdrawFlowProps {
   setView: (view: DrawerView) => void;
   txData: TxData;
   setTxData: (txData: TxData) => void;
+  // Reloads balances and activity after a withdrawal.
+  onWithdrawn: () => Promise<void>;
 }
 
 interface WithdrawalApiErrorResponse {
@@ -67,8 +118,9 @@ export function WithdrawFundsFlow({
   setView,
   txData,
   setTxData,
+  onWithdrawn,
 }: WithdrawFlowProps) {
-  const { user } = useUser();
+  const user = useViewer();
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [ataCreationCost, setAtaCreationCost] = useState<number>(0);
@@ -76,10 +128,10 @@ export function WithdrawFundsFlow({
     useState<WithdrawFormData | null>(null);
 
   const { wallets } = useWallets();
-  const { signAndSendTransaction } = useSignAndSendTransaction();
+  const sender = useSignAndSendTransaction();
 
   const form = useForm<WithdrawFormData>({
-    resolver: zodResolver(withdrawFormSchema),
+    resolver,
     defaultValues: {
       tokenAddress: tokens[0]?.tokenAddress ?? '',
       amount: '',
@@ -87,29 +139,13 @@ export function WithdrawFundsFlow({
     },
   });
 
-  const queryClient = useQueryClient();
-
+  const tokenAddress = useWatch({
+    control: form.control,
+    name: 'tokenAddress',
+  });
   const selectedToken = tokens.find(
-    (token) => token.tokenAddress === form.watch('tokenAddress'),
+    (token) => token.tokenAddress === tokenAddress,
   );
-
-  const detectTokenProgram = async (mintAddress: string) => {
-    if (mintAddress === 'So11111111111111111111111111111111111111112') {
-      return TOKEN_PROGRAM_ADDRESS;
-    }
-    const rpc = getRpc();
-    try {
-      const mintInfo = await rpc
-        .getAccountInfo(address(mintAddress), { encoding: 'base64' })
-        .send();
-      if (mintInfo.value?.owner === TOKEN_2022_PROGRAM_ADDRESS) {
-        return TOKEN_2022_PROGRAM_ADDRESS;
-      }
-      return TOKEN_PROGRAM_ADDRESS;
-    } catch {
-      return TOKEN_PROGRAM_ADDRESS;
-    }
-  };
 
   async function checkATARequirement(
     values: WithdrawFormData,
@@ -126,7 +162,7 @@ export function WithdrawFundsFlow({
       toast.error(
         'The destination address is invalid. Please enter a valid Solana wallet address.',
       );
-      log.error(
+      console.error(
         `Withdrawal recipient validation failed: ${message}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
       );
       posthog.capture('withdraw_failed');
@@ -164,8 +200,7 @@ export function WithdrawFundsFlow({
         const ataCreationCostInUSD = solUSDValue * 0.0021;
         const tokenAmountToCharge = ataCreationCostInUSD / tokenUSDValue;
 
-        const tokenDetails = await getTokenBySymbol(selectedToken?.tokenSymbol);
-        const power = tokenDetails?.decimals;
+        const power = selectedToken?.decimals;
         if (
           !Number.isFinite(tokenUSDValue) ||
           tokenUSDValue <= 0 ||
@@ -189,7 +224,7 @@ export function WithdrawFundsFlow({
         e instanceof Error ? e.message : 'Unknown withdrawal precheck error';
 
       toast.error(SUPPORT_ERROR_MESSAGE);
-      log.error(
+      console.error(
         `Withdrawal precheck failed: ${message}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
       );
       posthog.capture('withdraw_failed');
@@ -210,7 +245,7 @@ export function WithdrawFundsFlow({
       toast.error(
         'Wallet mismatch. Please contact support@superteam.fun to resolve this issue.',
       );
-      log.error(
+      console.error(
         `Withdrawal wallet mismatch: userId: ${user?.id}, userWalletAddress: ${userWalletAddress ?? 'missing'}, availableWallets: ${wallets
           .map((wallet) => wallet.address)
           .join(',')}`,
@@ -224,22 +259,30 @@ export function WithdrawFundsFlow({
     let signature = '';
 
     try {
-      const response = await api.post('/api/wallet/create-signed-transaction', {
+      const { serializedTransaction } = await postJson<{
+        serializedTransaction: string;
+      }>('/api/wallet/create-signed-transaction/', {
         recipientAddress: values.recipientAddress,
         amount: values.amount,
         tokenAddress: values.tokenAddress,
       });
 
-      const serializedTransaction = response.data.serializedTransaction;
-      const transactionBytes = Buffer.from(serializedTransaction, 'base64');
+      const transactionBytes = new Uint8Array(
+        getBase64Encoder().encode(serializedTransaction),
+      );
 
       try {
         const simulation = await rpc
-          .simulateTransaction(serializedTransaction, {
-            sigVerify: false,
-            replaceRecentBlockhash: true,
-            commitment: 'confirmed',
-          })
+          .simulateTransaction(
+            // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+            serializedTransaction as Base64EncodedWireTransaction,
+            {
+              encoding: 'base64',
+              sigVerify: false,
+              replaceRecentBlockhash: true,
+              commitment: 'confirmed',
+            },
+          )
           .send();
         if (simulation.value.err) {
           const simulationLogs = simulation.value.logs?.join('\n');
@@ -256,7 +299,7 @@ export function WithdrawFundsFlow({
         }
       }
 
-      const result = await signAndSendTransaction({
+      const result = await sender.signAndSendTransaction({
         wallet: earnWallet,
         transaction: transactionBytes,
         chain: 'solana:mainnet',
@@ -267,7 +310,7 @@ export function WithdrawFundsFlow({
       let transactionConfirmed = false;
       for (let i = 0; i < 30; i++) {
         const status = await rpc
-          .getSignatureStatuses([signature as Signature])
+          .getSignatureStatuses([toSignature(signature)])
           .send();
         const transactionStatus = status.value[0];
 
@@ -292,25 +335,27 @@ export function WithdrawFundsFlow({
         ...values,
         timestamp: Date.now(),
         type: 'Withdrawn',
+        tokenSymbol: selectedToken?.tokenSymbol ?? '',
+        tokenImg: selectedToken?.tokenImg ?? '',
       });
 
-      await queryClient.invalidateQueries({ queryKey: ['wallet', 'assets'] });
-      await queryClient.invalidateQueries({ queryKey: ['wallet', 'activity'] });
+      await onWithdrawn();
 
       posthog.capture('withdraw_complete');
       setView('success');
 
       return signature;
     } catch (e) {
-      log.error(
+      console.error(
         `Withdrawal failed: ${String(e)}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}, signature: ${signature}`,
       );
 
-      const errorMessage = (e as Error)?.message?.toLowerCase() || '';
-      const isAxiosErr = isAxiosError(e);
-      const apiError = isAxiosErr
-        ? (e.response?.data as WithdrawalApiErrorResponse | undefined)
-        : undefined;
+      const errorMessage = e instanceof Error ? e.message.toLowerCase() : '';
+      const apiError =
+        e instanceof RequestError
+          ? // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+            (e.body as WithdrawalApiErrorResponse | null)
+          : undefined;
       const errorType = classifySolanaError(e);
       const tokenSymbol = selectedToken?.tokenSymbol ?? 'token';
 
@@ -384,7 +429,7 @@ export function WithdrawFundsFlow({
         <ATAConfirmation
           selectedToken={selectedToken}
           formData={pendingFormData}
-          onConfirm={() => handleWithdraw(pendingFormData)}
+          onConfirm={() => void handleWithdraw(pendingFormData).catch(() => {})}
           onCancel={() => {
             setPendingFormData(null);
             setView('withdraw');

@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useTokenByMintAddress } from '@/constants/tokenList';
 
 import type { TokenAsset } from '../../types/TokenAsset';
 
@@ -22,6 +21,16 @@ interface TokenAmountInputProps {
   className?: string;
 }
 
+const clampToDecimals = (value: string, maxDecimals: number): string => {
+  if (!value) return value;
+  const dotIndex = value.indexOf('.');
+  if (dotIndex === -1) return value;
+  const whole = value.slice(0, dotIndex);
+  const frac = value.slice(dotIndex + 1);
+  if (frac.length <= maxDecimals) return value;
+  return `${whole}.${frac.slice(0, maxDecimals)}`;
+};
+
 export const TokenAmountInput = ({
   tokens,
   selectedToken,
@@ -30,26 +39,14 @@ export const TokenAmountInput = ({
   onAmountChange,
   className,
 }: TokenAmountInputProps) => {
-  const tokenMetadata = useTokenByMintAddress(selectedToken?.tokenAddress);
-
   const handleMaxClick = () => {
     if (selectedToken) {
       onAmountChange(selectedToken.amount.toString());
     }
   };
 
-  const clampToDecimals = (value: string, maxDecimals: number): string => {
-    if (!value) return value;
-    const dotIndex = value.indexOf('.');
-    if (dotIndex === -1) return value;
-    const whole = value.slice(0, dotIndex);
-    const frac = value.slice(dotIndex + 1);
-    if (frac.length <= maxDecimals) return value;
-    return `${whole}.${frac.slice(0, maxDecimals)}`;
-  };
-
   const getMaxDecimals = (): number => {
-    return tokenMetadata?.decimals ?? 9;
+    return selectedToken?.decimals ?? 9;
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

@@ -20,7 +20,7 @@ export function ActivityItem({
   setTxData,
 }: ActivityItemProps) {
   const isCredit = activity.type === 'Credited';
-  const amount = formatNumberWithSuffix(Number(activity.amount), 3, true);
+  const amount = formatNumberWithSuffix(activity.amount, 3, true);
   const amountUI = isCredit ? `+${amount}` : `-${amount}`;
 
   return (
@@ -36,6 +36,8 @@ export function ActivityItem({
           recipientAddress: activity.counterpartyAddress,
           timestamp: activity.timestamp,
           type: activity.type,
+          tokenSymbol: activity.tokenSymbol,
+          tokenImg: activity.tokenImg,
         });
       }}
     >

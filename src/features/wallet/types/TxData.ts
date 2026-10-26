@@ -1,8 +1,10 @@
-import type { WithdrawFormData } from '../utils/withdrawFormSchema';
+import type { WithdrawFormData } from '../utils/withdrawal';
 
-export interface TxData extends Omit<WithdrawFormData, 'recipientAddress'> {
+// A withdrawal just made, or an activity row opened.
+export interface TxData extends WithdrawFormData {
   signature: string;
   timestamp: number;
   type: 'Credited' | 'Withdrawn';
-  recipientAddress: string;
+  tokenSymbol: string;
+  tokenImg: string;
 }

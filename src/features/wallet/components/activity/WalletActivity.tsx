@@ -1,33 +1,28 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import GrTransaction from '@/components/icons/GrTransaction';
 import { Button } from '@/components/ui/button';
 
-import { tokenActivityQuery } from '../../queries/fetch-activity';
+import type { TokenActivity } from '../../types/TokenActivity';
 import type { TxData } from '../../types/TxData';
 import type { DrawerView } from '../../types/WalletTypes';
 import { TokenSkeleton } from '../tokens/TokenSkeleton';
 import { ActivityItem } from './ActivityItem';
 
 export const WalletActivity = ({
+  activities,
+  isLoading,
+  error,
   setView,
   setTxData,
 }: {
+  activities: TokenActivity[] | undefined;
+  isLoading: boolean;
+  error: boolean;
   setView: (view: DrawerView) => void;
   setTxData: (txData: TxData) => void;
 }) => {
   const [visibleCount, setVisibleCount] = useState(3);
-  const { authenticated } = usePrivy();
-  const {
-    data: activities,
-    isLoading,
-    error,
-  } = useQuery({
-    ...tokenActivityQuery,
-    enabled: authenticated,
-  });
 
   if (isLoading) {
     return (

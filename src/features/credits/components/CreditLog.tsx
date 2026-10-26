@@ -1,9 +1,10 @@
+'use client';
+
 import { format } from 'date-fns';
 import { Check, Minus, Plus, Undo } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
-import { type ReactNode, useEffect, useState } from 'react';
+import { posthog } from 'posthog-js';
+import { type ReactNode, useState } from 'react';
 
 import BsThreeDotsVertical from '@/components/icons/BsThreeDotsVertical';
 import {
@@ -65,62 +66,68 @@ interface CreditHistoryCardProps {
   title: ReactNode;
   entries: CreditEntry[];
   disputeSubmissionId?: string | null;
+  // Reloads the history once a dispute is in.
+  onDisputed: () => Promise<void>;
+}
+
+function isUpcomingEntry(entry: CreditEntry) {
+  if (!entry.effectiveMonth) return false;
+
+  const now = new Date();
+  const currentMonth = now.getUTCMonth();
+  const currentYear = now.getUTCFullYear();
+
+  const effectiveDate = new Date(entry.effectiveMonth);
+  const effectiveMonth = effectiveDate.getUTCMonth();
+  const effectiveYear = effectiveDate.getUTCFullYear();
+
+  if (effectiveYear > currentYear) return true;
+  if (effectiveYear === currentYear && effectiveMonth > currentMonth)
+    return true;
+
+  return false;
 }
 
 export function CreditHistoryCard({
   title,
   entries,
   disputeSubmissionId,
+  onDisputed,
 }: CreditHistoryCardProps) {
   const [isDisputeModalOpen, setIsDisputeModalOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<CreditEntry | null>(null);
-  const router = useRouter();
+  // A dispute link (#dispute-submission-…) opens its entry's dispute, until
+  // they close it.
+  const [dismissedId, setDismissedId] = useState<string | null>(null);
+  const linkedEntry =
+    disputeSubmissionId && disputeSubmissionId !== dismissedId
+      ? entries.find((entry) => entry.submission?.id === disputeSubmissionId)
+      : undefined;
+  const linked =
+    linkedEntry && canDispute(linkedEntry, entries) ? linkedEntry : null;
+  const disputeEntry = selectedEntry ?? linked;
+  const isDisputeOpen = isDisputeModalOpen || linked !== null;
 
-  useEffect(() => {
-    if (disputeSubmissionId && entries.length > 0) {
-      const entryToDispute = entries.find(
-        (entry) => entry.submission?.id === disputeSubmissionId,
-      );
-      if (entryToDispute && canDispute(entryToDispute, entries)) {
-        setSelectedEntry(entryToDispute);
-        setIsDisputeModalOpen(true);
-      }
-    }
-  }, [disputeSubmissionId, entries]);
-
-  const isUpcoming = entries.some((entry) => {
-    if (!entry.effectiveMonth) return false;
-
-    const now = new Date();
-    const currentMonth = now.getUTCMonth();
-    const currentYear = now.getUTCFullYear();
-
-    const effectiveDate = new Date(entry.effectiveMonth);
-    const effectiveMonth = effectiveDate.getUTCMonth();
-    const effectiveYear = effectiveDate.getUTCFullYear();
-
-    if (effectiveYear > currentYear) return true;
-    if (effectiveYear === currentYear && effectiveMonth > currentMonth)
-      return true;
-
-    return false;
-  });
+  const isUpcoming = entries.some(isUpcomingEntry);
 
   const handleOpenDispute = (entry: CreditEntry) => {
     setSelectedEntry(entry);
     setIsDisputeModalOpen(true);
   };
 
-  const handleCloseDispute = async () => {
+  const handleCloseDispute = () => {
     const currentHash = window.location.hash;
     if (currentHash.startsWith('#dispute-submission-')) {
-      await router.replace(router.asPath.replace(currentHash, ''), undefined, {
-        shallow: true,
-      });
+      window.history.replaceState(
+        window.history.state,
+        '',
+        window.location.pathname + window.location.search,
+      );
     }
 
     setIsDisputeModalOpen(false);
     setSelectedEntry(null);
+    setDismissedId(disputeSubmissionId ?? null);
   };
 
   return (
@@ -139,7 +146,7 @@ export function CreditHistoryCard({
             entry.type === 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER' ||
             entry.type === 'REFERRAL_INVITEE_WIN_BONUS_INVITER';
 
-          const EntryContent = () => (
+          const entryContent = (
             <>
               <div className="relative">
                 <div
@@ -242,7 +249,7 @@ export function CreditHistoryCard({
             <div key={entry.id}>
               {isNonLinkableEntry ? (
                 <div className="flex items-center gap-2 px-4 py-4 hover:bg-slate-100 sm:gap-4">
-                  <EntryContent />
+                  {entryContent}
                 </div>
               ) : (
                 <Link
@@ -257,7 +264,7 @@ export function CreditHistoryCard({
                   }}
                 >
                   <div className="flex cursor-pointer items-center gap-2 px-4 py-4 hover:bg-slate-100 sm:gap-4">
-                    <EntryContent />
+                    {entryContent}
                   </div>
                 </Link>
               )}
@@ -267,9 +274,10 @@ export function CreditHistoryCard({
       </div>
 
       <DisputeModal
-        isOpen={isDisputeModalOpen}
+        isOpen={isDisputeOpen}
         onClose={handleCloseDispute}
-        entry={selectedEntry}
+        entry={disputeEntry}
+        onDisputed={onDisputed}
       />
     </div>
   );
@@ -396,6 +404,8 @@ function getEntryTitle(entry: CreditEntry): string {
       return 'Referred Successfully';
     case 'REFERRAL_INVITEE_WIN_BONUS_INVITER':
       return 'Bonus Referral Credit';
+    default:
+      return '';
   }
 }
 

@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 
 import type { TokenAsset } from '../../types/TokenAsset';
-import type { WithdrawFormData } from '../../utils/withdrawFormSchema';
+import type { WithdrawFormData } from '../../utils/withdrawal';
 import { TokenAmountInput } from './TokenAmountInput';
 
 interface WithdrawFormProps {
@@ -36,7 +36,14 @@ export const WithdrawForm = ({
     selectedToken && Number(form.watch('amount')) > selectedToken.amount;
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={(event) =>
+          void form.handleSubmit(async (values) => {
+            await onSubmit(values).catch(() => '');
+          })(event)
+        }
+        className="space-y-6"
+      >
         <div className="space-y-1.5">
           <FormLabel className="flex justify-between text-xs text-slate-500 sm:text-xs">
             <p>ASSET</p>
@@ -48,12 +55,12 @@ export const WithdrawForm = ({
               selectedToken={selectedToken}
               onTokenChange={(value) => {
                 form.setValue('tokenAddress', value);
-                form.trigger('tokenAddress');
+                void form.trigger('tokenAddress');
               }}
               amount={form.watch('amount')}
               onAmountChange={(value) => {
                 form.setValue('amount', value);
-                form.trigger('amount');
+                void form.trigger('amount');
               }}
             />
             {selectedToken && !hasInsufficientBalance && (
@@ -97,11 +104,11 @@ export const WithdrawForm = ({
                   {...field}
                   placeholder="Enter recipient address"
                   onBlur={() => {
-                    form.trigger('recipientAddress');
+                    void form.trigger('recipientAddress');
                   }}
                   onChange={(e) => {
                     field.onChange(e);
-                    form.trigger('recipientAddress');
+                    void form.trigger('recipientAddress');
                   }}
                 />
               </FormControl>

@@ -1,16 +1,12 @@
 import dayjs from 'dayjs';
 import { ArrowUpRight } from 'lucide-react';
 
-import { useTokenByMintAddress } from '@/constants/tokenList';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import type { TxData } from '../../types/TxData';
 
 export const TransactionDetails = ({ txData }: { txData: TxData }) => {
-  const { signature, tokenAddress, amount, recipientAddress } = txData;
-  const token = useTokenByMintAddress(tokenAddress);
-  const tokenImg = token?.icon;
-  const tokenSymbol = token?.tokenSymbol;
+  const { signature, amount, recipientAddress, tokenImg, tokenSymbol } = txData;
 
   return (
     <div className="flex flex-col items-center space-y-8 py-4">
