@@ -1,3 +1,5 @@
+'use client';
+
 import { ChevronDown } from 'lucide-react';
 import {
   type MouseEvent,
@@ -12,7 +14,7 @@ import { useExternalLinkDialog } from '@/components/shared/ExternalLinkDialogPro
 import { SuperteamBadge } from '@/components/shared/SuperteamBadge';
 import { Button } from '@/components/ui/button';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { isUserEligibleForST } from '@/features/grants/utils/stGrant';
@@ -22,12 +24,21 @@ import styles from '@/styles/listing-description.module.css';
 
 interface Props {
   description?: string;
+  // The description already sanitized on the server
+  // (`getDescriptionHtml`); preferred over `description`.
+  html?: string;
   sponsorId: string;
   isST?: boolean;
 }
 
-export function DescriptionUI({ description, sponsorId, isST = false }: Props) {
-  const { user, isLoading: isUserLoading } = useUser();
+export function DescriptionUI({
+  description,
+  html,
+  sponsorId,
+  isST = false,
+}: Props) {
+  const user = useViewer();
+  const isUserLoading = false;
   const { handleExternalLinkClick } = useExternalLinkDialog();
 
   const handleDescriptionClick = useCallback(
@@ -63,8 +74,8 @@ export function DescriptionUI({ description, sponsorId, isST = false }: Props) {
   }, [decideCollapser]);
 
   const descriptionHtml = useMemo(
-    () => getDescriptionHtml(description, styles.descriptionH1 ?? ''),
-    [description],
+    () => html ?? getDescriptionHtml(description, styles.descriptionH1 ?? ''),
+    [description, html],
   );
 
   const isUserSponsor = user?.currentSponsorId === sponsorId;
@@ -164,6 +175,7 @@ export function DescriptionUI({ description, sponsorId, isST = false }: Props) {
           <div
             className={`${styles.content} mt-4 w-full overflow-visible pb-7`}
             onClick={handleDescriptionClick}
+            // oxlint-disable-next-line react/no-danger -- sanitized with DOMPurify (getDescriptionHtml)
             dangerouslySetInnerHTML={{ __html: descriptionHtml }}
           />
           {!showMore && (

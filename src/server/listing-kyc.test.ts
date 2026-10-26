@@ -146,6 +146,7 @@ const setup = (options: Options = {}) => {
       paymentsRegionsTable: 'Regions',
       gdpBase: undefined,
       gdpSponsorsTable: undefined,
+      perksTable: undefined,
     },
   });
   const layer = ListingKyc.layer.pipe(

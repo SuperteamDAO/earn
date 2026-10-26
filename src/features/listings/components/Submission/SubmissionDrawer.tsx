@@ -1,9 +1,9 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { Loader2, X } from 'lucide-react';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { posthog } from 'posthog-js';
 import { type JSX, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -28,14 +28,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useServerTimeSync } from '@/hooks/use-server-time';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson, RequestError } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
+import type { ViewerEntry } from '@/server/listing-details';
 import { cn } from '@/utils/cn';
 
-import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { XVerificationModal } from '@/features/social/components/XVerificationModal';
+import { useXVerification } from '@/features/social/hooks/use-x-verification';
 import {
   extractXHandle,
   INVALID_X_STATUS_LINK_MESSAGE,
@@ -44,8 +44,7 @@ import {
   isXUrl,
 } from '@/features/social/utils/x-verification';
 
-import { submissionCountQuery } from '../../queries/submission-count';
-import { userSubmissionQuery } from '../../queries/user-submission-status';
+import { useChapters } from '../../hooks/useChapters';
 import type { Listing, SubmissionMutationResponse } from '../../types';
 import { getCombinedRegion } from '../../utils/region';
 import { submissionSchema } from '../../utils/submissionFormSchema';
@@ -60,6 +59,8 @@ interface Props {
   isTemplate?: boolean;
   isSubmitDisabled: boolean;
   showEasterEgg: () => void;
+  // The viewer's own entry, to edit.
+  submission?: ViewerEntry | null;
 }
 
 type FormData = z.infer<ReturnType<typeof submissionSchema>>;
@@ -72,11 +73,10 @@ export const SubmissionDrawer = ({
   isTemplate = false,
   isSubmitDisabled,
   showEasterEgg,
+  submission = null,
 }: Props) => {
   const { id, type, eligibility, Hackathon, isFndnPaying, region } = listing;
-  const { data: chapters = [] } = useQuery(chaptersQuery);
-
-  const queryClient = useQueryClient();
+  const chapters = useChapters();
   const isBounty = type === 'bounty';
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
@@ -95,10 +95,18 @@ export const SubmissionDrawer = ({
     null,
   );
 
-  const { user, refetchUser } = useUser();
+  const user = useViewer();
+  // X accounts verified on Earn, plus any verified in this form.
+  const [verifiedHandles, setVerifiedHandles] = useState<string[]>(() =>
+    Array.isArray(user?.linkedTwitter)
+      ? user.linkedTwitter.filter(
+          (handle): handle is string => typeof handle === 'string',
+        )
+      : [],
+  );
 
   const form = useForm<FormData>({
-    resolver: zodResolver(submissionSchema(listing, user)),
+    resolver: zodResolver(submissionSchema(listing, verifiedHandles)),
     defaultValues: {
       eligibilityAnswers:
         Array.isArray(listing.eligibility) && listing.eligibility.length > 0
@@ -111,8 +119,10 @@ export const SubmissionDrawer = ({
   });
 
   const router = useRouter();
-  const { query } = router;
+  const searchParams = useSearchParams();
 
+  // react-hook-form's watch, as Earn's form uses it.
+  // oxlint-disable-next-line react/incompatible-library
   const tweetValue = form.watch('tweet');
   const linkValue = form.watch('link');
   const hasInvalidTweetStatusFormat =
@@ -134,9 +144,8 @@ export const SubmissionDrawer = ({
       return false;
     }
 
-    const verifiedHandles = user?.linkedTwitter || [];
     return !isHandleVerified(handle, verifiedHandles);
-  }, [hasInvalidTweetStatusFormat, tweetValue, user?.linkedTwitter]);
+  }, [hasInvalidTweetStatusFormat, tweetValue, verifiedHandles]);
 
   const needsLinkVerification = useMemo(() => {
     if (hasInvalidLinkStatusFormat) {
@@ -152,9 +161,8 @@ export const SubmissionDrawer = ({
       return false;
     }
 
-    const verifiedHandles = user?.linkedTwitter || [];
     return !isHandleVerified(handle, verifiedHandles);
-  }, [hasInvalidLinkStatusFormat, linkValue, user?.linkedTwitter]);
+  }, [hasInvalidLinkStatusFormat, linkValue, verifiedHandles]);
 
   const isTweetVerified = useMemo(() => {
     if (!tweetValue || !isXUrl(tweetValue)) {
@@ -166,9 +174,8 @@ export const SubmissionDrawer = ({
       return false;
     }
 
-    const verifiedHandles = user?.linkedTwitter || [];
     return isHandleVerified(handle, verifiedHandles);
-  }, [tweetValue, user?.linkedTwitter]);
+  }, [tweetValue, verifiedHandles]);
 
   const isLinkVerified = useMemo(() => {
     if (!linkValue || !isXUrl(linkValue)) {
@@ -180,9 +187,8 @@ export const SubmissionDrawer = ({
       return false;
     }
 
-    const verifiedHandles = user?.linkedTwitter || [];
     return isHandleVerified(handle, verifiedHandles);
-  }, [linkValue, user?.linkedTwitter]);
+  }, [linkValue, verifiedHandles]);
 
   const regionAckCopy = useMemo(() => {
     if (!region || region === 'Global') {
@@ -231,7 +237,7 @@ export const SubmissionDrawer = ({
   ]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) return undefined;
 
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -258,88 +264,78 @@ export const SubmissionDrawer = ({
     onClose();
   };
 
+  const savedForm = submission?.form;
   useEffect(() => {
-    const fetchData = async () => {
-      if (editMode && id) {
-        try {
-          const response = await api.get('/api/submission/get/', {
-            params: { id },
-          });
+    if (editMode && id && savedForm) {
+      const { link, tweet, otherInfo, eligibilityAnswers } = savedForm;
+      const reconciledAnswers =
+        Array.isArray(listing.eligibility) && listing.eligibility.length > 0
+          ? listing.eligibility.map((currentQuestion, index) => {
+              const savedAnswersArray = Array.isArray(eligibilityAnswers)
+                ? eligibilityAnswers.filter(
+                    (
+                      saved: unknown,
+                    ): saved is { question: string; answer: string } =>
+                      typeof saved === 'object' &&
+                      saved !== null &&
+                      'question' in saved &&
+                      'answer' in saved,
+                  )
+                : [];
 
-          const { link, tweet, otherInfo, eligibilityAnswers } = response.data;
+              const matchByText = savedAnswersArray.find(
+                (saved) => saved.question === currentQuestion.question,
+              );
 
-          const reconciledAnswers =
-            Array.isArray(listing.eligibility) && listing.eligibility.length > 0
-              ? listing.eligibility.map((currentQuestion, index) => {
-                  const savedAnswersArray = Array.isArray(eligibilityAnswers)
-                    ? (eligibilityAnswers as Array<{
-                        question: string;
-                        answer: string;
-                      }>)
-                    : [];
+              if (matchByText) {
+                return {
+                  question: currentQuestion.question,
+                  answer: matchByText.answer || '',
+                };
+              }
 
-                  const matchByText = savedAnswersArray.find(
-                    (saved) => saved.question === currentQuestion.question,
-                  );
+              const matchByIndex = savedAnswersArray[index];
+              if (matchByIndex?.answer) {
+                return {
+                  question: currentQuestion.question,
+                  answer: matchByIndex.answer,
+                };
+              }
 
-                  if (matchByText) {
-                    return {
-                      question: currentQuestion.question,
-                      answer: matchByText.answer || '',
-                    };
-                  }
+              return {
+                question: currentQuestion.question,
+                answer: '',
+              };
+            })
+          : [];
 
-                  const matchByIndex = savedAnswersArray[index];
-                  if (matchByIndex?.answer) {
-                    return {
-                      question: currentQuestion.question,
-                      answer: matchByIndex.answer,
-                    };
-                  }
-
-                  return {
-                    question: currentQuestion.question,
-                    answer: '',
-                  };
-                })
-              : [];
-
-          form.reset({
-            link,
-            tweet,
-            otherInfo,
-            eligibilityAnswers: reconciledAnswers,
-          });
-        } catch (error) {
-          console.error('Failed to fetch submission data', error);
-          toast.error('Failed to load submission data');
-        }
-      }
-    };
-
-    fetchData();
-  }, [id, editMode, form.reset, listing.eligibility]);
+      form.reset({
+        link,
+        tweet,
+        otherInfo,
+        eligibilityAnswers: reconciledAnswers,
+      });
+    }
+  }, [id, editMode, form, listing.eligibility, savedForm]);
 
   const isDisabled = useMemo(
     () =>
-      Boolean(
-        isSubmitDisabled ||
-        isTemplate ||
-        !!query['preview'] ||
-        (isHackathon && !editMode && !termsAccepted) ||
-        (isFndnPaying && !editMode && !kycAcknowledged) ||
-        isLoading ||
-        form.formState.isSubmitting ||
-        hasInvalidTweetStatusFormat ||
-        hasInvalidLinkStatusFormat ||
-        needsXVerification ||
-        needsLinkVerification,
-      ),
+      isSubmitDisabled ||
+      isTemplate ||
+      !!searchParams?.get('preview') ||
+      (isHackathon && !editMode && !termsAccepted) ||
+      (isFndnPaying && !editMode && !kycAcknowledged) ||
+      isLoading ||
+      form.formState.isSubmitting ||
+      hasInvalidTweetStatusFormat ||
+      hasInvalidLinkStatusFormat ||
+      needsXVerification ||
+      needsLinkVerification,
 
     [
       isSubmitDisabled,
       isTemplate,
-      query,
+      searchParams,
       isHackathon,
       editMode,
       termsAccepted,
@@ -354,7 +350,7 @@ export const SubmissionDrawer = ({
     ],
   );
 
-  const { signIn: popupSignIn } = usePopupAuth();
+  const { verify: verifyX } = useXVerification();
 
   const { manualSync } = useServerTimeSync();
 
@@ -370,43 +366,22 @@ export const SubmissionDrawer = ({
       setVerificationHandle(handle);
       onVerificationModalOpen();
 
-      const success = await popupSignIn('twitter');
-
-      if (success) {
-        let attempts = 0;
-        const maxAttempts = 5;
-        const pollForUpdate = async (): Promise<boolean> => {
-          const { data: freshUser } = await refetchUser();
-
-          const currentVerifiedHandles = freshUser?.linkedTwitter || [];
-          const isNowVerified = isHandleVerified(
-            handle,
-            currentVerifiedHandles,
-          );
-
-          if (isNowVerified) {
-            form.trigger(fieldName);
-            setVerificationHandle(null);
-            onVerificationModalClose();
-            return true;
-          }
-
-          attempts++;
-          if (attempts >= maxAttempts) {
-            setVerificationStatus('error');
-            return false;
-          }
-
-          const delay = Math.min(500 * Math.pow(2, attempts - 1), 5000);
-          await new Promise((resolve) => setTimeout(resolve, delay));
-          return pollForUpdate();
-        };
-
-        await pollForUpdate();
+      // Opens X in a popup; the page refreshes with the account linked.
+      const result = await verifyX();
+      const verifiedHandle = result.handle;
+      if (
+        result.verified &&
+        verifiedHandle &&
+        isHandleVerified(handle, [verifiedHandle])
+      ) {
+        setVerifiedHandles((handles) => [...handles, verifiedHandle]);
+        setTimeout(() => void form.trigger(fieldName), 0);
+        setVerificationHandle(null);
+        onVerificationModalClose();
       } else {
         setVerificationStatus('error');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('X verification failed:', error);
       setVerificationStatus('error');
     }
@@ -426,7 +401,7 @@ export const SubmissionDrawer = ({
         ? '/api/submission/update/'
         : '/api/submission/create/';
 
-      await api.post<SubmissionMutationResponse>(submissionEndpoint, {
+      await postJson<SubmissionMutationResponse>(submissionEndpoint, {
         listingId: id,
         link: data.link || '',
         tweet: data.tweet || '',
@@ -435,23 +410,8 @@ export const SubmissionDrawer = ({
       });
 
       form.reset();
-      await queryClient.invalidateQueries({
-        queryKey: userSubmissionQuery(id!, user!.id).queryKey,
-      });
-
-      await refetchUser();
-
-      if (!editMode) {
-        await queryClient.invalidateQueries({
-          queryKey: submissionCountQuery(id!).queryKey,
-        });
-        await queryClient.invalidateQueries({
-          queryKey: ['creditBalance', user!.id],
-        });
-        await queryClient.invalidateQueries({
-          queryKey: ['creditHistory', user!.id],
-        });
-      }
+      // The page loads the entry, counts and credits again.
+      router.refresh();
 
       if (!editMode) showEasterEgg();
 
@@ -465,13 +425,18 @@ export const SubmissionDrawer = ({
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      if (axios.isAxiosError(error)) {
+      if (error instanceof RequestError) {
+        const body: unknown = error.body;
         if (error.status === 401) {
           toast.error(
             'Error occurred during submission. Please re-log in and try again.',
           );
         } else if (
-          String(error?.response?.data.error)
+          String(
+            typeof body === 'object' && body !== null && 'error' in body
+              ? body.error
+              : '',
+          )
             .toLowerCase()
             .includes('submissions closed')
         ) {
@@ -531,7 +496,7 @@ export const SubmissionDrawer = ({
         />
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}
             style={{ width: '100%', height: '100%' }}
           >
             <div className="flex h-full flex-col justify-between gap-6">
@@ -584,7 +549,7 @@ export const SubmissionDrawer = ({
                                         <Button
                                           type="button"
                                           onClick={() =>
-                                            handleVerifyClick('link')
+                                            void handleVerifyClick('link')
                                           }
                                           size="sm"
                                           className={cn(
@@ -643,7 +608,7 @@ export const SubmissionDrawer = ({
                                         <Button
                                           type="button"
                                           onClick={() =>
-                                            handleVerifyClick('tweet')
+                                            void handleVerifyClick('tweet')
                                           }
                                           size="sm"
                                           className={cn(
@@ -735,7 +700,7 @@ export const SubmissionDrawer = ({
                       )}
                       checked={termsAccepted}
                       onCheckedChange={(checked) =>
-                        setTermsAccepted(checked as boolean)
+                        setTermsAccepted(checked === true)
                       }
                     />
                     <label
@@ -760,7 +725,7 @@ export const SubmissionDrawer = ({
                       )}
                       checked={kycAcknowledged}
                       onCheckedChange={(checked) =>
-                        setKycAcknowledged(checked as boolean)
+                        setKycAcknowledged(checked === true)
                       }
                     />
                     <label

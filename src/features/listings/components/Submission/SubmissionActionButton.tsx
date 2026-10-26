@@ -1,24 +1,23 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import dayjs from 'dayjs';
 import { Loader2, Pencil } from 'lucide-react';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+import { useSearchParams } from 'next/navigation';
+import { posthog } from 'posthog-js';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useServerTimeSync } from '@/hooks/use-server-time';
-import { useCreditBalance } from '@/store/credit';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
+import type { ViewerEntry } from '@/server/listing-details';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { CreditIcon } from '@/features/credits/icon/credit';
 
-import { userSubmissionQuery } from '../../queries/user-submission-status';
+import { useChapters } from '../../hooks/useChapters';
 import type { Listing } from '../../types';
 import { isDeadlineOver } from '../../utils/deadline';
 import {
@@ -31,12 +30,14 @@ import {
 } from '../../utils/region';
 import { getListingDraftStatus } from '../../utils/status';
 import { EasterEgg } from './EasterEgg';
-import { KYCModal } from './KYCModal';
 import { SubmissionDrawer } from './SubmissionDrawer';
 
 interface Props {
   listing: Listing;
   isTemplate?: boolean;
+  // The viewer's own entry and credits, loaded with the page.
+  submission?: ViewerEntry | null;
+  creditBalance?: number;
 }
 
 const InfoWrapper = ({
@@ -66,7 +67,7 @@ const InfoWrapper = ({
   isLocationCooldown: boolean;
   locationCooldownLabel: string;
 }) => {
-  const { user } = useUser();
+  const user = useViewer();
   return (
     <Tooltip
       disabled={
@@ -99,6 +100,8 @@ const InfoWrapper = ({
 export const SubmissionActionButton = ({
   listing,
   isTemplate = false,
+  submission = null,
+  creditBalance = 0,
 }: Props) => {
   const {
     id,
@@ -113,19 +116,15 @@ export const SubmissionActionButton = ({
   } = listing;
 
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
-  const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
 
-  const { user } = useUser();
-  const { creditBalance } = useCreditBalance();
-  const { data: chapters = [] } = useQuery(chaptersQuery);
+  const user = useViewer();
+  const chapters = useChapters();
 
-  const { authenticated, ready } = usePrivy();
-
-  const isAuthenticated = authenticated;
+  const isAuthenticated = !!user;
 
   const isUserEligibleByRegion = userRegionEligibilty({
     region,
-    userLocation: user?.location,
+    userLocation: user?.location ?? undefined,
     chapters,
   });
 
@@ -140,16 +139,12 @@ export const SubmissionActionButton = ({
     ? locationCooldownTooltip(locationCooldown.daysRemaining)
     : '';
 
-  const { data: submission, isLoading: isUserSubmissionLoading } = useQuery({
-    ...userSubmissionQuery(id!, user?.id),
-    enabled: ready && isAuthenticated && !!user?.id,
-  });
+  const isUserSubmissionLoading = false;
 
   const isSubmitted = submission?.isSubmitted ?? false;
   const submissionStatus = submission?.status;
 
-  const router = useRouter();
-  const { query } = router;
+  const searchParams = useSearchParams();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -168,7 +163,8 @@ export const SubmissionActionButton = ({
   const handleSubmit = () => {
     void manualSync();
     if (buttonState === 'kyc') {
-      setIsKYCModalOpen(true);
+      // Sumsub runs on a page of its own (its own CSP): a full page load.
+      window.location.assign(`/earn/kyc/listing/${listing.slug}/`);
     } else {
       onOpen();
       if (buttonState === 'submit') {
@@ -191,7 +187,8 @@ export const SubmissionActionButton = ({
   const isHackathon = type === 'hackathon';
 
   const isListingSponsor = user?.currentSponsorId === listing.sponsorId;
-  const isNotPublished = bountyDraftStatus !== 'PUBLISHED' && !query['preview'];
+  const isNotPublished =
+    bountyDraftStatus !== 'PUBLISHED' && !searchParams?.get('preview');
 
   let buttonText;
   let buttonBG;
@@ -272,7 +269,7 @@ export const SubmissionActionButton = ({
       if (isNotPublished && !isListingSponsor) {
         buttonText = 'Paused';
       }
-      isBtnDisabled = Boolean(
+      isBtnDisabled =
         pastDeadline ||
         (user?.id &&
           user?.isTalentFilled &&
@@ -283,8 +280,7 @@ export const SubmissionActionButton = ({
           user?.isTalentFilled &&
           creditBalance === 0 &&
           isBounty) ||
-        (isNotPublished && !isListingSponsor),
-      );
+        (isNotPublished && !isListingSponsor);
       isSubmitDisabled = Boolean(
         pastDeadline ||
         (user?.id &&
@@ -340,6 +336,7 @@ export const SubmissionActionButton = ({
           editMode={isEditMode}
           listing={listing}
           isTemplate={isTemplate}
+          submission={submission}
           showEasterEgg={() => {
             setEasterEggOpen(true);
           }}
@@ -351,14 +348,6 @@ export const SubmissionActionButton = ({
           onClose={() => setEasterEggOpen(false)}
         />
       )}
-      {isKYCModalOpen && submission?.id && (
-        <KYCModal
-          isOpen={isKYCModalOpen}
-          listingId={id!}
-          onClose={() => setIsKYCModalOpen(false)}
-          submissionId={submission.id}
-        />
-      )}
 
       <div className="ph-no-capture w-full">
         <div className="flex items-center gap-2">
@@ -367,7 +356,7 @@ export const SubmissionActionButton = ({
             hasHackathonStarted={hasHackathonStarted}
             regionTooltipLabel={regionTooltipLabel}
             hackathonStartDate={hackathonStartDate}
-            pastDeadline={pastDeadline!}
+            pastDeadline={!!pastDeadline}
             creditBalance={creditBalance}
             isBounty={isBounty}
             isEditMode={isEditMode}

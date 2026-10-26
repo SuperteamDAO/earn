@@ -13,7 +13,7 @@ export const StatusBadge = ({ textColor, text, Icon }: StatusBadgeProps) => {
     <div
       className={cn(
         'flex items-center gap-1 rounded-full py-1 text-xs font-medium whitespace-nowrap sm:gap-2 sm:text-sm',
-        `${textColor}`,
+        textColor,
       )}
     >
       {Icon}

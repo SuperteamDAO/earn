@@ -1,7 +1,9 @@
+'use client';
+
 import { Check, Clock, File, MessageSquare, Pause } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+import { usePathname } from 'next/navigation';
+import { posthog } from 'posthog-js';
 import React from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
@@ -10,7 +12,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import type { SponsorType } from '@/interface/sponsor';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -136,7 +138,7 @@ const HeaderSub = ({
             contentProps={{ className: 'max-w-80' }}
           >
             <div className="flex items-center gap-1">
-              {getListingIcon(type!, 'fill-slate-400')}
+              {getListingIcon(type ?? '', 'fill-slate-400')}
               <p className="text-sm font-medium text-gray-400">
                 {isPrivate ? 'Private' : 'Bounty'}
               </p>
@@ -176,12 +178,15 @@ export function ListingHeader({
   commentCount,
   submissionNumber,
   isSubmissionNumberLoading = false,
+  bookmarks = { count: 0, bookmarked: false },
 }: {
   listing: Listing;
   isTemplate?: boolean;
   commentCount?: number;
   submissionNumber?: number;
   isSubmissionNumberLoading?: boolean;
+  // Loaded with the page.
+  bookmarks?: { count: number; bookmarked: boolean };
 }) {
   const {
     type,
@@ -197,9 +202,9 @@ export function ListingHeader({
     Hackathon,
     isPrivate,
   } = listing;
-  const router = useRouter();
+  const pathname = usePathname() ?? '';
 
-  const { user } = useUser();
+  const user = useViewer();
 
   const { serverTime } = useServerTimeSync();
 
@@ -241,7 +246,7 @@ export function ListingHeader({
     statusTextColor = 'text-green-600';
   }
 
-  const isSubmissionPage = router.pathname.endsWith('/submission');
+  const isSubmissionPage = pathname.replace(/\/$/, '').endsWith('/submission');
 
   return (
     <div className="flex flex-col gap-1 bg-white">
@@ -284,7 +289,12 @@ export function ListingHeader({
         {listing.id && listing.isPublished && (
           <div className="flex items-center gap-2">
             {user?.currentSponsorId !== listing.sponsorId && (
-              <BookmarkListing isTemplate={isTemplate} id={listing.id} />
+              <BookmarkListing
+                isTemplate={isTemplate}
+                id={listing.id}
+                initialCount={bookmarks.count}
+                initialBookmarked={bookmarks.bookmarked}
+              />
             )}
             <SecondaryOptions listing={listing} />
           </div>

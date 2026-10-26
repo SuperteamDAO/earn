@@ -1,12 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import lookup from 'country-code-lookup';
 import { Globe, Info } from 'lucide-react';
 
 import { UserFlag } from '@/components/shared/UserFlag';
 import { Tooltip } from '@/components/ui/tooltip';
 
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
-
+import { useChapters } from '../../hooks/useChapters';
 import { getCombinedRegion, getRegionTooltipLabel } from '../../utils/region';
 
 export const RegionLabel = ({
@@ -16,7 +16,7 @@ export const RegionLabel = ({
   region: string | undefined;
   isGrant?: boolean;
 }) => {
-  const { data: chapters = [] } = useQuery(chaptersQuery);
+  const chapters = useChapters();
   const regionObject = region
     ? getCombinedRegion(region, false, chapters)
     : null;

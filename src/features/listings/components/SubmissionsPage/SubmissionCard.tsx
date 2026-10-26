@@ -1,15 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import { ArrowUpRight, Heart, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import type { ListingPageSubmission } from '@/interface/submission';
-import { api } from '@/lib/api';
-import { ogImageQuery } from '@/queries/og';
-import { useUser } from '@/store/user';
+import { getJson, postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
@@ -17,6 +17,11 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import type { Rewards } from '../../types';
 import { Badge } from './Badge';
+
+type OgImageMetadata = {
+  title?: string;
+  images?: Array<{ url: string }>;
+};
 
 interface Props {
   winner: boolean;
@@ -40,16 +45,27 @@ export const SubmissionCard = ({
   onUpdate,
   link,
 }: Props) => {
-  const { user } = useUser();
+  const user = useViewer();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { data: ogData } = useQuery(ogImageQuery(link));
+  const [ogData, setOgData] = useState<OgImageMetadata | 'error'>();
+
+  // The link's preview image, read live (Earn's ogImageQuery).
+  useEffect(() => {
+    const controller = new AbortController();
+    getJson<{ result: OgImageMetadata | 'error' }>(
+      `/api/og/get/?${new URLSearchParams({ url: link }).toString()}`,
+      AbortSignal.any([controller.signal, AbortSignal.timeout(5000)]),
+    )
+      .then((data) => setOgData(data.result))
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, [link]);
 
   const handleLike = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsLoading(true);
 
-    const likePromise = api
-      .post('/api/submission/like/', { id })
+    const likePromise = postJson('/api/submission/like/', { id })
       .then()
       .finally(() => {
         setIsLoading(false);
@@ -59,10 +75,10 @@ export const SubmissionCard = ({
     toast.promise(likePromise, {
       loading: 'Liking the submission...',
       success: () => {
-        const likeAdded = likes?.some((e) => e.id === user?.id)
+        const likeAdded = likes?.some((like) => like.id === user?.id)
           ? 'Like removed'
           : 'Liked submission';
-        return `${likeAdded}`;
+        return likeAdded;
       },
       error: 'Error while liking submission',
     });
@@ -102,8 +118,10 @@ export const SubmissionCard = ({
               : ogData?.images?.[0]?.url || ASSET_URL + '/bg/og.svg'
           }
           onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = ASSET_URL + '/bg/og.svg';
+            // Once: the fallback itself failing mustn't loop.
+            const fallback = ASSET_URL + '/bg/og.svg';
+            if (e.currentTarget.src !== fallback)
+              e.currentTarget.src = fallback;
           }}
         />
       </Link>
@@ -116,7 +134,7 @@ export const SubmissionCard = ({
           )}
           variant="ghost"
           disabled={isLoading}
-          onClick={handleLike}
+          onClick={(e) => void handleLike(e)}
           type="button"
         >
           <Heart

@@ -26,7 +26,7 @@ export const CompensationAmount = ({
         <>
           <span className="ml-auto">
             {showUsdSymbol ? '$' : ''}
-            {formatNumberWithSuffix(rewardAmount!, 2, true)}
+            {formatNumberWithSuffix(rewardAmount ?? 0, 2, true)}
           </span>
           <span className="ml-1 text-slate-400">{token}</span>
         </>

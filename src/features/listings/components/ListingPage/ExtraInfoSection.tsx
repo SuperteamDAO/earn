@@ -1,15 +1,16 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import type { ParentSkills } from '@/interface/skills';
 import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { getHackathonPageHref } from '@/features/hackathon/utils/getHackathonPageHref';
 
+import { useChapters } from '../../hooks/useChapters';
 import type { ListingHackathon } from '../../types';
 import { getCombinedRegion, getRegionSlug } from '../../utils/region';
 
@@ -36,7 +37,7 @@ export function ExtraInfoSection({
   hideWinnerAnnouncement = false,
   isFndnPaying = false,
 }: ExtraInfoSectionProps) {
-  const { data: chapters = [] } = useQuery(chaptersQuery);
+  const chapters = useChapters();
   const regionObject = getCombinedRegion(region || '', false, chapters);
   const regionDisplayName =
     regionObject?.displayValue || regionObject?.name || region;

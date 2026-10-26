@@ -1,5 +1,7 @@
+'use client';
+
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
 const Countdown = dynamic(() => import('react-countdown'), { ssr: false });
@@ -8,28 +10,26 @@ import MdTimer from '@/components/icons/MdTimer';
 import TbBriefcase2 from '@/components/icons/TbBriefcase2';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
 import { TokenIcon } from '@/components/ui/token-icon';
-import { exclusiveSponsorData } from '@/constants/exclusiveSponsors';
 import { useServerTimeSync } from '@/hooks/use-server-time';
 import type { ParentSkills } from '@/interface/skills';
+import type { ListingWinner } from '@/interface/submission';
+import type { ViewerEntry } from '@/server/listing-details';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { cleanRewardPrizes } from '@/utils/rank';
 
-import { RelatedListings } from '@/features/home/components/RelatedListings';
+import type { ListingCardData } from '@/features/home/types/cards';
 
 import type { PublicListing } from '../../types';
 import { isDeadlineOver } from '../../utils/deadline';
+import { ListingCardMini } from '../ListingCardMini';
 import { ApprovalStages } from '../Submission/ApprovalStages';
 import { SubmissionActionButton } from '../Submission/SubmissionActionButton';
 import { CompensationAmount } from './CompensationAmount';
 import { ExtraInfoSection } from './ExtraInfoSection';
+import { ListingWinners } from './ListingWinners';
 import { PrizesList } from './PrizesList';
-
-const ListingWinners = dynamic(
-  () => import('./ListingWinners').then((m) => m.ListingWinners),
-  { ssr: false },
-);
 
 function digitsInLargestString(numbers: string[]): number {
   const largest = numbers.reduce((max, current) => {
@@ -68,12 +68,23 @@ export function RightSideBar({
   isTemplate = false,
   submissionNumber,
   isSubmissionNumberLoading = false,
+  winners = [],
+  submission = null,
+  creditBalance = 0,
+  related = [],
+  now,
 }: {
   listing: PublicListing;
   skills?: ParentSkills[];
   isTemplate?: boolean;
   submissionNumber?: number;
   isSubmissionNumberLoading?: boolean;
+  // Loaded with the page.
+  winners?: ListingWinner[];
+  submission?: ViewerEntry | null;
+  creditBalance?: number;
+  related?: ListingCardData[];
+  now: number;
 }) {
   const {
     token,
@@ -92,14 +103,14 @@ export function RightSideBar({
     ? dayjs().isAfter(Hackathon.startDate)
     : true;
 
-  const router = useRouter();
+  const pathname = usePathname() ?? '';
 
   const largestDigits = useMemo(() => {
     const consideringDigitsArray = cleanRewardPrizes(rewards).map(
-      (c) => formatNumberWithSuffix(c, 2, true) + (token || '') + '',
+      (c) => formatNumberWithSuffix(c, 2, true) + (token || ''),
     );
     consideringDigitsArray.push(
-      formatNumberWithSuffix(rewardAmount || 0, 2, true) + (token || '') + '',
+      formatNumberWithSuffix(rewardAmount || 0, 2, true) + (token || ''),
     );
     return digitsInLargestString(consideringDigitsArray);
   }, [rewards, token, rewardAmount]);
@@ -125,10 +136,10 @@ export function RightSideBar({
     <div className="h-full w-full md:w-auto">
       <div className="flex w-full flex-col gap-2 pt-4">
         <div className="flex w-full flex-col justify-center rounded-xl bg-white">
-          {!router.asPath.split('/')[4]?.includes('submission') &&
+          {!pathname.split('/')[4]?.includes('submission') &&
             listing.isWinnersAnnounced && (
               <div className="block w-full pb-6 md:hidden">
-                <ListingWinners bounty={listing} />
+                <ListingWinners bounty={listing} winners={winners} />
               </div>
             )}
           <div className="flex w-full flex-col justify-between px-1 pb-4">
@@ -265,7 +276,12 @@ export function RightSideBar({
           </div>
 
           <div className="hidden w-full md:flex">
-            <SubmissionActionButton listing={listing} isTemplate={isTemplate} />
+            <SubmissionActionButton
+              listing={listing}
+              isTemplate={isTemplate}
+              submission={submission}
+              creditBalance={creditBalance}
+            />
           </div>
           {inReview && listing.commitmentDate && (
             <div className="mt-2 hidden w-full items-start gap-2 text-center text-sm font-medium text-gray-500 md:inline">
@@ -294,7 +310,7 @@ export function RightSideBar({
               listing.isFndnPaying &&
               dayjs(listing.winnersAnnouncedAt).isAfter(
                 dayjs.utc('2025-08-06'),
-              ) && <ApprovalStages listing={listing} />}
+              ) && <ApprovalStages listing={listing} submission={submission} />}
           </div>
           <div className="mt-4 w-full">
             <ExtraInfoSection
@@ -309,18 +325,7 @@ export function RightSideBar({
           </div>
           <div className="hidden w-full py-8 text-sm md:block">
             {listing.id && (
-              <RelatedListings
-                isHackathon={!!listing.hackathonId}
-                listingId={listing.id}
-                excludeIds={listing.id ? [listing.id] : undefined}
-                exclusiveSponsorId={
-                  Object.values(exclusiveSponsorData).some(
-                    (sponsor) => sponsor.title === listing?.sponsor?.name,
-                  )
-                    ? listing?.sponsorId
-                    : undefined
-                }
-              >
+              <div>
                 <div className="flex w-full items-center justify-between">
                   <p className="text-sm font-semibold text-slate-600">
                     {!Hackathon
@@ -328,7 +333,16 @@ export function RightSideBar({
                       : 'RELATED LIVE TRACKS'}
                   </p>
                 </div>
-              </RelatedListings>
+                <div className="mt-1 flex w-full flex-col">
+                  {related.map((relatedListing) => (
+                    <ListingCardMini
+                      bounty={relatedListing}
+                      key={relatedListing?.id}
+                      now={now}
+                    />
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>

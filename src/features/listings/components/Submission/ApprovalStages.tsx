@@ -1,17 +1,16 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useQuery } from '@tanstack/react-query';
+'use client';
 
 import FaCheck from '@/components/icons/FaCheck';
-import { useUser } from '@/store/user';
+import type { ViewerEntry } from '@/server/listing-details';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getPayoutCopy } from '@/utils/payout-date';
 
 import type { Listing } from '@/features/listings/types';
 
-import { userSubmissionQuery } from '../../queries/user-submission-status';
-
 interface Props {
   listing: Listing;
+  // The viewer's own entry, loaded with the page; null when signed out.
+  submission: ViewerEntry | null;
 }
 
 const CheckIcon = () => (
@@ -53,20 +52,11 @@ const ConnectingLine = ({
   </div>
 );
 
-export const ApprovalStages = ({ listing }: Props) => {
-  const { user } = useUser();
-  const { authenticated, ready } = usePrivy();
-  const isAuthenticated = authenticated;
-
-  const { data: submission, isLoading: isUserSubmissionLoading } = useQuery({
-    ...userSubmissionQuery(listing.id!, user?.id),
-    enabled: ready && isAuthenticated && !!user?.id,
-  });
-
-  if (isUserSubmissionLoading || !ready || !submission?.isWinner) return null;
+export const ApprovalStages = ({ listing, submission }: Props) => {
+  if (!submission?.isWinner) return null;
 
   const isKycVerified = submission.isKYCVerified ?? false;
-  const isPaid = submission.isPaid;
+  const isPaid = submission.isPaid ?? false;
 
   const isPaymentSynced = submission.paymentSynced ?? false;
 
@@ -75,7 +65,7 @@ export const ApprovalStages = ({ listing }: Props) => {
 
   const token = listing.token || 'USDC';
   const rewardAmount = submission.winnerPosition
-    ? (listing.rewards?.[Number(submission.winnerPosition)] ?? 0)
+    ? (listing.rewards?.[submission.winnerPosition] ?? 0)
     : 0;
 
   return (

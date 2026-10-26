@@ -1,29 +1,106 @@
-import { useQuery } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
-import { ExternalLink } from 'lucide-react';
-import Head from 'next/head';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
-import { useEffect, useMemo, useState } from 'react';
+import 'server-only';
 
-import { ErrorSection } from '@/components/shared/ErrorSection';
-import type { User } from '@/interface/user';
+import * as Clock from 'effect/Clock';
+import * as Effect from 'effect/Effect';
+import { cache } from 'react';
+
 import { Default } from '@/layouts/Default';
-import { normalizeCanonicalUrl } from '@/utils/canonical';
-import { cn } from '@/utils/cn';
-import { dayjs } from '@/utils/dayjs';
-import { getURLSanitized } from '@/utils/getURLSanitized';
-import { getURL } from '@/utils/validUrl';
+import { getSession, getViewer } from '@/lib/session';
+import * as Credits from '@/server/credits';
+import * as ListingBookmarks from '@/server/listing-bookmarks';
+import * as ListingComments from '@/server/listing-comments';
+import * as ListingDetails from '@/server/listing-details';
+import { runtime } from '@/server/runtime';
 
-import { Comments } from '@/features/comments/components/Comments';
-import { ListingHeader } from '@/features/listings/components/ListingPage/ListingHeader';
-import { RightSideBar } from '@/features/listings/components/ListingPage/RightSideBar';
-import { SubmissionActionButton } from '@/features/listings/components/Submission/SubmissionActionButton';
-import { submissionCountQuery } from '@/features/listings/queries/submission-count';
+import {
+  type ListingPageData,
+  ListingPageFrame,
+} from '@/features/listings/components/ListingPage/ListingPageFrame';
 import type { PublicListing } from '@/features/listings/types';
-import { getListingTypeLabel } from '@/features/listings/utils/status';
-import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
+
+// A listing's announced winners, loaded once per request however many parts
+// of the page show them.
+export const listingWinners = cache((listingId: string) =>
+  runtime.runPromise(
+    ListingDetails.ListingDetails.use((details) =>
+      details.winners(listingId),
+    ).pipe(Effect.orElseSucceed(() => [])),
+  ),
+);
+
+const EMPTY: ListingPageData = {
+  submissionNumber: 0,
+  winners: [],
+  comments: undefined,
+  bookmarks: { count: 0, bookmarked: false },
+  chapters: [],
+  submission: null,
+  creditBalance: 0,
+  related: [],
+  now: 0,
+};
+
+// Everything around the page itself, for this listing and whoever's looking.
+// A part that fails to load shows empty, as Earn's client queries did.
+async function pageData(
+  listing: PublicListing,
+  isTemplate: boolean,
+): Promise<ListingPageData> {
+  const [viewer, session] = await Promise.all([getViewer(), getSession()]);
+  const listingId = listing.id;
+  const now = await runtime.runPromise(Clock.currentTimeMillis);
+  if (!listingId) return { ...EMPTY, now };
+  const [winners, rest] = await Promise.all([
+    listing.isWinnersAnnounced ? listingWinners(listingId) : [],
+    runtime.runPromise(
+      Effect.all(
+        {
+          submissionNumber: ListingDetails.ListingDetails.use((details) =>
+            details.submissionCount(listingId),
+          ).pipe(Effect.orElseSucceed(() => 0)),
+          comments: ListingComments.ListingComments.use((comments) =>
+            comments.list(listingId, { skip: 0, take: 10 }),
+          ).pipe(
+            Effect.map((page): ListingPageData['comments'] => page),
+            Effect.orElseSucceed(() => undefined),
+          ),
+          bookmarks: ListingBookmarks.ListingBookmarks.use((bookmarks) =>
+            bookmarks.summary(listingId, session?.userId ?? null),
+          ).pipe(Effect.orElseSucceed(() => EMPTY.bookmarks)),
+          chapters: ListingDetails.ListingDetails.use(
+            (details) => details.chapters,
+          ).pipe(Effect.orElseSucceed(() => [])),
+          submission: viewer
+            ? ListingDetails.ListingDetails.use((details) =>
+                details.viewerEntry(viewer.id, listingId),
+              ).pipe(Effect.orElseSucceed(() => null))
+            : Effect.succeed(null),
+          creditBalance: viewer?.isTalentFilled
+            ? Credits.Credits.use((credits) => credits.balance(viewer.id)).pipe(
+                Effect.orElseSucceed(() => 0),
+              )
+            : Effect.succeed(0),
+          related:
+            isTemplate || viewer?.isBlocked
+              ? Effect.succeed([])
+              : ListingDetails.ListingDetails.use((details) =>
+                  details.sidebar(
+                    {
+                      id: listingId,
+                      sponsorId: listing.sponsorId,
+                      hackathonId: listing.hackathonId,
+                      sponsor: listing.sponsor,
+                    },
+                    viewer?.location ?? null,
+                  ),
+                ).pipe(Effect.orElseSucceed(() => [])),
+        },
+        { concurrency: 'unbounded' },
+      ),
+    ),
+  ]);
+  return { ...rest, winners, now };
+}
 
 interface ListingPageProps {
   listing: PublicListing | null;
@@ -32,245 +109,25 @@ interface ListingPageProps {
   isTemplate?: boolean;
 }
 
-export function ListingPageLayout({
-  listing: initialListing,
+// Earn's listing layout, on the server: the shell, then the listing's frame
+// with its data. Pages export their own metadata (see listingMetadata).
+export async function ListingPageLayout({
+  listing,
   children,
   maxW = '7xl',
   isTemplate = false,
 }: ListingPageProps) {
-  const router = useRouter();
-  const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
-
-  const { data: submissionNumber = 0, isLoading: isSubmissionNumberLoading } =
-    useQuery(submissionCountQuery(initialListing?.id ?? ''));
-  const [commentCount, setCommentCount] = useState(0);
-  const iterableSkills = useMemo(
-    () => initialListing?.skills?.map((e) => e.skills) ?? [],
-    [initialListing?.skills],
-  );
-
-  useEffect(() => {
-    if (initialListing?.type === 'bounty') {
-      posthog.capture('open_bounty');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (initialListing) {
-      setBountySnackbar({
-        isCaution: initialListing.sponsor?.isCaution,
-        submissionCount: submissionNumber,
-        deadline: initialListing.deadline,
-        rewardAmount: initialListing.rewardAmount,
-        type: initialListing.type,
-        isPublished: initialListing.isPublished,
-        status: initialListing.status,
-        sponsorId: initialListing.sponsorId,
-        slug: initialListing.slug,
-      });
-    }
-  }, [initialListing, submissionNumber, setBountySnackbar]);
-
-  const ogImage = new URL(`${getURL()}api/dynamic-og/listing/`);
-
-  const previewSlug =
-    typeof router.query.slug === 'string' ? router.query.slug : undefined;
-  if (router.query.preview === '1' && previewSlug) {
-    ogImage.searchParams.set('preview', '1');
-    ogImage.searchParams.set('slug', previewSlug);
-  }
-
-  ogImage.searchParams.set('title', initialListing?.title || '');
-  ogImage.searchParams.set(
-    'reward',
-    initialListing?.rewardAmount?.toString() || '',
-  );
-  ogImage.searchParams.set('token', initialListing?.token || '');
-  ogImage.searchParams.set('sponsor', initialListing?.sponsor?.name || '');
-  ogImage.searchParams.set('logo', initialListing?.sponsor?.logo || '');
-  ogImage.searchParams.set('type', initialListing?.type || '');
-  ogImage.searchParams.set(
-    'compensationType',
-    initialListing?.compensationType || '',
-  );
-  ogImage.searchParams.set(
-    'minRewardAsk',
-    initialListing?.minRewardAsk?.toString() || '',
-  );
-  ogImage.searchParams.set(
-    'maxRewardAsk',
-    initialListing?.maxRewardAsk?.toString() || '',
-  );
-  ogImage.searchParams.set(
-    'isSponsorVerified',
-    initialListing?.sponsor?.isVerified?.toString() || 'false',
-  );
-
-  const isSubmissionPage = router.pathname.endsWith('/submission');
-  const canonicalUrl = initialListing?.slug
-    ? normalizeCanonicalUrl(`${getURL()}earn/listing/${initialListing.slug}/`)
-    : undefined;
-
+  const data = listing ? await pageData(listing, isTemplate) : EMPTY;
   return (
-    <Default
-      meta={
-        <Head>
-          <title>{`${
-            initialListing?.title || 'Apply'
-          } by ${initialListing?.sponsor?.name} | Superteam Earn Listing`}</title>
-          <meta
-            name="description"
-            content={`${getListingTypeLabel(initialListing?.type ?? 'Listing')} on Superteam Earn | ${
-              initialListing?.sponsor?.name
-            } is seeking freelancers and builders ${
-              initialListing?.title
-                ? `to work on ${initialListing.title}`
-                : '| Apply Here'
-            }`}
-          />
-          {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-          {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
-          <meta
-            property="og:title"
-            content={`${initialListing?.title || 'Listing'} | Superteam Earn`}
-          />
-          <meta property="og:image" content={ogImage.toString()} />
-          <meta
-            name="twitter:title"
-            content={`${initialListing?.title || 'Listing'} | Superteam Earn`}
-          />
-          <meta name="twitter:image" content={ogImage.toString()} />
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:image:height" content="630" />
-          <meta
-            property="og:image:alt"
-            content={`${initialListing?.title || 'Listing'} - ${initialListing?.type === 'hackathon' ? 'Hackathon Track' : 'Bounty'} by ${initialListing?.sponsor?.name || 'Sponsor'} on Superteam Earn`}
-          />
-          <meta property="og:type" content="website" />
-          <meta charSet="UTF-8" key="charset" />
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1, maximum-scale=1"
-            key="viewport"
-          />
-        </Head>
-      }
-    >
-      <div className="bg-white">
-        {initialListing === null && <ErrorSection />}
-        {initialListing !== null && !initialListing?.id && (
-          <ErrorSection message="Sorry! The bounty you are looking for is not available." />
-        )}
-        {initialListing !== null && !!initialListing?.id && (
-          <div className="mx-auto w-full px-2 lg:px-6">
-            <div className="mx-auto w-full max-w-7xl">
-              <ListingHeader
-                isTemplate={isTemplate}
-                commentCount={commentCount}
-                listing={initialListing}
-                submissionNumber={submissionNumber}
-                isSubmissionNumberLoading={isSubmissionNumberLoading}
-              />
-              <div
-                className={cn(
-                  'flex min-h-screen flex-col items-center justify-center gap-0 bg-white md:flex-row md:items-start md:justify-between md:gap-4',
-                  maxW,
-                )}
-              >
-                {!isSubmissionPage && (
-                  <div className="top-14 h-full w-full grow border-slate-100 md:sticky md:w-[23rem] md:border-r md:pr-2 lg:pr-5">
-                    <RightSideBar
-                      isTemplate={isTemplate}
-                      listing={initialListing}
-                      skills={iterableSkills}
-                      submissionNumber={submissionNumber}
-                      isSubmissionNumberLoading={isSubmissionNumberLoading}
-                    />
-                  </div>
-                )}
-                <div className="flex h-full w-full grow flex-col gap-8 pb-10">
-                  <div className="w-full">{children}</div>
-                  <div className="flex w-full flex-col items-start md:hidden">
-                    <p className="mb-1.5 h-full text-center text-xs font-semibold text-slate-600">
-                      SKILLS NEEDED
-                    </p>
-                    <div className="flex flex-wrap gap-3">
-                      {iterableSkills?.map((skill) => (
-                        <div
-                          className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-sm font-medium text-slate-600"
-                          key={skill}
-                        >
-                          <p className="text-xs">{skill}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  {initialListing.pocSocials && (
-                    <div className="flex w-full flex-col items-start md:hidden">
-                      <p className="h-full text-center text-xs font-semibold text-slate-600">
-                        CONTACT
-                      </p>
-                      <p>
-                        <Link
-                          className="ph-no-capture text-xs font-medium text-[#64768b]"
-                          href={getURLSanitized(initialListing.pocSocials)}
-                          onClick={() => posthog.capture('reach out_listing')}
-                        >
-                          Reach out
-                          <ExternalLink className="mx-1 mb-1 inline h-3 w-3 text-[#64768b]" />
-                        </Link>
-                        <span className="text-xs text-slate-500">
-                          if you have any questions about this initialBounty
-                        </span>
-                      </p>
-                    </div>
-                  )}
-                  {!!initialListing.commitmentDate && (
-                    <div className="flex w-full flex-col items-start md:hidden">
-                      <p className="h-full text-center text-xs font-semibold text-slate-600">
-                        WINNER ANNOUNCEMENT BY
-                      </p>
-                      <div>
-                        <span className="text-xs text-slate-500">
-                          {dayjs(initialListing.commitmentDate).format(
-                            'MMMM DD, YYYY',
-                          )}{' '}
-                          - as scheduled by the sponsor.
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
-                  <Comments
-                    isTemplate={isTemplate}
-                    isAnnounced={initialListing?.isWinnersAnnounced ?? false}
-                    listingSlug={initialListing?.slug ?? ''}
-                    listingType={initialListing?.type ?? ''}
-                    poc={initialListing?.poc as User}
-                    sponsorId={initialListing?.sponsorId}
-                    isVerified={initialListing?.sponsor?.isVerified}
-                    refId={initialListing?.id ?? ''}
-                    refType="BOUNTY"
-                    count={commentCount}
-                    setCount={setCommentCount}
-                    isDisabled={
-                      !initialListing.isPublished &&
-                      initialListing.status === 'OPEN'
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="sticky bottom-14 z-40 mb-12 w-full border-t border-slate-100 bg-white py-1 md:hidden">
-              <SubmissionActionButton
-                listing={initialListing}
-                isTemplate={isTemplate}
-              />
-            </div>
-          </div>
-        )}
-      </div>
+    <Default>
+      <ListingPageFrame
+        listing={listing}
+        maxW={maxW}
+        isTemplate={isTemplate}
+        data={data}
+      >
+        {children}
+      </ListingPageFrame>
     </Default>
   );
 }

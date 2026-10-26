@@ -1,3 +1,7 @@
+'use client';
+
+/* oxlint-disable react/set-state-in-effect, react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- Earn's prize list, unchanged: it collapses once on mount and on toggle. */
+
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 

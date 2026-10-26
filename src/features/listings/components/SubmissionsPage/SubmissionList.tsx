@@ -1,3 +1,6 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
@@ -7,11 +10,24 @@ import { dayjs } from '@/utils/dayjs';
 import type { Listing } from '../../types';
 import { SubmissionCard } from './SubmissionCard';
 
+// Earn stores likes as a JSON list of who liked and when.
+const likesOf = (like: unknown): { id: string; date: number }[] =>
+  Array.isArray(like)
+    ? like.filter(
+        (entry): entry is { id: string; date: number } =>
+          typeof entry === 'object' &&
+          entry !== null &&
+          'id' in entry &&
+          typeof entry.id === 'string',
+      )
+    : [];
+
 interface Props {
   bounty: Listing;
   submissions: ListingPageSubmission[];
   endTime: string;
-  onUpdate: () => void;
+  // After a like; the page loads again by default.
+  onUpdate?: () => void;
 }
 export const SubmissionList = ({
   bounty,
@@ -19,9 +35,13 @@ export const SubmissionList = ({
   endTime,
   onUpdate,
 }: Props) => {
+  const router = useRouter();
+  const update = onUpdate ?? (() => router.refresh());
   const [isEndTimePassed, setIsEndTimePassed] = useState(false);
 
+  // After hydration: the server's clock may differ from the browser's.
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect
     setIsEndTimePassed(dayjs(endTime).valueOf() < Date.now());
   }, [endTime]);
 
@@ -34,17 +54,12 @@ export const SubmissionList = ({
               return (
                 <SubmissionCard
                   id={submission.id}
-                  likes={
-                    (submission.like as unknown as {
-                      id: string;
-                      date: number;
-                    }[]) ?? []
-                  }
+                  likes={likesOf(submission.like)}
                   talent={submission.user}
                   key={submission.id}
-                  winner={!!bounty?.isWinnersAnnounced && !!submission.isWinner}
+                  winner={!!bounty?.isWinnersAnnounced && submission.isWinner}
                   link={submission.link ?? ''}
-                  onUpdate={onUpdate}
+                  onUpdate={update}
                   winnerPosition={submission.winnerPosition}
                 />
               );

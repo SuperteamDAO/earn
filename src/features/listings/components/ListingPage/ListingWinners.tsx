@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -15,12 +16,13 @@ import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { formatTotalPrize } from '@/features/listing-builder/utils/formatTotalPrize';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { listingWinnersQuery } from '../../queries/listing-winners';
-import type { Listing, Rewards } from '../../types';
+import type { Listing } from '../../types';
 import { tweetTemplate } from '../../utils/tweetTemplate';
 
 interface Props {
   bounty: Listing;
+  // Loaded with the page, by position.
+  winners?: ListingWinner[];
 }
 
 const getOrRemoveBonuses = (
@@ -37,15 +39,11 @@ const getOrRemoveBonuses = (
     );
 };
 
-export function ListingWinners({ bounty }: Props) {
+export function ListingWinners({ bounty, winners: submissions = [] }: Props) {
   const isMD = useBreakpoint('md');
   const isSM = useBreakpoint('sm');
   const isLG = useBreakpoint('lg');
   const isXL = useBreakpoint('xl');
-
-  const { data: submissions = [], isLoading } = useQuery(
-    listingWinnersQuery(bounty?.id),
-  );
 
   const openWinnerLink = () => {
     return tweetEmbedLink(
@@ -75,7 +73,7 @@ export function ListingWinners({ bounty }: Props) {
     [bonusSubmissions, sliceValue],
   );
 
-  if (isLoading || !submissions.length) {
+  if (!submissions.length) {
     return null;
   }
 
@@ -144,17 +142,20 @@ export function ListingWinners({ bounty }: Props) {
                     <EarnAvatar
                       className="h-14 w-14 md:h-16 md:w-16"
                       id={submission?.user?.id}
-                      avatar={submission?.user?.photo as string}
+                      avatar={submission?.user?.photo ?? undefined}
                     />
                   </div>
-                  <p className="w-16 truncate pt-4 text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.firstName}`}</p>
-                  <p className="w-16 truncate text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">{`${submission?.user?.lastName}`}</p>
+                  <p className="w-16 truncate pt-4 text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">
+                    {String(submission?.user?.firstName)}
+                  </p>
+                  <p className="w-16 truncate text-center text-xs font-semibold text-slate-700 md:text-sm lg:w-min">
+                    {String(submission?.user?.lastName)}
+                  </p>
                   <p className="text-center text-xs font-normal text-slate-500 opacity-60">
                     {bounty?.rewards &&
                       formatTotalPrize(
-                        bounty?.rewards[
-                          Number(submission?.winnerPosition) as keyof Rewards
-                        ] ?? 0,
+                        bounty?.rewards[Number(submission?.winnerPosition)] ??
+                          0,
                       )}{' '}
                     {bounty?.token}
                   </p>
@@ -183,7 +184,7 @@ export function ListingWinners({ bounty }: Props) {
                   <EarnAvatar
                     className="h-9 w-9 md:h-11 md:w-11"
                     id={submission?.user?.id}
-                    avatar={submission?.user?.photo as string}
+                    avatar={submission?.user?.photo ?? undefined}
                   />
                 </Link>
               </Tooltip>

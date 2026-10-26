@@ -1,15 +1,17 @@
+import * as Effect from 'effect/Effect';
+import * as Option from 'effect/Option';
 import { ImageResponse } from 'next/og';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { getTokenIcon } from '@/server/tokenList';
+import { publicEnv } from '@/lib/public-env';
+import * as ListingDetails from '@/server/listing-details';
+import { runtime } from '@/server/runtime';
 import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
 import { safeStringify } from '@/utils/safeStringify';
-import { getURL } from '@/utils/validUrl';
 
 let localFontPromise: Promise<ArrayBuffer> | null = null;
 
@@ -32,10 +34,13 @@ const safeDecodeURIComponent = (value: string) => {
 };
 
 const bufferToArrayBuffer = (buffer: Buffer): ArrayBuffer =>
-  buffer.buffer.slice(
-    buffer.byteOffset,
-    buffer.byteOffset + buffer.byteLength,
-  ) as ArrayBuffer;
+  Uint8Array.prototype.slice.call(buffer).buffer;
+
+// A log line's detail: safeStringify's text, when it managed one.
+const logText = (value: unknown): string => {
+  const text: unknown = safeStringify(value);
+  return typeof text === 'string' ? text : '';
+};
 
 const loadLocalOgFont = async () => {
   localFontPromise ??= readFile(
@@ -50,10 +55,26 @@ const loadOgFont = async (font: string, text: string) => {
     return await loadGoogleFont(font, text);
   } catch (error) {
     logger.warn(
-      `Listing OG font fetch failed for ${font}, falling back to local font: ${safeStringify(error)}`,
+      `Listing OG font fetch failed for ${font}, falling back to local font: ${logText(error)}`,
     );
     return loadLocalOgFont();
   }
+};
+
+const resolveAbsoluteUrl = (url: string | null): string | null => {
+  if (!url) {
+    return null;
+  }
+
+  if (/^https?:\/\//i.test(url)) {
+    return url;
+  }
+
+  if (url.startsWith('/')) {
+    return new URL(url, publicEnv.siteUrl).toString();
+  }
+
+  return url;
 };
 
 export async function GET(request: Request) {
@@ -76,30 +97,11 @@ export async function GET(request: Request) {
 
     const previewListing =
       isDraftPreview && slug
-        ? await prisma.bounties.findFirst({
-            where: {
-              slug,
-              isPublished: false,
-              isActive: true,
-              isArchived: false,
-            },
-            select: {
-              title: true,
-              rewardAmount: true,
-              token: true,
-              type: true,
-              compensationType: true,
-              minRewardAsk: true,
-              maxRewardAsk: true,
-              sponsor: {
-                select: {
-                  name: true,
-                  logo: true,
-                  isVerified: true,
-                },
-              },
-            },
-          })
+        ? await runtime.runPromise(
+            ListingDetails.ListingDetails.use((details) =>
+              details.ogPreview(slug),
+            ).pipe(Effect.map(Option.getOrNull)),
+          )
         : null;
 
     const previewParams: Record<string, string | null | undefined> = {
@@ -115,32 +117,20 @@ export async function GET(request: Request) {
       isSponsorVerified: previewListing?.sponsor?.isVerified?.toString(),
     };
 
-    const getParam = (name: any, processFn = (x: any) => x) =>
-      previewParams[name] != null
-        ? processFn(previewParams[name])
-        : searchParams.has(name)
-          ? processFn(searchParams.get(name))
-          : null;
+    const getParam = (
+      name: string,
+      processFn: (x: string) => string | null = (x) => x,
+    ): string | null => {
+      const preview = previewParams[name];
+      if (preview != null) return processFn(preview);
+      const value = searchParams.get(name);
+      return value !== null ? processFn(value) : null;
+    };
 
     const title = getParam('title', (x) =>
       formatString(safeDecodeURIComponent(x), 100),
     );
     const type = getParam('type');
-    const resolveAbsoluteUrl = (url: string | null): string | null => {
-      if (!url) {
-        return null;
-      }
-
-      if (/^https?:\/\//i.test(url)) {
-        return url;
-      }
-
-      if (url.startsWith('/')) {
-        return new URL(url, getURL()).toString();
-      }
-
-      return url;
-    };
 
     const logo = resolveAbsoluteUrl(
       getParam('logo', (x) => convertToJpegUrl(x)) ||
@@ -180,7 +170,11 @@ export async function GET(request: Request) {
     }
 
     const icon = resolveAbsoluteUrl(
-      (await getTokenIcon(token, { format: 'png' })) ?? null,
+      await runtime.runPromise(
+        ListingDetails.ListingDetails.use((details) =>
+          details.tokenIcon(token),
+        ),
+      ),
     );
 
     const capitalizedType = type
@@ -226,7 +220,7 @@ export async function GET(request: Request) {
               borderRadius: '12px',
             }}
             alt="logo"
-            src={logo as string}
+            src={logo ?? undefined}
             width="64px"
             height="64px"
           />
@@ -323,7 +317,7 @@ export async function GET(request: Request) {
                     objectFit: 'contain',
                   }}
                   alt="token"
-                  src={icon as string}
+                  src={icon}
                 />
               )}
               {displayReward && (
@@ -413,12 +407,9 @@ export async function GET(request: Request) {
     );
 
     return response;
-  } catch (e: any) {
+  } catch (e: unknown) {
     logger.error(
-      `Listing OG image generation failed: ${safeStringify({
-        ...requestContext,
-        error: e,
-      })}`,
+      `Listing OG image generation failed: ${logText({ ...requestContext, error: e })}`,
     );
     return new Response(`Failed to generate the image`, {
       status: 500,

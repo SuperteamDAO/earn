@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { useEffect } from 'react';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
@@ -35,8 +37,8 @@ const createDecorateOptions = (): TDecorateOptionsFn => {
     while (selectedColors.length < 5) {
       const randomIndex = Math.floor(Math.random() * colors.length);
       const color = colors[randomIndex];
-      if (!selectedColors.includes(color!)) {
-        selectedColors.push(color!);
+      if (color !== undefined && !selectedColors.includes(color)) {
+        selectedColors.push(color);
       }
     }
 
@@ -104,7 +106,7 @@ export const EasterEgg = ({ isOpen, onClose }: Props) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) return undefined;
     const timeout = setTimeout(() => {
       onClose();
     }, 60000); // 60 seconds

@@ -3,7 +3,7 @@ import 'server-only';
 import * as Effect from 'effect/Effect';
 
 import type { ChapterRegionData } from '@/interface/chapter';
-import * as Database from '@/server/database';
+import type * as Database from '@/server/database';
 
 // Earn's active chapters as the region helpers in
 // src/features/listings/utils/region.ts take them (Earn's getChapterRegions).
@@ -64,12 +64,12 @@ export function regionForLocation(
 ): string {
   const wanted = normalize(location);
   if (!wanted) return 'Global';
-  const chapter = chapters.find(
+  const found = chapters.find(
     (chapter) =>
       normalize(chapter.region) === wanted ||
       normalize(chapter.displayValue) === wanted ||
       normalize(chapter.name) === wanted ||
       chapter.country.some((country) => normalize(country) === wanted),
   );
-  return chapter?.region || 'Global';
+  return found?.region || 'Global';
 }
