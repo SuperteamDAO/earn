@@ -144,5 +144,5 @@ export function proxy(request: NextRequest) {
 // Every document and route; static files and images skip it. Matched
 // exactly: a looser pattern would leave some 404 page without a policy.
 export const config = {
-  matcher: ['/((?!_next/static/|_next/image$|assets/|fonts/).*)'],
+  matcher: ['/((?!_next/static/|_next/image/?$|assets/|fonts/).*)'],
 };
