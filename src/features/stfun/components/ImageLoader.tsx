@@ -74,8 +74,7 @@ export default function ImageLoader({
           alt={alt}
           className={className}
           loading={loading}
-          // @ts-expect-error fetchpriority is a valid attribute but not typed
-          fetchpriority={fetchpriority}
+          fetchPriority={fetchpriority}
           width={width}
           height={height}
         />
