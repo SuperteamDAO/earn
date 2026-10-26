@@ -1,135 +1,60 @@
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import * as Schema from 'effect/Schema';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { ogImageUpdateRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
-import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { decodeBody, guardUser, json } from '@/lib/route-guard';
+import * as OgImages from '@/server/og-images';
+import { runtime } from '@/server/runtime';
 
-import { getUserSession } from '@/features/auth/utils/getUserSession';
-import { fetchOgMetadata } from '@/features/og/utils/fetchOgMetadata';
-import {
-  getOgImageValue,
-  type OgImageTarget,
-  parseOgImageUpdateRequest,
-} from '@/features/og/utils/ogImageUpdate';
+import { rateLimited } from '../rate-limited';
 
-const findOgRecord = (type: OgImageTarget, id: string) => {
-  const query = {
-    where: { id },
-    select: { link: true, ogImage: true },
-  } as const;
+// Only the record's identity: the image is read from its link here.
+const Body = Schema.Struct({
+  type: OgImages.OgImageTarget,
+  id: Schema.String.check(
+    Schema.makeFilter(
+      (value: string) =>
+        (value.trim().length > 0 && value.length <= 64) || 'id',
+    ),
+  ),
+});
 
-  return type === 'submission'
-    ? prisma.submission.findUnique(query)
-    : prisma.poW.findUnique(query);
-};
+const invalid = () =>
+  json(400, { success: false, error: 'Invalid request body' });
 
-const updateOgRecord = async (
-  type: OgImageTarget,
-  id: string,
-  imageUrl: string,
-) => {
-  const update = {
-    where: {
-      id,
-      OR: [{ ogImage: null }, { ogImage: 'error' }],
-    },
-    data: { ogImage: imageUrl },
-  };
-
-  const result =
-    type === 'submission'
-      ? await prisma.submission.updateMany(update)
-      : await prisma.poW.updateMany(update);
-
-  return result.count;
-};
-
-export async function POST(request: NextRequest) {
-  try {
-    const headersList = await headers();
-    const sessionResponse = await getUserSession(headersList);
-
-    if (sessionResponse.status !== 200 || !sessionResponse.data) {
-      logger.warn(`Authentication failed: ${sessionResponse.error}`);
-      return NextResponse.json(
-        { error: sessionResponse.error },
-        { status: sessionResponse.status },
+// Stores a submission's or project's preview image the first time anyone
+// sees its card.
+export function POST(request: NextRequest) {
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const writer = yield* guardUser(request);
+      if (writer instanceof NextResponse) return writer;
+      const body = yield* decodeBody(request, Body, 1024);
+      if (body instanceof NextResponse) return invalid();
+      return yield* OgImages.OgImages.use((og) =>
+        og.update(writer.userId, body.type, body.id),
+      ).pipe(
+        Effect.map((imageUrl) => json(200, { success: true, imageUrl })),
+        Effect.catchTags({
+          RateLimited: (error) => Effect.succeed(rateLimited(error)),
+          OgRecordNotFound: () =>
+            Effect.succeed(
+              json(404, { success: false, error: 'Record not found' }),
+            ),
+          OgImageExists: () =>
+            Effect.succeed(
+              json(409, { success: false, error: 'Image already exists' }),
+            ),
+          OgNoSource: () =>
+            Effect.succeed(
+              json(422, { success: false, error: 'Record has no source URL' }),
+            ),
+          DatabaseError: () =>
+            Effect.succeed(
+              json(500, { success: false, error: 'Internal Server Error' }),
+            ),
+        }),
       );
-    }
-
-    const rateLimitResponse = await checkAndApplyRateLimitApp({
-      limiter: ogImageUpdateRateLimiter,
-      identifier: sessionResponse.data.userId,
-      routeName: 'og_image_update',
-    });
-    if (rateLimitResponse) return rateLimitResponse;
-
-    let body: unknown;
-    try {
-      body = await request.json();
-    } catch {
-      return NextResponse.json(
-        { success: false, error: 'Invalid request body' },
-        { status: 400 },
-      );
-    }
-
-    const updateRequest = parseOgImageUpdateRequest(body);
-    if (!updateRequest) {
-      logger.warn('Invalid OG image update request');
-      return NextResponse.json(
-        { success: false, error: 'Invalid request body' },
-        { status: 400 },
-      );
-    }
-    logger.debug(`OG image update: ${safeStringify(updateRequest)}`);
-
-    const { type, id } = updateRequest;
-    const record = await findOgRecord(type, id);
-
-    if (!record) {
-      return NextResponse.json(
-        { success: false, error: 'Record not found' },
-        { status: 404 },
-      );
-    }
-
-    if (record.ogImage && record.ogImage !== 'error') {
-      logger.warn(`OG image already exists for ${type} ${id}`);
-      return NextResponse.json(
-        { success: false, error: 'Image already exists' },
-        { status: 409 },
-      );
-    }
-
-    if (!record.link) {
-      return NextResponse.json(
-        { success: false, error: 'Record has no source URL' },
-        { status: 422 },
-      );
-    }
-
-    const result = await fetchOgMetadata(record.link);
-    const imageUrl = getOgImageValue(result);
-    const updatedCount = await updateOgRecord(type, id, imageUrl);
-
-    if (updatedCount !== 1) {
-      return NextResponse.json(
-        { success: false, error: 'Image already exists' },
-        { status: 409 },
-      );
-    }
-
-    logger.info(`Successfully updated ogImage for ${type} with ID: ${id}`);
-    return NextResponse.json({ success: true, imageUrl });
-  } catch (error) {
-    logger.error(`Error updating ogImage: ${safeStringify(error)}`);
-    return NextResponse.json(
-      { success: false, error: 'Internal Server Error' },
-      { status: 500 },
-    );
-  }
+    }),
+  );
 }

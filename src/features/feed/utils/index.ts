@@ -2,15 +2,12 @@ import type { CommentRefType } from '@/prisma/enums';
 
 import type { FeedPostType } from '../types';
 
+const COMMENT_REF_TYPES: Record<FeedPostType, CommentRefType> = {
+  submission: 'SUBMISSION',
+  pow: 'POW',
+  'grant-application': 'GRANT_APPLICATION',
+};
+
 export const convertFeedPostTypeToCommentRefType = (
   feedPostType: FeedPostType,
-): CommentRefType => {
-  switch (feedPostType) {
-    case 'submission':
-      return 'SUBMISSION';
-    case 'pow':
-      return 'POW';
-    case 'grant-application':
-      return 'GRANT_APPLICATION';
-  }
-};
+): CommentRefType => COMMENT_REF_TYPES[feedPostType];

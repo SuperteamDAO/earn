@@ -1,3 +1,5 @@
+'use client';
+
 import { Info } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 
@@ -58,7 +60,7 @@ export function SkillsField({ skillsRefreshKey }: Props) {
                 defaultValue={field.value || []}
                 onChange={(e) => {
                   field.onChange(e);
-                  trigger('skills');
+                  void trigger('skills');
                 }}
                 maxSuggestions={isSM ? 5 : 3}
               />

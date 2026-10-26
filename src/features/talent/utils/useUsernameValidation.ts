@@ -1,9 +1,10 @@
+'use client';
+
 import debounce from 'lodash.debounce';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { api } from '@/lib/api';
-import logger from '@/lib/logger';
-import { useUser } from '@/store/user';
+import { getJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 
 import { USERNAME_PATTERN } from '../constants';
 
@@ -13,7 +14,7 @@ export const useUsernameValidation = (initialValue = '') => {
   const [validationErrorMessage, setValidationErrorMessage] = useState('');
   const [validating, setValidating] = useState(false);
 
-  const { user } = useUser();
+  const user = useViewer();
 
   const checkUsernameAvailability = useCallback(
     async (usernameToCheck: string) => {
@@ -32,17 +33,16 @@ export const useUsernameValidation = (initialValue = '') => {
 
       try {
         setValidating(true);
-        const response = await api.get(
-          `/api/user/username?username=${usernameToCheck}`,
+        const { available } = await getJson<{ available: boolean }>(
+          `/api/user/username/?username=${encodeURIComponent(usernameToCheck)}`,
         );
-        const available = response.data.available;
         setIsInvalid(!available);
         setValidationErrorMessage(
           available ? '' : 'Username is unavailable! Please try another one.',
         );
         setValidating(false);
       } catch (error) {
-        logger.error(error);
+        console.error(error);
         setIsInvalid(true);
         setValidationErrorMessage(
           'An error occurred while checking username availability.',
@@ -60,12 +60,13 @@ export const useUsernameValidation = (initialValue = '') => {
 
   useEffect(() => {
     if (username && username.toLowerCase() === user?.username?.toLowerCase()) {
+      // oxlint-disable-next-line react/set-state-in-effect -- kept as Earn runs it
       setIsInvalid(false);
       setValidationErrorMessage('');
-      return;
+      return undefined;
     }
     if (username) {
-      debouncedCheckUsername(username);
+      void debouncedCheckUsername(username);
     }
     return () => {
       debouncedCheckUsername.cancel();

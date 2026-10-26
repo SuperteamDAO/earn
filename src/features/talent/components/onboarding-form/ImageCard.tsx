@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import { useMemo } from 'react';
 
 import {
@@ -12,14 +13,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { api } from '@/lib/api';
+import type { OnboardingStats } from '@/server/talent-directory';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { roundToNearestThousand } from '@/utils/number';
-
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
-import { totalsQuery } from '@/features/home/queries/totals';
-import { userCountQuery } from '@/features/home/queries/user-count';
-import { liveOpportunitiesQuery } from '@/features/listings/queries/live-opportunities';
 
 const dummyUsers = [
   { name: 'Kash Dhanda', pfp: ASSET_URL + '/pfps/t1.webp' },
@@ -27,29 +23,9 @@ const dummyUsers = [
   { name: 'Pratik Dholani', pfp: ASSET_URL + '/pfps/fff1.webp' },
 ];
 
-export const TalentImageCard = () => {
-  const { data: chapters = [] } = useQuery(chaptersQuery);
-
-  const { data: countryCode } = useQuery({
-    queryKey: ['location-country-code'],
-    queryFn: async () => {
-      const response = await api.get<{ country_code?: string }>(
-        '/api/location',
-      );
-      return response.data.country_code?.trim().toLowerCase() || null;
-    },
-    staleTime: 5 * 60 * 1000,
-    gcTime: 5 * 60 * 1000,
-  });
-
-  const chapterFromLocation = useMemo(() => {
-    if (!countryCode) return null;
-    return (
-      chapters.find(
-        (chapter) => chapter.code?.trim().toLowerCase() === countryCode,
-      ) || null
-    );
-  }, [chapters, countryCode]);
+// The onboarding page's side panel, with numbers loaded on the server.
+export const TalentImageCard = ({ stats }: { stats: OnboardingStats }) => {
+  const chapterFromLocation = stats.chapter;
 
   const people = useMemo(() => {
     if (!chapterFromLocation) return dummyUsers;
@@ -62,17 +38,9 @@ export const TalentImageCard = () => {
     return [chapterLead, ...dummyUsers].slice(0, 3);
   }, [chapterFromLocation]);
 
-  const { data: liveOpportunities } = useQuery({
-    ...liveOpportunitiesQuery,
-  });
-
-  const { data: totals } = useQuery({
-    ...totalsQuery,
-  });
-
-  const { data: stat } = useQuery({
-    ...userCountQuery,
-  });
+  const liveOpportunities = { totalUsdValue: stats.liveUsdValue };
+  const totals = { totalInUSD: stats.totalInUSD };
+  const stat = { totalUsers: stats.totalUsers };
 
   return (
     <div className="relative h-full w-full">

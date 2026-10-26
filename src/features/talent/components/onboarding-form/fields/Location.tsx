@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -10,14 +12,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { countries, SANCTIONED_COUNTRY_CODES } from '@/constants/country';
-import { api } from '@/lib/api';
+import { getJson } from '@/lib/fetch-json';
 
 import {
   type NewTalentFormData,
   newTalentSchema,
 } from '@/features/talent/schema';
 
-export function LocationField() {
+// `countryCode` is where the request came from, when the server knows.
+export function LocationField({ countryCode }: { countryCode: string | null }) {
   const form = useFormContext<NewTalentFormData>();
   const { control, watch, setValue } = form;
 
@@ -26,14 +29,14 @@ export function LocationField() {
       try {
         const currentLocation = watch('location');
         if (!currentLocation) {
-          const response = await api.get('/api/location');
-          const locationData = response.data;
+          const locationData = countryCode
+            ? { country_code: countryCode }
+            : await getJson<{ country_code?: string }>('/api/location/');
 
-          if (locationData && locationData.country_code) {
+          const code = locationData?.country_code;
+          if (code) {
             const country = countries.find(
-              (ct) =>
-                ct.code.toLowerCase() ===
-                locationData.country_code.toLowerCase(),
+              (ct) => ct.code.toLowerCase() === code.toLowerCase(),
             );
 
             if (country && !SANCTIONED_COUNTRY_CODES.includes(country.code)) {
@@ -50,8 +53,8 @@ export function LocationField() {
       }
     };
 
-    fetchLocation();
-  }, [setValue, watch]);
+    void fetchLocation();
+  }, [setValue, watch, countryCode]);
 
   return (
     <FormField

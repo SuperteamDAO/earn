@@ -31,6 +31,7 @@ const getDisplayValue = (name: SocialType, value: string) => {
 };
 
 type SocialInputAllProps = {
+  // oxlint-disable-next-line typescript/no-explicit-any -- shared by forms of every shape
   control: Control<any>;
   required?: SocialType[];
 };
@@ -56,6 +57,7 @@ export const SocialInputAll = ({ control, required }: SocialInputAllProps) => {
 };
 
 interface SocialInputProps {
+  // oxlint-disable-next-line typescript/no-explicit-any -- shared by forms of every shape
   control: Control<any>;
   name: string;
   socialName: SocialType;
@@ -93,7 +95,7 @@ export const SocialInput = ({
 }: SocialInputProps) => {
   const social = useMemo(
     () => socials.find((s) => s.name === socialName),
-    [socials, socialName],
+    [socialName],
   );
   const Icon = social?.icon;
   return (

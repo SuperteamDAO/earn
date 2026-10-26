@@ -28,7 +28,7 @@ function isPng(bytes: Uint8Array): boolean {
 function isWebp(bytes: Uint8Array): boolean {
   if (bytes.length < 12) return false;
   const hasRiff = matchesSignature(bytes, [...SIGNATURES.webp.riff]);
-  const hasWebp = matchesSignature(bytes.slice(8, 12) as Uint8Array, [
+  const hasWebp = matchesSignature(bytes.slice(8, 12), [
     ...SIGNATURES.webp.webp,
   ]);
   return hasRiff && hasWebp;

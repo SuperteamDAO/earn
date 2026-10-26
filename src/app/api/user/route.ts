@@ -1,47 +1,35 @@
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import * as Option from 'effect/Option';
+import type { NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { json, sessionOf } from '@/lib/route-guard';
+import { runtime } from '@/server/runtime';
+import * as Users from '@/server/users';
 
-import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
-import { getUserSession } from '@/features/auth/utils/getUserSession';
-
-export async function GET(_request: NextRequest) {
-  try {
-    const headersList = await headers();
-    const sessionResponse = await getUserSession(headersList);
-
-    if (sessionResponse.status !== 200 || !sessionResponse.data) {
-      logger.warn(`Authentication failed: ${sessionResponse.error}`);
-      return NextResponse.json(
-        { error: sessionResponse.error },
-        { status: sessionResponse.status },
+// The signed-in account, as pages' viewer has it. For client code that
+// still asks; pages get it from the root layout.
+export function GET(request: NextRequest) {
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const privyDid = yield* sessionOf(request);
+      if (Option.isNone(privyDid)) return json(401, { error: 'session' });
+      return yield* Users.Users.use((users) =>
+        users.viewer(privyDid.value),
+      ).pipe(
+        Effect.map(
+          Option.match({
+            onNone: () => json(404, { error: 'User not found' }),
+            onSome: (viewer) => json(200, viewer),
+          }),
+        ),
+        Effect.catchTag('DatabaseError', () =>
+          Effect.succeed(
+            json(500, {
+              error: 'Error occurred while processing the request.',
+            }),
+          ),
+        ),
       );
-    }
-
-    const { privyDid } = sessionResponse.data;
-
-    const result = await prisma.user.findUnique({
-      where: { privyDid },
-      select: userSelectOptions,
-    });
-
-    if (!result) {
-      logger.warn(`User not found for privyDid: ${privyDid}`);
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    logger.info(`User data retrieved successfully for user ID: ${result.id}`);
-    return NextResponse.json(result);
-  } catch (err) {
-    logger.error(
-      `Error occurred while processing the request: ${safeStringify(err)}`,
-    );
-    return NextResponse.json(
-      { error: 'Error occurred while processing the request.' },
-      { status: 500 },
-    );
-  }
+    }),
+  );
 }

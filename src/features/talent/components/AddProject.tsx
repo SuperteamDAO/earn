@@ -1,3 +1,5 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Dispatch, type SetStateAction, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
@@ -20,8 +22,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import type { PoW } from '@/interface/pow';
 import { allSkills, allSubSkills } from '@/interface/skills';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import type { FeedDataProps } from '@/features/feed/types';
@@ -61,7 +63,7 @@ export const AddProject = ({
   });
   const { handleSubmit, setValue, watch, control } = form;
 
-  const { user } = useUser();
+  const user = useViewer();
 
   const skillsOptions = useMemo<Option[]>(
     () =>
@@ -69,7 +71,7 @@ export const AddProject = ({
         value: i,
         label: i,
       })),
-    [allSkills],
+    [],
   );
   const subSkillsOptions = useMemo<Option[]>(
     () =>
@@ -79,11 +81,11 @@ export const AddProject = ({
           label: i,
         }))
         .filter((i) => i.value !== 'Other'),
-    [allSubSkills],
+    [],
   );
 
   const projectToEdit =
-    selectedProject !== null && pow ? pow[selectedProject as number] : null;
+    typeof selectedProject === 'number' && pow ? pow[selectedProject] : null;
 
   useEffect(() => {
     if (!isOpen) {
@@ -117,15 +119,15 @@ export const AddProject = ({
       link: data.link,
       skills: data.skills,
       subSkills: data.subSkills,
-      firstName: user?.firstName,
-      lastName: user?.lastName,
-      photo: user?.photo,
+      firstName: user?.firstName ?? undefined,
+      lastName: user?.lastName ?? undefined,
+      photo: user?.photo ?? undefined,
       createdAt: new Date().toISOString(),
     };
 
     if (upload) {
       try {
-        await api.post('/api/pow/create', {
+        await postJson('/api/pow/create/', {
           pows: [
             {
               title: projectData.title,
@@ -144,18 +146,18 @@ export const AddProject = ({
         return;
       }
     } else if (setPow && setSelectedProject !== undefined) {
-      if (selectedProject !== null) {
+      if (typeof selectedProject === 'number') {
         setPow((prevPow) => {
-          const updatedPow = [...prevPow!];
-          updatedPow[selectedProject as number] = {
-            ...updatedPow[selectedProject as number],
+          const updatedPow = [...prevPow];
+          updatedPow[selectedProject] = {
+            ...updatedPow[selectedProject],
             ...projectData,
           };
           return updatedPow;
         });
         setSelectedProject(null);
       } else {
-        setPow((prevPow) => [...prevPow!, projectData]);
+        setPow((prevPow) => [...prevPow, projectData]);
       }
     }
 
@@ -166,7 +168,7 @@ export const AddProject = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-[607px] py-[1.4375rem]">
         <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={(event) => void handleSubmit(onSubmit)(event)}>
             <div className="space-y-5">
               <FormFieldWrapper
                 isRequired
@@ -198,6 +200,7 @@ export const AddProject = ({
                         <p
                           className={cn(
                             'ml-auto text-xs',
+                            // oxlint-disable-next-line react/incompatible-library -- react-hook-form's watch, as Earn reads it
                             (watch('description')?.length || 0) > 160
                               ? 'text-red-500'
                               : 'text-slate-400',

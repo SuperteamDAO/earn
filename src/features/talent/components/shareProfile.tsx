@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 import FaCheck from '@/components/icons/FaCheck';
@@ -8,7 +10,7 @@ import FaXTwitter from '@/components/icons/FaXTwitter';
 import type { IconType } from '@/components/icons/helpers/GenIcon';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
@@ -39,7 +41,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
     }
   };
 
-  const { user } = useUser();
+  const user = useViewer();
 
   const shareMessage =
     id === user?.id
@@ -114,7 +116,7 @@ export const ShareProfile = ({ isOpen, onClose, username, id }: Props) => {
                 <FaCheck className="h-5 w-5 text-slate-500" />
               ) : (
                 <FaCopy
-                  onClick={onCopy}
+                  onClick={() => void onCopy()}
                   className="h-5 w-5 cursor-pointer text-slate-500"
                 />
               )}

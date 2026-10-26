@@ -1,3 +1,5 @@
+'use client';
+
 import { Lock } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -100,7 +102,7 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
           >
             <FeedCardLink
               href={listingLink}
-              style="opacity-50 pointer-events-none"
+              linkStyle="opacity-50 pointer-events-none"
             >
               View Submission
             </FeedCardLink>
@@ -113,7 +115,7 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
         >
           <FeedCardLink
             href={submissionLink}
-            style="opacity-100 pointer-events-auto"
+            linkStyle="opacity-100 pointer-events-auto"
           >
             View Submission
           </FeedCardLink>

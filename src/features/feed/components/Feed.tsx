@@ -1,6 +1,7 @@
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
+'use client';
+
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import {
@@ -10,21 +11,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FeedPageLayout } from '@/layouts/Feed';
 import { cn } from '@/utils/cn';
 
-import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
-import { VibeCard } from '@/features/home/components/VibeCard';
-
-import { useGetFeed } from '../queries/useGetFeed';
-import type { FeedPostType } from '../types';
-import { FeedLoop } from './FeedLoop';
+import {
+  DEFAULT_TIME_PERIOD,
+  type FeedDataProps,
+  type FeedPostType,
+} from '../types';
+import { InfiniteFeed } from './InfiniteFeed';
 
 interface Props {
   type?: FeedPostType;
   id?: string;
   isWinner?: boolean;
-  meta?: React.ReactNode;
+  activeMenu: 'new' | 'popular';
+  // The first page, for `activeMenu` and the default period.
+  initial: FeedDataProps[];
 }
 
 interface MenuOptionProps {
@@ -51,48 +53,38 @@ const MenuOption = ({ option, activeMenu, onSelect }: MenuOptionProps) => {
   );
 };
 
-export const Feed = ({ isWinner = false, id, type, meta }: Props) => {
+// The feed's body; pages put it in `FeedPageLayout isHomePage` (a server
+// layout).
+export const Feed = ({
+  isWinner = false,
+  id,
+  type,
+  activeMenu,
+  initial,
+}: Props) => {
   const router = useRouter();
-  const { query } = router;
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const activeMenu = (query.filter as 'new' | 'popular') || 'popular';
-  const [timePeriod, setTimePeriod] = useState('This Month');
-
-  const { ref, inView } = useInView();
-
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useGetFeed({
-      filter: activeMenu,
-      timePeriod:
-        activeMenu === 'popular' ? timePeriod.toLowerCase() : undefined,
-      isWinner,
-      take: 15,
-      highlightId: id,
-      highlightType: type,
-    });
-
-  useEffect(() => {
-    if (inView && hasNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, fetchNextPage, hasNextPage]);
+  const [timePeriod, setTimePeriod] = useState(DEFAULT_TIME_PERIOD);
 
   const handleMenuSelect = (option: 'new' | 'popular') => {
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...query, filter: option },
-      },
-      undefined,
-      { shallow: true },
-    );
+    const params = new URLSearchParams(searchParams?.toString());
+    params.set('filter', option);
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  const feedItems = data?.pages.flatMap((page) => page) ?? [];
+  const query = {
+    filter: activeMenu,
+    timePeriod: activeMenu === 'popular' ? timePeriod.toLowerCase() : undefined,
+    isWinner,
+    take: 15,
+    highlightId: id,
+    highlightType: type,
+  };
 
   return (
-    <FeedPageLayout isHomePage meta={meta}>
-      <HomepagePop />
+    <>
       <div className="border-b border-slate-200 px-5 pt-6">
         <h1 className="text-lg font-semibold text-slate-900 lg:text-xl">
           Activity Feed
@@ -100,9 +92,6 @@ export const Feed = ({ isWinner = false, id, type, meta }: Props) => {
         <p className="mt-1 text-sm text-slate-500 lg:text-base">
           Discover the best work on Earn
         </p>
-        <div className="flex w-full pt-4 lg:hidden">
-          <VibeCard />
-        </div>
         <div className="mt-4 -mb-px flex h-12 items-stretch justify-between gap-4">
           <div className="flex shrink-0 gap-5">
             <MenuOption
@@ -141,11 +130,14 @@ export const Feed = ({ isWinner = false, id, type, meta }: Props) => {
         </div>
       </div>
       <div className="min-w-0">
-        <FeedLoop
-          feed={feedItems}
-          ref={ref}
-          isFetchingNextPage={isFetchingNextPage}
-          isLoading={isLoading}
+        <InfiniteFeed
+          key={`${activeMenu}:${timePeriod}`}
+          initial={
+            activeMenu === 'new' || timePeriod === DEFAULT_TIME_PERIOD
+              ? initial
+              : undefined
+          }
+          query={query}
           type="activity"
         >
           <div className="my-32">
@@ -161,8 +153,8 @@ export const Feed = ({ isWinner = false, id, type, meta }: Props) => {
               We couldn’t find any activity for your time filter
             </p>
           </div>
-        </FeedLoop>
+        </InfiniteFeed>
       </div>
-    </FeedPageLayout>
+    </>
   );
 };

@@ -46,8 +46,7 @@ export const EarnAvatar = ({
           onError={handleImageError}
           loading={imgLoading}
           decoding={imgDecoding}
-          // fetchPriority is relatively new; cast for TS compatibility
-          fetchPriority={imgFetchPriority as any}
+          fetchPriority={imgFetchPriority}
         />
       ) : (
         <div className={cn(commonClassName, className)}>

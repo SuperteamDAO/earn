@@ -1,7 +1,9 @@
+'use client';
+
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
-import { type ReactNode, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { posthog } from 'posthog-js';
+import { type ReactNode, useState } from 'react';
 
 import GoComment from '@/components/icons/GoComment';
 import IoMdHeart from '@/components/icons/IoMdHeart';
@@ -9,8 +11,8 @@ import IoMdHeartEmpty from '@/components/icons/IoMdHeartEmpty';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
@@ -36,7 +38,7 @@ interface FeedCardContainerProps {
   photo: string | undefined;
   username?: string;
   id: string;
-  like: any;
+  like: FeedDataProps['like'];
   commentLink?: string;
   commentCount?: number;
   cardType: 'submission' | 'pow' | 'grant-application';
@@ -64,11 +66,17 @@ export const FeedCardContainer = ({
   recentCommenters: initialRecentCommenters,
   isPrivate,
 }: FeedCardContainerProps) => {
-  const { user } = useUser();
+  const user = useViewer();
 
-  const [isLiked, setIsLiked] = useState<boolean>(
-    !!like?.find((e: any) => e.id === user?.id),
-  );
+  const likedByViewer = !!like?.find((e) => e.id === user?.id);
+  const [isLiked, setIsLiked] = useState<boolean>(likedByViewer);
+  // Earn re-read it when the likes or the viewer changed; adjusted during
+  // render rather than in an effect.
+  const [likedFor, setLikedFor] = useState({ like, userId: user?.id });
+  if (likedFor.like !== like || likedFor.userId !== user?.id) {
+    setLikedFor({ like, userId: user?.id });
+    setIsLiked(likedByViewer);
+  }
   const [totalLikes, setTotalLikes] = useState<number>(like?.length ?? 0);
   const {
     onToggle: onToggleComment,
@@ -90,10 +98,6 @@ export const FeedCardContainer = ({
 
   const sanitizedLink = getURLSanitized(link);
 
-  useEffect(() => {
-    setIsLiked(!!like?.find((e: any) => e.id === user?.id));
-  }, [like, user?.id]);
-
   const handleLike = async () => {
     const newIsLiked = !isLiked;
     if (newIsLiked) posthog.capture('liked post_feed');
@@ -106,9 +110,9 @@ export const FeedCardContainer = ({
     setTotalLikes(newTotalLikes);
 
     try {
-      await api.post(`/api/${cardType}/like`, { id });
+      await postJson(`/api/${cardType}/like/`, { id });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setIsLiked(isLiked);
       setTotalLikes(totalLikes);
       alert('Failed to update like status. Please try again.');
@@ -132,7 +136,7 @@ export const FeedCardContainer = ({
           onClick={(e) => {
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
-            router.push(`/earn/t/${username}`);
+            router.push(`/earn/t/${username}/`);
           }}
         />
 
@@ -172,7 +176,7 @@ export const FeedCardContainer = ({
                   e.stopPropagation();
                   e.nativeEvent.stopImmediatePropagation();
                   if (!user?.id) return;
-                  handleLike();
+                  void handleLike();
                 }}
               >
                 {!isLiked && (
@@ -204,8 +208,8 @@ export const FeedCardContainer = ({
                 <div className="ml-1 flex -space-x-2">
                   {recentCommenters?.slice(0, 4).map((comment, index) => (
                     <EarnAvatar
-                      avatar={comment.author.photo!}
-                      id={comment.author.name!}
+                      avatar={comment.author.photo ?? undefined}
+                      id={comment.author.name ?? undefined}
                       key={index}
                       className="h-6 w-6 border border-white"
                     />

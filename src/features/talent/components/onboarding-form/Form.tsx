@@ -1,6 +1,8 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { posthog } from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -17,8 +19,8 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import {
@@ -31,13 +33,26 @@ import { LocationField } from './fields/Location';
 import { SkillsField } from './fields/Skills';
 import { SocialsField } from './fields/Socials';
 import { UsernameField } from './fields/Username';
-export const TalentForm = () => {
+interface TalentFormProps {
+  // Picked on the server for someone without a username yet.
+  suggestedUsername: string | null;
+  // Where the request came from, to start the location there.
+  countryCode: string | null;
+}
+
+export const TalentForm = ({
+  suggestedUsername,
+  countryCode,
+}: TalentFormProps) => {
   const router = useRouter();
-  const { user, refetchUser } = useUser();
+  const params = useSearchParams();
+  const user = useViewer();
 
   const form = useForm<NewTalentFormData>({
     resolver: zodResolver(
-      newTalentSchema.superRefine((data, ctx) => socialSuperRefine(data, ctx)),
+      newTalentSchema.superRefine(
+        (data, ctx) => void socialSuperRefine(data, ctx),
+      ),
     ),
     mode: 'onBlur',
   });
@@ -64,9 +79,9 @@ export const TalentForm = () => {
       ).data;
 
       reset({
-        username: user?.username,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
+        username: user?.username ?? undefined,
+        firstName: user?.firstName ?? undefined,
+        lastName: user?.lastName ?? undefined,
         skills: newTalentSchema.shape.skills.safeParse(user?.skills).data,
         photo: user?.photo,
         location: userLocation || currentLocation,
@@ -80,13 +95,14 @@ export const TalentForm = () => {
           extractSocialUsername('telegram', user.telegram || '') || undefined,
         website: user.website || undefined,
       });
+      // oxlint-disable-next-line react/set-state-in-effect -- kept as Earn runs it
       setSkillsRefreshKey((s) => s + 1);
     }
   }, [user, getValues, reset]);
 
   const isForcedRedirect = useMemo(() => {
-    return router.query.type === 'forced';
-  }, [router, user]);
+    return params?.get('type') === 'forced';
+  }, [params]);
 
   const TitleArray = {
     title: isForcedRedirect ? 'Finish Your Profile' : 'Complete your Profile',
@@ -103,7 +119,7 @@ export const TalentForm = () => {
     if (isSubmitDisabled) return false;
     if (errors.username?.message) {
       form.setFocus('username');
-      return;
+      return false;
     }
 
     setisLoading(true);
@@ -115,13 +131,14 @@ export const TalentForm = () => {
           const photoUrl =
             uploadedPhotoUrl || (isGooglePhoto ? user?.photo : data.photo);
 
-          await api.post('/api/user/complete-profile/', {
+          await postJson('/api/user/complete-profile/', {
             ...data,
             photo: photoUrl,
           });
           if (user) posthog.identify(user.email);
 
-          await refetchUser();
+          // The page sees the finished profile and sends them on.
+          router.refresh();
           return true;
         } catch (error) {
           console.error('Error:', error);
@@ -141,7 +158,10 @@ export const TalentForm = () => {
   return (
     <div className="">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} style={{ width: '100%' }}>
+        <form
+          onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}
+          style={{ width: '100%' }}
+        >
           <div className="mt-4 mb-3 flex flex-col text-left sm:mb-4 2xl:mt-8">
             <h1 className="font-sans text-lg font-medium md:text-2xl">
               {TitleArray?.title}
@@ -199,8 +219,11 @@ export const TalentForm = () => {
           </div>
 
           <div className="flex flex-col md:flex-row md:gap-2">
-            <UsernameField setUsernameValidating={setUsernameValidating} />
-            <LocationField />
+            <UsernameField
+              setUsernameValidating={setUsernameValidating}
+              suggestedUsername={suggestedUsername}
+            />
+            <LocationField countryCode={countryCode} />
           </div>
 
           <SkillsField skillsRefreshKey={skillsRefreshKey} />

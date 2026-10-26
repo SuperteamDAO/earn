@@ -1,3 +1,5 @@
+'use client';
+
 import { Lock } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -74,7 +76,7 @@ export function GrantCard({ grant, type, commentCount }: GrantCardProps) {
         >
           <FeedCardLink
             href={listingLink}
-            style={grant?.isPrivate ? 'opacity-50 pointer-events-none' : ''}
+            linkStyle={grant?.isPrivate ? 'opacity-50 pointer-events-none' : ''}
           >
             View Grant
           </FeedCardLink>

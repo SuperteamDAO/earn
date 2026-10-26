@@ -1,12 +1,15 @@
-import posthog from 'posthog-js';
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { posthog } from 'posthog-js';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 
 interface AlertOptionProps {
   title: string;
@@ -39,7 +42,8 @@ export const EmailSettingsModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { user, refetchUser } = useUser();
+  const user = useViewer();
+  const router = useRouter();
 
   const emailSettings = user?.emailSettings || [];
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
@@ -59,11 +63,11 @@ export const EmailSettingsModal = ({
     try {
       posthog.capture('confirm_email preferences');
       setIsUpdating(true);
-      await api.post('/api/user/update-email-settings', {
+      await postJson('/api/user/update-email-settings/', {
         categories: selectedCategories,
       });
 
-      await refetchUser();
+      router.refresh();
       setIsUpdating(false);
       onClose();
       toast.success('Email preferences updated');
@@ -162,7 +166,7 @@ export const EmailSettingsModal = ({
           <Button
             className="ph-no-capture mb-3 w-full"
             disabled={isUpdating}
-            onClick={updateEmailSettings}
+            onClick={() => void updateEmailSettings()}
           >
             {isUpdating ? (
               <span>Updating Preferences..</span>

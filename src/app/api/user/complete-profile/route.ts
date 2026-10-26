@@ -1,274 +1,45 @@
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
-import { ZodError } from 'zod';
+import * as Effect from 'effect/Effect';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { privy } from '@/lib/privy';
-import { prisma } from '@/prisma';
-import { cleanSkills } from '@/utils/cleanSkills';
-import { verifyImageExists } from '@/utils/cloudinary';
-import { filterAllowedFields } from '@/utils/filterAllowedFields';
-import { safeStringify } from '@/utils/safeStringify';
+import { decodeBody, guardUser, json } from '@/lib/route-guard';
+import * as ProfileWrites from '@/server/profile-writes';
+import { runtime } from '@/server/runtime';
 
-import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
-import { getUserSession } from '@/features/auth/utils/getUserSession';
-import { refreshUserMembershipLevel } from '@/features/membership/utils/refreshUserMembershipLevel';
-import { extractSocialUsername } from '@/features/social/utils/extractUsername';
-import {
-  profileSchema,
-  socialSuperRefine,
-  usernameSuperRefine,
-} from '@/features/talent/schema';
+import { ProfileBody } from '@/features/talent/utils/profile-input';
 
-function isZodValidationError(error: unknown): error is ZodError {
-  if (error instanceof ZodError) return true;
-
-  if (!error || typeof error !== 'object') return false;
-
-  const candidate = error as {
-    name?: unknown;
-    flatten?: unknown;
-  };
-
-  return (
-    candidate.name === 'ZodError' && typeof candidate.flatten === 'function'
+const failed = () =>
+  Effect.succeed(
+    json(500, { message: 'Error occurred while updating the user.' }),
   );
-}
 
-const allowedFields = [
-  'username',
-  'photo',
-  'firstName',
-  'lastName',
-  'interests',
-  'bio',
-  'twitter',
-  'discord',
-  'github',
-  'linkedin',
-  'website',
-  'telegram',
-  'community',
-  'experience',
-  'location',
-  'cryptoExperience',
-  'workPrefernce',
-  'currentEmployer',
-  'skills',
-  'private',
-];
-
-function normalizeSocialInput(value: unknown): string | undefined {
-  if (typeof value !== 'string') return undefined;
-
-  const trimmedValue = value.trim();
-  if (!trimmedValue) return undefined;
-
-  return trimmedValue.replace(/^@/, '');
-}
-
-function normalizeLinkedSocialInput(
-  platform: 'github' | 'twitter' | 'linkedin' | 'telegram',
-  value: unknown,
-): string | undefined {
-  const normalizedValue = normalizeSocialInput(value);
-  if (!normalizedValue) return undefined;
-
-  return extractSocialUsername(platform, normalizedValue) || normalizedValue;
-}
-
-export async function POST(request: NextRequest) {
-  const sessionResponse = await getUserSession(await headers());
-
-  if (sessionResponse.status !== 200 || !sessionResponse.data) {
-    logger.warn(`Authentication failed: ${sessionResponse.error}`);
-    return NextResponse.json(
-      { error: sessionResponse.error },
-      { status: sessionResponse.status },
-    );
-  }
-
-  const { userId } = sessionResponse.data;
-
-  let body: Record<string, unknown>;
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
-  }
-
-  logger.debug(`Request body: ${safeStringify(body)}`);
-
-  try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-
-    if (!user) {
-      logger.warn(`User not found for user ID: ${userId}`);
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    const filteredData = filterAllowedFields(body, allowedFields);
-
-    if (filteredData.photo && typeof filteredData.photo === 'string') {
-      try {
-        const imageExists = await verifyImageExists(filteredData.photo);
-        if (!imageExists) {
-          logger.warn(
-            `Photo verification failed for user ${userId}: ${filteredData.photo}`,
-          );
-          return NextResponse.json(
-            { error: 'Invalid photo: Image does not exist in our storage' },
-            { status: 400 },
-          );
-        }
-        logger.info(
-          `Photo verification successful for user ${userId}: ${filteredData.photo}`,
-        );
-      } catch (error: any) {
-        logger.warn(
-          `Photo verification error for user ${userId}: ${safeStringify(error)}`,
-        );
-        filteredData.photo = user.photo || undefined;
-      }
-    }
-
-    type SchemaKeys = keyof typeof profileSchema._def.schema.shape;
-    const keysToValidate = Object.keys(filteredData).reduce<
-      Record<SchemaKeys, true>
-    >(
-      (acc, key) => {
-        acc[key as SchemaKeys] = true;
-        return acc;
-      },
-      {} as Record<SchemaKeys, true>,
-    );
-
-    const partialSchema = profileSchema._def.schema
-      .pick(keysToValidate)
-      .superRefine(async (data, ctx) => {
-        await socialSuperRefine(data, ctx);
-        await usernameSuperRefine(data, ctx, user.id, {
-          isUsernameAvailable: async (username, currentUserId) => {
-            const existingUser = await prisma.user.findUnique({
-              where: { username },
-              select: { id: true },
-            });
-            return !existingUser || existingUser.id === currentUserId;
-          },
-        });
-      });
-
-    const updatedData = await partialSchema.parseAsync({
-      ...filteredData,
-      github: normalizeLinkedSocialInput('github', filteredData.github),
-      twitter: normalizeLinkedSocialInput('twitter', filteredData.twitter),
-      linkedin: normalizeLinkedSocialInput('linkedin', filteredData.linkedin),
-      telegram: normalizeLinkedSocialInput('telegram', filteredData.telegram),
-    });
-
-    const correctedSkills = updatedData.skills
-      ? cleanSkills(updatedData.skills)
-      : undefined;
-
-    const categories = new Set([
-      'createListing',
-      'commentOrLikeSubmission',
-      'weeklyListingRoundup',
-      'replyOrTagComment',
-      'productAndNewsletter',
-    ]);
-
-    for (const category of categories) {
-      await prisma.emailSettings.deleteMany({
-        where: {
-          userId,
-          category,
-        },
-      });
-      await prisma.emailSettings.create({
-        data: {
-          user: { connect: { id: userId } },
-          category,
-        },
-      });
-    }
-
-    logger.info(
-      `Completing user profile for user ID: ${userId}; fields: ${Object.keys(updatedData).join(', ')}`,
-    );
-
-    let walletAddress = user.walletAddress;
-    if (!walletAddress) {
-      const createWalletResponse = await privy.wallets().create({
-        chain_type: 'solana',
-        owner: {
-          user_id: user.privyDid,
-        },
-      });
-      walletAddress = createWalletResponse.address;
-    } else {
-      logger.info(`Using existing wallet for user ID: ${userId}`);
-    }
-
-    await prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        ...updatedData,
-        ...(correctedSkills
-          ? {
-              skills: correctedSkills,
-            }
-          : {}),
-        interests: updatedData.interests
-          ? JSON.stringify(updatedData.interests)
-          : undefined,
-        community: updatedData.community
-          ? JSON.stringify(updatedData.community)
-          : undefined,
-        isTalentFilled: true,
-        walletAddress,
-      },
-    });
-
-    await refreshUserMembershipLevel({
-      userId,
-      email: user.email,
-      currentPeopleId: user.peopleId ?? null,
-    });
-
-    const result = await prisma.user.findUnique({
-      where: { id: userId },
-      select: userSelectOptions,
-    });
-
-    logger.info(`User onboarded successfully for user ID: ${userId}`);
-    return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
-    if (isZodValidationError(error)) {
-      logger.warn(
-        `Validation failed while onboarding user ${userId}: ${safeStringify(error.flatten())}`,
+// Finishes a talent profile (onboarding's form).
+export function POST(request: NextRequest) {
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const writer = yield* guardUser(request);
+      if (writer instanceof NextResponse) return writer;
+      const body = yield* decodeBody(request, ProfileBody);
+      if (body instanceof NextResponse) return body;
+      return yield* ProfileWrites.ProfileWrites.use((writes) =>
+        writes.complete(writer.userId, body),
+      ).pipe(
+        Effect.map((viewer) => json(200, viewer)),
+        Effect.catchTags({
+          ProfileUserMissing: () =>
+            Effect.succeed(json(404, { error: 'User not found' })),
+          PhotoMissing: (error) =>
+            Effect.succeed(json(400, { error: error.message })),
+          InvalidProfile: (error) =>
+            Effect.succeed(
+              json(422, {
+                message: 'Invalid onboarding data',
+                errors: { formErrors: [], fieldErrors: error.errors },
+              }),
+            ),
+          PrivyApiError: failed,
+          DatabaseError: failed,
+        }),
       );
-      return NextResponse.json(
-        {
-          message: 'Invalid onboarding data',
-          errors: error.flatten(),
-        },
-        { status: 422 },
-      );
-    }
-
-    logger.error(
-      `Error occurred while onboarding user ${userId}: ${safeStringify(error)}`,
-    );
-    return NextResponse.json(
-      {
-        message: 'Error occurred while updating the user.',
-      },
-      { status: 500 },
-    );
-  }
+    }),
+  );
 }

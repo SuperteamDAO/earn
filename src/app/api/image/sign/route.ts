@@ -1,134 +1,63 @@
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import {
-  generateSignedUploadParams,
-  getRateLimitHeaders,
-  ImageUploadError,
-  signRequestSchema,
-} from '@/lib/image-upload';
-import { checkRateLimit } from '@/lib/image-upload/security/rate-limiter';
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { guardUser, json, readBody } from '@/lib/route-guard';
+import * as ImageUploads from '@/server/image-uploads';
+import { runtime } from '@/server/runtime';
 
-import { getUserSession } from '@/features/auth/utils/getUserSession';
-
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
-
-export async function POST(request: NextRequest) {
-  try {
-    const session = await getUserSession(await headers());
-
-    if (session.error || !session.data) {
-      logger.warn('Unauthorized image sign request', {
-        error: session.error,
-        status: session.status,
-      });
-      return NextResponse.json(
-        { error: session.error || 'Unauthorized' },
-        { status: session.status || 401 },
+// Signs a browser's upload straight to Earn's Cloudinary (profile photos,
+// sponsor logos, listing images, grant proofs).
+export function POST(request: NextRequest) {
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const writer = yield* guardUser(request);
+      if (writer instanceof NextResponse) return writer;
+      const text = yield* readBody(request, 4 * 1024);
+      const body: unknown = (() => {
+        try {
+          return text === null ? null : JSON.parse(text);
+        } catch {
+          return null;
+        }
+      })();
+      return yield* ImageUploads.ImageUploads.use((uploads) =>
+        uploads.sign(writer.userId, body),
+      ).pipe(
+        Effect.map(({ params, rate }) =>
+          NextResponse.json(params, {
+            headers: ImageUploads.rateHeaders(rate),
+          }),
+        ),
+        Effect.catchTags({
+          UploadRateLimited: (error) =>
+            Effect.succeed(
+              NextResponse.json(
+                {
+                  error: error.message,
+                  retryAfter: error.retryAfter,
+                },
+                {
+                  status: 429,
+                  headers: ImageUploads.rateHeaders(error),
+                },
+              ),
+            ),
+          InvalidImageRequest: () =>
+            Effect.succeed(json(400, { error: 'Invalid request body' })),
+          ImageUserNotFound: () =>
+            Effect.succeed(json(404, { error: 'User not found' })),
+          ImageForbidden: () =>
+            Effect.succeed(
+              json(403, {
+                error: 'You do not have permission to upload listing images',
+              }),
+            ),
+          ImageStoreError: () =>
+            Effect.succeed(json(500, { error: 'Internal Server Error' })),
+          DatabaseError: () =>
+            Effect.succeed(json(500, { error: 'Internal Server Error' })),
+        }),
       );
-    }
-
-    const userId = session.data.userId;
-
-    const rateLimitResult = await checkRateLimit(userId);
-    const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
-
-    if (!rateLimitResult.allowed) {
-      logger.warn(`Rate limit exceeded for user ${userId}`);
-      return NextResponse.json(
-        {
-          error: 'Too many upload requests. Please try again later.',
-          retryAfter: rateLimitResult.retryAfter,
-        },
-        {
-          status: 429,
-          headers: rateLimitHeaders,
-        },
-      );
-    }
-
-    const rawBody = await request.json();
-    logger.debug(`Image sign request: ${safeStringify(rawBody)}`);
-
-    const validationResult = signRequestSchema.safeParse(rawBody);
-    if (!validationResult.success) {
-      logger.warn(
-        `Invalid sign request body: ${safeStringify(validationResult.error.format())}`,
-      );
-      return NextResponse.json(
-        {
-          error: 'Invalid request body',
-          details: validationResult.error.format(),
-        },
-        { status: 400, headers: rateLimitHeaders },
-      );
-    }
-
-    const { source, contentType, contentLength } = validationResult.data;
-
-    if (source === 'description') {
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-          currentSponsorId: true,
-          UserSponsors: {
-            select: { sponsorId: true },
-          },
-        },
-      });
-
-      if (!user) {
-        logger.warn(`User ${userId} not found for description upload`);
-        return NextResponse.json(
-          { error: 'User not found' },
-          { status: 404, headers: rateLimitHeaders },
-        );
-      }
-
-      if (!user.currentSponsorId && user.UserSponsors.length === 0) {
-        logger.warn(
-          `User ${userId} attempted description upload without sponsor access`,
-        );
-        return NextResponse.json(
-          { error: 'You do not have permission to upload listing images' },
-          { status: 403, headers: rateLimitHeaders },
-        );
-      }
-    }
-
-    const signedParams = generateSignedUploadParams(source, undefined, userId);
-
-    logger.info(`Image upload signature generated for user ${userId}`, {
-      source,
-      contentType,
-      contentLength,
-    });
-
-    return NextResponse.json(
-      {
-        ...signedParams,
-        contentType,
-        contentLength,
-      },
-      { headers: rateLimitHeaders },
-    );
-  } catch (error: unknown) {
-    logger.error(`Failed to generate image signature: ${safeStringify(error)}`);
-
-    if (error instanceof ImageUploadError) {
-      return NextResponse.json(
-        { error: error.message, code: error.code },
-        { status: 400 },
-      );
-    }
-
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 },
-    );
-  }
+    }),
+  );
 }

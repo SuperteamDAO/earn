@@ -47,15 +47,3 @@ export const UPLOAD_CONFIGS: Record<ImageSource, UploadConfig> = {
     eager: 'c_limit,w_1200,q_auto,f_webp',
   },
 };
-
-export const CLOUDINARY_CONFIG = {
-  cloudName: process.env.CLOUDINARY_CLOUD_NAME || '',
-  apiKey: process.env.CLOUDINARY_API_KEY || '',
-  apiSecret: process.env.CLOUDINARY_API_SECRET || '',
-  signatureExpiry: 5 * 60,
-};
-
-export const RATE_LIMIT_CONFIG = {
-  maxRequests: 20,
-  windowMs: 60 * 1000,
-};

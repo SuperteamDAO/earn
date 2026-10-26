@@ -1,24 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
-
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { FeedPageLayout } from '@/layouts/Feed';
 
-import { fetchFeedPostQuery } from '../queries/feed-post';
-import type { FeedPostType } from '../types';
-import { FeedCardContainerSkeleton } from './FeedCardContainer';
+import type { FeedDataProps } from '../types';
 import { GrantCard } from './grantCard';
 import { PowCard } from './powCard';
 import { SubmissionCard } from './submissionCard';
 
 interface Props {
-  type: FeedPostType;
-  id: string;
+  // The post and, for a submission, the others on its listing; null when
+  // there's no such post. Loaded with the page.
+  data: FeedDataProps[] | null;
 }
 
-export const FeedPost = ({ type, id }: Props) => {
-  const { data, isLoading } = useQuery(fetchFeedPostQuery({ type, id }));
-
-  if (!data && !isLoading) {
+export const FeedPost = ({ data }: Props) => {
+  if (!data) {
     return (
       <FeedPageLayout>
         <div className="mt-20 flex min-h-[100vh] flex-col items-center justify-start gap-4">
@@ -40,34 +35,24 @@ export const FeedPost = ({ type, id }: Props) => {
   }
   return (
     <FeedPageLayout>
-      {isLoading || !data ? (
-        <FeedCardContainerSkeleton />
-      ) : (
+      {
         <>
           {data.map((item, index) => {
             switch (item.type) {
               case 'submission':
                 return (
-                  <SubmissionCard
-                    key={index}
-                    sub={item as any}
-                    type="activity"
-                  />
+                  <SubmissionCard key={index} sub={item} type="activity" />
                 );
               case 'pow':
-                return (
-                  <PowCard key={index} pow={item as any} type="activity" />
-                );
+                return <PowCard key={index} pow={item} type="activity" />;
               case 'grant-application':
-                return (
-                  <GrantCard type="activity" grant={item as any} key={index} />
-                );
+                return <GrantCard type="activity" grant={item} key={index} />;
               default:
                 return null;
             }
           })}
         </>
-      )}
+      }
     </FeedPageLayout>
   );
 };

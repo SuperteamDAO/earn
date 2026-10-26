@@ -1,3 +1,5 @@
+'use client';
+
 import { Info, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -45,11 +47,13 @@ export function SocialsField() {
       clearErrors('github');
       return 'twitter';
     }
+    // oxlint-disable-next-line react/memo-dependencies, react-hooks/exhaustive-deps -- kept as Earn runs it
   }, [skills]);
 
   useEffect(() => {
     const twitter = getValues('twitter');
     const github = getValues('github');
+    // oxlint-disable-next-line react/set-state-in-effect -- kept as Earn runs it
     setSelectedSocials((prev) => {
       const newSocials: SocialType[] = [requiredSocial];
       if (requiredSocial === 'twitter' && !!github) {
@@ -65,6 +69,7 @@ export function SocialsField() {
       );
       return newSocials;
     });
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- kept as Earn runs it
   }, [requiredSocial]);
 
   const handleToggleSocial = (social: SocialType, checked: boolean) => {

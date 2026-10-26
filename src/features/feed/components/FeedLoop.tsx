@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef } from 'react';
 
 import type { FeedDataProps } from '../types';
@@ -10,7 +12,7 @@ interface Props {
   feed: FeedDataProps[];
   isLoading?: boolean;
   isFetchingNextPage?: boolean;
-  ref?: (node?: Element | null | undefined) => void;
+  ref?: (node?: Element | null) => void;
   children: React.ReactNode;
   type: 'activity' | 'profile';
 }
@@ -32,28 +34,20 @@ export const FeedLoop = forwardRef<HTMLDivElement, Omit<Props, 'ref'>>(
               switch (item.type) {
                 case 'submission':
                   return (
-                    <div {...itemProps}>
-                      <SubmissionCard
-                        key={item.id}
-                        type={type}
-                        sub={item as any}
-                      />
+                    <div key={item.id ?? index} {...itemProps}>
+                      <SubmissionCard key={item.id} type={type} sub={item} />
                     </div>
                   );
                 case 'pow':
                   return (
-                    <div {...itemProps}>
-                      <PowCard key={item.id} type={type} pow={item as any} />
+                    <div key={item.id ?? index} {...itemProps}>
+                      <PowCard key={item.id} type={type} pow={item} />
                     </div>
                   );
                 case 'grant-application':
                   return (
-                    <div {...itemProps}>
-                      <GrantCard
-                        type={type}
-                        grant={item as any}
-                        key={item.id}
-                      />
+                    <div key={item.id ?? index} {...itemProps}>
+                      <GrantCard type={type} grant={item} key={item.id} />
                     </div>
                   );
                 default:

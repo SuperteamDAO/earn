@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import React from 'react';
 
-import { Home } from '@/layouts/Home';
+import { Default } from '@/layouts/Default';
+import { cn } from '@/utils/cn';
 
 import {
   AllPostsIcon,
@@ -11,7 +12,7 @@ import {
 
 interface NavItemProps {
   name: string;
-  icon: any;
+  icon: React.ComponentType;
   href: string;
 }
 
@@ -29,34 +30,49 @@ const NavItem = ({ name, icon: Icon, href }: NavItemProps) => {
 interface FeedPageProps {
   children: React.ReactNode;
   isHomePage?: boolean;
-  meta?: React.ReactNode;
 }
 
+// Earn's feed frame: Home's `type="feed"` layout around the feed's own
+// navigation. Home's sidebar joins once the home area's `Home` layout runs
+// under the App Router.
 export const FeedPageLayout = ({
   children,
   isHomePage = false,
-  meta,
 }: FeedPageProps) => {
   return (
-    <Home type="feed" meta={meta}>
-      <div className="-mx-2 border-r border-slate-200 lg:-mr-[25px] lg:ml-0">
-        <div className="flex">
-          <div className="sticky top-14 hidden h-screen w-48 shrink-0 flex-col gap-3 border-r pt-5 pr-5 lg:flex">
-            <NavItem name="Homepage" icon={HomeIcon} href="/earn" />
-            <NavItem
-              name="Winners"
-              icon={WinnersIcon}
-              href="/earn/feed/winners"
-            />
-            {!isHomePage && (
-              <NavItem name="All Posts" icon={AllPostsIcon} href="/earn/feed" />
-            )}
-          </div>
-          <div className="flex min-w-0 flex-1 flex-col lg:max-w-[44rem]">
-            {children}
+    <Default className="bg-white">
+      <div className={cn('mx-auto w-full px-2 lg:px-6')}>
+        <div className="mx-auto w-full max-w-7xl p-0">
+          <div className="flex items-start justify-between">
+            <div className="w-full min-w-0 lg:border-r lg:border-slate-100">
+              <div className="w-full lg:pr-6">
+                <div className="-mx-2 border-r border-slate-200 lg:-mr-[25px] lg:ml-0">
+                  <div className="flex">
+                    <div className="sticky top-14 hidden h-screen w-48 shrink-0 flex-col gap-3 border-r pt-5 pr-5 lg:flex">
+                      <NavItem name="Homepage" icon={HomeIcon} href="/earn/" />
+                      <NavItem
+                        name="Winners"
+                        icon={WinnersIcon}
+                        href="/earn/feed/winners/"
+                      />
+                      {!isHomePage && (
+                        <NavItem
+                          name="All Posts"
+                          icon={AllPostsIcon}
+                          href="/earn/feed/"
+                        />
+                      )}
+                    </div>
+                    <div className="flex min-w-0 flex-1 flex-col lg:max-w-[44rem]">
+                      {children}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </Home>
+    </Default>
   );
 };

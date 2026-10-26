@@ -8,11 +8,12 @@ import { getURLSanitized } from '@/utils/getURLSanitized';
 
 export const FeedCardLink = ({
   href,
-  style,
+  linkStyle,
   children,
 }: {
   href: string | undefined;
-  style?: React.HTMLAttributes<HTMLDivElement>['className'];
+  // Classes for the wrapper (Earn called this prop `style`).
+  linkStyle?: React.HTMLAttributes<HTMLDivElement>['className'];
   children: ReactNode;
 }) => {
   const { handleExternalLinkClick } = useExternalLinkDialog();
@@ -22,7 +23,7 @@ export const FeedCardLink = ({
     <div
       className={cn(
         'group-hover:underline-none flex items-center gap-2 whitespace-nowrap',
-        style,
+        linkStyle,
       )}
     >
       <Link

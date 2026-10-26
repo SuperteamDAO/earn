@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
@@ -17,7 +19,7 @@ interface PowCardProps {
     title: string;
     username: string;
     id: string;
-    like: any;
+    like: FeedDataProps['like'];
     userId: string;
     likeCount: number;
     ogImage: string;

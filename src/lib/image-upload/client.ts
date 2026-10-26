@@ -27,7 +27,7 @@ export function extractPublicIdFromUrl(url: string): string | null {
     const digits = seg.slice(1);
     if (digits.length === 0) return false;
     for (let i = 0; i < digits.length; i++) {
-      const ch = digits[i]!;
+      const ch = digits[i] ?? '';
       if (ch < '0' || ch > '9') return false;
     }
     return true;

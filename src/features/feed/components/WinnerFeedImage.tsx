@@ -29,18 +29,16 @@ export const WinnerFeedImage = ({
           symbol={token}
         />
         <p className="text-2xl font-semibold text-white md:text-5xl">
-          {!!grantApplicationAmount ? (
+          {grantApplicationAmount ? (
             grantApplicationAmount
           ) : (
-            <>
-              {winnerPosition ? `${rewards?.[Number(winnerPosition)]}` : 'N/A'}
-            </>
+            <>{winnerPosition ? `${rewards?.[winnerPosition]}` : 'N/A'}</>
           )}{' '}
           {token}
         </p>
       </div>
       <p className="mx-auto my-4 w-fit rounded-full bg-[#5536ab8a] px-4 py-2 text-xs font-medium text-white md:text-lg">
-        {!!grantApplicationAmount ? (
+        {grantApplicationAmount ? (
           'GRANT'
         ) : (
           <>{getRankLabels(Number(winnerPosition))?.toUpperCase()} PRIZE</>

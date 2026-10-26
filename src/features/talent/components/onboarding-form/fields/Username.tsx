@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import debounce from 'lodash.debounce';
 import { CheckIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -12,17 +13,19 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
-import { usernameRandomQuery } from '@/features/talent/queries/random-username';
 import type { NewTalentFormData } from '@/features/talent/schema';
 import { useUsernameValidation } from '@/features/talent/utils/useUsernameValidation';
 
 export function UsernameField({
   setUsernameValidating,
+  suggestedUsername,
 }: {
   setUsernameValidating: (val: boolean) => void;
+  // A free username for someone without one, picked on the server.
+  suggestedUsername: string | null;
 }) {
   const form = useFormContext<NewTalentFormData>();
   const {
@@ -33,7 +36,7 @@ export function UsernameField({
     setValue,
   } = form;
 
-  const { user } = useUser();
+  const user = useViewer();
   const {
     setUsername,
     isInvalid,
@@ -52,6 +55,7 @@ export function UsernameField({
     if (typeof watchedUsername === 'string') {
       setUsername(watchedUsername);
     }
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- kept as Earn runs it
   }, [watchedUsername, setUsername, clearErrors]);
 
   useEffect(() => {
@@ -60,6 +64,7 @@ export function UsernameField({
     } else {
       setUsernameValidating(false);
     }
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- kept as Earn runs it
   }, [isUsernameTyping, validating]);
 
   useEffect(() => {
@@ -78,23 +83,19 @@ export function UsernameField({
       }
       debouncedSetIsUsernameTyping(false);
     }
-    validateUsername();
+    void validateUsername();
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- kept as Earn runs it
   }, [validationErrorMessage, isInvalid, username, errors.username?.message]);
-
-  const { data: randomUsername } = useQuery({
-    ...usernameRandomQuery(user?.firstName),
-    enabled: !!user && !user.username,
-    refetchOnWindowFocus: false,
-  });
 
   useEffect(() => {
     setTimeout(() => {
-      if (user && !user?.username && randomUsername?.username) {
-        setValue('username', randomUsername.username);
-        setUsername(randomUsername?.username);
+      if (user && !user?.username && suggestedUsername) {
+        setValue('username', suggestedUsername);
+        setUsername(suggestedUsername);
       }
     }, 1000);
-  }, [randomUsername]);
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- kept as Earn runs it
+  }, [suggestedUsername]);
 
   return (
     <FormField
