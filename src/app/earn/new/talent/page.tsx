@@ -10,6 +10,8 @@ import { canResume, getViewer } from '@/lib/session';
 import { runtime } from '@/server/runtime';
 import * as TalentDirectory from '@/server/talent-directory';
 
+import { EmbeddedSignIn } from '@/features/sponsor/components/EmbeddedSignIn';
+
 import { NewTalent } from './new-talent';
 
 export const metadata = pageMetadata({
@@ -43,7 +45,22 @@ export default async function NewTalentPage({
         </Default>
       );
     }
-    redirect(signInHref(here));
+    // Earn's inline sign-in, back here once signed in.
+    return (
+      <Default>
+        <div className="h-screen w-full bg-white">
+          <div className="mx-auto flex min-h-[60vh] max-w-[32rem] flex-col items-center justify-center">
+            <p className="pt-4 text-center text-2xl font-semibold text-slate-900">
+              You&apos;re one step away
+            </p>
+            <p className="pb-4 text-center text-xl font-normal text-slate-600">
+              from joining Superteam Earn
+            </p>
+            <EmbeddedSignIn next={here} />
+          </div>
+        </div>
+      </Default>
+    );
   }
   if (viewer.isTalentFilled) {
     const originUrl = query.originUrl;
