@@ -23,6 +23,7 @@ export class EarncognitoError extends Schema.TaggedError<EarncognitoError>()(
 // Changing one there breaks it here.
 export type EarncognitoPath =
   | '/telegram/verify-listing'
+  | '/telegram/verify-listing/dm-st'
   | '/telegram/unpublish-listing'
   | '/telegram/report-listing'
   | '/telegram/spam-dispute'

@@ -101,6 +101,7 @@ export interface Airtable {
   readonly paymentsBase: string | undefined;
   readonly paymentsTable: string | undefined;
   readonly paymentsRegionsTable: string | undefined;
+  readonly perksTable: string | undefined;
   readonly gdpBase: string | undefined;
   readonly gdpSponsorsTable: string | undefined;
 }
@@ -228,6 +229,7 @@ const make = Effect.gen(function* () {
           paymentsRegionsTable: yield* text(
             'AIRTABLE_PAYMENTS_REGIONS_TABLE_NAME',
           ),
+          perksTable: yield* text('AIRTABLE_PERKS_TABLE'),
           gdpBase: yield* text('AIRTABLE_GDP_BASE_ID'),
           gdpSponsorsTable: yield* text('AIRTABLE_GDP_SPONSORS_TABLE_NAME'),
         }

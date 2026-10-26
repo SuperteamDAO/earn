@@ -75,11 +75,6 @@ export function verificationFields(body: VerificationBody) {
   );
 }
 
-// earncognito DMs the Superteam lead who is asked to vouch. Allowed for
-// Earn's service token (SERVICE_PATH_RESTRICTIONS), but missing from
-// Earncognito's typed paths.
-const DM_LEAD = '/telegram/verify-listing/dm-st';
-
 // A sponsor that isn't verified yet asks to publish a listing: the answers
 // are kept on the sponsor, and earncognito asks the Superteam lead to vouch
 // and posts the listing for review.
@@ -133,8 +128,8 @@ const make = Effect.gen(function* () {
       superteamLead: fields.superteamLead,
     };
     yield* earncognito
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- see DM_LEAD
-      .post(DM_LEAD as unknown as Earncognito.EarncognitoPath, lead)
+      // earncognito DMs the Superteam lead who is asked to vouch.
+      .post('/telegram/verify-listing/dm-st', lead)
       .pipe(
         Effect.catch(() =>
           Effect.logError(

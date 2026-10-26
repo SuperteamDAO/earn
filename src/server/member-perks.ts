@@ -1,11 +1,9 @@
 import 'server-only';
 
-import * as Config from 'effect/Config';
 import * as Context from 'effect/Context';
 import * as Effect from 'effect/Effect';
 import * as Exit from 'effect/Exit';
 import * as Layer from 'effect/Layer';
-import * as Option from 'effect/Option';
 import * as Redacted from 'effect/Redacted';
 import * as Schema from 'effect/Schema';
 
@@ -90,12 +88,8 @@ export class MemberPerks extends Context.Service<
 
 const make = Effect.gen(function* () {
   const config = yield* AppConfig.AppConfig;
-  // TODO(foundation): AppConfig.airtable has no perks table yet; read here
-  // until it does.
-  const table = yield* Config.option(
-    Config.String('AIRTABLE_PERKS_TABLE'),
-  ).pipe(Config.map(Option.getOrUndefined));
   const airtable = config.airtable;
+  const table = airtable?.perksTable;
 
   const load = Effect.gen(function* () {
     if (!airtable?.base || !table) {
