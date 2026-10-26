@@ -10,6 +10,7 @@ import { Toaster } from 'sonner';
 import { ExternalLinkDialogProvider } from '@/components/shared/ExternalLinkDialogProvider';
 import { TokenListProvider } from '@/constants/tokenList';
 import { SessionKeeper } from '@/lib/auth/session-keeper';
+import { SignInDialogProvider } from '@/lib/auth/sign-in-dialog';
 import { publicEnv } from '@/lib/public-env';
 import { confirmDelay } from '@/lib/renewal';
 import { getSession, getViewer, hasPrivySession } from '@/lib/session';
@@ -51,7 +52,9 @@ export default async function RootLayout({
       <body>
         <ViewerProvider viewer={viewer}>
           <TokenListProvider tokens={tokens}>
-            <ExternalLinkDialogProvider>{children}</ExternalLinkDialogProvider>
+            <ExternalLinkDialogProvider>
+              <SignInDialogProvider>{children}</SignInDialogProvider>
+            </ExternalLinkDialogProvider>
           </TokenListProvider>
         </ViewerProvider>
         <Toaster position="bottom-right" richColors />

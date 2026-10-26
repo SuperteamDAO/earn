@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import type { ReactNode } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { signInHref } from '@/lib/safe-next';
+import { useSignIn } from '@/lib/auth/sign-in-dialog';
 import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
@@ -27,8 +27,7 @@ interface AuthWrapperProps {
 }
 
 // Wraps something only a signed-in person (optionally with a finished
-// talent profile) may use. Signed out, a tap goes to sign-in, a page of its
-// own (Privy's SDK loads only there), and comes back. Without a profile,
+// talent profile) may use. Signed out, a tap opens Earn's sign-in dialog. Without a profile,
 // it asks them to finish one.
 export function AuthWrapper({
   children,
@@ -40,6 +39,7 @@ export function AuthWrapper({
   allowSponsor = false,
 }: AuthWrapperProps) {
   const viewer = useViewer();
+  const openSignIn = useSignIn();
   const pathname = usePathname() ?? '';
   const search = useSearchParams()?.toString() ?? '';
   const isSponsor = !!viewer?.currentSponsorId;
@@ -63,10 +63,7 @@ export function AuthWrapper({
     event.stopPropagation();
     if (!viewer) {
       onClick?.();
-      // A full page load: sign-in is a document with its own CSP.
-      window.location.assign(
-        signInHref(redirectTo ?? (search ? `${pathname}?${search}` : pathname)),
-      );
+      openSignIn(redirectTo ?? (search ? `${pathname}?${search}` : pathname));
       return;
     }
     profileModalOnOpen();

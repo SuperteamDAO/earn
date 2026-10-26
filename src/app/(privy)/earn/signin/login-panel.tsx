@@ -10,17 +10,26 @@ export function LoginPanel({
   privy,
   next,
   expectingSession,
+  embed,
+  google,
 }: {
   privy: PrivyProps;
   next: string;
   expectingSession: boolean;
+  embed: boolean;
+  google: boolean;
 }) {
   const { started, ready } = useTurn();
   return (
-    <LoginCard>
+    <LoginCard embed={embed}>
       {started ? (
         <PrivyAuthProvider {...privy} onReady={ready}>
-          <LoginForm next={next} expectingSession={expectingSession} />
+          <LoginForm
+            next={next}
+            expectingSession={expectingSession}
+            embed={embed}
+            google={google}
+          />
         </PrivyAuthProvider>
       ) : (
         <Waiting />

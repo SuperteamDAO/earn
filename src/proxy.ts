@@ -111,15 +111,16 @@ export function proxy(request: NextRequest) {
     return new NextResponse(null, { status: 204 });
   }
 
-  // Only the two hidden frames, never the sign-in form: the parameter given
-  // once and set to 1, exactly as the page reads it.
+  // Only sign-in's frames: the parameter given once and set to 1, exactly
+  // as the page reads it.
   const once = (key: string) => {
     const values = searchParams.getAll(key);
     return values.length === 1 && values[0] === '1';
   };
+  // Earn's sign-in dialog frames the form itself (`embed`).
   const frameable =
     startsWithPage(pathname, '/earn/signin') &&
-    (once('renew') || once('sign-out'));
+    (once('renew') || once('sign-out') || once('embed'));
   const csp = contentSecurityPolicy(nonce, { privy, kyc, frameable });
 
   // Next stamps the nonce from the request's CSP on its own scripts; pages

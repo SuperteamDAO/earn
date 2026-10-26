@@ -26,6 +26,8 @@ export default async function SignInPage({
     privy_oauth_code,
     renew,
     'sign-out': signOut,
+    embed,
+    google,
   } = await searchParams;
   const privy = await privyProps();
   // A public page renewing the session in a hidden frame; nothing to show.
@@ -49,13 +51,21 @@ export default async function SignInPage({
   const expectingSession =
     (await cookies()).has('privy-session') ||
     typeof privy_oauth_code === 'string';
+  const panel = (
+    <LoginPanel
+      privy={privy}
+      next={safeNext(typeof next === 'string' ? next : null)}
+      expectingSession={expectingSession}
+      embed={embed === '1'}
+      google={google === '1'}
+    />
+  );
+  // Framed by Earn's sign-in dialog (src/lib/auth/sign-in-dialog.tsx): just
+  // the card's content; the dialog is the card.
+  if (embed === '1') return panel;
   return (
     <main className="flex min-h-dvh items-center justify-center bg-slate-50 px-4 py-10">
-      <LoginPanel
-        privy={privy}
-        next={safeNext(typeof next === 'string' ? next : null)}
-        expectingSession={expectingSession}
-      />
+      {panel}
     </main>
   );
 }

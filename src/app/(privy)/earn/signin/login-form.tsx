@@ -18,6 +18,11 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
+import {
+  SIGN_IN_GOOGLE,
+  SIGN_IN_HEIGHT,
+  SIGNED_IN,
+} from '@/lib/auth/sign-in-messages';
 import { validateEmailRegex } from '@/lib/email';
 import { GoogleIcon } from '@/svg/google';
 
@@ -85,10 +90,45 @@ const REFUSALS: Record<string, string> = {
   database: 'We couldn’t set up your account. Try again in a minute.',
 };
 
-// Earn's sign-in card: the dialog Earn showed over every page, now a page.
-export function LoginCard({ children }: { children: React.ReactNode }) {
+// Tells the dialog that frames this page how tall the card is.
+function useReportHeight(embed: boolean) {
+  const card = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const element = card.current;
+    if (!embed || !element || window.parent === window) return undefined;
+    const report = () =>
+      window.parent.postMessage(
+        { type: SIGN_IN_HEIGHT, height: element.offsetHeight },
+        window.location.origin,
+      );
+    const observer = new ResizeObserver(report);
+    observer.observe(element);
+    report();
+    return () => observer.disconnect();
+  }, [embed]);
+  return card;
+}
+
+// Earn's sign-in card: the content of the dialog Earn shows over every page
+// (src/lib/auth/sign-in-dialog.tsx frames it, `embed`), or on its own when
+// sign-in is opened directly.
+export function LoginCard({
+  embed = false,
+  children,
+}: {
+  embed?: boolean;
+  children: React.ReactNode;
+}) {
+  const card = useReportHeight(embed);
   return (
-    <div className="w-full max-w-[23rem] overflow-hidden rounded-lg border border-slate-200 bg-white pt-2 shadow-lg">
+    <div
+      ref={card}
+      className={
+        embed
+          ? 'w-full overflow-hidden bg-white pt-2'
+          : 'w-full max-w-[23rem] overflow-hidden rounded-lg border border-slate-200 bg-white pt-2 shadow-lg'
+      }
+    >
       {children}
       <div className="rounded-b-md bg-slate-100 py-[7px]">
         <p className="text-center text-xs text-slate-400">
@@ -170,9 +210,15 @@ export function Waiting({ label = 'Loading…' }: { label?: string }) {
 export function LoginForm({
   next,
   expectingSession,
+  embed = false,
+  google = false,
 }: {
   next: string;
   expectingSession: boolean;
+  // Framed by Earn's sign-in dialog: hand Google and the finish to the page.
+  embed?: boolean;
+  // Sent here by the dialog to sign in with Google: start it at once.
+  google?: boolean;
 }) {
   const { ready, authenticated, getAccessToken, logout } = usePrivy();
   const [error, setError] = useState<string | null>(null);
@@ -211,11 +257,47 @@ export function LoginForm({
           setStuck(
             REFUSALS[session.refusal] ?? 'Something went wrong. Try again.',
           );
+        } else if (embed && window.parent !== window) {
+          window.parent.postMessage(
+            { type: SIGNED_IN, href: landing(next, session.created) },
+            window.location.origin,
+          );
         } else {
           window.location.replace(landing(next, session.created));
         }
       });
-  }, [ready, authenticated, getAccessToken, next]);
+  }, [ready, authenticated, getAccessToken, next, embed]);
+
+  const startGoogle = () => {
+    posthog.capture('google_auth');
+    setError(null);
+    // Google refuses to sign in inside a frame; the page goes to sign-in
+    // for it, which starts Google there.
+    if (embed && window.parent !== window) {
+      window.parent.postMessage(
+        { type: SIGN_IN_GOOGLE },
+        window.location.origin,
+      );
+      return;
+    }
+    acted.current = true;
+    googleLogin.initOAuth({ provider: 'google' }).catch(() => {
+      setError('Google sign-in didn’t start. Try again.');
+    });
+  };
+
+  // While true, Google is starting (it leaves the page when it does).
+  const [autoGoogle, setAutoGoogle] = useState(google);
+  const googleStarted = useRef(false);
+  useEffect(() => {
+    if (!ready || authenticated || !google || googleStarted.current) return;
+    googleStarted.current = true;
+    acted.current = true;
+    googleLogin.initOAuth({ provider: 'google' }).catch(() => {
+      setAutoGoogle(false);
+      setError('Google sign-in didn’t start. Try again.');
+    });
+  }, [ready, authenticated, google, googleLogin]);
 
   if (stuck) {
     return (
@@ -244,11 +326,13 @@ export function LoginForm({
 
   // Privy will likely sign them in unprompted, so say so rather than show
   // the form for a moment.
-  if (!ready || authenticated) {
+  if (!ready || authenticated || autoGoogle) {
     return (
       <Waiting
         label={
-          authenticated || expectingSession ? 'Signing you in…' : 'Loading…'
+          authenticated || expectingSession || google
+            ? 'Signing you in…'
+            : 'Loading…'
         }
       />
     );
@@ -352,14 +436,7 @@ export function LoginForm({
               className="ph-no-capture h-12 w-full font-medium"
               size="lg"
               disabled={googleLogin.state.status === 'loading'}
-              onClick={() => {
-                posthog.capture('google_auth');
-                setError(null);
-                acted.current = true;
-                googleLogin.initOAuth({ provider: 'google' }).catch(() => {
-                  setError('Google sign-in didn’t start. Try again.');
-                });
-              }}
+              onClick={startGoogle}
             >
               <GoogleIcon />
               <span>
