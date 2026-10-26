@@ -75,7 +75,7 @@ export default async function SignupPage(props: PageProps<'/earn/signup'>) {
           <div>
             <AcceptInvite
               token={token}
-              signIn={signInHref(here)}
+              next={here}
               signedInEmail={viewer?.email ?? null}
               invitedEmail={details.invitedEmail}
             />
