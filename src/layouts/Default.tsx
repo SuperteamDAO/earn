@@ -1,48 +1,30 @@
-import dynamic from 'next/dynamic';
 import type { ReactNode } from 'react';
 
 import { cn } from '@/utils/cn';
 
-import { Header } from '@/features/navbar/components/Header';
-
+// TEMPORARY STUB while the home area rebuilds the shell (header, footer)
+// for the App Router. Same export and props as Earn's; `meta` is ignored
+// (pages export `metadata` now).
 interface IDefaultProps {
-  readonly meta: ReactNode;
+  readonly meta?: ReactNode;
   readonly children: ReactNode;
   readonly className?: string;
   readonly hideFooter?: boolean;
   readonly topBanner?: ReactNode;
 }
 
-const Footer = dynamic(
-  () => import('@/features/navbar/components/Footer').then((mod) => mod.Footer),
-  { ssr: false },
-);
-
-const OutdatedBrowserWarning = dynamic(
-  () =>
-    import('@/features/navbar/components/OutdatedBrowserWarning').then(
-      (mod) => mod.OutdatedBrowserWarning,
-    ),
-  { ssr: false },
-);
-
-export const Default = ({
-  className,
-  meta,
-  children,
-  hideFooter,
-  topBanner,
-}: IDefaultProps) => {
+export const Default = ({ className, children, topBanner }: IDefaultProps) => {
   return (
     <div
       className={cn('flex min-h-screen flex-col justify-between', className)}
     >
-      {meta}
-      <OutdatedBrowserWarning />
       {topBanner}
-      <Header />
+      <header className="flex h-14 items-center border-b border-slate-200 px-4">
+        <a href="/earn/" className="font-semibold text-slate-800">
+          Superteam Earn
+        </a>
+      </header>
       <div className="flex flex-1 flex-col">{children}</div>
-      {!hideFooter && <Footer />}
     </div>
   );
 };
