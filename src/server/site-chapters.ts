@@ -38,6 +38,11 @@ export class SiteChapters extends Context.Service<
       ReadonlyArray<Chapter>,
       Database.DatabaseError
     >;
+    // The chapter a region page or OG image names (by region, display
+    // name, slug or name), as Earn's `findChapterByRegionInput` finds it.
+    readonly byRegionInput: (
+      region: string,
+    ) => Effect.Effect<Chapter | null, Database.DatabaseError>;
     // The chapters' display names, once each, sorted.
     readonly countries: Effect.Effect<
       ReadonlyArray<string>,
@@ -55,6 +60,9 @@ const countriesOf = (raw: unknown): ReadonlyArray<string> =>
   Array.isArray(raw)
     ? raw.filter((country): country is string => typeof country === 'string')
     : [];
+
+const normalize = (value: string | null | undefined): string =>
+  (value || '').trim().toLowerCase();
 
 const make = Effect.gen(function* () {
   const db = yield* Database.Database;
@@ -103,6 +111,23 @@ const make = Effect.gen(function* () {
     Exit.isSuccess(exit) ? '5 minutes' : 0,
   );
 
+  const byRegionInput = (region: string) => {
+    const wanted = normalize(region);
+    if (!wanted) return Effect.succeed(null);
+    return list.pipe(
+      Effect.map(
+        (chapters) =>
+          chapters.find(
+            (chapter) =>
+              normalize(chapter.region) === wanted ||
+              normalize(chapter.displayValue) === wanted ||
+              normalize(chapter.slug) === wanted ||
+              normalize(chapter.name) === wanted,
+          ) ?? null,
+      ),
+    );
+  };
+
   const countries = list.pipe(
     Effect.map((chapters) =>
       Array.from(
@@ -140,7 +165,7 @@ const make = Effect.gen(function* () {
       .filter((user) => Boolean(user.name));
   });
 
-  return SiteChapters.of({ list, countries, coreMembers });
+  return SiteChapters.of({ list, byRegionInput, countries, coreMembers });
 });
 
 export const layer = Layer.effect(SiteChapters, make);

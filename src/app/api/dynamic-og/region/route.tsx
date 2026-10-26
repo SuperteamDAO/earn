@@ -4,7 +4,8 @@ import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { CUSTOM_FLAGS } from '@/constants/CUSTOM_FLAGS';
-import { findChapterByRegionInput } from '@/utils/chapterRegion';
+import { runtime } from '@/server/runtime';
+import * as SiteChapters from '@/server/site-chapters';
 import { loadGoogleFont } from '@/utils/ogHelpers';
 
 function getFlagUrl(code: string): string | null {
@@ -34,7 +35,13 @@ export async function GET(request: Request) {
       loadGoogleFont('Inter:wght@700', allText),
     ]);
 
-    const chapter = region ? await findChapterByRegionInput(region) : null;
+    const chapter = region
+      ? await runtime.runPromise(
+          SiteChapters.SiteChapters.use((chapters) =>
+            chapters.byRegionInput(region),
+          ),
+        )
+      : null;
     const isSuperteam = !!chapter;
 
     // Use pastel backgrounds like other OG images

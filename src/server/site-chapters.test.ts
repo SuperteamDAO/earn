@@ -92,6 +92,26 @@ describe('SiteChapters', () => {
     ),
   );
 
+  it.effect('finds a chapter by region, display name, slug or name', () =>
+    Effect.gen(function* () {
+      const chapters = yield* SiteChapters.SiteChapters;
+      const byRegion = yield* chapters.byRegionInput(' india ');
+      const bySlug = yield* chapters.byRegionInput('BALKAN');
+      const byName = yield* chapters.byRegionInput('Superteam India');
+      const missing = yield* chapters.byRegionInput('Nowhere');
+      const blank = yield* chapters.byRegionInput('  ');
+      assert.strictEqual(byRegion?.id, 'c1');
+      assert.strictEqual(bySlug?.id, 'c2');
+      assert.strictEqual(byName?.id, 'c1');
+      assert.isNull(missing);
+      assert.isNull(blank);
+    }).pipe(
+      Effect.provide(
+        SiteChapters.layer.pipe(Layer.provide(fakeDatabase().layer)),
+      ),
+    ),
+  );
+
   it.effect('names core members, falling back to their People record', () =>
     Effect.gen(function* () {
       const database = fakeDatabase([
