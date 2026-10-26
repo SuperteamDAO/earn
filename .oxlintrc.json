@@ -29,6 +29,9 @@
         "fixStyle": "inline-type-imports"
       }
     ],
+    // With verbatimModuleSyntax, `import { type A } from 'x'` still loads
+    // 'x' at runtime; a type-only import must be `import type`.
+    "typescript/no-import-type-side-effects": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-non-null-assertion": "error",
     "@typescript-eslint/no-misused-promises": "error",
