@@ -151,9 +151,6 @@ importers:
       '@sumsub/websdk-react':
         specifier: ^2.5.0
         version: 2.5.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-      '@tanstack/react-query':
-        specifier: ^5.90.6
-        version: 5.90.6(react@19.3.0)
       '@tiptap/core':
         specifier: ^3.10.1
         version: 3.10.1(@tiptap/pm@3.10.1)
@@ -208,9 +205,6 @@ importers:
       ai:
         specifier: ^5.0.29
         version: 5.0.29(zod@3.25.76)
-      axios:
-        specifier: ^1.13.1
-        version: 1.13.1
       boring-avatars:
         specifier: ^2.0.4
         version: 2.0.4(react-dom@19.3.0(react@19.3.0))(react@19.3.0)

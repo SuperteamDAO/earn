@@ -10,5 +10,10 @@
   // shadcn components are vendored whole (Root, Content, Item…) so the CLI can
   // update them; unused parts of a used component are fine. Unused component
   // files still fail, so delete those.
-  "ignoreIssues": { "src/components/ui/**": ["exports", "types"] },
+  // The walletconnect logger shim exports `pino` both named and as default,
+  // as the module it stands in for does.
+  "ignoreIssues": {
+    "src/components/ui/**": ["exports", "types"],
+    "src/shims/walletconnect-logger.ts": ["duplicates"],
+  },
 }
