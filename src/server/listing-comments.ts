@@ -235,6 +235,10 @@ const make = Effect.gen(function* () {
     const isPinned = input.isPinned ?? false;
 
     const pocId = refType === 'BOUNTY' ? yield* pocOf(refId) : null;
+    // Only top-level comments are pinned.
+    if (isPinned && replyToId) {
+      return yield* new PinRefused({ reason: 'Cannot pin replies' });
+    }
     if (isPinned) {
       if (refType !== 'BOUNTY') {
         return yield* new PinRefused({
@@ -255,10 +259,28 @@ const make = Effect.gen(function* () {
       const parent = yield* database.query('replyTarget', (client) =>
         client.comment.findUnique({
           where: { id: replyToId },
-          select: { authorId: true },
+          select: {
+            authorId: true,
+            refId: true,
+            refType: true,
+            replyToId: true,
+            isActive: true,
+            isArchived: true,
+          },
         }),
       );
-      if (!parent) return yield* new CommentNotFound({ id: replyToId });
+      // Earn's threads are one level deep, on the same thing: a reply hangs
+      // off a live top-level comment of the thread it's posted to.
+      if (
+        !parent ||
+        parent.refId !== refId ||
+        parent.refType !== refType ||
+        parent.replyToId !== null ||
+        !parent.isActive ||
+        parent.isArchived
+      ) {
+        return yield* new CommentNotFound({ id: replyToId });
+      }
       replyToUserId = parent.authorId;
     }
 

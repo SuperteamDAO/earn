@@ -37,7 +37,15 @@ interface Options {
   // Comments the service looks up by id: its author, replyToId, listing.
   comments?: Record<
     string,
-    { authorId: string; replyToId?: string | null; pocId?: string | null }
+    {
+      authorId: string;
+      replyToId?: string | null;
+      pocId?: string | null;
+      refId?: string;
+      refType?: string;
+      isActive?: boolean;
+      isArchived?: boolean;
+    }
   >;
   // Users whose usernames are @mentioned, by username.
   users?: Record<string, string>;
@@ -67,6 +75,10 @@ const fakeDatabase = (options: Options = {}) => {
           ? {
               authorId: found.authorId,
               replyToId: found.replyToId ?? null,
+              refId: found.refId ?? 'b1',
+              refType: found.refType ?? 'BOUNTY',
+              isActive: found.isActive ?? true,
+              isArchived: found.isArchived ?? false,
               listing:
                 found.pocId === undefined ? null : { pocId: found.pocId },
             }
@@ -243,6 +255,38 @@ describe('ListingComments.create', () => {
       const database = fakeDatabase();
       const error = yield* Effect.flip(post(database, { replyToId: 'gone' }));
       assert.strictEqual(error._tag, 'CommentNotFound');
+      assert.deepStrictEqual(database.writes, []);
+    }),
+  );
+
+  it.effect('refuses a reply that would cross into another thread', () =>
+    Effect.gen(function* () {
+      const parents = {
+        otherListing: { authorId: 'u-grace', refId: 'b2' },
+        otherKind: { authorId: 'u-grace', refType: 'SUBMISSION' },
+        nested: { authorId: 'u-grace', replyToId: 'top' },
+        archived: { authorId: 'u-grace', isArchived: true },
+        inactive: { authorId: 'u-grace', isActive: false },
+      };
+      for (const replyToId of Object.keys(parents)) {
+        const database = fakeDatabase({ comments: parents });
+        const error = yield* Effect.flip(post(database, { replyToId }));
+        assert.strictEqual(error._tag, 'CommentNotFound');
+        assert.deepStrictEqual(database.writes, []);
+        assert.deepStrictEqual(database.emails, []);
+      }
+    }),
+  );
+
+  it.effect('never pins a reply, even for the poc', () =>
+    Effect.gen(function* () {
+      const database = fakeDatabase({
+        comments: { parent: { authorId: 'u-grace' } },
+      });
+      const error = yield* Effect.flip(
+        post(database, { replyToId: 'parent', isPinned: true }, 'u-poc'),
+      );
+      assert.strictEqual(error._tag, 'PinRefused');
       assert.deepStrictEqual(database.writes, []);
     }),
   );
