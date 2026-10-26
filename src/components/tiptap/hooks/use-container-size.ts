@@ -57,7 +57,7 @@ export function useContainerSize(
           return prev;
         });
       }, 0);
-      return;
+      return () => {};
     }
 
     const initialRect = currentElement.getBoundingClientRect();

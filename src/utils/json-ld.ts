@@ -239,6 +239,14 @@ export function generateRegionalOrganizationSchema(region: {
   };
 }
 
+const stripHtml = (html?: string) => {
+  if (!html) return '';
+  return html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
 /**
  * Generate JobPosting schema for a listing
  */
@@ -317,14 +325,6 @@ export function generateJobPostingSchema(
   }
 
   // Strip HTML tags from description for plain text
-  const stripHtml = (html?: string) => {
-    if (!html) return '';
-    return html
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-  };
-
   const schema: JobPostingSchema = {
     '@context': 'https://schema.org',
     '@type': 'JobPosting',
@@ -398,14 +398,6 @@ export function generateMonetaryGrantSchema(
   }
 
   // Strip HTML tags from description
-  const stripHtml = (html?: string) => {
-    if (!html) return '';
-    return html
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-  };
-
   const schema: MonetaryGrantSchema = {
     '@context': 'https://schema.org',
     '@type': 'MonetaryGrant',
@@ -577,12 +569,18 @@ export function generatePersonSchema(person: {
   let knowsAbout: string[] | undefined;
   if (person.skills && Array.isArray(person.skills)) {
     const allSkills: string[] = [];
-    person.skills.forEach((skillItem: any) => {
-      if (skillItem?.skills) {
-        allSkills.push(skillItem.skills);
+    person.skills.forEach((skillItem: unknown) => {
+      if (typeof skillItem !== 'object' || skillItem === null) return;
+      if ('skills' in skillItem && typeof skillItem.skills === 'string') {
+        if (skillItem.skills) allSkills.push(skillItem.skills);
       }
-      if (Array.isArray(skillItem?.subskills)) {
-        allSkills.push(...skillItem.subskills);
+      if ('subskills' in skillItem && Array.isArray(skillItem.subskills)) {
+        allSkills.push(
+          ...skillItem.subskills.filter(
+            (subskill: unknown): subskill is string =>
+              typeof subskill === 'string',
+          ),
+        );
       }
     });
     if (allSkills.length > 0) {

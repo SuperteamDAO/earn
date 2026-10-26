@@ -1,9 +1,27 @@
 import { Plugin, PluginKey } from '@tiptap/pm/state';
-import { Extension } from '@tiptap/react';
+import { Extension, type JSONContent } from '@tiptap/react';
 
 interface ImageCleanupOptions {
   onCleanup?: (src: string) => void;
 }
+
+const extractImages = (
+  content: JSONContent | null | undefined,
+  images: Set<string>,
+) => {
+  if (!content) return;
+
+  const src: unknown = content.attrs?.src;
+  if (content.type === 'image' && typeof src === 'string' && src) {
+    images.add(src);
+  }
+
+  if (content.content) {
+    content.content.forEach((node) => {
+      extractImages(node, images);
+    });
+  }
+};
 
 export const ImageCleanup = Extension.create<ImageCleanupOptions>({
   name: 'imageCleanup',
@@ -16,21 +34,7 @@ export const ImageCleanup = Extension.create<ImageCleanupOptions>({
 
   addProseMirrorPlugins() {
     const trackedImages = new Set<string>();
-    let prevContent: any = null;
-
-    const extractImages = (content: any, images: Set<string>) => {
-      if (!content) return;
-
-      if (content.type === 'image' && content.attrs?.src) {
-        images.add(content.attrs.src);
-      }
-
-      if (content.content) {
-        content.content.forEach((node: any) => {
-          extractImages(node, images);
-        });
-      }
-    };
+    let prevContent: JSONContent | null = null;
 
     return [
       new Plugin({
@@ -38,7 +42,7 @@ export const ImageCleanup = Extension.create<ImageCleanupOptions>({
 
         view: () => ({
           update: (view) => {
-            const newContent = view.state.doc.toJSON();
+            const newContent: JSONContent = view.state.doc.toJSON();
 
             if (prevContent) {
               const oldImages = new Set<string>();

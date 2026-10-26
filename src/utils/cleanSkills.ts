@@ -1,4 +1,5 @@
 import {
+  allSkills,
   type ParentSkills,
   skillSubSkillMap,
   type SubSkillsType,
@@ -11,41 +12,30 @@ const uniqueArray = (arr: SubSkillsType[]): SubSkillsType[] => {
 export const cleanSkills = (
   skillObjArray: { skills: ParentSkills; subskills: SubSkillsType[] }[],
 ): { skills: ParentSkills; subskills: SubSkillsType[] }[] => {
-  const correctedSkills: {
-    skills: ParentSkills;
-    subskills: SubSkillsType[];
-  }[] = [];
-  const skillMap: Record<ParentSkills, SubSkillsType[]> = {} as Record<
-    ParentSkills,
-    SubSkillsType[]
-  >;
+  // In the order each parent skill first shows up.
+  const skillMap = new Map<ParentSkills, SubSkillsType[]>();
 
   skillObjArray.forEach((skillObj) => {
-    if (!skillMap[skillObj.skills]) {
-      skillMap[skillObj.skills] = [];
+    if (!skillMap.has(skillObj.skills)) {
+      skillMap.set(skillObj.skills, []);
     }
     skillObj.subskills.forEach((subskill) => {
-      const correctMainSkill = Object.keys(skillSubSkillMap).find((mainSkill) =>
-        skillSubSkillMap[mainSkill as ParentSkills].some(
+      const correctMainSkill = allSkills.find((mainSkill) =>
+        skillSubSkillMap[mainSkill].some(
           (subSkillObj) => subSkillObj.value === subskill,
         ),
       );
 
       if (correctMainSkill) {
-        if (!skillMap[correctMainSkill as ParentSkills]) {
-          skillMap[correctMainSkill as ParentSkills] = [];
-        }
-        skillMap[correctMainSkill as ParentSkills].push(subskill);
+        const subskills = skillMap.get(correctMainSkill) ?? [];
+        subskills.push(subskill);
+        skillMap.set(correctMainSkill, subskills);
       }
     });
   });
 
-  Object.keys(skillMap).forEach((key) => {
-    correctedSkills.push({
-      skills: key as ParentSkills,
-      subskills: uniqueArray(skillMap[key as ParentSkills]),
-    });
-  });
-
-  return correctedSkills;
+  return Array.from(skillMap, ([skills, subskills]) => ({
+    skills,
+    subskills: uniqueArray(subskills),
+  }));
 };

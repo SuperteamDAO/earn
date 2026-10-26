@@ -63,10 +63,10 @@ function Carousel({
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
 
-  const onSelect = useCallback((api: CarouselApi) => {
-    if (!api) return;
-    setCanScrollPrev(api.canScrollPrev());
-    setCanScrollNext(api.canScrollNext());
+  const onSelect = useCallback((emblaApi: CarouselApi) => {
+    if (!emblaApi) return;
+    setCanScrollPrev(emblaApi.canScrollPrev());
+    setCanScrollNext(emblaApi.canScrollNext());
   }, []);
 
   const scrollPrev = useCallback(() => {
@@ -96,7 +96,8 @@ function Carousel({
   }, [api, setApi]);
 
   useEffect(() => {
-    if (!api) return;
+    if (!api) return undefined;
+    // oxlint-disable-next-line react/set-state-in-effect -- reads Embla's initial scroll state once it exists
     onSelect(api);
     api.on('reInit', onSelect);
     api.on('select', onSelect);
@@ -187,8 +188,9 @@ function CarouselDots({
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
   useEffect(() => {
-    if (!api) return;
+    if (!api) return undefined;
 
+    // oxlint-disable-next-line react/set-state-in-effect -- reads Embla's snaps once it exists
     setScrollSnaps(api.scrollSnapList());
 
     const onSelect = () => {

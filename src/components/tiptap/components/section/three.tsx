@@ -156,9 +156,12 @@ export const SectionThree: React.FC<SectionThreeProps> = ({
     [editor],
   );
 
-  React.useEffect(() => {
+  // Follow the editor's color when the selection's changes.
+  const [prevColor, setPrevColor] = React.useState(color);
+  if (color !== prevColor) {
+    setPrevColor(color);
     setSelectedColor(color);
-  }, [color]);
+  }
 
   return (
     <Popover>

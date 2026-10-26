@@ -26,6 +26,8 @@ interface FormFieldWrapperProps<T extends FieldValues> {
   token?: string;
   richEditorPlaceholder?: string;
   className?: string;
+  // An input's change event, or the rich editor's or token input's value.
+  // oxlint-disable-next-line typescript/no-explicit-any -- callers read the shape their own field sends
   onChange?: (e: any) => void;
 }
 
@@ -75,17 +77,19 @@ export function FormFieldWrapper<T extends FieldValues>({
                     onChange?.(e);
                   }}
                 />
-              ) : (
-                React.cloneElement(children as React.ReactElement<any>, {
+              ) : React.isValidElement<
+                  Record<string, unknown> & { className?: string }
+                >(children) ? (
+                React.cloneElement(children, {
                   ...field,
-                  onChange: (e: any) => {
+                  onChange: (e: unknown) => {
                     field.onChange(e);
                     onChange?.(e);
                   },
-                  className: cn(
-                    (children as React.ReactElement<any>).props?.className,
-                  ),
+                  className: cn(children.props?.className),
                 })
+              ) : (
+                children
               )}
             </FormControl>
             <FormMessage className="pt-1" />

@@ -6,8 +6,6 @@ import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
 import { nthLabelGenerator } from '@/utils/rank';
 
-import type { Rewards } from '@/features/listings/types';
-
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',
   maximumFractionDigits: 2,
@@ -25,6 +23,17 @@ const BORING_AVATAR_COLORS = [
 ];
 
 const AVATAR_SIZE = 80;
+
+// Amounts by winner position, as the listing page put them in the URL
+// (numbers, or numeric strings).
+type OgRewards = Partial<Record<number, number | string>>;
+
+// A JSON query parameter, as the listing page wrote it. A malformed one
+// fails the image (the catch below), as it always did.
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- the caller names the parameter's shape
+const parseJson = <T,>(value: string): T =>
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the OG URL is built by Earn's own pages; its shape isn't validated here
+  JSON.parse(value) as T;
 
 type WinnerOgSubmission = Pick<ListingWinner, 'id' | 'winnerPosition'> & {
   user: Pick<ListingWinner['user'], 'id' | 'firstName' | 'lastName' | 'photo'>;
@@ -118,22 +127,24 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url.replaceAll('&amp%3B', '&'));
 
-    const getParam = (name: string, processFn = (x: any) => x) =>
-      searchParams.has(name) ? processFn(searchParams.get(name)) : null;
+    const getParam = (name: string) => {
+      const value = searchParams.get(name);
+      return value === null ? null : decodeURIComponent(value);
+    };
 
-    const id = getParam('id', (x) => decodeURIComponent(x)) as string;
+    const id = getParam('id');
 
-    const token = getParam('token', (x) => decodeURIComponent(x)) as
-      | string
-      | undefined;
+    const token = getParam('token');
 
-    const rewards = getParam('rewards', (x) =>
-      JSON.parse(decodeURIComponent(x)),
-    ) as Rewards;
+    const rewardsParam = getParam('rewards');
+    const rewards =
+      rewardsParam === null ? null : parseJson<OgRewards>(rewardsParam);
 
-    const submissions = getParam('submissions', (x) =>
-      JSON.parse(decodeURIComponent(x)),
-    ) as WinnerOgSubmission[];
+    const submissionsParam = getParam('submissions');
+    const submissions =
+      submissionsParam === null
+        ? null
+        : parseJson<WinnerOgSubmission[]>(submissionsParam);
 
     if (!id) throw new Error('ID IS MISSING');
     if (!rewards) throw new Error('REWARDS IS MISSING');
@@ -289,7 +300,11 @@ export async function GET(request: Request) {
                 {token ?? 'USD'}{' '}
                 {rewards &&
                   formatter.format(
-                    +(rewards[winner?.winnerPosition as keyof Rewards] ?? 0),
+                    +(
+                      (winner.winnerPosition === null
+                        ? undefined
+                        : rewards[winner.winnerPosition]) ?? 0
+                    ),
                   )}
               </div>
             </div>
@@ -333,8 +348,8 @@ export async function GET(request: Request) {
         fonts: [{ name: 'Inter', data: interSemiBold, style: 'normal' }],
       },
     );
-  } catch (err: any) {
-    console.log(`${err.message}`);
+  } catch (err) {
+    console.error(err instanceof Error ? err.message : String(err));
     return new Response(`Failed to generate the image`, {
       status: 500,
     });

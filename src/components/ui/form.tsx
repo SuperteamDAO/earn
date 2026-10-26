@@ -23,6 +23,8 @@ type FormFieldContextValue<
 };
 
 const FormFieldContext = React.createContext<FormFieldContextValue>(
+  // shadcn's empty default; FormField provides the real one.
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- read only under <FormField>
   {} as FormFieldContextValue,
 );
 
@@ -69,6 +71,8 @@ type FormItemContextValue = {
 };
 
 const FormItemContext = React.createContext<FormItemContextValue>(
+  // shadcn's empty default; FormItem provides the real one.
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- read only under <FormItem>
   {} as FormItemContextValue,
 );
 
@@ -120,9 +124,7 @@ function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
       data-slot="form-control"
       id={formItemId}
       aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
+        !error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`
       }
       aria-invalid={!!error}
       {...props}
@@ -149,7 +151,7 @@ function FormMessage({
   ...props
 }: React.ComponentProps<'p'> & { children?: React.ReactNode }) {
   const { error, formMessageId } = useFormField();
-  const body = error?.message ? String(error?.message) : children;
+  const body = error?.message ? error.message : children;
 
   if (!body) {
     return null;

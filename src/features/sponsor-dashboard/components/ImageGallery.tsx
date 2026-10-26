@@ -132,7 +132,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
               {currentIndex + 1} / {images.length}
             </div>
             <button
-              onClick={handleDownload}
+              onClick={() => void handleDownload()}
               className="hover:bg-brand-purple-dark focus-visible:ring-brand-purple/40 bg-brand-purple flex items-center gap-2 rounded-md p-2 text-center text-sm text-white"
               aria-label="Download image"
             >
@@ -153,6 +153,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
             )}
 
             {isPdfUrl(currentImage || '') ? (
+              // oxlint-disable-next-line react/iframe-missing-sandbox -- browsers refuse to render PDFs in a sandboxed frame
               <iframe
                 src={currentImage}
                 className="h-full w-full"

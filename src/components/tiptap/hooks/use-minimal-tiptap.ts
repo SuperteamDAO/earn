@@ -8,7 +8,7 @@ import {
   useEditor,
   type UseEditorOptions,
 } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { StarterKit } from '@tiptap/starter-kit';
 import * as React from 'react';
 import { toast } from 'sonner';
 
@@ -83,10 +83,7 @@ async function uploadImageToCloudinary(
     throw new Error('Failed to detect format after compression');
   }
 
-  const mimeType = `image/${detectedFormat}` as
-    | 'image/jpeg'
-    | 'image/png'
-    | 'image/webp';
+  const mimeType = `image/${detectedFormat}`;
 
   const signedParams = await postJson<SignedUploadParams>('/api/image/sign/', {
     source,
@@ -190,10 +187,11 @@ export const useMinimalTiptapEditor = ({
   ...props
 }: UseMinimalTiptapEditorProps): MinimalTiptapEditorReturn => {
   const throttledSetValue = useThrottle(
-    (value: Content) => onUpdate?.(value),
+    (content: Content) => onUpdate?.(content),
     throttleDelay,
   );
 
+  const source = imageSetting.source;
   const trackedImagesRef = React.useRef(new Set<string>());
   const pendingDeletionsRef = React.useRef(new Set<string>());
 
@@ -202,22 +200,16 @@ export const useMinimalTiptapEditor = ({
       getPendingDeletions: () => Array.from(pendingDeletionsRef.current),
       processPendingDeletions: async () => {
         const pendingCount = pendingDeletionsRef.current.size;
-        console.log(
-          `Processing pending deletions: ${pendingCount} images`,
-          Array.from(pendingDeletionsRef.current),
-        );
 
         if (pendingCount === 0) {
-          console.log('No images to delete');
           return;
         }
 
         const deletionResults = await Promise.all(
           Array.from(pendingDeletionsRef.current).map(async (src) => {
             try {
-              await deleteImageFromCloudinary(src, imageSetting.source);
+              await deleteImageFromCloudinary(src, source);
               trackedImagesRef.current.delete(src);
-              console.log('Successfully deleted image:', src);
               return { src, success: true };
             } catch (error) {
               console.error('Error deleting image:', error);
@@ -237,8 +229,6 @@ export const useMinimalTiptapEditor = ({
           console.warn(
             `Cleanup completed with ${failedCount} failed deletions (retained for retry)`,
           );
-        } else {
-          console.log('Cleanup completed successfully');
         }
       },
       clearPendingDeletions: () => {
@@ -250,43 +240,36 @@ export const useMinimalTiptapEditor = ({
           (src) => !originalImageUrls.has(src),
         );
 
-        console.log(
-          `Processing orphaned image cleanup: ${orphanedImages.length} images`,
-          orphanedImages,
-        );
-        console.log('Original images:', Array.from(originalImageUrls));
-        console.log('Tracked images:', Array.from(trackedImagesRef.current));
-
         if (orphanedImages.length === 0) {
-          console.log('No orphaned images to delete');
           return;
         }
 
         const deletionPromises = orphanedImages.map(async (src) => {
           try {
-            await deleteImageFromCloudinary(src, imageSetting.source);
+            await deleteImageFromCloudinary(src, source);
             trackedImagesRef.current.delete(src);
-            console.log('Successfully deleted orphaned image:', src);
           } catch (error) {
             console.error('Error deleting orphaned image:', error);
           }
         });
 
         await Promise.all(deletionPromises);
-        console.log('Orphaned image cleanup completed');
       },
     };
 
     if (typeof window !== 'undefined') {
-      console.log('Setting up global window functions');
+      // The listing builder calls these when it saves or leaves.
+      // oxlint-disable-next-line no-underscore-dangle -- names the builder reads
       window.__processImageCleanup = manager.processPendingDeletions;
+      // oxlint-disable-next-line no-underscore-dangle -- names the builder reads
       window.__clearImageCleanup = manager.clearPendingDeletions;
+      // oxlint-disable-next-line no-underscore-dangle -- names the builder reads
       window.__processOrphanedImageCleanup =
         manager.processOrphanedImageCleanup;
     }
 
     return manager;
-  }, [imageSetting.source]);
+  }, [source, pendingDeletionsRef, trackedImagesRef]);
 
   const handleUpdate = React.useCallback(
     (editor: Editor) => throttledSetValue(getOutput(editor, output)),
@@ -322,66 +305,55 @@ export const useMinimalTiptapEditor = ({
         link: false,
       }),
       Link,
+      // oxlint-disable-next-line react/refs -- tiptap keeps these callbacks and calls them on editor events, not during render
       Image.configure({
         allowedMimeTypes: ['image/*'],
         maxFileSize: 5 * 1024 * 1024,
         allowBase64: true,
         uploadFn: async (file) => {
-          const src = await uploadImageToCloudinary(file, imageSetting.source);
+          const src = await uploadImageToCloudinary(file, source);
           trackedImagesRef.current.add(src);
           pendingDeletionsRef.current.delete(src);
           return src;
         },
-        onImageRemoved({ id, src }) {
-          console.log('Image removed', { id, src });
-          console.log('Is tracked?', trackedImagesRef.current.has(src));
-          console.log('Tracked images:', Array.from(trackedImagesRef.current));
+        onImageRemoved({ src }) {
           if (src && trackedImagesRef.current.has(src)) {
             pendingDeletionsRef.current.add(src);
-            console.log('Image marked for deletion:', src);
-            console.log(
-              'Current pending deletions:',
-              pendingDeletionsRef.current,
-            );
-          } else {
-            console.log('Image not tracked, not adding to pending deletions');
           }
         },
-        onImageRestored: async ({ id, src }) => {
-          console.log('Image restored', { id, src });
+        onImageRestored: ({ src }) => {
+          void (async () => {
+            if (pendingDeletionsRef.current.has(src)) {
+              pendingDeletionsRef.current.delete(src);
+            }
 
-          if (pendingDeletionsRef.current.has(src)) {
-            pendingDeletionsRef.current.delete(src);
-            console.log('Image unmarked for deletion:', src);
-          }
+            trackedImagesRef.current.add(src);
 
-          trackedImagesRef.current.add(src);
-          console.log('Image re-added to tracking:', src);
-
-          if (!src.includes('cloudinary.com')) {
-            try {
-              const response = await fetch(src, { method: 'HEAD' });
-              if (!response.ok) {
-                console.warn('Restored image URL is broken:', src);
-                toast.warning('Image Restored but Broken', {
+            if (!src.includes('cloudinary.com')) {
+              try {
+                const response = await fetch(src, { method: 'HEAD' });
+                if (!response.ok) {
+                  console.warn('Restored image URL is broken:', src);
+                  toast.warning('Image Restored but Broken', {
+                    position: 'bottom-right',
+                    description:
+                      'The restored image is no longer available. Please re-upload it.',
+                  });
+                }
+              } catch (error) {
+                console.warn(
+                  'Failed to validate restored image URL:',
+                  src,
+                  error,
+                );
+                toast.warning('Image Validation Failed', {
                   position: 'bottom-right',
                   description:
-                    'The restored image is no longer available. Please re-upload it.',
+                    'Unable to verify if the restored image is still available.',
                 });
               }
-            } catch (error) {
-              console.warn(
-                'Failed to validate restored image URL:',
-                src,
-                error,
-              );
-              toast.warning('Image Validation Failed', {
-                position: 'bottom-right',
-                description:
-                  'Unable to verify if the restored image is still available.',
-              });
             }
-          }
+          })();
         },
         onValidationError(errors) {
           errors.forEach((error) => {
@@ -415,36 +387,35 @@ export const useMinimalTiptapEditor = ({
           });
         },
       }),
+      // oxlint-disable-next-line react/refs -- tiptap keeps these callbacks and calls them on editor events, not during render
       FileHandler.configure({
         allowBase64: true,
         allowedMimeTypes: ['image/*'],
         maxFileSize: 5 * 1024 * 1024,
-        onDrop: (editor, files, pos) => {
-          files.forEach(async (file) => {
-            const src = await uploadImageToCloudinary(
-              file,
-              imageSetting.source,
-            );
-            trackedImagesRef.current.add(src);
-            pendingDeletionsRef.current.delete(src);
-            editor.commands.insertContentAt(pos, {
-              type: 'image',
-              attrs: { src },
-            });
+        onDrop: (current, files, pos) => {
+          files.forEach((file) => {
+            void (async () => {
+              const src = await uploadImageToCloudinary(file, source);
+              trackedImagesRef.current.add(src);
+              pendingDeletionsRef.current.delete(src);
+              current.commands.insertContentAt(pos, {
+                type: 'image',
+                attrs: { src },
+              });
+            })();
           });
         },
-        onPaste: (editor, files) => {
-          files.forEach(async (file) => {
-            const src = await uploadImageToCloudinary(
-              file,
-              imageSetting.source,
-            );
-            trackedImagesRef.current.add(src);
-            pendingDeletionsRef.current.delete(src);
-            editor.commands.insertContent({
-              type: 'image',
-              attrs: { src },
-            });
+        onPaste: (current, files) => {
+          files.forEach((file) => {
+            void (async () => {
+              const src = await uploadImageToCloudinary(file, source);
+              trackedImagesRef.current.add(src);
+              pendingDeletionsRef.current.delete(src);
+              current.commands.insertContent({
+                type: 'image',
+                attrs: { src },
+              });
+            })();
           });
         },
         onValidationError: (errors) => {
@@ -457,11 +428,11 @@ export const useMinimalTiptapEditor = ({
           });
         },
       }),
+      // oxlint-disable-next-line react/refs -- tiptap keeps these callbacks and calls them on editor events, not during render
       ImageCleanup.configure({
         onCleanup: (src) => {
           if (trackedImagesRef.current.has(src)) {
             pendingDeletionsRef.current.add(src);
-            console.log('Image marked for cleanup deletion:', src);
           }
         },
       }),
@@ -475,7 +446,7 @@ export const useMinimalTiptapEditor = ({
       CodeBlockLowlight,
       Placeholder.configure({ placeholder: () => placeholder }),
     ];
-  }, [placeholder, imageSetting.source]);
+  }, [placeholder, source, pendingDeletionsRef, trackedImagesRef]);
 
   const editor = useEditor({
     extensions,
@@ -487,9 +458,9 @@ export const useMinimalTiptapEditor = ({
         class: cn('focus:outline-hidden', editorClassName),
       },
     },
-    onUpdate: ({ editor }) => handleUpdate(editor),
-    onCreate: ({ editor }) => handleCreate(editor),
-    onBlur: ({ editor }) => handleBlur(editor),
+    onUpdate: ({ editor: current }) => handleUpdate(current),
+    onCreate: ({ editor: current }) => handleCreate(current),
+    onBlur: ({ editor: current }) => handleBlur(current),
     immediatelyRender: false,
     ...props,
   });

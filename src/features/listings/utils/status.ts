@@ -1,6 +1,6 @@
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
-import type { Listing, ListingWithSubmissions } from '../types';
+import type { Rewards } from '../types';
 import { isDeadlineOver } from './deadline';
 
 export const getListingDraftStatus = (
@@ -19,18 +19,33 @@ export const getListingTypeLabel = (type: string) => {
   if (type === 'hackathon') return 'Hackathon';
   if (type === 'bounty') return 'Bounty';
   if (type === 'grant') return 'Grant';
-  return;
+  return undefined;
 };
 
+// What getListingStatus reads: listings, grants, hackathon tracks and the
+// review page's listing all pass it.
+interface ListingStatusInput {
+  readonly status?: string | null;
+  readonly isPublished?: boolean | null;
+  readonly deadline?: string | Date | null;
+  readonly rewards?: Rewards | null;
+  readonly maxBonusSpots?: number | null;
+  readonly publishedAt?: string | Date | null;
+  readonly type?: string | null;
+  readonly isWinnersAnnounced?: boolean | null;
+  readonly totalPaymentsMade?: number | null;
+  readonly isFndnPaying?: boolean | null;
+}
+
 export const getListingStatus = (
-  listing: Listing | ListingWithSubmissions | any,
+  listing: ListingStatusInput | null | undefined,
   isGrant?: boolean,
 ) => {
   if (!listing) return 'Draft';
 
   const listingStatus = getListingDraftStatus(
-    listing?.status,
-    listing?.isPublished,
+    listing?.status ?? undefined,
+    listing?.isPublished ?? undefined,
   );
   const hasDeadlinePassed = isDeadlineOver(listing?.deadline || '');
   const totalWinnerRanks = calculateTotalPrizes(
@@ -67,7 +82,7 @@ export const getListingStatus = (
         return 'Payment Pending';
       if (
         listing?.isWinnersAnnounced &&
-        listing.totalPaymentsMade > 0 &&
+        (listing.totalPaymentsMade ?? 0) > 0 &&
         listing?.totalPaymentsMade === totalWinnerRanks
       )
         return 'Completed';

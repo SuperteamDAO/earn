@@ -19,7 +19,7 @@ export function useScrollShadow<T extends HTMLElement>() {
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) return;
+    if (!element) return () => {};
     handleScroll();
 
     const resizeObserver = new ResizeObserver(handleScroll);

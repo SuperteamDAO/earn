@@ -93,7 +93,9 @@ export const getParentRegions = (
 ) => {
   return countries
     .filter((s) =>
-      s.regions?.find((s) => s.toLowerCase() === region?.name?.toLowerCase()),
+      s.regions?.find(
+        (name) => name.toLowerCase() === region?.name?.toLowerCase(),
+      ),
     )
     .map((s) => s.name);
 };
@@ -236,7 +238,7 @@ function getEligibleCountries(chapters: ChapterRegionData[]) {
   const chapterCodes = getChapterCodes(chapters);
 
   return countries.filter((country) => {
-    if (country.iso === true) {
+    if (country.iso) {
       const countryCodeUpper = country.code.toUpperCase();
       return !chapterCodes.includes(countryCodeUpper);
     }

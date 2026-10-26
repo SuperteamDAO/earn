@@ -24,8 +24,8 @@ async function loadGoogleFont(font: string, text: string) {
     /src: url\((.+)\) format\('(opentype|truetype)'\)/,
   );
 
-  if (resource) {
-    const response = await fetch(resource[1] as string);
+  if (resource?.[1]) {
+    const response = await fetch(resource[1]);
     if (response.status === 200) {
       return await response.arrayBuffer();
     }

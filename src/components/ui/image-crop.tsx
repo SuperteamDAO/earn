@@ -17,11 +17,12 @@ import {
   useRef,
   useState,
 } from 'react';
-import ReactCrop, {
+import {
   centerCrop,
   makeAspectCrop,
   type PercentCrop,
   type PixelCrop,
+  ReactCrop,
   type ReactCropProps,
 } from 'react-image-crop';
 
@@ -114,10 +115,7 @@ type ImageCropContextType = {
   onCrop?: (croppedImage: string) => void;
   reactCropProps: Omit<ReactCropProps, 'onChange' | 'onComplete' | 'children'>;
   handleChange: (pixelCrop: PixelCrop, percentCrop: PercentCrop) => void;
-  handleComplete: (
-    pixelCrop: PixelCrop,
-    percentCrop: PercentCrop,
-  ) => Promise<void>;
+  handleComplete: (pixelCrop: PixelCrop, percentCrop: PercentCrop) => void;
   onImageLoad: (e: SyntheticEvent<HTMLImageElement>) => void;
   applyCrop: () => Promise<void>;
   resetCrop: () => void;
@@ -158,6 +156,7 @@ export const ImageCrop = ({
   const [initialCrop, setInitialCrop] = useState<PercentCrop>();
   useEffect(() => {
     const objectUrl = URL.createObjectURL(file);
+    // oxlint-disable-next-line react/set-state-in-effect -- the object URL is created and revoked with the file
     setImgSrc(objectUrl);
 
     return () => URL.revokeObjectURL(objectUrl);
@@ -176,10 +175,7 @@ export const ImageCrop = ({
     onChange?.(pixelCrop, percentCrop);
   };
 
-  const handleComplete = async (
-    pixelCrop: PixelCrop,
-    percentCrop: PercentCrop,
-  ) => {
+  const handleComplete = (pixelCrop: PixelCrop, percentCrop: PercentCrop) => {
     setCompletedCrop(pixelCrop);
     onComplete?.(pixelCrop, percentCrop);
   };
@@ -239,10 +235,10 @@ export const ImageCropContent = ({
     imgRef,
     reactCropProps,
   } = useImageCrop();
-  const shadcnStyle = {
+  const shadcnStyle: CSSProperties & Record<`--${string}`, string> = {
     '--rc-border-color': 'var(--color-border)',
     '--rc-focus-color': 'var(--color-primary)',
-  } as CSSProperties;
+  };
   return (
     <div className="flex justify-center bg-gray-200">
       <ReactCrop
@@ -282,13 +278,21 @@ export const ImageCropApply = ({
   };
   if (asChild) {
     return (
-      <Slot onClick={handleClick} {...props}>
+      <Slot
+        onClick={(e: MouseEvent<HTMLButtonElement>) => void handleClick(e)}
+        {...props}
+      >
         {children}
       </Slot>
     );
   }
   return (
-    <Button onClick={handleClick} size="icon" variant="ghost" {...props}>
+    <Button
+      onClick={(e) => void handleClick(e)}
+      size="icon"
+      variant="ghost"
+      {...props}
+    >
       {children ?? <CropIcon className="size-4" />}
     </Button>
   );

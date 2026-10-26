@@ -9,6 +9,7 @@ import {
   type Option,
 } from '@/components/ui/multi-select';
 import {
+  allSubSkills,
   type ParentSkills,
   type Skills,
   skillSubSkillMap,
@@ -25,6 +26,17 @@ const SELECTABLE_PARENTS = [
 ] as const;
 type SelectableParent = (typeof SELECTABLE_PARENTS)[number];
 
+const isSelectableParent = (
+  value: string | undefined,
+): value is SelectableParent =>
+  SELECTABLE_PARENTS.some((parent) => parent === value);
+
+const isParentSkill = (value: string | undefined): value is ParentSkills =>
+  value !== undefined && Object.hasOwn(skillSubSkillMap, value);
+
+const isSubSkill = (value: string | undefined): value is SubSkillsType =>
+  allSubSkills.some((subskill) => subskill === value);
+
 const MAX_SUGGESTIONS = 3;
 
 interface SkillsSelectProps {
@@ -38,11 +50,7 @@ const convertSkillsToOptions = (skills: Skills): Option[] => {
   const options: Option[] = [];
 
   skills.forEach(({ skills: parentSkill, subskills }) => {
-    const isSelectableParent = SELECTABLE_PARENTS.includes(
-      parentSkill as SelectableParent,
-    );
-
-    if (isSelectableParent) {
+    if (isSelectableParent(parentSkill)) {
       options.push({
         label: parentSkill,
         value: `parent:${parentSkill}`,
@@ -103,10 +111,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
       });
 
       Object.entries(skillSubSkillMap).forEach(([parent, subskills]) => {
-        if (
-          !SELECTABLE_PARENTS.includes(parent as SelectableParent) &&
-          parent !== 'Other'
-        ) {
+        if (!isSelectableParent(parent) && parent !== 'Other') {
           subskills.forEach(({ label, value }) => {
             if (value !== 'Other') {
               options.push({
@@ -139,25 +144,22 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
           const [prefix, value] = option.value.split(':');
 
           if (prefix === 'parent') {
-            const isSelectableParent = SELECTABLE_PARENTS.includes(
-              value as SelectableParent,
-            );
-            if (isSelectableParent) {
-              parentSkills.add(value as ParentSkills);
-              if (!skillMap.has(value as ParentSkills)) {
-                skillMap.set(value as ParentSkills, new Set());
+            if (isSelectableParent(value)) {
+              parentSkills.add(value);
+              if (!skillMap.has(value)) {
+                skillMap.set(value, new Set());
               }
             }
-          } else {
-            const parentSkill = prefix as ParentSkills;
+          } else if (isParentSkill(prefix)) {
+            const parentSkill = prefix;
             if (!skillMap.has(parentSkill)) {
               skillMap.set(parentSkill, new Set());
             }
-            skillMap.get(parentSkill)?.add(value as SubSkillsType);
+            if (isSubSkill(value)) skillMap.get(parentSkill)?.add(value);
 
             // Auto-add parent in backend state
             if (
-              SELECTABLE_PARENTS.includes(parentSkill as SelectableParent) &&
+              isSelectableParent(parentSkill) &&
               !parentSkills.has(parentSkill)
             ) {
               parentSkills.add(parentSkill);
@@ -239,7 +241,8 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
         const unselectedSubskills = skillSubSkillMap[parentSkill]
           .filter(
             ({ value }) =>
-              value !== 'Other' && !subskills.includes(value as SubSkillsType),
+              value !== 'Other' &&
+              !subskills.some((subskill) => subskill === value),
           )
           .slice(0, 4);
 

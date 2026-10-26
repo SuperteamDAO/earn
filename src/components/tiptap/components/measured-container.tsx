@@ -22,6 +22,8 @@ export const MeasuredContainer = React.forwardRef(
     const innerRef = React.useRef<HTMLElement>(null);
     const rect = useContainerSize(innerRef);
 
+    // Callers read the handle after mount, when the element is there.
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- forwardRef's handle type has no null
     React.useImperativeHandle(ref, () => innerRef.current as HTMLElement);
 
     const customStyle = {

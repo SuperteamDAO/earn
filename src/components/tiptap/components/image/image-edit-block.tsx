@@ -53,7 +53,9 @@ export const ImageEditBlock: React.FC<ImageEditBlockProps> = ({
       'image/webp': [],
       'image/jpg': [],
     },
-    onDrop,
+    onDrop: (acceptedFiles) => {
+      void onDrop(acceptedFiles);
+    },
   });
 
   return (

@@ -184,7 +184,7 @@ export const Image = TiptapImage.extend<CustomImageOptions>({
   atom: true,
 
   addOptions() {
-    const parentOptions = this.parent?.() ?? ({} as CustomImageOptions);
+    const parentOptions: Partial<CustomImageOptions> = this.parent?.() ?? {};
     return {
       ...parentOptions,
       inline: parentOptions.inline ?? false,
@@ -194,7 +194,7 @@ export const Image = TiptapImage.extend<CustomImageOptions>({
       maxFileSize: 0,
       allowBase64: false,
       uploadFn: undefined,
-    } as CustomImageOptions;
+    };
   },
 
   addAttributes() {

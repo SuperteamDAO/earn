@@ -1,14 +1,14 @@
-interface BrowserInfo {
-  readonly name: string;
-  readonly version: number;
-}
-
 const MINIMUM_VERSIONS = {
   chrome: 115,
   edge: 115,
   firefox: 127,
   safari: 16.8,
 } as const;
+
+interface BrowserInfo {
+  readonly name: keyof typeof MINIMUM_VERSIONS;
+  readonly version: number;
+}
 
 function getBrowserInfo(userAgent: string): BrowserInfo | null {
   const ua = userAgent.toLowerCase();
@@ -55,8 +55,7 @@ export function isBrowserOutdated(): boolean {
     return true;
   }
 
-  const minimumVersion =
-    MINIMUM_VERSIONS[browserInfo.name as keyof typeof MINIMUM_VERSIONS];
+  const minimumVersion = MINIMUM_VERSIONS[browserInfo.name];
 
   if (!minimumVersion) {
     return true;

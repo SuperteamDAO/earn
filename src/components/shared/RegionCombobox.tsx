@@ -35,6 +35,10 @@ interface GroupedOption {
 
 type SelectOption = CountryOption | GroupedOption;
 
+const isGroupedOption = (option: SelectOption): option is GroupedOption => {
+  return 'options' in option && Array.isArray(option.options);
+};
+
 /**
  * Props for the RegionCombobox component.
  */
@@ -47,7 +51,7 @@ interface RegionComboboxProps {
   /**
    * Callback function triggered when the selection changes.
    */
-  onChange?: (value: string) => void;
+  onChange?: (value: string | null) => void;
 
   /**
    * Placeholder text displayed in the combobox.
@@ -188,18 +192,14 @@ export function RegionCombobox({
   const [open, setOpen] = React.useState(false);
   const listRef = React.useRef<HTMLDivElement>(null);
 
-  const isGroupedOption = (option: SelectOption): option is GroupedOption => {
-    return 'options' in option && Array.isArray(option.options);
-  };
-
-  const findOptionByValue = (value: string): CountryOption | undefined => {
+  const findOptionByValue = (wanted: string): CountryOption | undefined => {
     for (const option of options) {
       if ('options' in option) {
-        const foundInGroup = option.options.find((opt) => opt.value === value);
+        const foundInGroup = option.options.find((opt) => opt.value === wanted);
         if (foundInGroup) {
           return foundInGroup;
         }
-      } else if (option.value === value) {
+      } else if (option.value === wanted) {
         return option;
       }
     }
@@ -283,7 +283,7 @@ export function RegionCombobox({
                 <CommandItem
                   value={undefined}
                   onSelect={() => {
-                    onChange?.(null!);
+                    onChange?.(null);
                     setOpen(false);
                   }}
                 >

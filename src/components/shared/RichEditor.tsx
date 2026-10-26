@@ -1,7 +1,7 @@
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import { Placeholder } from '@tiptap/extensions';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { StarterKit } from '@tiptap/starter-kit';
 import {
   Bold,
   ChevronRight,
@@ -64,8 +64,8 @@ export const RichEditor: React.FC<RichEditorProps> = ({
         class: 'mx-auto focus:outline-hidden',
       },
     },
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
+    onUpdate: ({ editor: current }) => {
+      const html = current.getHTML();
       onChange(html === '<p></p>' ? '' : html);
     },
     immediatelyRender: false,
@@ -82,9 +82,9 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   }
 
   const focusEditor = (event: React.MouseEvent<HTMLDivElement>) => {
-    const target = event.target as Node;
+    const target = event.target;
 
-    if (editor.view.dom.contains(target)) return;
+    if (target instanceof Node && editor.view.dom.contains(target)) return;
 
     event.preventDefault();
     editor.chain().focus('end').run();
@@ -132,9 +132,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
   editorClassname,
 }) => {
   const [style, setStyle] = useState({ top: 0, left: 0, opacity: 0 });
-  const [toolbarState, setToolbarState] = useState<
-    'default' | 'link' | 'hidden'
-  >('hidden');
+  const [toolbarState, setToolbarState] = useState<ToolbarState>('hidden');
   const [linkUrl, setLinkUrl] = useState('');
   const toolbarRef = useRef<HTMLDivElement>(null);
 
@@ -145,13 +143,13 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
       if (toolbarState !== 'link') {
-        setStyle((style) => ({ ...style, opacity: 0 }));
+        setStyle((prev) => ({ ...prev, opacity: 0 }));
       }
       return;
     }
 
     if (!editorElement.contains(selection.anchorNode)) {
-      setStyle((style) => ({ ...style, opacity: 0 }));
+      setStyle((prev) => ({ ...prev, opacity: 0 }));
       return;
     }
 
@@ -205,19 +203,20 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
   }, [toolbarState, editorClassname]);
 
   useEffect(() => {
-    if (!editor) return;
+    if (!editor) return () => {};
     const editorElement =
       document.getElementsByClassName(editorClassname)[0] || undefined;
-    if (!editorElement) return;
+    if (!editorElement) return () => {};
 
     const handleSelectionChange = () => {
       setTimeout(updateToolbarPosition, 0);
     };
 
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target;
       if (
         toolbarRef.current &&
-        !toolbarRef.current.contains(event.target as Node)
+        !(target instanceof Node && toolbarRef.current.contains(target))
       ) {
         setToolbarState('hidden');
       }
@@ -246,10 +245,10 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
       editor.off('selectionUpdate', updateToolbarPosition);
       editor.off('transaction', updateToolbarPosition);
     };
-  }, [updateToolbarPosition, editor]);
+  }, [updateToolbarPosition, editor, editorClassname]);
 
   const toolbarButtons = useMemo(
-    () => [
+    (): ToolbarButton[] => [
       {
         ariaLabel: 'Bold',
         icon: <Bold className="h-4 w-4" />,
@@ -292,30 +291,6 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     [editor],
   );
 
-  const DefaultToolbar = useCallback(
-    () => (
-      <>
-        {toolbarButtons.map((button, index) => (
-          <Button
-            key={index}
-            variant="ghost"
-            type="button"
-            size="sm"
-            className={cn(
-              'h-full rounded-none border-l px-2',
-              index === 0 && 'border-l-0',
-              button.isActive() && 'bg-muted',
-            )}
-            onClick={button.action}
-          >
-            {button.icon}
-          </Button>
-        ))}
-      </>
-    ),
-    [toolbarButtons],
-  );
-
   function addLinkToEditor() {
     if (linkUrl) {
       let href = linkUrl;
@@ -326,81 +301,6 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
       editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
     }
   }
-
-  const LinkToolbar = () => {
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-      inputRef.current?.focus();
-    }, []);
-
-    const handleInputClick = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
-    };
-    return (
-      <>
-        <Input
-          ref={inputRef}
-          className="h-8 rounded-none border-0 text-sm focus-visible:ring-0"
-          placeholder="https://..."
-          value={linkUrl}
-          onChange={(e) => setLinkUrl(e.target.value)}
-          onClick={handleInputClick}
-          onMouseDown={(e) => e.preventDefault()}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              addLinkToEditor();
-              setToolbarState('default');
-              setLinkUrl('');
-            } else if (e.key === 'Escape') {
-              e.preventDefault();
-              setToolbarState('default');
-              setLinkUrl('');
-            }
-          }}
-        />
-        {!!linkUrl && (
-          <Button
-            variant="ghost"
-            type="button"
-            className="h-7 rounded-none border-l px-2"
-            onClick={() => {
-              window.open(
-                getURLSanitized(linkUrl),
-                '_blank',
-                'noopener,noreferrer',
-              );
-            }}
-          >
-            <ExternalLink className="h-4 w-4" />
-          </Button>
-        )}
-        <Button
-          variant="ghost"
-          type="button"
-          className="h-7 rounded-none border-l px-2"
-          onClick={() => {
-            editor.chain().focus().unsetLink().run();
-            setToolbarState('default');
-          }}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          type="button"
-          className="h-7. rounded-none border-l px-2 lg:hidden"
-          onClick={() => {
-            addLinkToEditor();
-          }}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </>
-    );
-  };
 
   if (!editor || toolbarState === 'hidden') {
     return null;
@@ -424,9 +324,139 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
           'text-muted-foreground',
         )}
       >
-        {toolbarState === 'default' && <DefaultToolbar />}
-        {toolbarState === 'link' && <LinkToolbar />}
+        {toolbarState === 'default' && (
+          <DefaultToolbar buttons={toolbarButtons} />
+        )}
+        {toolbarState === 'link' && (
+          <LinkToolbar
+            editor={editor}
+            linkUrl={linkUrl}
+            setLinkUrl={setLinkUrl}
+            setToolbarState={setToolbarState}
+            addLinkToEditor={addLinkToEditor}
+          />
+        )}
       </div>
     </div>
+  );
+};
+
+type ToolbarState = 'default' | 'link' | 'hidden';
+
+interface ToolbarButton {
+  ariaLabel: string;
+  icon: React.ReactNode;
+  isActive: () => boolean;
+  action: () => void;
+}
+
+const DefaultToolbar = ({ buttons }: { buttons: ToolbarButton[] }) => (
+  <>
+    {buttons.map((button, index) => (
+      <Button
+        key={index}
+        variant="ghost"
+        type="button"
+        size="sm"
+        className={cn(
+          'h-full rounded-none border-l px-2',
+          index === 0 && 'border-l-0',
+          button.isActive() && 'bg-muted',
+        )}
+        onClick={button.action}
+      >
+        {button.icon}
+      </Button>
+    ))}
+  </>
+);
+
+const handleInputClick = (e: React.MouseEvent) => {
+  e.stopPropagation();
+  e.preventDefault();
+};
+
+interface LinkToolbarProps {
+  editor: Editor;
+  linkUrl: string;
+  setLinkUrl: (url: string) => void;
+  setToolbarState: (state: ToolbarState) => void;
+  addLinkToEditor: () => void;
+}
+
+const LinkToolbar = ({
+  editor,
+  linkUrl,
+  setLinkUrl,
+  setToolbarState,
+  addLinkToEditor,
+}: LinkToolbarProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  return (
+    <>
+      <Input
+        ref={inputRef}
+        className="h-8 rounded-none border-0 text-sm focus-visible:ring-0"
+        placeholder="https://..."
+        value={linkUrl}
+        onChange={(e) => setLinkUrl(e.target.value)}
+        onClick={handleInputClick}
+        onMouseDown={(e) => e.preventDefault()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            addLinkToEditor();
+            setToolbarState('default');
+            setLinkUrl('');
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            setToolbarState('default');
+            setLinkUrl('');
+          }
+        }}
+      />
+      {!!linkUrl && (
+        <Button
+          variant="ghost"
+          type="button"
+          className="h-7 rounded-none border-l px-2"
+          onClick={() => {
+            window.open(
+              getURLSanitized(linkUrl),
+              '_blank',
+              'noopener,noreferrer',
+            );
+          }}
+        >
+          <ExternalLink className="h-4 w-4" />
+        </Button>
+      )}
+      <Button
+        variant="ghost"
+        type="button"
+        className="h-7 rounded-none border-l px-2"
+        onClick={() => {
+          editor.chain().focus().unsetLink().run();
+          setToolbarState('default');
+        }}
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="ghost"
+        type="button"
+        className="h-7. rounded-none border-l px-2 lg:hidden"
+        onClick={() => {
+          addLinkToEditor();
+        }}
+      >
+        <ChevronRight className="h-4 w-4" />
+      </Button>
+    </>
   );
 };

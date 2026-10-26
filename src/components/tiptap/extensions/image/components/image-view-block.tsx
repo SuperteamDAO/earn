@@ -139,7 +139,7 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({
 
   const handleImageLoad = React.useCallback(
     (ev: React.SyntheticEvent<HTMLImageElement>) => {
-      const img = ev.target as HTMLImageElement;
+      const img = ev.currentTarget;
       const newNaturalSize = {
         width: img.naturalWidth,
         height: img.naturalHeight,
@@ -179,15 +179,10 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({
     [initiateResize],
   );
 
-  const handleResizeEnd = React.useCallback(() => {
+  // The handle is forgotten when a resize ends.
+  if (!isResizing && activeResizeHandle !== null) {
     setActiveResizeHandle(null);
-  }, []);
-
-  React.useEffect(() => {
-    if (!isResizing) {
-      handleResizeEnd();
-    }
-  }, [isResizing, handleResizeEnd]);
+  }
 
   React.useEffect(() => {
     const handleImage = async () => {
@@ -237,7 +232,7 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({
       }
     };
 
-    handleImage();
+    void handleImage();
   }, [editor, fileName, fileType, initSrc, updateAttributes]);
 
   return (

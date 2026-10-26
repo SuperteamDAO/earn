@@ -109,7 +109,7 @@ export const sortRank = (rankArray: number[]) => {
       rank,
       index: rank,
     }))
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       if (a.index < b.index) {
         return -1;
       }

@@ -36,7 +36,7 @@ export function AnimatedDots({
       const duration = 1.5 + Math.random() * 1.5;
 
       return {
-        color: colors[colorIndex % colors.length]!,
+        color: colors[colorIndex % colors.length] ?? '',
         delay,
         duration,
       };

@@ -109,14 +109,14 @@ export const blobUrlToBase64 = async (blobUrl: string): Promise<string> => {
 
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onloadend = () => {
+    reader.addEventListener('loadend', () => {
       if (typeof reader.result === 'string') {
         resolve(reader.result);
       } else {
         reject(new Error('Failed to convert Blob to base64'));
       }
-    };
-    reader.onerror = reject;
+    });
+    reader.addEventListener('error', reject);
     reader.readAsDataURL(blob);
   });
 };
@@ -140,26 +140,28 @@ const validateFileOrBase64 = <T extends FileInput>(
   }
 };
 
+const REASON_TEXT: Record<
+  FileError['reason'],
+  { title: string; subTitle: string }
+> = {
+  type: {
+    title: 'Invalid Type',
+    subTitle: 'Please only upload PNG, JPG, JPEG or WEBP',
+  },
+  size: {
+    title: 'File Too Big',
+    subTitle: 'Please upload a file under 5MB',
+  },
+  invalidBase64: { title: 'Invalid Base64', subTitle: 'Please check the file' },
+  base64NotAllowed: {
+    title: 'Base64 not allowed',
+    subTitle: 'Please upload a file',
+  },
+};
+
 export const reasonToText = (
   reason: FileError['reason'],
-): { title: string; subTitle: string } => {
-  switch (reason) {
-    case 'type':
-      return {
-        title: 'Invalid Type',
-        subTitle: 'Please only upload PNG, JPG, JPEG or WEBP',
-      };
-    case 'size':
-      return {
-        title: 'File Too Big',
-        subTitle: 'Please upload a file under 5MB',
-      };
-    case 'invalidBase64':
-      return { title: 'Invalid Base64', subTitle: 'Please check the file' };
-    case 'base64NotAllowed':
-      return { title: 'Base64 not allowed', subTitle: 'Please upload a file' };
-  }
-};
+): { title: string; subTitle: string } => REASON_TEXT[reason];
 
 const checkTypeAndSize = (
   input: File | string,

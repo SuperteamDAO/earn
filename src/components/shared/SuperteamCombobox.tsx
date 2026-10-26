@@ -114,8 +114,8 @@ export function SuperteamCombobox({
 
   const isMD = useBreakpoint('md');
 
-  const findOptionByValue = (value: string): SuperteamOption | undefined => {
-    return options.find((option) => option.value === value);
+  const findOptionByValue = (wanted: string): SuperteamOption | undefined => {
+    return options.find((option) => option.value === wanted);
   };
 
   return (

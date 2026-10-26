@@ -1,12 +1,13 @@
-import parse, { type HTMLReactParserOptions } from 'html-react-parser';
+import parse, { Element, type HTMLReactParserOptions } from 'html-react-parser';
 import { marked } from 'marked';
 import { memo, useEffect, useState } from 'react';
 const options: HTMLReactParserOptions = {
-  replace: ({ name, children, attribs }: any) => {
-    if (name === 'p' && (!children || children.length === 0)) {
+  // Empty paragraphs become line breaks; everything else stays as parsed.
+  replace: (node) => {
+    if (node instanceof Element && node.name === 'p' && !node.children.length) {
       return <br />;
     }
-    return { name, children, attribs };
+    return undefined;
   },
 };
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
@@ -15,7 +16,7 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
     const awaitedParse = async () => {
       setRawHtml(await marked.parse(children || '', { gfm: true }));
     };
-    awaitedParse();
+    void awaitedParse();
   }, [children]);
 
   return (

@@ -1,23 +1,9 @@
-import TiptapLink from '@tiptap/extension-link';
+import { Link as TiptapLink, type LinkOptions } from '@tiptap/extension-link';
 import { Plugin, TextSelection } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
 import { getMarkRange, mergeAttributes } from '@tiptap/react';
 
-interface ExtensionWithParent<TValue> {
-  readonly parent?: () => TValue;
-}
-
-type ParentLinkOptions = Record<string, unknown> & {
-  readonly HTMLAttributes: Record<string, unknown>;
-};
-
-const getParent = <TValue>(
-  extension: ExtensionWithParent<TValue>,
-): TValue | undefined => {
-  return extension.parent?.();
-};
-
-export const Link = TiptapLink.extend({
+export const Link = TiptapLink.extend<LinkOptions>({
   /*
    * Determines whether typing next to a link automatically becomes part of the link.
    * In this case, we dont want any characters to be included as part of the link.
@@ -46,10 +32,9 @@ export const Link = TiptapLink.extend({
   },
 
   addOptions() {
-    const parentOptions =
-      getParent<ParentLinkOptions>(
-        this as unknown as ExtensionWithParent<ParentLinkOptions>,
-      ) ?? (this.options as unknown as ParentLinkOptions);
+    // Always there: this extends tiptap's link extension.
+    const parentOptions = this.parent?.();
+    if (!parentOptions) throw new Error('Link has no parent extension');
 
     return {
       ...parentOptions,
@@ -63,9 +48,7 @@ export const Link = TiptapLink.extend({
 
   addProseMirrorPlugins() {
     const { editor } = this;
-    const parentPlugins =
-      getParent<Plugin[]>(this as unknown as ExtensionWithParent<Plugin[]>) ??
-      [];
+    const parentPlugins = this.parent?.() ?? [];
 
     return [
       ...parentPlugins,
@@ -78,7 +61,7 @@ export const Link = TiptapLink.extend({
              * Handles the 'Escape' key press when there's a selection within the link.
              * This will move the cursor to the end of the link.
              */
-            if (event.key === 'Escape' && selection.empty !== true) {
+            if (event.key === 'Escape' && !selection.empty) {
               editor.commands.focus(selection.to, { scrollIntoView: false });
             }
 

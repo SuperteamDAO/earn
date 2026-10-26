@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DayPicker, type Matcher, TZDate } from 'react-day-picker';
+import { DayPicker, TZDate } from 'react-day-picker';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
@@ -180,6 +180,7 @@ export function DateTimePicker({
     'month' | 'year' | false
   >(false);
   const initDate = useMemo(
+    // oxlint-disable-next-line react/purity -- with no value the calendar opens on today
     () => new TZDate(value || new Date(), timezone),
     [value, timezone],
   );
@@ -246,6 +247,7 @@ export function DateTimePicker({
 
   useEffect(() => {
     if (open) {
+      // oxlint-disable-next-line react/set-state-in-effect -- opening the popover returns to the selected month
       setMonth(initDate);
       setMonthYearPicker(false);
     }
@@ -259,7 +261,7 @@ export function DateTimePicker({
       displayValue,
       `${!hideTime ? 'MMM' : 'MMMM'} d, yyyy${!hideTime ? (use12HourFormat ? ' hh:mm a' : ' HH:mm:ss') : ''}`,
     );
-  }, [displayValue, hideTime, use12HourFormat]);
+  }, [displayValue, hideTime, use12HourFormat, defaultDisplayValue]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -364,16 +366,15 @@ export function DateTimePicker({
             onSelect={(d) => d && onDayChanged(d)}
             month={month}
             endMonth={endMonth}
-            disabled={
-              [
-                max ? { after: max } : null,
-                min ? { before: min } : null,
-              ].filter(Boolean) as Matcher[]
-            }
+            disabled={[
+              max ? { after: max } : null,
+              min ? { before: min } : null,
+            ].filter((matcher) => matcher !== null)}
             onMonthChange={setMonth}
             components={{
-              Day: (props) => {
-                const date = props.day.date;
+              // oxlint-disable-next-line react/no-unstable-nested-components -- react-day-picker's components prop; reads min/max from this render
+              Day: (dayProps) => {
+                const date = dayProps.day.date;
                 const isDisabledBefore = min && date < min;
                 const isDisabledAfter = max && date > max;
 
@@ -390,11 +391,11 @@ export function DateTimePicker({
                       }
                       contentProps={{ className: 'max-w-56 text-center z-100' }}
                     >
-                      <div {...props} />
+                      <div {...dayProps} />
                     </Tooltip>
                   );
                 }
-                return <div {...props} />;
+                return <div {...dayProps} />;
               },
             }}
             classNames={{
@@ -438,7 +439,7 @@ export function DateTimePicker({
           ></div>
           <MonthYearPicker
             value={month}
-            mode={monthYearPicker as any}
+            mode={monthYearPicker}
             onChange={onMonthYearChanged}
             minDate={minDate}
             maxDate={maxDate}
@@ -453,6 +454,7 @@ export function DateTimePicker({
             <TimePicker
               hideSeconds={hideSeconds}
               timePicker={timePicker}
+              // oxlint-disable-next-line react/purity -- with no value the time picker starts from now
               value={value || new Date()}
               onChange={onChange}
               use12HourFormat={use12HourFormat}
@@ -476,12 +478,13 @@ function MonthYearPicker({
   value,
   minDate,
   maxDate,
-  mode = 'month',
+  mode,
   onChange,
   className,
 }: {
   value: Date;
-  mode: 'month' | 'year';
+  // Hidden (`false`) while the day grid shows.
+  mode: 'month' | 'year' | false;
   minDate?: Date;
   maxDate?: Date;
   onChange: (value: Date, mode: 'month' | 'year') => void;
@@ -489,28 +492,28 @@ function MonthYearPicker({
 }) {
   const yearRef = useRef<HTMLDivElement>(null);
   const years = useMemo(() => {
-    const years: TimeOption[] = [];
+    const list: TimeOption[] = [];
     for (let i = 1912; i < 2100; i++) {
       let disabled = false;
       const startY = startOfYear(setYear(value, i));
       const endY = endOfYear(setYear(value, i));
       if (minDate && endY < minDate) disabled = true;
       if (maxDate && startY > maxDate) disabled = true;
-      years.push({ value: i, label: i.toString(), disabled });
+      list.push({ value: i, label: i.toString(), disabled });
     }
-    return years;
+    return list;
   }, [value, minDate, maxDate]);
   const months = useMemo(() => {
-    const months: TimeOption[] = [];
+    const list: TimeOption[] = [];
     for (let i = 0; i < 12; i++) {
       let disabled = false;
       const startM = startOfMonth(setMonthFns(value, i));
       const endM = endOfMonth(setMonthFns(value, i));
       if (minDate && endM < minDate) disabled = true;
       if (maxDate && startM > maxDate) disabled = true;
-      months.push({ value: i, label: format(new Date(0, i), 'MMM'), disabled });
+      list.push({ value: i, label: format(new Date(0, i), 'MMM'), disabled });
     }
-    return months;
+    return list;
   }, [value, minDate, maxDate]);
 
   const onYearChange = useCallback(
@@ -531,6 +534,7 @@ function MonthYearPicker({
     if (mode === 'year') {
       yearRef.current?.scrollIntoView({ behavior: 'auto', block: 'center' });
     }
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- scrolls the selected year into view when the value changes too
   }, [mode, value]);
   return (
     <div className={cn(className)}>
@@ -631,13 +635,16 @@ function TimePicker({
       }),
       true,
     );
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- reports a time only when one of its parts changes, as Earn had it
   }, [hour, minute, second, ampm, formatStr, use12HourFormat]);
 
-  const _hourIn24h = useMemo(() => {
+  const hourIn24h = useMemo(() => {
     // if (use12HourFormat) {
     //   return (hour % 12) + ampm * 12;
     // }
+    // oxlint-disable-next-line react/memo-dependencies -- recomputed with the value the hour change produces, as Earn had it
     return use12HourFormat ? (hour % 12) + ampm * 12 : hour;
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- recomputed with the value the hour change produces, as Earn had it
   }, [value, use12HourFormat, ampm]);
 
   const hours: TimeOption[] = useMemo(
@@ -659,7 +666,7 @@ function TimePicker({
     [value, min, max, use12HourFormat, ampm],
   );
   const minutes: TimeOption[] = useMemo(() => {
-    const anchorDate = setHours(value, _hourIn24h);
+    const anchorDate = setHours(value, hourIn24h);
     return Array.from({ length: 60 }, (_, i) => {
       let disabled = false;
       const mDate = setMinutes(anchorDate, i);
@@ -673,26 +680,26 @@ function TimePicker({
         disabled,
       };
     });
-  }, [value, min, max, _hourIn24h]);
+  }, [value, min, max, hourIn24h]);
   const seconds: TimeOption[] = useMemo(() => {
     const anchorDate = setMilliseconds(
-      setMinutes(setHours(value, _hourIn24h), minute),
+      setMinutes(setHours(value, hourIn24h), minute),
       0,
     );
-    const _min = min ? setMilliseconds(min, 0) : undefined;
-    const _max = max ? setMilliseconds(max, 0) : undefined;
+    const minSecond = min ? setMilliseconds(min, 0) : undefined;
+    const maxSecond = max ? setMilliseconds(max, 0) : undefined;
     return Array.from({ length: 60 }, (_, i) => {
       let disabled = false;
       const sDate = setSeconds(anchorDate, i);
-      if (_min && sDate < _min) disabled = true;
-      if (_max && sDate > _max) disabled = true;
+      if (minSecond && sDate < minSecond) disabled = true;
+      if (maxSecond && sDate > maxSecond) disabled = true;
       return {
         value: i,
         label: i.toString().padStart(2, '0'),
         disabled,
       };
     });
-  }, [value, minute, min, max, _hourIn24h]);
+  }, [value, minute, min, max, hourIn24h]);
   const ampmOptions = useMemo(() => {
     const startD = startOfDay(value);
     const endD = endOfDay(value);
@@ -810,7 +817,6 @@ function TimePicker({
       use12HourFormat,
       value,
       formatStr,
-      hour,
       second,
       ampm,
       min,
@@ -872,8 +878,8 @@ function TimePicker({
 
   const display = useMemo(() => {
     const arr = [];
-    for (const element of ['hour', 'minute', 'second']) {
-      if (!timePicker || timePicker[element as keyof typeof timePicker]) {
+    for (const element of ['hour', 'minute', 'second'] as const) {
+      if (!timePicker || timePicker[element]) {
         if (element === 'hour') {
           arr.push(use12HourFormat ? 'hh' : 'HH');
         } else {
@@ -952,7 +958,7 @@ function TimePicker({
                       <TimeItem
                         option={v}
                         selected={v.value === second}
-                        onSelect={(v) => setSecond(v.value)}
+                        onSelect={(option) => setSecond(option.value)}
                         className="h-8"
                         disabled={v.disabled}
                       />

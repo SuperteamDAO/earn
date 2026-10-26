@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import IsoDomPurify, { type Config } from 'isomorphic-dompurify';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -36,14 +36,18 @@ const hardDomPurify = (dirty: string | Node, cfg?: Config) =>
     ...cfg,
   });
 
+// The inputs send strings; anything else (an unset field) is nothing, as
+// DOMPurify makes of it.
+const asText = (val: unknown): string => (typeof val === 'string' ? val : '');
+
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
   subject: z.preprocess(
-    (val) => hardDomPurify(val as unknown as string),
+    (val) => hardDomPurify(asText(val)),
     z.string().min(1, { message: 'Subject is required' }),
   ),
   description: z.preprocess(
-    (val) => hardDomPurify(val as unknown as string),
+    (val) => hardDomPurify(asText(val)),
     z
       .string()
       .min(10, { message: 'Description must be at least 10 valid characters' }),
@@ -145,7 +149,7 @@ export function SupportFormDialog({ children, onSubmit }: ModalFormProps) {
 
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(handleSubmit)}
+            onSubmit={(event) => void form.handleSubmit(handleSubmit)(event)}
             className="space-y-6 px-6 pt-4"
           >
             {!user && (

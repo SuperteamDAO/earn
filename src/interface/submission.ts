@@ -10,7 +10,7 @@ interface SubmissionWithUser {
   link?: string;
   tweet?: string;
   otherInfo?: string;
-  eligibilityAnswers?: any;
+  eligibilityAnswers?: unknown;
   userId: string;
   listingId: string;
   isWinner: boolean;
@@ -26,7 +26,7 @@ interface SubmissionWithUser {
   isArchived: boolean;
   createdAt: string;
   updatedAt: string;
-  like?: any;
+  like?: unknown;
   user: User;
   listing?: Listing;
   ask?: number;

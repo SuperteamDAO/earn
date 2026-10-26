@@ -51,7 +51,7 @@ export const sortTokenSearchResults = <T extends TokenSearchable>(
   tokens: T[],
   query: string,
 ) =>
-  [...tokens].sort((firstToken, secondToken) => {
+  tokens.toSorted((firstToken, secondToken) => {
     const rankDelta =
       getTokenSearchRank({
         query,
@@ -81,7 +81,7 @@ export const sortJupiterTokenSearchResults = <T extends JupiterTokenSearchable>(
   tokens: T[],
   query: string,
 ) =>
-  [...tokens].sort((firstToken, secondToken) => {
+  tokens.toSorted((firstToken, secondToken) => {
     const rankDelta =
       getTokenSearchRank({
         query,

@@ -98,6 +98,7 @@ export function ImageUploader({
 
   useEffect(() => {
     if (defaultValue) {
+      // oxlint-disable-next-line react/set-state-in-effect -- a new defaultValue from the form replaces the preview, as Earn had it
       setPreview(defaultValue);
     }
   }, [defaultValue]);
@@ -200,7 +201,7 @@ export function ImageUploader({
 
       const files = e.dataTransfer.files;
       if (files && files.length > 0) {
-        handleFileChange(files[0]);
+        void handleFileChange(files[0]);
       }
     },
     [disabled, uploading, handleFileChange],
@@ -209,7 +210,7 @@ export function ImageUploader({
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files ? e.target.files[0] : null;
-      handleFileChange(file);
+      void handleFileChange(file);
       e.target.value = '';
     },
     [handleFileChange],
@@ -430,7 +431,7 @@ export function ImageUploader({
           {selectedFile && (
             <ImageCrop
               file={selectedFile}
-              onCrop={handleCropApply}
+              onCrop={(cropped) => void handleCropApply(cropped)}
               maxImageSize={MAX_FILE_SIZE}
               aspect={crop === 'square' ? 1 : undefined}
             >

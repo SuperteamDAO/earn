@@ -102,21 +102,30 @@ type SkillMap = {
   color: string;
 };
 
-export const allSubSkills = Object.values(skillSubSkillMap).flatMap((skills) =>
-  skills.map((s) => s.value),
-) as [SubSkillsType, ...SubSkillsType[]];
-export const allSkills = Object.keys(skillSubSkillMap) as [
-  keyof typeof skillSubSkillMap,
-];
+// The lists are fixed and never empty; zod's enums want that in the type.
+function nonEmpty<T>(items: ReadonlyArray<T>): [T, ...T[]] {
+  const [first, ...rest] = items;
+  if (first === undefined) throw new Error('Expected a non-empty list');
+  return [first, ...rest];
+}
+
+const isParentSkill = (key: string): key is ParentSkills =>
+  key in skillSubSkillMap;
+
+export const allSubSkills = nonEmpty(
+  Object.values(skillSubSkillMap).flatMap((skills) =>
+    skills.map((s): SubSkillsType => s.value),
+  ),
+);
+// In the map's order.
+export const allSkills = nonEmpty(
+  Object.keys(skillSubSkillMap).filter(isParentSkill),
+);
 
 const skillSchema = z
   .object({
-    skills: z.enum(
-      Object.keys(skillSubSkillMap) as [ParentSkills, ...ParentSkills[]],
-    ),
-    subskills: z.array(
-      z.enum(allSubSkills as [SubSkillsType, ...SubSkillsType[]]),
-    ),
+    skills: z.enum(allSkills),
+    subskills: z.array(z.enum(allSubSkills)),
   })
   .refine((data) => {
     const validSubskills = skillSubSkillMap[data.skills].map((s) => s.value);

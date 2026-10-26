@@ -68,7 +68,9 @@ export function getDescriptionHtml(
   let normalized = description ?? '';
   if (normalized.startsWith('"')) {
     try {
-      normalized = JSON.parse(normalized) as string;
+      // Starts with a quote, so a valid one is a string.
+      const parsed: unknown = JSON.parse(normalized);
+      if (typeof parsed === 'string') normalized = parsed;
     } catch {
       normalized = description ?? '';
     }

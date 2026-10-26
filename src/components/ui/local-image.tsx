@@ -7,7 +7,7 @@ interface LocalImageProps {
   style?: React.CSSProperties;
   loading?: 'lazy' | 'eager';
   decoding?: 'async' | 'sync';
-  onError?: (event: React.SyntheticEvent<HTMLImageElement, Event>) => void;
+  onError?: (event: React.SyntheticEvent<HTMLImageElement>) => void;
 }
 
 export const LocalImage = ({

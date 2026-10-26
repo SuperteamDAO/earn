@@ -17,6 +17,7 @@ import {
   type UploadResult,
   validateImageBuffer,
 } from '@/lib/image-upload/client';
+import type { ImageFormat } from '@/lib/image-upload/types';
 
 interface UseImageUploadOptions {
   source: ImageSource;
@@ -93,7 +94,7 @@ export function useImageUpload({
         updateProgress(0, 100);
 
         let processedFile: File;
-        let mimeType: string;
+        let mimeType: 'application/pdf' | `image/${ImageFormat}`;
 
         if (isPdf) {
           // For PDFs, skip validation and compression
@@ -144,7 +145,7 @@ export function useImageUpload({
           '/api/image/sign/',
           {
             source,
-            contentType: mimeType as 'image/jpeg' | 'image/png' | 'image/webp',
+            contentType: mimeType,
             contentLength: processedFile.size,
           },
         );

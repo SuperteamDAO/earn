@@ -50,6 +50,8 @@ export const LinkEditBlock = React.forwardRef<HTMLDivElement, LinkEditorProps>(
       mode: 'onTouched',
     });
 
+    // Callers read the handle after mount, when the element is there.
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- forwardRef's handle type has no null
     React.useImperativeHandle(ref, () => formRef.current as HTMLDivElement);
 
     const handleSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -118,8 +120,8 @@ export const LinkEditBlock = React.forwardRef<HTMLDivElement, LinkEditorProps>(
               <Button
                 type="button"
                 size="sm"
-                onClick={async () => {
-                  form.handleSubmit(handleSubmit)();
+                onClick={() => {
+                  void form.handleSubmit(handleSubmit)();
                 }}
               >
                 Save

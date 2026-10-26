@@ -1,4 +1,4 @@
-import { type NextConfig } from 'next';
+import type { NextConfig } from 'next';
 
 // The Content-Security-Policy is set per document in src/proxy.ts (Privy
 // and KYC pages get their own), not here.

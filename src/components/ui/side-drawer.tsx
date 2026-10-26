@@ -19,6 +19,7 @@ export function SideDrawer({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- the portal needs document, so it mounts after hydration
     setMounted(true);
     return () => setMounted(false);
   }, []);

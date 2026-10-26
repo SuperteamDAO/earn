@@ -27,7 +27,7 @@ import { cn } from '@/utils/cn';
 interface MultiImageUploaderProps {
   source: ImageSource;
   onChange: (urls: string[]) => void;
-  value: string[];
+  value?: string[];
   maxImages?: number;
   minImages?: number;
   label?: string;
@@ -39,6 +39,16 @@ interface MultiImageUploaderProps {
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const PDF_TYPE = 'application/pdf';
+
+const getFilenameFromUrl = (url: string): string => {
+  try {
+    const pathname = new URL(url).pathname;
+    const segments = pathname.split('/');
+    return segments[segments.length - 1] || 'File';
+  } catch {
+    return 'File';
+  }
+};
 
 export function MultiImageUploader({
   source,
@@ -167,7 +177,7 @@ export function MultiImageUploader({
 
       const files = e.dataTransfer.files;
       if (files && files.length > 0) {
-        handleFileChange(files);
+        void handleFileChange(files);
       }
     },
     [disabled, uploading, canAddMore, handleFileChange],
@@ -175,7 +185,7 @@ export function MultiImageUploader({
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleFileChange(e.target.files);
+      void handleFileChange(e.target.files);
       e.target.value = '';
     },
     [handleFileChange],
@@ -213,16 +223,6 @@ export function MultiImageUploader({
 
   const currentPreviewUrl = value[previewIndex] || '';
   const isCurrentPreviewPdf = currentPreviewUrl.toLowerCase().endsWith('.pdf');
-
-  const getFilenameFromUrl = (url: string): string => {
-    try {
-      const pathname = new URL(url).pathname;
-      const segments = pathname.split('/');
-      return segments[segments.length - 1] || 'File';
-    } catch {
-      return 'File';
-    }
-  };
 
   const handleDownload = async () => {
     if (!currentPreviewUrl) return;
@@ -371,7 +371,7 @@ export function MultiImageUploader({
             </div>
             <button
               type="button"
-              onClick={handleDownload}
+              onClick={() => void handleDownload()}
               className="bg-brand-purple hover:bg-brand-purple-dark focus-visible:ring-brand-purple/40 flex items-center gap-2 rounded-md p-2 text-center text-sm text-white focus-visible:ring-2"
               aria-label="Download file"
             >
@@ -393,6 +393,7 @@ export function MultiImageUploader({
             )}
 
             {isCurrentPreviewPdf ? (
+              // oxlint-disable-next-line react/iframe-missing-sandbox -- the browser's PDF viewer doesn't run in a sandboxed frame
               <iframe
                 src={currentPreviewUrl}
                 className="h-full w-full"

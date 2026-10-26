@@ -14,6 +14,6 @@ export function grantAmount({
   if (minReward && maxReward && minReward > 0) {
     return `${formatNumberWithSuffix(minReward)}-${formatNumberWithSuffix(maxReward)}`;
   } else {
-    return `Up to ${formatNumberWithSuffix(maxReward!)}`;
+    return `Up to ${formatNumberWithSuffix(maxReward)}`;
   }
 }

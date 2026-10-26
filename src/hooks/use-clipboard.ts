@@ -18,7 +18,7 @@ export const useClipboard = (
   const { timeout = 1500 } = options;
 
   const onCopy = useCallback(() => {
-    navigator.clipboard.writeText(text).then(() => {
+    void navigator.clipboard.writeText(text).then(() => {
       setHasCopied(true);
       setTimeout(() => {
         setHasCopied(false);

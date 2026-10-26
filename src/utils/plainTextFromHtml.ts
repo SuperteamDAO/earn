@@ -27,8 +27,7 @@ turndownService.addRule('plainText', {
 turndownService.addRule('links', {
   filter: 'a',
   replacement: function (content, node) {
-    const element = node as HTMLElement;
-    const href = element.getAttribute('href');
+    const href = node.getAttribute('href');
     if (href && href !== content) {
       return `${content} ( ${href} )`;
     }

@@ -17,14 +17,12 @@ function subscribe(callback: () => void) {
   };
 }
 
+const getServerSnapshot = () => false;
+
 export const useBreakpoint = (breakpoint: Breakpoint): boolean => {
   const getSnapshot = useCallback(() => {
     return window.innerWidth >= breakpointValues[breakpoint];
   }, [breakpoint]);
-
-  const getServerSnapshot = () => {
-    return false;
-  };
 
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 };

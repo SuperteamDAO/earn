@@ -67,12 +67,15 @@ pino.levels = {
   },
 };
 
+const isLogLevel = (value: unknown): value is LogLevel =>
+  typeof value === 'string' && Object.hasOwn(pino.levels.values, value);
+
 export function getDefaultLoggerOptions<T extends Record<string, unknown>>(
   opts: T,
 ): T & { level: LogLevel } {
   return {
     ...opts,
-    level: (opts.level as LogLevel | undefined) ?? PINO_LOGGER_DEFAULTS.level,
+    level: isLogLevel(opts.level) ? opts.level : PINO_LOGGER_DEFAULTS.level,
   };
 }
 
@@ -112,6 +115,7 @@ export function generateChildLogger<T extends LoggerLike>(
   });
 
   return setLoggerContext(
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- @walletconnect/logger's signature: a logger's child is the same kind of logger
     child as T,
     formatChildLoggerContext(logger, context, key),
     key,

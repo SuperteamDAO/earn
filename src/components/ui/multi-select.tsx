@@ -117,7 +117,8 @@ function transToGroupOption(options: Option[], groupBy?: string) {
 
   const groupOption: GroupOption = {};
   options.forEach((option) => {
-    const key = (option[groupBy] as string) || '';
+    const groupValue = option[groupBy];
+    const key = groupValue ? String(groupValue) : '';
     if (!groupOption[key]) {
       groupOption[key] = [];
     }
@@ -127,7 +128,7 @@ function transToGroupOption(options: Option[], groupBy?: string) {
 }
 
 function removePickedOption(groupOption: GroupOption, picked: Option[]) {
-  const cloneOption = JSON.parse(JSON.stringify(groupOption)) as GroupOption;
+  const cloneOption = structuredClone(groupOption);
 
   for (const [key, value] of Object.entries(cloneOption)) {
     cloneOption[key] = value.filter(
@@ -221,6 +222,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       ref,
       () => ({
         selectedValue: [...selected],
+        // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- shadcn's ref API; read after mount
         input: inputRef.current as HTMLInputElement,
         focus: () => inputRef?.current?.focus(),
         reset: () => setSelected([]),
@@ -229,11 +231,12 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
     );
 
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target instanceof Node ? event.target : null;
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
+        !dropdownRef.current.contains(target) &&
         inputRef.current &&
-        !inputRef.current.contains(event.target as Node)
+        !inputRef.current.contains(target)
       ) {
         setOpen(false);
         inputRef.current.blur();
@@ -257,8 +260,8 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
             if (input.value === '' && selected.length > 0) {
               const lastSelectOption = selected[selected.length - 1];
               // If last item is fixed, we should not remove it.
-              if (!lastSelectOption?.fixed) {
-                handleUnselect(selected[selected.length - 1]!);
+              if (lastSelectOption && !lastSelectOption.fixed) {
+                handleUnselect(lastSelectOption);
               }
             }
           }
@@ -284,10 +287,12 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
         document.removeEventListener('mousedown', handleClickOutside);
         document.removeEventListener('touchend', handleClickOutside);
       };
+      // oxlint-disable-next-line react/exhaustive-effect-dependencies -- the listener only reads refs; Earn re-subscribes on open alone
     }, [open]);
 
     useEffect(() => {
       if (value) {
+        // oxlint-disable-next-line react/set-state-in-effect -- a controlled value replaces the selection
         setSelected(value);
       }
     }, [value]);
@@ -299,8 +304,10 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       }
       const newOption = transToGroupOption(arrayOptions || [], groupBy);
       if (JSON.stringify(newOption) !== JSON.stringify(options)) {
+        // oxlint-disable-next-line react/set-state-in-effect -- options follow the options prop
         setOptions(newOption);
       }
+      // oxlint-disable-next-line react/exhaustive-effect-dependencies -- kept as shadcn wrote it
     }, [arrayDefaultOptions, arrayOptions, groupBy, onSearch, options]);
 
     useEffect(() => {
@@ -324,6 +331,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       };
 
       void exec();
+      // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- searches on the term, not on each new callback
     }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 
     useEffect(() => {
@@ -349,8 +357,10 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       };
 
       void exec();
+      // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- searches on the term, not on each new callback
     }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 
+    // oxlint-disable-next-line react/no-unstable-nested-components -- kept as shadcn wrote it; hoisting changes when the item remounts
     const CreatableItem = () => {
       if (!creatable) return undefined;
       if (
@@ -368,13 +378,16 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
             e.preventDefault();
             e.stopPropagation();
           }}
-          onSelect={(value: string) => {
+          onSelect={(created: string) => {
             if (selected.length >= maxSelected) {
               onMaxSelected?.(selected.length);
               return;
             }
             setInputValue('');
-            const newOptions = [...selected, { value, label: value }];
+            const newOptions = [
+              ...selected,
+              { value: created, label: created },
+            ];
             setSelected(newOptions);
             onChange?.(newOptions);
           }}
@@ -425,8 +438,10 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       }
 
       if (creatable) {
-        return (value: string, search: string) => {
-          return value.toLowerCase().includes(search.toLowerCase()) ? 1 : -1;
+        return (itemValue: string, search: string) => {
+          return itemValue.toLowerCase().includes(search.toLowerCase())
+            ? 1
+            : -1;
         };
       }
       // Using default filter in `cmdk`. We don't have to provide it.
@@ -506,9 +521,9 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 ref={inputRef}
                 value={inputValue}
                 disabled={disabled}
-                onValueChange={(value) => {
-                  setInputValue(value);
-                  inputProps?.onValueChange?.(value);
+                onValueChange={(next) => {
+                  setInputValue(next);
+                  inputProps?.onValueChange?.(next);
                 }}
                 onBlur={(event) => {
                   if (!onScrollbar) {
@@ -519,8 +534,8 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 }}
                 onFocus={(event) => {
                   setOpen(true);
-                  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                  triggerSearchOnFocus && onSearch?.(debouncedSearchTerm);
+                  if (triggerSearchOnFocus)
+                    void onSearch?.(debouncedSearchTerm);
                   inputProps?.onFocus?.(event);
                 }}
                 placeholder={
