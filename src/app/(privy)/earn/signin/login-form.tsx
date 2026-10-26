@@ -90,6 +90,10 @@ const REFUSALS: Record<string, string> = {
   database: 'We couldn’t set up your account. Try again in a minute.',
 };
 
+// Pages that embed the form under their own heading (Earn's inline sign-in
+// on the invite and new-sponsor pages) leave this one out.
+const HeadingContext = createContext(true);
+
 // Tells the dialog that frames this page how tall the card is.
 function useReportHeight(embed: boolean) {
   const card = useRef<HTMLDivElement>(null);
@@ -120,12 +124,15 @@ export function LoginCard({
   children: React.ReactNode;
 }) {
   const card = useReportHeight(embed);
+  // Under the page's own heading, the form starts at the top, as Earn's
+  // inline sign-in did.
+  const heading = useContext(HeadingContext);
   return (
     <div
       ref={card}
       className={
         embed
-          ? 'w-full overflow-hidden bg-white pt-2'
+          ? `w-full overflow-hidden bg-white ${heading ? 'pt-2' : ''}`
           : 'w-full max-w-[23rem] overflow-hidden rounded-lg border border-slate-200 bg-white pt-2 shadow-lg'
       }
     >
@@ -144,10 +151,6 @@ export function LoginCard({
     </div>
   );
 }
-
-// Pages that embed the form under their own heading (Earn's inline sign-in
-// on the invite and new-sponsor pages) leave this one out.
-const HeadingContext = createContext(true);
 
 export function HeadingProvider({
   heading,
