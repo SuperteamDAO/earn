@@ -1,9 +1,12 @@
-import { usePrivy } from '@privy-io/react-auth';
+'use client';
+
 import dynamic from 'next/dynamic';
-import { type ReactNode, useEffect, useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { type ReactNode } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { useUser } from '@/store/user';
+import { signInHref } from '@/lib/safe-next';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 const CompleteProfileModal = dynamic(() =>
@@ -12,23 +15,21 @@ const CompleteProfileModal = dynamic(() =>
   ),
 );
 
-const Login = dynamic(() =>
-  import('@/features/auth/components/Login').then((mod) => mod.Login),
-);
-
 interface AuthWrapperProps {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
   showCompleteProfileModal?: boolean;
   completeProfileModalBodyText?: string;
+  // Where sign-in returns to; this page by default.
   redirectTo?: string;
-  hideLoginOverlay?: boolean;
-  onLoginOpenCallback?: () => void;
-  onLoginCloseCallback?: () => void;
   allowSponsor?: boolean;
 }
 
+// Wraps something only a signed-in person (optionally with a finished
+// talent profile) may use. Signed out, a tap goes to sign-in, a page of its
+// own (Privy's SDK loads only there), and comes back. Without a profile,
+// it asks them to finish one.
 export function AuthWrapper({
   children,
   className,
@@ -36,31 +37,13 @@ export function AuthWrapper({
   showCompleteProfileModal = false,
   completeProfileModalBodyText = 'Please complete your profile before proceeding.',
   redirectTo,
-  hideLoginOverlay,
-  onLoginCloseCallback,
-  onLoginOpenCallback,
   allowSponsor = false,
 }: AuthWrapperProps) {
-  const { authenticated, ready } = usePrivy();
-  const isAuthenticated = authenticated;
-  const isLoading = !ready;
-
-  const { user } = useUser();
-  const isSponsor = !!user?.currentSponsorId || false;
-  const isTalentFilled = !!user?.isTalentFilled || false;
-
-  const [triggerLogin, setTriggerLogin] = useState(false);
-
-  const {
-    isOpen: loginIsOpen,
-    onOpen: loginOnOpen,
-    onClose: loginOnClose,
-  } = useDisclosure();
-
-  useEffect(() => {
-    if (loginIsOpen) onLoginOpenCallback?.();
-    else onLoginCloseCallback?.();
-  }, [loginIsOpen, onLoginOpenCallback, onLoginCloseCallback]);
+  const viewer = useViewer();
+  const pathname = usePathname() ?? '';
+  const search = useSearchParams()?.toString() ?? '';
+  const isSponsor = !!viewer?.currentSponsorId;
+  const isTalentFilled = !!viewer?.isTalentFilled;
 
   const {
     isOpen: profileModalIsOpen,
@@ -68,52 +51,29 @@ export function AuthWrapper({
     onClose: profileModalOnClose,
   } = useDisclosure();
 
-  const handleLoginTrigger = (e: React.MouseEvent) => {
-    if (isLoading) {
-      return;
-    }
-    if (!isAuthenticated) {
-      e.preventDefault();
-      e.stopPropagation();
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      onClick && onClick();
-      loginOnOpen();
-    } else if (
-      showCompleteProfileModal &&
-      !isTalentFilled &&
-      !(allowSponsor && isSponsor)
-    ) {
-      e.preventDefault();
-      e.stopPropagation();
-      profileModalOnOpen();
-    }
-  };
-
-  useEffect(() => {
-    if (triggerLogin && !isAuthenticated) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTriggerLogin(false);
-      loginOnOpen();
-    }
-  }, [triggerLogin, isAuthenticated, loginOnOpen]);
-
   const shouldAllowInteraction =
-    isAuthenticated &&
+    !!viewer &&
     (!showCompleteProfileModal ||
       isTalentFilled ||
       (allowSponsor && isSponsor));
 
+  const handleTrigger = (event: React.MouseEvent) => {
+    if (shouldAllowInteraction) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (!viewer) {
+      onClick?.();
+      // A full page load: sign-in is a document with its own CSP.
+      window.location.assign(
+        signInHref(redirectTo ?? (search ? `${pathname}?${search}` : pathname)),
+      );
+      return;
+    }
+    profileModalOnOpen();
+  };
+
   return (
     <>
-      {loginIsOpen && (
-        <Login
-          hideOverlay={hideLoginOverlay}
-          isOpen={loginIsOpen}
-          onClose={loginOnClose}
-          redirectTo={redirectTo}
-          onOpen={loginOnOpen}
-        />
-      )}
       {profileModalIsOpen && (
         <CompleteProfileModal
           isOpen={profileModalIsOpen}
@@ -123,15 +83,12 @@ export function AuthWrapper({
         />
       )}
       <div
-        onClick={handleLoginTrigger}
+        onClick={handleTrigger}
         className={cn('flex cursor-pointer', className)}
       >
         <div
           className="h-full w-full"
-          style={{
-            pointerEvents:
-              isLoading || !shouldAllowInteraction ? 'none' : 'auto',
-          }}
+          style={{ pointerEvents: shouldAllowInteraction ? 'auto' : 'none' }}
         >
           {children}
         </div>

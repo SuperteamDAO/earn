@@ -1,34 +1,21 @@
 {
   "compilerOptions": {
+    "target": "es2022",
     "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "removeComments": true,
-    "preserveConstEnums": true,
+    "jsx": "react-jsx",
     "strict": true,
-    "alwaysStrict": true,
-    "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
-    "noImplicitAny": true,
     "noImplicitReturns": true,
-    "noImplicitThis": true,
+    "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "allowUnreachableCode": false,
-    "noFallthroughCasesInSwitch": true,
-    "target": "es2021",
-    "outDir": "out",
-    "declaration": true,
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "allowJs": false, // earlier - true
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "react-jsx",
     "noEmit": true,
     "isolatedModules": true,
+    "verbatimModuleSyntax": true,
     "incremental": true,
     "paths": {
       "@/*": ["./src/*"],
@@ -38,20 +25,21 @@
     "plugins": [
       {
         "name": "next"
+      },
+      {
+        "name": "@effect/language-service",
+        "allowedUnstableApis": ["@effect/vitest"]
       }
-    ]
+    ],
+    "allowJs": false,
+    "esModuleInterop": true
   },
-  "exclude": [
-    "./out/**/*",
-    "./node_modules/**/*",
-    "./utils/functions.ts",
-    "./src/generated/**/*",
-    ".next/types/validator.ts"
-  ],
   "include": [
+    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-  ]
+  ],
+  "exclude": ["node_modules", "out", "src/generated"]
 }

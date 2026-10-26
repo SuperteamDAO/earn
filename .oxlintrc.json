@@ -1,10 +1,27 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "extends": ["./node_modules/@effect/tsgo/oxlint-presets/recommended.json"],
+  "ignorePatterns": [
+    "src/generated/**",
+    "public/**",
+    "src/components/icons/**"
+  ],
   "plugins": ["oxc", "unicorn", "typescript", "import", "react", "nextjs"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error"
+  },
+  "options": {
+    "typeAware": true
+  },
   "rules": {
-    "import/no-duplicates": ["error", { "prefer-inline": true }],
-    "react/exhaustive-deps": "off",
-    "nextjs/no-img-element": "off",
+    "import/no-duplicates": [
+      "error",
+      {
+        "prefer-inline": true
+      }
+    ],
+    "import/no-unassigned-import": "off",
     "@typescript-eslint/consistent-type-imports": [
       "error",
       {
@@ -12,27 +29,61 @@
         "fixStyle": "inline-type-imports"
       }
     ],
-    "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
-    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "@typescript-eslint/no-misused-promises": "error",
     "eslint/no-unused-vars": [
-      "warn",
+      "error",
       {
         "caughtErrors": "none",
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_"
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allow": ["_tag", "_count", "_sum", "_all"]
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    // Images come from Cloudinary and user links, sized by CSS.
+    "nextjs/no-img-element": "off",
+    "react/rules-of-hooks": "error",
+    "react/no-danger": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@privy-io/*"],
+            "message": "Privy's SDK only loads under src/app/(privy)/; public pages must ship none of it."
+          }
+        ]
       }
     ]
   },
-  "ignorePatterns": [
-    "node_modules/**",
-    "out/**",
-    "public/**/*",
-    "**/__next_data_cache_handler.js",
-    "**/*.cache.js",
-    "pnpm-lock.yaml",
-    "src/generated/**",
-    "next-env.d.ts",
-    ".next/**",
-    "src/components/icons/**/*.tsx"
+  "overrides": [
+    {
+      // Each test body is its own entry point, which is where this rule wants
+      // layers provided.
+      "files": ["src/**/*.test.ts"],
+      "rules": {
+        "effecttsgo/strict-effect-provide": "off",
+        // Fakes stand in for clients (Prisma's) far too large to implement.
+        "typescript/no-unsafe-type-assertion": "off"
+      }
+    },
+    {
+      "files": ["src/app/(privy)/**"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
   ]
 }

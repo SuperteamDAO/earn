@@ -1,0 +1,11 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
+  // Named in tsconfig, but under TypeScript 7 the plugin comes from @effect/tsgo.
+  // @prisma/client is imported by the generated client, which is gitignored
+  // and so unseen by knip.
+  "ignoreDependencies": ["@effect/language-service", "@prisma/client"],
+  // shadcn components are vendored whole (Root, Content, Item…) so the CLI can
+  // update them; unused parts of a used component are fine. Unused component
+  // files still fail, so delete those.
+  "ignoreIssues": { "src/components/ui/**": ["exports", "types"] },
+}

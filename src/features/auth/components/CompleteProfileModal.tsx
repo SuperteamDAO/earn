@@ -1,6 +1,8 @@
+'use client';
+
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -24,7 +26,9 @@ export function CompleteProfileModal({
   bodyText,
   isSponsor,
 }: Props) {
-  const router = useRouter();
+  const pathname = usePathname() ?? '';
+  const search = useSearchParams()?.toString() ?? '';
+  const here = search ? `${pathname}?${search}` : pathname;
 
   const header = isSponsor
     ? 'Add your talent profile'
@@ -53,7 +57,9 @@ export function CompleteProfileModal({
             asChild
             onClick={() => posthog.capture('complete profile_CTA pop up')}
           >
-            <Link href={`/earn/new/talent?originUrl=${router.asPath}`}>
+            <Link
+              href={`/earn/new/talent/?originUrl=${encodeURIComponent(here)}`}
+            >
               {CTA}
             </Link>
           </Button>

@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-
 import { popupTimeoutAtom } from '@/features/conversion-popups/atoms';
 
 import { loginEventAtom } from '../atoms';
