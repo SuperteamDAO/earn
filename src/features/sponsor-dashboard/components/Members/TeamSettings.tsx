@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { posthog } from 'posthog-js';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 
 import { ErrorSection } from '@/components/shared/ErrorSection';
@@ -47,6 +47,7 @@ import type { Member, Role } from '@/server/team-members';
 
 import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { InviteMembers } from '@/features/sponsor-dashboard/components/Members/InviteMembers';
+import { MembersTableSkeleton } from '@/features/sponsor-dashboard/components/Members/MembersTableSkeleton';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 type UserSponsor = Member;
@@ -108,6 +109,8 @@ export const TeamSettings = ({
   const pathname = usePathname() ?? '/earn/dashboard/team-settings/';
   const searchParams = useSearchParams();
 
+  // While the next page loads, the table's skeleton, as Earn showed it.
+  const [isMembersLoading, startTransition] = useTransition();
   const setQuery = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams?.toString() ?? '');
     for (const [key, value] of Object.entries(updates)) {
@@ -115,7 +118,11 @@ export const TeamSettings = ({
       else params.delete(key);
     }
     const query = params.toString();
-    router.replace(`${pathname}${query ? `?${query}` : ''}`, { scroll: false });
+    startTransition(() =>
+      router.replace(`${pathname}${query ? `?${query}` : ''}`, {
+        scroll: false,
+      }),
+    );
   };
   const setSkip = (value: number) =>
     setQuery({ skip: value > 0 ? String(value) : null });
@@ -243,13 +250,14 @@ export const TeamSettings = ({
           </div>
         </div>
       </div>
-      {!members?.length && (
+      {isMembersLoading && <MembersTableSkeleton rows={2} />}
+      {!isMembersLoading && !members?.length && (
         <ErrorSection
           title="No members found!"
           message="Invite members to join your organization!"
         />
       )}
-      {!!members?.length && (
+      {!isMembersLoading && !!members?.length && (
         <div className="rounded-md border border-slate-200 bg-white">
           <Table>
             <TableHeader>

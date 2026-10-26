@@ -11,7 +11,7 @@ import {
   Search,
 } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useTransition } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
@@ -45,6 +45,7 @@ import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingStatus } from '@/features/listings/utils/status';
 import { Banner } from '@/features/sponsor-dashboard/components/Banner';
 import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
+import { ListingTableSkeleton } from '@/features/sponsor-dashboard/components/ListingTableSkeleton';
 
 // The hackathon dashboard's "All Tracks": a page of the hackathon's
 // published tracks (`?search=`, `?skip=`), loaded on the server.
@@ -69,6 +70,8 @@ export function HackathonTracksView({
   const pathname = usePathname() ?? '/earn/dashboard/hackathon/';
   const searchParams = useSearchParams();
 
+  // While the next page loads, the table's skeleton, as Earn showed it.
+  const [isBountiesLoading, startTransition] = useTransition();
   const setQuery = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams?.toString() ?? '');
     for (const [key, value] of Object.entries(updates)) {
@@ -76,7 +79,11 @@ export function HackathonTracksView({
       else params.delete(key);
     }
     const query = params.toString();
-    router.replace(`${pathname}${query ? `?${query}` : ''}`, { scroll: false });
+    startTransition(() =>
+      router.replace(`${pathname}${query ? `?${query}` : ''}`, {
+        scroll: false,
+      }),
+    );
   };
   const setSkip = (value: number) =>
     setQuery({ skip: value > 0 ? String(value) : null });
@@ -138,7 +145,8 @@ export function HackathonTracksView({
           />
         </div>
       </div>
-      {!bounties?.length && (
+      {isBountiesLoading && <ListingTableSkeleton rows={10} />}
+      {!isBountiesLoading && !bounties?.length && (
         <>
           {isOpenCreateListing && (
             <CreateListingModal
@@ -167,7 +175,7 @@ export function HackathonTracksView({
           </Button>
         </>
       )}
-      {!!bounties?.length && (
+      {!isBountiesLoading && !!bounties?.length && (
         <>
           <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
             <Table>
