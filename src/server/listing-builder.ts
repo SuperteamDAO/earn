@@ -616,8 +616,8 @@ const make = Effect.gen(function* () {
     valid: ValidListing,
     isGod: boolean,
   ) {
-    // Earn verifies only on its own deployment (IS_EARN_BASE).
-    if (!config.earnProduction) {
+    // Earn verifies only on its own deployments (IS_EARN_BASE).
+    if (!config.isEarnBase) {
       return { isVerifying: false, reason: 'Earn Base is true' };
     }
     if (listing.isPublished) {

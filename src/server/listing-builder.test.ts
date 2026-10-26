@@ -262,7 +262,7 @@ const setup = (options: Options = {}) => {
           AppConfig.AppConfig,
           AppConfig.AppConfig.of({
             ...testConfig,
-            earnProduction: true,
+            isEarnBase: true,
             ...options.config,
           }),
         ),
@@ -473,7 +473,7 @@ describe('ListingBuilder.publish', () => {
     Effect.gen(function* () {
       const world = setup({
         sponsor: { isVerified: false },
-        config: { earnProduction: false },
+        config: { isEarnBase: false },
       });
       const result = yield* run(world, (builder) =>
         builder.publish(writer, 'b1', form()),

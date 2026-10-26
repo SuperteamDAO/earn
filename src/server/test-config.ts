@@ -9,6 +9,7 @@ const privyKeys = await generateKeyPair('ES256', { extractable: true });
 export const testConfig = AppConfig.AppConfig.of({
   isProduction: false,
   earnProduction: false,
+  isEarnBase: false,
   databaseUrl: Redacted.make('mysql://test@localhost/test'),
   siteUrl: 'http://localhost:3000',
   siteOrigins: ['http://localhost:3000'],

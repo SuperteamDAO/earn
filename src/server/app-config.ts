@@ -19,6 +19,9 @@ export class AppConfig extends Context.Service<
     // Earn's production deployment (VERCEL_ENV): picks the foundation's live
     // Airtable payment category, Cloudinary folders and the like.
     readonly earnProduction: boolean;
+    // IS_EARN_BASE: Superteam's own deployments, as opposed to open-source
+    // copies, which skip new sponsors' listing verification.
+    readonly isEarnBase: boolean;
     readonly databaseUrl: Redacted.Redacted;
     // superteam.fun, or wherever this deployment answers.
     readonly siteUrl: string;
@@ -189,6 +192,7 @@ const make = Effect.gen(function* () {
   return AppConfig.of({
     isProduction,
     earnProduction: (yield* text('VERCEL_ENV')) === 'production',
+    isEarnBase: (yield* text('IS_EARN_BASE')) === 'true',
     databaseUrl: yield* Config.Redacted('DATABASE_URL'),
     siteUrl,
     siteOrigins:
