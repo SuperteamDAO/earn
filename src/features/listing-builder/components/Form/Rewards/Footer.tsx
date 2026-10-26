@@ -1,53 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
-import { useAtomValue } from 'jotai';
-import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
 import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 
-import { submitListingMutationAtom } from '@/features/listing-builder/atoms';
-import {
-  calculateTotalPrizes,
-  scaleRewardsForTargetUsd,
-} from '@/features/listing-builder/utils/rewards';
+import { tokenUsdValueQuery } from '@/features/listing-builder/queries/token-usd-value';
+import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
 import { useListingForm } from '../../../hooks';
-import { BOOST_STEP_TO_AMOUNT_USD } from '../Boost/constants';
-import {
-  featuredAvailabilityQuery,
-  tokenUsdValueQuery,
-} from '../Boost/queries';
-import {
-  computeEstimatedUsdValue,
-  getAllowedMaxStep,
-  hasMoreThan72HoursLeft,
-  resolveTargetUsdFromBoost,
-} from '../Boost/utils';
 import { RewardsLabel } from './Sheet';
 
-function RewardsFooter({
-  panel,
-  setPanel,
-  setOpen,
-  boostStep,
-  isBoostFromUrl,
-  shouldShowFeaturedWarning,
-  setFeaturedWarningAction,
-}: {
-  panel: 'rewards' | 'boost';
-  setPanel: (panel: 'rewards' | 'boost') => void;
-  setOpen: (open: boolean, options?: { bypassPrompt?: boolean }) => void;
-  boostStep?: number;
-  isBoostFromUrl?: boolean;
-  shouldShowFeaturedWarning?: boolean;
-  setFeaturedWarningAction?: (action: 'close' | 'boost' | null) => void;
-}) {
+function RewardsFooter({ setOpen }: { setOpen: (open: boolean) => void }) {
   const form = useListingForm();
-  const router = useRouter();
   const type = useWatch({
     control: form.control,
     name: 'type',
@@ -80,25 +45,11 @@ function RewardsFooter({
     control: form.control,
     name: 'maxRewardAsk',
   });
-  const deadline = useWatch({
-    control: form.control,
-    name: 'deadline',
-  });
-  const isPrivate = useWatch({
-    control: form.control,
-    name: 'isPrivate',
-  });
-
-  const { data: featuredData } = useQuery(featuredAvailabilityQuery());
-  const isFeatureAvailable = featuredData?.isAvailable ?? true;
 
   const totalPrize = useMemo(
     () => calculateTotalPrizes(rewards, maxBonusSpots || 0),
     [type, maxBonusSpots, rewards],
   );
-
-  const deadlineMoreThan72HoursLeft = hasMoreThan72HoursLeft(deadline);
-  const submitListingMutation = useAtomValue(submitListingMutationAtom);
 
   const { data: tokenUsdValueData } = useQuery(
     tokenUsdValueQuery(token as string | undefined),
@@ -128,45 +79,9 @@ function RewardsFooter({
     maxRewardAsk,
   ]);
 
-  const prevRewardAmountTokens = Number(rewardAmount) || 0;
-  const targetBoostTokens = useMemo(() => {
-    if (panel !== 'boost') return prevRewardAmountTokens;
-    const estimatedUsdValue = computeEstimatedUsdValue(
-      rewardAmount,
-      tokenUsdValue,
-    );
-    const targetUSD = resolveTargetUsdFromBoost(
-      boostStep ?? 0,
-      estimatedUsdValue,
-      isFeatureAvailable,
-    );
-    const usd = tokenUsdValue || 1;
-    return targetUSD / usd;
-  }, [
-    boostStep,
-    isFeatureAvailable,
-    panel,
-    prevRewardAmountTokens,
-    rewardAmount,
-    tokenUsdValue,
-  ]);
-  const estimatedUsdValue = useMemo(
-    () => computeEstimatedUsdValue(rewardAmount, tokenUsdValue),
-    [rewardAmount, tokenUsdValue],
-  );
-  const maxBoostStep = getAllowedMaxStep(isFeatureAvailable);
-  const maxBoostUsd = BOOST_STEP_TO_AMOUNT_USD[maxBoostStep] ?? 0;
-  const isAtMaxBoost =
-    typeof estimatedUsdValue === 'number' && estimatedUsdValue >= maxBoostUsd;
-  const boostIncreasesReward = useMemo(
-    () =>
-      panel !== 'boost' ? true : targetBoostTokens > prevRewardAmountTokens,
-    [panel, prevRewardAmountTokens, targetBoostTokens],
-  );
-
   return (
     <div className="w-full space-y-4 bg-white">
-      {!!tokenUsdValue && totalUsdPrize <= 100 && panel === 'rewards' && (
+      {!!tokenUsdValue && totalUsdPrize <= 100 && (
         <p className="text-[0.8rem] text-yellow-600">
           {`Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability.`}
         </p>
@@ -186,131 +101,19 @@ function RewardsFooter({
           <RewardsLabel hideCompensationType />
         </div>
       </div>
-      {panel === 'boost' && (
-        <div>
-          <Button
-            type="button"
-            className="w-full"
-            disabled={
-              (!boostIncreasesReward && !isAtMaxBoost) ||
-              (isBoostFromUrl
-                ? submitListingMutation.isPending ||
-                  submitListingMutation.isSuccess
-                : false)
-            }
-            onClick={async () => {
-              if (await form.validateRewards()) {
-                const targetUSD = targetBoostTokens * (tokenUsdValue || 1);
-                const { rewardAmountTokens, rewardsToPersist } =
-                  scaleRewardsForTargetUsd({
-                    rewards,
-                    maxBonusSpots,
-                    targetUsd: targetUSD,
-                    tokenUsdValue: tokenUsdValue || 1,
-                    shouldScalePodium: true,
-                    shouldRoundToNearestTen: (tokenUsdValue || 0) <= 10,
-                  });
-
-                if (rewardsToPersist) {
-                  form.setValue('rewards', rewardsToPersist, {
-                    shouldValidate: false,
-                  });
-                }
-
-                const prevTokens = prevRewardAmountTokens;
-                if (rewardAmountTokens > prevTokens) {
-                  posthog.capture('boost_listing');
-                }
-
-                form.setValue('rewardAmount', rewardAmountTokens, {
-                  shouldValidate: false,
-                });
-                if (isBoostFromUrl) {
-                  const isValid = await form.trigger();
-                  if (isValid) {
-                    try {
-                      await form.submitListing();
-                      toast.success('Listing boosted and rewards updated.', {
-                        description: 'Redirecting to the listing page.',
-                      });
-                      posthog.capture('update listing_sponsor');
-                      router.push('/earn/dashboard/listings');
-                    } catch (error) {
-                      console.log(error);
-                      toast.error(
-                        'Failed to update listing, please try again later',
-                        {},
-                      );
-                    }
-                  }
-                } else {
-                  await form.trigger(['rewards', 'rewardAmount'] as any);
-                  form.saveDraft();
-                  setOpen(false, { bypassPrompt: true });
-                }
-              } else {
-                toast.warning(
-                  'Please resolve all errors in Rewards to Continue',
-                );
-              }
-            }}
-          >
-            {isBoostFromUrl ? (
-              submitListingMutation.isPending ||
-              submitListingMutation.isSuccess ? (
-                <span className="flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Updating Rewards...
-                </span>
-              ) : (
-                <span>Update Rewards</span>
-              )
-            ) : (
-              'Continue'
-            )}
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            className="mt-2 w-full text-slate-500"
-            onClick={async () => {
-              setOpen(false, { bypassPrompt: true });
-            }}
-          >
-            Skip
-          </Button>
-        </div>
-      )}
-
-      {panel === 'rewards' && (
-        <Button
-          type="button"
-          className="w-full"
-          onClick={async () => {
-            if (await form.validateRewards()) {
-              // Check if we should show featured removal warning
-              if (shouldShowFeaturedWarning && setFeaturedWarningAction) {
-                setFeaturedWarningAction('boost');
-                return;
-              }
-              if (
-                compensationType === 'fixed' &&
-                deadlineMoreThan72HoursLeft &&
-                type !== 'hackathon' &&
-                !isPrivate
-              ) {
-                setPanel('boost');
-              } else {
-                setOpen(false, { bypassPrompt: true });
-              }
-            } else {
-              toast.warning('Please resolve all errors in Rewards to Continue');
-            }
-          }}
-        >
-          Continue
-        </Button>
-      )}
+      <Button
+        type="button"
+        className="w-full"
+        onClick={async () => {
+          if (await form.validateRewards()) {
+            setOpen(false);
+          } else {
+            toast.warning('Please resolve all errors in Rewards to Continue');
+          }
+        }}
+      >
+        Continue
+      </Button>
     </div>
   );
 }

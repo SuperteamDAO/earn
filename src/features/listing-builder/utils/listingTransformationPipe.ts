@@ -1,17 +1,13 @@
 import { franc } from 'franc';
 
 import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
 import { type BountiesUncheckedUpdateInput } from '@/prisma/models/Bounties';
 import { type SponsorsModel } from '@/prisma/models/Sponsors';
 import { getTokenBySymbol } from '@/server/tokenList';
 import { cleanSkills } from '@/utils/cleanSkills';
 
 import { type ListingWithSponsor } from '@/features/auth/utils/checkListingSponsorAuth';
-import { FEATURED_USD_THRESHOLD } from '@/features/listing-builder/components/Form/Boost/constants';
-import { hasMoreThan72HoursLeft } from '@/features/listing-builder/components/Form/Boost/utils';
 import { type ListingFormData } from '@/features/listing-builder/types';
-import { buildFeaturedAvailabilityWhere } from '@/features/listing-builder/utils/featured-availability';
 import { isFndnPayingCheck } from '@/features/listing-builder/utils/isFndnPayingCheck';
 import { fetchTokenUSDValue } from '@/features/wallet/utils/fetchTokenUSDValue';
 
@@ -37,17 +33,6 @@ const processMaxBonusSpots = (
     return 0;
   }
   return newMaxBonusSpots;
-};
-
-const isAutoFeatureUsdThresholdMet = (usdValue: number): boolean => {
-  if (typeof usdValue !== 'number' || usdValue <= 0) return false;
-  return usdValue >= FEATURED_USD_THRESHOLD - 100;
-};
-
-const countLiveFeaturedListings = async (): Promise<number> => {
-  return prisma.bounties.count({
-    where: buildFeaturedAvailabilityWhere(),
-  });
 };
 
 interface TransformToPrismaDataProps {
@@ -155,35 +140,9 @@ export const transformToPrismaData = async ({
     }
   }
 
-  let isFeaturedUpdate: boolean | undefined;
-  try {
-    const isEligibleForAutoFeature =
-      isAutoFeatureUsdThresholdMet(usdValue) &&
-      hasMoreThan72HoursLeft(deadline) &&
-      compensationType === 'fixed' &&
-      type !== 'hackathon' &&
-      !isPrivate;
-
-    if (isEligibleForAutoFeature) {
-      const liveFeaturedCount = await countLiveFeaturedListings();
-      if (liveFeaturedCount < 2) {
-        isFeaturedUpdate = true;
-      }
-    }
-
-    if (isEditing && listing.isFeatured && !isEligibleForAutoFeature) {
-      isFeaturedUpdate = false;
-    }
-  } catch (error) {
-    logger.error('Auto-feature evaluation failed', { error });
-  }
-
   const baseData: BountiesUncheckedUpdateInput = {
     title,
     ...(includeUsdValue ? { usdValue } : {}),
-    ...(typeof isFeaturedUpdate === 'boolean'
-      ? { isFeatured: isFeaturedUpdate }
-      : {}),
     skills,
     slug,
     deadline: new Date(deadline),

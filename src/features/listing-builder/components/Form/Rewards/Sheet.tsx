@@ -1,20 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { useAtomValue } from 'jotai';
-import { ArrowLeftIcon } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
   FormField,
@@ -35,12 +21,7 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
-import { isEditingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
-import { FEATURED_USD_THRESHOLD } from '../Boost/constants';
-import { tokenUsdValueQuery } from '../Boost/queries';
-import type { BoostStep } from '../Boost/utils';
-import { BoostContent } from './BoostContent';
 import { Footer } from './Footer';
 import { PaymentType } from './PaymentType';
 import { TokenLabel } from './Tokens/TokenLabel';
@@ -52,99 +33,11 @@ import { Range } from './Types/Range';
 export function RewardsSheet() {
   const form = useListingForm();
   const [open, setOpen] = useState(false);
-  const [panel, setPanel] = useState<'rewards' | 'boost'>('rewards');
-  const [boostStep, setBoostStep] = useState<BoostStep>(0);
-  const [isBoostDismissPromptOpen, setIsBoostDismissPromptOpen] =
-    useState(false);
-  const [featuredWarningAction, setFeaturedWarningAction] = useState<
-    'close' | 'boost' | null
-  >(null);
-  const params = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-  const isBoostFromUrl = params?.get('boost') === 'true';
-  const isEditing = useAtomValue(isEditingAtom);
-
-  useEffect(() => {
-    const shouldOpenBoost = params?.get('boost') === 'true';
-    if (shouldOpenBoost) {
-      setOpen(true);
-      setPanel('boost');
-    }
-  }, [params]);
 
   const type = useWatch({
     control: form.control,
     name: 'type',
   });
-  const rewardAmount = useWatch({
-    control: form.control,
-    name: 'rewardAmount',
-  });
-  const token = useWatch({
-    control: form.control,
-    name: 'token',
-  });
-  const compensationType = useWatch({
-    control: form.control,
-    name: 'compensationType',
-  });
-  const minRewardAsk = useWatch({
-    control: form.control,
-    name: 'minRewardAsk',
-  });
-  const maxRewardAsk = useWatch({
-    control: form.control,
-    name: 'maxRewardAsk',
-  });
-  const isFeatured = useWatch({
-    control: form.control,
-    name: 'isFeatured',
-  });
-  const isPublished = useWatch({
-    control: form.control,
-    name: 'isPublished',
-  });
-
-  const { data: tokenUsdValueData } = useQuery(
-    tokenUsdValueQuery(token as string | undefined),
-  );
-  const tokenUsdValue =
-    typeof tokenUsdValueData === 'number' ? tokenUsdValueData : 1;
-
-  const currentUsdValue = useMemo(() => {
-    if (type !== 'project') {
-      return (tokenUsdValue || 1) * (rewardAmount || 0);
-    } else {
-      if (compensationType === 'fixed') {
-        return (tokenUsdValue || 1) * (rewardAmount || 0);
-      } else if (compensationType === 'range') {
-        return (
-          (tokenUsdValue || 1) *
-          (((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2)
-        );
-      } else if (compensationType === 'variable') {
-        return 1000;
-      }
-    }
-    return 0;
-  }, [
-    tokenUsdValue,
-    rewardAmount,
-    type,
-    compensationType,
-    minRewardAsk,
-    maxRewardAsk,
-  ]);
-
-  const shouldShowFeaturedWarning = useMemo(() => {
-    return (
-      isEditing &&
-      isPublished === true &&
-      isFeatured === true &&
-      currentUsdValue < FEATURED_USD_THRESHOLD
-    );
-  }, [isEditing, isPublished, isFeatured, currentUsdValue]);
 
   const hasRewardsErrors = useMemo(() => {
     const errors = form.formState.errors;
@@ -159,228 +52,66 @@ export function RewardsSheet() {
     );
   }, [form]);
 
-  const closeSheet = () => {
-    setOpen(false);
-    setIsBoostDismissPromptOpen(false);
-    try {
-      const current = new URLSearchParams(params?.toString() || '');
-      if (current.has('boost')) {
-        current.delete('boost');
-        const search = current.toString();
-        const base = pathname ?? '/';
-        const href = search ? `${base}?${search}` : base;
-        router.replace(href);
-      }
-    } catch (err) {}
-  };
-
-  const handleOpenChange = (nextOpen: boolean) => {
-    if (nextOpen) {
-      setOpen(true);
-      setPanel('rewards');
-      return;
-    }
-
-    if (panel === 'boost') {
-      setIsBoostDismissPromptOpen(true);
-      return;
-    }
-
-    // Check if we should show featured removal warning when closing sheet
-    if (panel === 'rewards' && shouldShowFeaturedWarning) {
-      setFeaturedWarningAction('close');
-      return;
-    }
-
-    closeSheet();
-  };
-
-  const changeOpen = (
-    nextOpen: boolean,
-    options?: { bypassPrompt?: boolean },
-  ): void => {
-    if (nextOpen) {
-      setOpen(true);
-      setPanel('rewards');
-    } else {
-      if (options?.bypassPrompt) {
-        closeSheet();
-      } else {
-        handleOpenChange(false);
-      }
-    }
-  };
-
   return (
-    <>
-      <Sheet open={open} onOpenChange={handleOpenChange}>
-        <SheetTrigger className="w-full text-left">
-          <FormField
-            control={form.control}
-            name="rewards"
-            render={({}) => {
-              return (
-                <FormItem className="group items-start gap-1.5">
-                  <FormLabel isRequired className="">
-                    Rewards
-                  </FormLabel>
-                  <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-3">
-                    <RewardsLabel />
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="ml-auto group-hover:underline"
-                    >
-                      Edit
-                    </Button>
-                  </div>
-                  {hasRewardsErrors ? (
-                    <p className={'text-destructive text-[0.8rem] font-medium'}>
-                      Please resolve all errors in rewards
-                    </p>
-                  ) : (
-                    <FormMessage />
-                  )}
-                </FormItem>
-              );
-            }}
-          />
-        </SheetTrigger>
-        <SheetContent
-          showCloseIcon={false}
-          side="right"
-          className="flex h-screen flex-col p-0 sm:max-w-xl"
-        >
-          <SheetHeader className="shrink-0 space-y-6 p-6 pb-0">
-            <SheetTitle>
-              {panel === 'rewards' ? (
-                'Add Rewards'
-              ) : (
-                <>
-                  <div className="flex items-center gap-2">
-                    <div className="-ml-4 cursor-pointer">
-                      <ArrowLeftIcon
-                        className="size-4 text-slate-400"
-                        onClick={() => setPanel('rewards')}
-                      />
-                    </div>
-                    Boost to reach more people
-                  </div>
-                  <p className="ml-2.5 text-sm font-normal text-slate-500">
-                    Increase your prize pool to unlock promotions across
-                    Twitter, Email, and more.
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger className="w-full text-left">
+        <FormField
+          control={form.control}
+          name="rewards"
+          render={({}) => {
+            return (
+              <FormItem className="group items-start gap-1.5">
+                <FormLabel isRequired className="">
+                  Rewards
+                </FormLabel>
+                <div className="flex w-full items-center rounded-md border border-slate-200 bg-slate-50 py-0.5 pl-3">
+                  <RewardsLabel />
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="ml-auto group-hover:underline"
+                  >
+                    Edit
+                  </Button>
+                </div>
+                {hasRewardsErrors ? (
+                  <p className={'text-destructive text-[0.8rem] font-medium'}>
+                    Please resolve all errors in rewards
                   </p>
-                </>
-              )}
-            </SheetTitle>
-            {panel === 'rewards' && (
-              <>
-                <TokenSelect />
-                {type === 'project' && <PaymentType />}
-              </>
-            )}
-          </SheetHeader>
-
-          <div
-            className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-4 pb-16"
-            id="main-content"
-          >
-            {panel === 'rewards' ? (
-              <Type />
-            ) : (
-              <BoostContent
-                boostStep={boostStep}
-                setBoostStep={(s: number) => setBoostStep(s as BoostStep)}
-              />
-            )}
-          </div>
-
-          <div className="relative shrink-0 bg-white">
-            <Separator className="mb-4" />
-            <SheetFooter className="p-6 pt-0">
-              <Footer
-                panel={panel}
-                setPanel={setPanel}
-                setOpen={changeOpen}
-                boostStep={boostStep}
-                isBoostFromUrl={isBoostFromUrl}
-                shouldShowFeaturedWarning={shouldShowFeaturedWarning}
-                setFeaturedWarningAction={setFeaturedWarningAction}
-              />
-            </SheetFooter>
-          </div>
-        </SheetContent>
-      </Sheet>
-      <AlertDialog
-        open={isBoostDismissPromptOpen}
-        onOpenChange={(next) => {
-          setIsBoostDismissPromptOpen(next);
-        }}
+                ) : (
+                  <FormMessage />
+                )}
+              </FormItem>
+            );
+          }}
+        />
+      </SheetTrigger>
+      <SheetContent
+        showCloseIcon={false}
+        side="right"
+        className="flex h-screen flex-col p-0 sm:max-w-xl"
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Skip boosting?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Closing now keeps your current rewards without applying the boost.
-              Continue editing to adjust your boost settings.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              onClick={() => {
-                setIsBoostDismissPromptOpen(false);
-                changeOpen(false, { bypassPrompt: true });
-              }}
-            >
-              Skip Boost
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                setIsBoostDismissPromptOpen(false);
-              }}
-            >
-              Get more visibility
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      <AlertDialog
-        open={featuredWarningAction !== null}
-        onOpenChange={(next) => {
-          if (!next) setFeaturedWarningAction(null);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Your Featured Status Will Be Removed
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Your listing is currently featured on the homepage. Reducing
-              rewards below $5,000 will remove your listing&apos;s featured
-              status and its homepage visibility.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setFeaturedWarningAction(null)}>
-              Keep Editing
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (featuredWarningAction === 'close') {
-                  closeSheet();
-                } else if (featuredWarningAction === 'boost') {
-                  setPanel('boost');
-                }
-                setFeaturedWarningAction(null);
-              }}
-            >
-              Continue Anyway
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+        <SheetHeader className="shrink-0 space-y-6 p-6 pb-0">
+          <SheetTitle>Add Rewards</SheetTitle>
+          <TokenSelect />
+          {type === 'project' && <PaymentType />}
+        </SheetHeader>
+
+        <div
+          className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-4 pb-16"
+          id="main-content"
+        >
+          <Type />
+        </div>
+
+        <div className="relative shrink-0 bg-white">
+          <Separator className="mb-4" />
+          <SheetFooter className="p-6 pt-0">
+            <Footer setOpen={setOpen} />
+          </SheetFooter>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 

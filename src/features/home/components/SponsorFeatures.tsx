@@ -27,14 +27,6 @@ const features: Feature[] = [
       'Go from idea prompt to a full fledged listing in under two minutes',
     ctaLink: 'https://x.com/SuperteamEarn/status/1920451822965436468',
   },
-  {
-    imageLink:
-      'https://res.cloudinary.com/dgvnuwspr/image/upload/v1762377726/assets/home/sponsor-stages/boost-feature.webp',
-    title: 'Boost',
-    subtext:
-      'Get more eyeballs to your Earn listing by increasing your bounty rewards',
-    ctaLink: 'https://x.com/SuperteamEarn/status/1984248796155699506',
-  },
 ];
 
 export function SponsorFeatures() {

@@ -2,8 +2,6 @@ import { type Listing } from '@/features/listings/types';
 
 export enum SponsorStage {
   NEW_SPONSOR = 'NEW_SPONSOR',
-  BOOST = 'BOOST',
-  BOOSTED = 'BOOSTED',
   REVIEW = 'REVIEW',
   REVIEW_URGENT = 'REVIEW_URGENT',
   PAYMENT_PENDING = 'PAYMENT_PENDING',

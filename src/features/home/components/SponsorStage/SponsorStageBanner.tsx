@@ -9,8 +9,6 @@ import { useUser } from '@/store/user';
 import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
 import { SponsorStage } from '@/features/home/types/sponsor-stage';
 
-import { BoostBanner } from './BoostBanner';
-import { BoostedBanner } from './BoostedBanner';
 import { NewSponsorBanner } from './NewSponsorBanner';
 import { NextListingBanner } from './NextListingBanner';
 import { PaymentPendingBanner } from './PaymentPendingBanner';
@@ -42,12 +40,6 @@ export function SponsorStageBanner() {
   switch (stage) {
     case SponsorStage.NEW_SPONSOR:
       return <NewSponsorBanner />;
-
-    case SponsorStage.BOOST:
-      return listing ? <BoostBanner listing={listing} /> : null;
-
-    case SponsorStage.BOOSTED:
-      return listing ? <BoostedBanner listing={listing} /> : null;
 
     case SponsorStage.REVIEW:
       return listing ? <ReviewBanner listing={listing} /> : null;

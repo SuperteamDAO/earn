@@ -2,7 +2,7 @@ import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { type Prisma } from '@/generated/prisma/client';
-import { type Skills, skillsArraySchema } from '@/interface/skills';
+import { type Skills } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
@@ -13,25 +13,9 @@ import {
   SponsorStage,
   type SponsorStageResponse,
 } from '@/features/home/types/sponsor-stage';
-import {
-  BOOST_STEP_TO_AMOUNT_USD,
-  BOOST_STEPS,
-  DEFAULT_EMAIL_IMPRESSIONS,
-} from '@/features/listing-builder/components/Form/Boost/constants';
-import {
-  getEmailEstimate,
-  getFeaturedAvailability,
-} from '@/features/listing-builder/components/Form/Boost/server-queries';
-import {
-  amountToStep,
-  getTotalImpressionsForValue,
-} from '@/features/listing-builder/components/Form/Boost/utils';
 import { type Listing, type Rewards } from '@/features/listings/types';
 
 const PAYMENT_REMINDER_MAX_DAYS = 7;
-
-const BOOST_THRESHOLD =
-  BOOST_STEP_TO_AMOUNT_USD[BOOST_STEPS[BOOST_STEPS.length - 1]!];
 
 const listingSelectForStage = {
   id: true,
@@ -88,8 +72,6 @@ const isListingReviewable = (listing: BountyWithStageFields) =>
 function determineSponsorStage(
   listing: BountyWithStageFields,
   hasUnpaidWinners: boolean,
-  isFeatureAvailable: boolean,
-  emailImpressions: number,
 ): { stage: SponsorStage; sortDate: Date } | null {
   const now = dayjs();
   const deadline = listing.deadline ? dayjs(listing.deadline) : null;
@@ -138,55 +120,6 @@ function determineSponsorStage(
     return { stage: SponsorStage.REVIEW, sortDate: deadline.toDate() };
   }
 
-  const isActiveListing =
-    isVerifiedListing &&
-    listing.isActive &&
-    !listing.isArchived &&
-    deadline &&
-    (deadline.isAfter(now) || deadline.isSame(now));
-
-  if (isActiveListing) {
-    const usdValue = listing.usdValue || 0;
-    const publishedDate = listing.publishedAt
-      ? dayjs(listing.publishedAt)
-      : now;
-
-    const currentStep = amountToStep(usdValue, isFeatureAvailable);
-    const allSteps = [...BOOST_STEPS];
-    const currentStepIndex = allSteps.indexOf(currentStep);
-    const nextStep = allSteps[currentStepIndex + 1];
-
-    const currentImpressions = getTotalImpressionsForValue(
-      currentStep,
-      emailImpressions,
-      isFeatureAvailable,
-    );
-    const nextImpressions = nextStep
-      ? getTotalImpressionsForValue(
-          nextStep,
-          emailImpressions,
-          isFeatureAvailable,
-        )
-      : 0;
-
-    const hasNextTierWithImpressions =
-      nextStep &&
-      usdValue < BOOST_THRESHOLD &&
-      nextImpressions > currentImpressions;
-
-    if (hasNextTierWithImpressions) {
-      return {
-        stage: SponsorStage.BOOST,
-        sortDate: publishedDate.toDate(),
-      };
-    } else {
-      return {
-        stage: SponsorStage.BOOSTED,
-        sortDate: publishedDate.toDate(),
-      };
-    }
-  }
-
   if (listing.isArchived || listing.status === 'CLOSED') {
     const completionDate = listing.winnersAnnouncedAt
       ? dayjs(listing.winnersAnnouncedAt)
@@ -213,8 +146,6 @@ function applyPriorityAndTiebreaker(
     [SponsorStage.REVIEW_URGENT]: 1,
     [SponsorStage.PAYMENT_PENDING]: 2,
     [SponsorStage.REVIEW]: 4,
-    [SponsorStage.BOOST]: 5,
-    [SponsorStage.BOOSTED]: 6,
     [SponsorStage.UNDER_VERIFICATION]: 7,
     [SponsorStage.NEXT_LISTING]: 8,
     [SponsorStage.NEW_SPONSOR]: 9,
@@ -224,8 +155,6 @@ function applyPriorityAndTiebreaker(
     [SponsorStage.REVIEW_URGENT]: true,
     [SponsorStage.PAYMENT_PENDING]: true,
     [SponsorStage.REVIEW]: true,
-    [SponsorStage.BOOST]: false,
-    [SponsorStage.BOOSTED]: false,
     [SponsorStage.UNDER_VERIFICATION]: false,
     [SponsorStage.NEXT_LISTING]: false,
     [SponsorStage.NEW_SPONSOR]: false,
@@ -375,18 +304,15 @@ export async function GET(_request: NextRequest) {
     const unpaidWinnersMap = new Map<string, boolean>();
 
     const parallelQueriesStartTime = performance.now();
-    const [unpaidWinners, isFeatureAvailable] = await Promise.all([
-      prisma.submission.groupBy({
-        by: ['listingId'],
-        where: {
-          listingId: { in: listingIds },
-          isWinner: true,
-          isPaid: false,
-        },
-        _count: { id: true },
-      }),
-      getFeaturedAvailability(),
-    ]);
+    const unpaidWinners = await prisma.submission.groupBy({
+      by: ['listingId'],
+      where: {
+        listingId: { in: listingIds },
+        isWinner: true,
+        isPaid: false,
+      },
+      _count: { id: true },
+    });
     const parallelQueriesEndTime = performance.now();
 
     unpaidWinners.forEach((item) => {
@@ -395,10 +321,6 @@ export async function GET(_request: NextRequest) {
       }
     });
 
-    const emailEstimateStartTime = performance.now();
-    const emailEstimateCache = new Map<string, number>();
-    const estimatePromises: Promise<void>[] = [];
-    const seenEstimates = new Set<string>();
     const urgentListingIds: string[] = [];
     const now = dayjs();
 
@@ -414,78 +336,12 @@ export async function GET(_request: NextRequest) {
       ) {
         urgentListingIds.push(listing.id);
       }
-
-      const isActiveListing =
-        isListingVerified(listing) &&
-        listing.isActive &&
-        !listing.isArchived &&
-        listing.deadline &&
-        dayjs(listing.deadline).isAfter(now);
-
-      if (isActiveListing && listing.skills && Array.isArray(listing.skills)) {
-        try {
-          const validatedSkills = skillsArraySchema.parse(listing.skills);
-          if (validatedSkills.length > 0) {
-            const sortedSkills = validatedSkills.sort().join(',');
-            const cacheKey = `${sortedSkills}|${listing.region || 'GLOBAL'}`;
-
-            if (!seenEstimates.has(cacheKey)) {
-              seenEstimates.add(cacheKey);
-              estimatePromises.push(
-                getEmailEstimate(validatedSkills, listing.region)
-                  .then((estimate) => {
-                    emailEstimateCache.set(cacheKey, estimate);
-                  })
-                  .catch((error) => {
-                    logger.warn('Failed to get email estimate', {
-                      skills: validatedSkills,
-                      region: listing.region,
-                      error:
-                        error instanceof Error
-                          ? error.message
-                          : 'Unknown error',
-                    });
-                    emailEstimateCache.set(cacheKey, DEFAULT_EMAIL_IMPRESSIONS);
-                  }),
-              );
-            }
-          }
-        } catch (error) {}
-      }
     }
-
-    await Promise.all(estimatePromises);
-    const emailEstimateEndTime = performance.now();
 
     const processListing = (listing: BountyWithStageFields) => {
       const hasUnpaidWinners = unpaidWinnersMap.get(listing.id) || false;
 
-      let emailImpressions = DEFAULT_EMAIL_IMPRESSIONS;
-      if (listing.skills && Array.isArray(listing.skills)) {
-        try {
-          const validatedSkills = skillsArraySchema.parse(listing.skills);
-          if (validatedSkills.length > 0) {
-            const sortedSkills = validatedSkills.sort().join(',');
-            const cacheKey = `${sortedSkills}|${listing.region || 'GLOBAL'}`;
-
-            const estimate = emailEstimateCache.get(cacheKey);
-            if (estimate !== undefined && estimate > 0) {
-              const roundedEstimate = Math.round(estimate / 1000) * 1000;
-              emailImpressions = Math.max(
-                roundedEstimate,
-                DEFAULT_EMAIL_IMPRESSIONS,
-              );
-            }
-          }
-        } catch (error) {}
-      }
-
-      return determineSponsorStage(
-        listing,
-        hasUnpaidWinners,
-        isFeatureAvailable,
-        emailImpressions,
-      );
+      return determineSponsorStage(listing, hasUnpaidWinners);
     };
 
     const processingStartTime = performance.now();
@@ -534,15 +390,11 @@ export async function GET(_request: NextRequest) {
             parallelQueries: Math.round(
               parallelQueriesEndTime - parallelQueriesStartTime,
             ),
-            emailEstimates: Math.round(
-              emailEstimateEndTime - emailEstimateStartTime,
-            ),
             processing: Math.round(processingEndTime - processingStartTime),
           },
           stats: {
             totalListings: listings.length,
             urgentListings: urgentListings.length,
-            emailEstimatesCached: emailEstimateCache.size,
           },
         });
 
@@ -593,15 +445,11 @@ export async function GET(_request: NextRequest) {
         parallelQueries: Math.round(
           parallelQueriesEndTime - parallelQueriesStartTime,
         ),
-        emailEstimates: Math.round(
-          emailEstimateEndTime - emailEstimateStartTime,
-        ),
         processing: Math.round(processingEndTime - processingStartTime),
       },
       stats: {
         totalListings: listings.length,
         processedListings: listingsWithStages.length,
-        emailEstimatesCached: emailEstimateCache.size,
       },
     });
 

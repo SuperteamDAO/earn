@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { ArrowRight, Eye, Rocket } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
 
@@ -193,93 +193,6 @@ export function SponsorListing() {
                   }}
                 >
                   View Dashboard
-                </Link>
-              </Button>
-            )}
-
-            {data.stage === SponsorStage.BOOST && (
-              <>
-                <Button
-                  variant="outline"
-                  className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
-                  asChild
-                >
-                  <Link
-                    href={`/earn/dashboard/listings/${listing.slug}/submissions`}
-                    onClick={() => {
-                      posthog.capture(
-                        'view submissions_sponsor sidebar listing',
-                        {
-                          stage: 'BOOST',
-                          listing_type: listing.type,
-                          listing_slug: listing.slug,
-                        },
-                      );
-                      posthog.capture('click_sponsor sidebar listing', {
-                        stage: 'BOOST',
-                        listing_type: listing.type,
-                        listing_slug: listing.slug,
-                      });
-                    }}
-                  >
-                    <Eye className="mr-1 h-4 w-4" />
-                    {listing.type === 'bounty' ? 'Submissions' : 'Applications'}
-                  </Link>
-                </Button>
-
-                <Button
-                  variant="outline"
-                  className="flex-1 border-gray-200 text-green-700 hover:bg-green-50 hover:text-green-800"
-                  asChild
-                >
-                  <Link
-                    href={`/earn/dashboard/listings/${listing.slug}/edit?boost=true`}
-                    onClick={() => {
-                      posthog.capture('boost listing_sponsor sidebar listing', {
-                        stage: 'BOOST',
-                        listing_type: listing.type,
-                        listing_slug: listing.slug,
-                      });
-                      posthog.capture('click_sponsor sidebar listing', {
-                        stage: 'BOOST',
-                        listing_type: listing.type,
-                        listing_slug: listing.slug,
-                      });
-                    }}
-                  >
-                    <Rocket className="mr-1 h-4 w-4" />
-                    Boost
-                  </Link>
-                </Button>
-              </>
-            )}
-
-            {data.stage === SponsorStage.BOOSTED && (
-              <Button
-                variant="outline"
-                className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
-                asChild
-              >
-                <Link
-                  href={`/earn/dashboard/listings/${listing.slug}/submissions`}
-                  onClick={() => {
-                    posthog.capture(
-                      'view submissions_sponsor sidebar listing',
-                      {
-                        stage: 'BOOSTED',
-                        listing_type: listing.type,
-                        listing_slug: listing.slug,
-                      },
-                    );
-                    posthog.capture('click_sponsor sidebar listing', {
-                      stage: 'BOOSTED',
-                      listing_type: listing.type,
-                      listing_slug: listing.slug,
-                    });
-                  }}
-                >
-                  <Eye className="mr-1 h-4 w-4" />
-                  {listing.type === 'bounty' ? 'Submissions' : 'Applications'}
                 </Link>
               </Button>
             )}

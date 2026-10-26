@@ -16,7 +16,6 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
 import { getHackathonPageHref } from '@/features/hackathon/utils/getHackathonPageHref';
-import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
 
 import { type Listing, type ListingHackathon } from '../../types';
 import { getListingIcon } from '../../utils/getListingIcon';
@@ -290,9 +289,7 @@ export function ListingHeader({
         </div>
         {listing.id && listing.isPublished && (
           <div className="flex items-center gap-2">
-            {user?.currentSponsorId === listing.sponsorId ? (
-              <BoostButton listing={listing} />
-            ) : (
+            {user?.currentSponsorId !== listing.sponsorId && (
               <BookmarkListing isTemplate={isTemplate} id={listing.id} />
             )}
             <SecondaryOptions listing={listing} />

@@ -197,11 +197,6 @@ export const Footer = () => {
             <p className="mb-3 text-sm text-slate-400 md:mb-0">
               © {currentYear} Superteam All Rights Reserved
             </p>
-            <p className="hidden text-sm text-slate-400 md:block">
-              Thanks for reading this far, use coupon{' '}
-              <span className="font-medium text-white">FOOTERS</span> to claim a
-              free BOOST
-            </p>
           </div>
         </div>
       </div>
