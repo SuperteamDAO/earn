@@ -3,21 +3,21 @@
 import PerkCard from '../cards/PerkCard';
 
 interface Perk {
-  fields: {
-    Name: string;
-    Notes?: string;
-    Link?: string;
-    Logo?: Array<{ url: string }>;
+  readonly fields: {
+    readonly Name: string;
+    readonly Notes?: string;
+    readonly Link?: string;
+    readonly Logo?: ReadonlyArray<{ readonly url: string }>;
   };
 }
 
 interface PerksGridProps {
-  perks: Perk[];
+  perks: ReadonlyArray<Perk>;
 }
 
 export default function PerksGrid({ perks }: PerksGridProps) {
   // Calculate offset array for staggered layout
-  const offsetArray = new Array(perks?.length ?? 0).fill(false);
+  const offsetArray = Array.from({ length: perks?.length ?? 0 }, () => false);
   if (offsetArray.length > 1) {
     offsetArray[1] = true;
   }

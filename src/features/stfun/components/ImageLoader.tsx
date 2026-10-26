@@ -30,7 +30,7 @@ export default function ImageLoader({
 
   useEffect(() => {
     if (loading === 'eager') {
-      return;
+      return undefined;
     }
 
     const observer = new IntersectionObserver(

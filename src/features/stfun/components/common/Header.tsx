@@ -2,7 +2,7 @@
 
 import { X } from '@phosphor-icons/react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 import { gsap } from '@/lib/gsap';
@@ -22,7 +22,7 @@ export default function Header({ className }: HeaderProps) {
   const [menuPos, setMenuPos] = useState(-192);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  const pathname = usePathname();
 
   const openMenu = () => {
     setMenuPos(-32);
@@ -56,18 +56,12 @@ export default function Header({ className }: HeaderProps) {
   }, []);
 
   // Close menu on route change
-  useEffect(() => {
-    const handleRouteChange = () => {
-      if (isMenuOpen) {
-        closeMenu();
-      }
-    };
-
-    router.events.on('routeChangeStart', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange);
-    };
-  }, [router.events, isMenuOpen]);
+  const [menuPath, setMenuPath] = useState(pathname);
+  if (menuPath !== pathname) {
+    setMenuPath(pathname);
+    setMenuPos(-192);
+    setIsMenuOpen(false);
+  }
 
   return (
     <header

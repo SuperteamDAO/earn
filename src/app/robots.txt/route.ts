@@ -1,46 +1,9 @@
-import { NextResponse } from 'next/server';
+import { runtime } from '@/server/runtime';
+import * as Sitemaps from '@/server/sitemaps';
 
-import { getSiteUrl, isProductionEnv } from '@/lib/site-url';
-
-import { generateSitemaps } from '../sitemap';
-
-export async function GET(): Promise<NextResponse> {
-  const isProduction = isProductionEnv();
-  const baseUrl = getSiteUrl();
-
-  // For preview/staging environments, disallow everything
-  if (!isProduction) {
-    const robotsTxt = `User-agent: *
-Disallow: /`;
-
-    return new NextResponse(robotsTxt, {
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-    });
-  }
-
-  let sitemapLines = '';
-  try {
-    const sitemaps = await generateSitemaps();
-    sitemapLines = sitemaps
-      .map((sitemap) => `Sitemap: ${baseUrl}/sitemap/${sitemap.id}.xml`)
-      .join('\n');
-  } catch (error) {
-    console.error('Error generating robots sitemap entries:', error);
-  }
-
-  const robotsTxt = `User-agent: *
-Allow: /
-Disallow: /earn/dashboard/
-Disallow: /auth/
-Disallow: /earn/signin
-Disallow: /earn/signup
-${sitemapLines}`.trim();
-
-  return new NextResponse(robotsTxt, {
-    headers: {
-      'Content-Type': 'text/plain',
-    },
-  });
+export async function GET() {
+  const robots = await runtime.runPromise(
+    Sitemaps.Sitemaps.use((sitemaps) => sitemaps.robots),
+  );
+  return new Response(robots, { headers: { 'Content-Type': 'text/plain' } });
 }

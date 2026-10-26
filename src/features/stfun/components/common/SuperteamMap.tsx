@@ -73,6 +73,30 @@ const COUNTRY_MARKER_OVERRIDES = new Map<string, readonly [number, number]>([
   ['SGP', [103.8198, 1.3521] as const],
 ]);
 
+type Country = d3.ExtendedFeature;
+
+interface Marker {
+  readonly iso3: string;
+  readonly feature?: Country;
+  readonly coordinates?: readonly [number, number];
+}
+
+type PlacedMarker = Marker & { readonly position: [number, number] };
+
+const idOf = (feature: Country) =>
+  feature.id === undefined ? '' : String(feature.id);
+
+function isCountryCollection(
+  value: unknown,
+): value is d3.ExtendedFeatureCollection {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'features' in value &&
+    Array.isArray(value.features)
+  );
+}
+
 interface SuperteamMapProps {
   chapters: ChapterRegionData[];
   hoveredSuperteam: string | null;
@@ -140,68 +164,72 @@ export default function SuperteamMap({
       ? superteamCodeMap.get(hoveredSuperteam) || []
       : [];
 
-    svg.selectAll('.countries path').each(function (d: any) {
-      const element = d3.select(this);
-      const isSuperteam = superteamCodes.includes(d.id);
-      const isHovered = hoveredIso3Codes.includes(d.id);
+    svg
+      .selectAll<SVGPathElement, Country>('.countries path')
+      .each(function (d) {
+        const element = d3.select(this);
+        const isSuperteam = superteamCodes.includes(idOf(d));
+        const isHovered = hoveredIso3Codes.includes(idOf(d));
 
-      if (hoveredSuperteam) {
-        if (isHovered) {
-          // Hovered country - brighter
-          element
-            .attr('fill', hoverHighlightColor)
-            .attr('stroke', hoverHighlightColor)
-            .attr('stroke-width', 1);
-        } else if (isSuperteam) {
-          // Other superteam countries - dimmed
-          element
-            .attr('fill', dimmedColor)
-            .attr('stroke', dimmedColor)
-            .attr('stroke-width', 0.5);
+        if (hoveredSuperteam) {
+          if (isHovered) {
+            // Hovered country - brighter
+            element
+              .attr('fill', hoverHighlightColor)
+              .attr('stroke', hoverHighlightColor)
+              .attr('stroke-width', 1);
+          } else if (isSuperteam) {
+            // Other superteam countries - dimmed
+            element
+              .attr('fill', dimmedColor)
+              .attr('stroke', dimmedColor)
+              .attr('stroke-width', 0.5);
+          } else {
+            // Non-superteam countries - default
+            element.attr('fill', defaultColor);
+          }
         } else {
-          // Non-superteam countries - default
-          element.attr('fill', defaultColor);
+          // No hover - reset to default state
+          if (isSuperteam) {
+            element
+              .attr('fill', highlightColor)
+              .attr('stroke', highlightColor)
+              .attr('stroke-width', 0.5);
+          } else {
+            element.attr('fill', defaultColor);
+          }
         }
-      } else {
-        // No hover - reset to default state
-        if (isSuperteam) {
+      });
+
+    svg
+      .selectAll<SVGCircleElement, PlacedMarker>('.country-markers circle')
+      .each(function (d) {
+        const element = d3.select(this);
+        const isHovered = hoveredIso3Codes.includes(d.iso3);
+
+        if (hoveredSuperteam) {
+          if (isHovered) {
+            element
+              .attr('fill', hoverHighlightColor)
+              .attr('stroke', hoverHighlightColor)
+              .attr('stroke-width', 1);
+          } else {
+            element
+              .attr('fill', dimmedColor)
+              .attr('stroke', dimmedColor)
+              .attr('stroke-width', 0.5);
+          }
+        } else {
           element
             .attr('fill', highlightColor)
             .attr('stroke', highlightColor)
             .attr('stroke-width', 0.5);
-        } else {
-          element.attr('fill', defaultColor);
         }
-      }
-    });
-
-    svg.selectAll('.country-markers circle').each(function (d: any) {
-      const element = d3.select(this);
-      const isHovered = hoveredIso3Codes.includes(d.iso3);
-
-      if (hoveredSuperteam) {
-        if (isHovered) {
-          element
-            .attr('fill', hoverHighlightColor)
-            .attr('stroke', hoverHighlightColor)
-            .attr('stroke-width', 1);
-        } else {
-          element
-            .attr('fill', dimmedColor)
-            .attr('stroke', dimmedColor)
-            .attr('stroke-width', 0.5);
-        }
-      } else {
-        element
-          .attr('fill', highlightColor)
-          .attr('stroke', highlightColor)
-          .attr('stroke-width', 0.5);
-      }
-    });
+      });
   }, [chapters, hoveredSuperteam, superteamCodeMap]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) return undefined;
 
     const superteamCodes = getSuperteamAlpha3Codes(chapters);
 
@@ -215,7 +243,7 @@ export default function SuperteamMap({
 
     const projection = d3.geoNaturalEarth1();
     const path = d3.geoPath().projection(projection);
-    const getMarkerPosition = (marker: any): [number, number] | null => {
+    const getMarkerPosition = (marker: Marker): [number, number] | null => {
       if (marker.feature) {
         const [cx, cy] = path.centroid(marker.feature);
         if (Number.isFinite(cx) && Number.isFinite(cy)) {
@@ -226,7 +254,7 @@ export default function SuperteamMap({
       }
 
       if (marker.coordinates) {
-        const projected = projection(marker.coordinates);
+        const projected = projection([...marker.coordinates]);
         if (
           projected &&
           Number.isFinite(projected[0]) &&
@@ -289,33 +317,40 @@ export default function SuperteamMap({
       .attr('operator', 'in');
 
     let resizeHandler: (() => void) | null = null;
-    let worldData: any = null;
-    let markerGroup: any = null;
-    let normalizedMarkers: any[] = [];
+    let worldData: d3.ExtendedFeatureCollection | null = null;
+    let markerGroup: d3.Selection<
+      SVGGElement,
+      unknown,
+      null,
+      undefined
+    > | null = null;
+    let normalizedMarkers: PlacedMarker[] = [];
 
     const initMap = async () => {
       const response = await fetch('/api/geo/world.geojson');
-      const rawWorldData = await response.json();
+      const rawWorldData: unknown = await response.json();
+      if (!isCountryCollection(rawWorldData)) return;
 
       // Filter out Antarctica
-      worldData = {
+      const world = {
         ...rawWorldData,
         features: rawWorldData.features.filter(
-          (feature: any) => feature.id !== 'ATA' && feature.id !== 'AQ',
+          (feature) => feature.id !== 'ATA' && feature.id !== 'AQ',
         ),
       };
+      worldData = world;
 
       // Fit the entire globe to the viewport
-      projection.fitSize([width, height], worldData);
+      projection.fitSize([width, height], world);
 
-      const featureById = new Map<string, any>();
-      for (const feature of worldData.features) {
+      const featureById = new Map<string, Country>();
+      for (const feature of world.features) {
         if (feature?.id) {
-          featureById.set(feature.id, feature);
+          featureById.set(idOf(feature), feature);
         }
       }
 
-      const markerCandidates: any[] = [];
+      const markerCandidates: Marker[] = [];
       for (const iso3 of superteamCodes) {
         const feature = featureById.get(iso3);
         if (feature) {
@@ -351,37 +386,37 @@ export default function SuperteamMap({
 
       countriesGroup
         .selectAll('path')
-        .data(worldData.features)
+        .data(world.features)
         .enter()
         .append('path')
-        .attr('d', path as any)
-        .attr('fill', (d: any) =>
-          superteamCodes.includes(d.id) ? highlightColor : defaultColor,
+        .attr('d', (d) => path(d))
+        .attr('fill', (d) =>
+          superteamCodes.includes(idOf(d)) ? highlightColor : defaultColor,
         )
-        .attr('stroke', (d: any) =>
-          superteamCodes.includes(d.id) ? highlightColor : defaultStroke,
+        .attr('stroke', (d) =>
+          superteamCodes.includes(idOf(d)) ? highlightColor : defaultStroke,
         )
-        .attr('stroke-width', (d: any) =>
-          superteamCodes.includes(d.id) ? 0.5 : 0.25,
+        .attr('stroke-width', (d) =>
+          superteamCodes.includes(idOf(d)) ? 0.5 : 0.25,
         )
-        .attr('filter', (d: any) =>
-          superteamCodes.includes(d.id) ? 'url(#countryNoise)' : 'none',
+        .attr('filter', (d) =>
+          superteamCodes.includes(idOf(d)) ? 'url(#countryNoise)' : 'none',
         )
-        .style('cursor', (d: any) =>
-          superteamCodes.includes(d.id) ? 'pointer' : 'default',
+        .style('cursor', (d) =>
+          superteamCodes.includes(idOf(d)) ? 'pointer' : 'default',
         )
         .style('transition', 'fill 0.2s ease, stroke 0.2s ease')
-        .on('mouseenter', function (_event: any, d: any) {
-          if (superteamCodes.includes(d.id)) {
-            handleCountryHover(d.id);
+        .on('mouseenter', function (_event: MouseEvent, d) {
+          if (superteamCodes.includes(idOf(d))) {
+            handleCountryHover(idOf(d));
           }
         })
         .on('mouseleave', function () {
           handleCountryHover(null);
         })
-        .on('click', function (_event: any, d: any) {
-          if (superteamCodes.includes(d.id)) {
-            handleCountryClick(d.id);
+        .on('click', function (_event: MouseEvent, d) {
+          if (superteamCodes.includes(idOf(d))) {
+            handleCountryClick(idOf(d));
           }
         });
 
@@ -391,22 +426,22 @@ export default function SuperteamMap({
         .data(normalizedMarkers)
         .enter()
         .append('circle')
-        .attr('data-iso3', (d: any) => d.iso3)
+        .attr('data-iso3', (d) => d.iso3)
         .attr('r', NORMALIZED_MARKER_RADIUS_PX)
-        .attr('cx', (d: any) => d.position[0])
-        .attr('cy', (d: any) => d.position[1])
+        .attr('cx', (d) => d.position[0])
+        .attr('cy', (d) => d.position[1])
         .attr('fill', highlightColor)
         .attr('stroke', highlightColor)
         .attr('stroke-width', 0.5)
         .style('cursor', 'pointer')
         .style('transition', 'fill 0.2s ease, stroke 0.2s ease')
-        .on('mouseenter', function (_event: any, d: any) {
+        .on('mouseenter', function (_event: MouseEvent, d) {
           handleCountryHover(d.iso3);
         })
         .on('mouseleave', function () {
           handleCountryHover(null);
         })
-        .on('click', function (_event: any, d: any) {
+        .on('click', function (_event: MouseEvent, d) {
           handleCountryClick(d.iso3);
         });
 
@@ -419,20 +454,22 @@ export default function SuperteamMap({
         projection.fitSize([width, height], worldData);
 
         svg.attr('width', width).attr('height', height);
-        svg.selectAll('.countries path').attr('d', path as any);
+        svg
+          .selectAll<SVGPathElement, Country>('.countries path')
+          .attr('d', (d) => path(d));
 
         if (markerGroup) {
           markerGroup
-            .selectAll('circle')
-            .attr('cx', (d: any) => getMarkerPosition(d)?.[0] ?? 0)
-            .attr('cy', (d: any) => getMarkerPosition(d)?.[1] ?? 0);
+            .selectAll<SVGCircleElement, PlacedMarker>('circle')
+            .attr('cx', (d) => getMarkerPosition(d)?.[0] ?? 0)
+            .attr('cy', (d) => getMarkerPosition(d)?.[1] ?? 0);
         }
       };
 
       window.addEventListener('resize', resizeHandler);
     };
 
-    initMap();
+    void initMap();
 
     return () => {
       if (svgRef.current) {
