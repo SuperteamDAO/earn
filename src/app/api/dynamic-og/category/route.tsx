@@ -8,6 +8,13 @@ import {
   getCategoryInfo,
 } from '@/features/listings/utils/category';
 
+const CATEGORY_NAMES: ReadonlyArray<CategoryType> = [
+  'Content',
+  'Design',
+  'Development',
+  'Other',
+];
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -28,8 +35,8 @@ export async function GET(request: Request) {
     let categoryColor = '#6366F1'; // Default color
     if (category) {
       try {
-        const categoryInfo = getCategoryInfo(category as CategoryType);
-        categoryColor = categoryInfo.color;
+        const name = CATEGORY_NAMES.find((item) => item === category);
+        if (name) categoryColor = getCategoryInfo(name).color;
       } catch {
         // Use default color if category not found
       }
@@ -208,8 +215,8 @@ export async function GET(request: Request) {
         ],
       },
     );
-  } catch (e: any) {
-    console.log(`${e.message}`);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
     return new Response(`Failed to generate the image`, {
       status: 500,
     });

@@ -22,11 +22,8 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const getParam = (name: any, processFn = (x: any) => x) =>
-      searchParams.has(name) ? processFn(searchParams.get(name)) : null;
-
-    const region = getParam('region');
-    const code = getParam('code');
+    const region = searchParams.get('region');
+    const code = searchParams.get('code');
     const hasCode = code && code !== 'undefined';
 
     const prefix = 'Find High Paying Crypto Gigs in ';
@@ -342,8 +339,8 @@ export async function GET(request: Request) {
         fonts: [{ name: 'Bold', data: interBold, style: 'normal' }],
       },
     );
-  } catch (e: any) {
-    console.log(`${e.message}`);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
     return new Response(`Failed to generate the image`, {
       status: 500,
     });

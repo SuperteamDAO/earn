@@ -1,126 +1,38 @@
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import * as Effect from 'effect/Effect';
+import * as Option from 'effect/Option';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import { prisma } from '@/prisma';
-import {
-  type JsonValue,
-  PrismaClientKnownRequestError,
-} from '@/prisma/internal/prismaNamespace';
+import { json, sessionOf } from '@/lib/route-guard';
+import * as ListingLists from '@/server/listing-lists';
+import { runtime } from '@/server/runtime';
 
-import { getUserSession } from '@/features/auth/utils/getUserSession';
-import {
-  ListingCategorySchema,
-  QueryParamsSchema,
-} from '@/features/listings/constants/schema';
-import { buildListingQuery } from '@/features/listings/utils/query-builder';
-
-const CountQueryParamsSchema = QueryParamsSchema.omit({ category: true });
-
+// How many listings each category pill would show (Earn's
+// /api/listings/count).
 export async function GET(request: NextRequest) {
-  const requestHeaders = await headers();
-
-  try {
-    const session = await getUserSession(requestHeaders);
-    if (session.error === 'User is blocked') {
-      return NextResponse.json(
-        { error: session.error },
-        { status: session.status },
-      );
-    }
-
-    const { searchParams } = new URL(request.url);
-    const queryParams = Object.fromEntries(searchParams.entries());
-
-    const validationResult = CountQueryParamsSchema.safeParse(queryParams);
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { errors: validationResult.error.flatten() },
-        { status: 400 },
-      );
-    }
-    const queryData = validationResult.data;
-
-    let user: {
-      id: string;
-      isTalentFilled: boolean;
-      location: string | null;
-      skills: JsonValue;
-    } | null = null;
-
-    if (session.data?.userId) {
-      user = await prisma.user.findUnique({
-        where: { id: session.data.userId },
-        select: {
-          id: true,
-          isTalentFilled: true,
-          location: true,
-          skills: true,
-        },
-      });
-    }
-
-    const categories = ListingCategorySchema._def.innerType.options;
-
-    if (queryData.context === 'bookmarks' && !user?.id) {
-      const emptyCategoryCounts: Record<string, number> = {};
-      categories.forEach((category) => {
-        emptyCategoryCounts[category] = 0;
-      });
-
-      return NextResponse.json(emptyCategoryCounts, {
+  const params = Object.fromEntries(request.nextUrl.searchParams);
+  const query = ListingLists.decodeListQuery({ ...params, category: 'All' });
+  if (Option.isNone(query)) return json(400, { errors: 'Invalid query' });
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const lists = yield* ListingLists.ListingLists;
+      const privyDid = yield* sessionOf(request);
+      const viewer = Option.isSome(privyDid)
+        ? yield* lists.viewer(privyDid.value)
+        : null;
+      const counts = yield* lists.counts(query.value, viewer);
+      return NextResponse.json(counts, {
         headers: {
           'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
           Vary: 'Cookie',
         },
       });
-    }
-
-    const counts = await Promise.all(
-      categories.map(async (category) => {
-        try {
-          const { where } = await buildListingQuery(
-            { ...queryData, category },
-            user,
-          );
-          const count = await prisma.bounties.count({ where });
-          return { category, count };
-        } catch (error) {
-          console.error(`Error counting category ${category}:`, error);
-          return { category, count: 0 };
-        }
+    }).pipe(
+      Effect.catchTags({
+        ViewerBlocked: () =>
+          Effect.succeed(json(403, { error: 'User is blocked' })),
+        DatabaseError: () =>
+          Effect.succeed(json(500, { message: 'Database error' })),
       }),
-    );
-
-    const categoryCounts: Record<string, number> = {};
-    counts.forEach(({ category, count }) => {
-      categoryCounts[category] = count;
-    });
-
-    return NextResponse.json(categoryCounts, {
-      headers: {
-        'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
-        Vary: 'Cookie',
-      },
-    });
-  } catch (error) {
-    console.error('Error in count API handler:', error);
-
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { message: 'Invalid query parameters', errors: error.flatten() },
-        { status: 400 },
-      );
-    }
-
-    if (error instanceof PrismaClientKnownRequestError) {
-      console.error('Prisma error:', error.code, error.message);
-      return NextResponse.json({ message: 'Database error' }, { status: 500 });
-    }
-
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 },
-    );
-  }
+    ),
+  );
 }

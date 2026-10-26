@@ -1,100 +1,41 @@
-import { type NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import * as Effect from 'effect/Effect';
+import * as Option from 'effect/Option';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import { prisma } from '@/prisma';
-import {
-  type JsonValue,
-  PrismaClientKnownRequestError,
-} from '@/prisma/internal/prismaNamespace';
+import { json, sessionOf } from '@/lib/route-guard';
+import * as GrantLists from '@/server/grant-lists';
+import * as ListingLists from '@/server/listing-lists';
+import { runtime } from '@/server/runtime';
 
-import {
-  GrantQueryParamsSchema,
-  grantsSelect,
-} from '@/features/grants/constants/schema';
-import { buildGrantsQuery } from '@/features/grants/utils/query-builder';
-
+// A list's grants (Earn's /api/grants). The viewer comes from the session,
+// no longer from a client-set cookie.
 export async function GET(request: NextRequest) {
-  try {
-    const userIdFromCookie = request.cookies.get('user-id-hint')?.value;
-
-    const { searchParams } = new URL(request.url);
-    const queryParams = Object.fromEntries(searchParams.entries());
-
-    const validationResult = GrantQueryParamsSchema.safeParse(queryParams);
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { errors: validationResult.error.flatten() },
-        { status: 400 },
+  const params = Object.fromEntries(request.nextUrl.searchParams);
+  const query = GrantLists.decodeGrantListQuery(params);
+  if (Option.isNone(query)) return json(400, { errors: 'Invalid query' });
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const privyDid = yield* sessionOf(request);
+      const viewer = Option.isSome(privyDid)
+        ? yield* ListingLists.ListingLists.use((lists) =>
+            lists.viewer(privyDid.value),
+          ).pipe(Effect.catchTag('ViewerBlocked', () => Effect.succeed(null)))
+        : null;
+      const grants = yield* GrantLists.GrantLists.use((lists) =>
+        lists.list(query.value, viewer),
       );
-    }
-    const queryData = validationResult.data;
-
-    let user: {
-      id: string;
-      isTalentFilled: boolean;
-      location: string | null;
-      skills: JsonValue;
-    } | null = null;
-
-    if (userIdFromCookie) {
-      user = await prisma.user.findUnique({
-        where: { id: userIdFromCookie },
-        select: {
-          id: true,
-          isTalentFilled: true,
-          location: true,
-          skills: true,
+      return NextResponse.json(grants, {
+        headers: {
+          'Cache-Control': viewer
+            ? 'private, max-age=300, stale-while-revalidate=600'
+            : 'public, max-age=300, stale-while-revalidate=600',
+          Vary: 'Cookie',
         },
       });
-    }
-
-    console.log('queryData', queryData);
-    const { where, take } = await buildGrantsQuery(queryData, user);
-
-    const grants = await prisma.grants.findMany({
-      where,
-      take,
-      orderBy: { createdAt: 'desc' },
-      select: grantsSelect,
-    });
-
-    const grantsWithTotalApplications = grants.map((grant) => {
-      const { GrantApplication, _count, ...grantData } = grant;
-
-      return {
-        ...grantData,
-        approvedAmountTotal: GrantApplication.reduce(
-          (sum, application) => sum + (application.approvedAmountInUSD || 0),
-          0,
-        ),
-        totalApplications:
-          _count.GrantApplication + grant.historicalApplications,
-      };
-    });
-
-    return NextResponse.json(grantsWithTotalApplications, {
-      headers: {
-        'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
-      },
-    });
-  } catch (error) {
-    console.error('Error in API handler:', error);
-
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { message: 'Invalid query parameters', errors: error.flatten() },
-        { status: 400 },
-      );
-    }
-
-    if (error instanceof PrismaClientKnownRequestError) {
-      console.error('Prisma error:', error.code, error.message);
-      return NextResponse.json({ message: 'Database error' }, { status: 500 });
-    }
-
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 },
-    );
-  }
+    }).pipe(
+      Effect.catchTag('DatabaseError', () =>
+        Effect.succeed(json(500, { message: 'Database error' })),
+      ),
+    ),
+  );
 }

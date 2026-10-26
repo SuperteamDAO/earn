@@ -1,71 +1,38 @@
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
-import { useCallback, useMemo } from 'react';
+'use client';
 
-import { GrantCategorySchema } from '../constants/schema';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { posthog } from 'posthog-js';
+import { useCallback, useOptimistic, useTransition } from 'react';
 
-const DEFAULT_CATEGORY = GrantCategorySchema._def.defaultValue();
+import { startTopLoader } from '@/components/ui/toploader';
 
-type QueryParamUpdates = Partial<Record<'grantCategory', string | null>>;
-
-const PARAM_DEFAULTS: Record<keyof QueryParamUpdates, unknown> = {
-  grantCategory: DEFAULT_CATEGORY,
-} as const;
-
-export const useGrantState = () => {
+// The grants list's category lives in the URL (`grantCategory`): a change
+// navigates and the server renders the list again; the pill lights up at
+// once.
+export const useGrantState = (category: string) => {
   const router = useRouter();
-  const searchParamsFromHook = useSearchParams();
-
-  const searchParams = useMemo(
-    () => searchParamsFromHook ?? new URLSearchParams(),
-    [searchParamsFromHook],
-  );
-
-  const updateQueryParams = useCallback(
-    (updates: QueryParamUpdates) => {
-      const newParams = new URLSearchParams(Array.from(searchParams.entries()));
-
-      for (const key in updates) {
-        const typedKey = key as keyof QueryParamUpdates;
-        const value = updates[typedKey];
-        const defaultValueForKey = PARAM_DEFAULTS[typedKey];
-
-        if (
-          value === null ||
-          value === undefined ||
-          value === defaultValueForKey
-        ) {
-          newParams.delete(typedKey);
-        } else {
-          newParams.set(typedKey, String(value));
-        }
-      }
-
-      const queryString = newParams.toString();
-      const newPath = `${window.location.pathname}${queryString ? `?${queryString}` : ''}`;
-      void router.replace(newPath, undefined, { shallow: true, scroll: false });
-    },
-    [searchParams, router],
-  );
-
-  const activeCategory = useMemo(
-    (): string => searchParams.get('grantCategory') ?? DEFAULT_CATEGORY,
-    [searchParams],
-  );
+  const pathname = usePathname() ?? '';
+  const searchParams = useSearchParams();
+  const [, startTransition] = useTransition();
+  const [activeCategory, setActiveCategory] = useOptimistic(category);
 
   const handleCategoryChange = useCallback(
-    (category: string, posthogEvent?: string) => {
-      updateQueryParams({ grantCategory: category });
-      if (posthogEvent) {
-        posthog.capture(posthogEvent);
-      }
+    (next: string, posthogEvent?: string) => {
+      const params = new URLSearchParams(searchParams?.toString() ?? '');
+      if (next === 'All') params.delete('grantCategory');
+      else params.set('grantCategory', next);
+      const query = params.toString();
+      startTopLoader();
+      startTransition(() => {
+        setActiveCategory(next);
+        router.replace(`${pathname}${query ? `?${query}` : ''}`, {
+          scroll: false,
+        });
+      });
+      if (posthogEvent) posthog.capture(posthogEvent);
     },
-    [updateQueryParams],
+    [searchParams, pathname, router, setActiveCategory],
   );
 
-  return {
-    activeCategory,
-    handleCategoryChange,
-  };
+  return { activeCategory, handleCategoryChange };
 };

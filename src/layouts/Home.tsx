@@ -1,17 +1,21 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useQuery } from '@tanstack/react-query';
-import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
-import { type ReactNode, useMemo } from 'react';
+import 'server-only';
+
+import type { ReactNode } from 'react';
 
 import type { ChapterDisplay } from '@/interface/chapter';
 import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
+import { getViewer } from '@/lib/session';
 import { cn } from '@/utils/cn';
 
 import { BannerCarousel } from '@/features/home/components/Banner';
+import { CategoryBanner } from '@/features/home/components/CategoryBanner';
+import { CountryBanner } from '@/features/home/components/CountryBanner';
+import { RegionBanner } from '@/features/home/components/RegionBanner';
+import { HomeSideBar } from '@/features/home/components/SideBar';
+import { TypeBanner } from '@/features/home/components/TypeBanner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
-import { userCountQuery } from '@/features/home/queries/user-count';
+
+import { homeCounts } from './home-counts';
 
 interface CountryData {
   readonly name: string;
@@ -30,91 +34,52 @@ interface HomeProps {
   readonly countryData?: CountryData;
   readonly categoryData?: CategoryData;
   readonly listingType?: 'bounties';
+  // On /earn/all/: its `?category=`, which picks a category banner.
+  readonly allCategory?: string;
+  // Ignored: pages export `metadata`, and the viewer is known here.
   readonly potentialSession?: boolean;
   readonly meta?: ReactNode;
 }
 
 type CategoryTypes = 'content' | 'development' | 'design' | 'other' | 'all';
 
-const RegionBanner = dynamic(() =>
-  import('@/features/home/components/RegionBanner').then(
-    (mod) => mod.RegionBanner,
-  ),
-);
+const CATEGORY_TYPES: ReadonlyArray<CategoryTypes> = [
+  'content',
+  'development',
+  'design',
+  'other',
+  'all',
+];
 
-const CategoryBanner = dynamic(() =>
-  import('@/features/home/components/CategoryBanner').then(
-    (mod) => mod.CategoryBanner,
-  ),
-);
+const asCategoryType = (value: string): CategoryTypes | null =>
+  CATEGORY_TYPES.find((type) => type === value) ?? null;
 
-const CountryBanner = dynamic(() =>
-  import('@/features/home/components/CountryBanner').then(
-    (mod) => mod.CountryBanner,
-  ),
-);
-
-const TypeBanner = dynamic(() =>
-  import('@/features/home/components/TypeBanner').then((mod) => mod.TypeBanner),
-);
-
-const HomeSideBar = dynamic(() =>
-  import('@/features/home/components/SideBar').then((mod) => mod.HomeSideBar),
-);
-
-export function Home({
+// The list pages' frame: a banner for the region, category or type, the
+// page's lists with the welcome banner above, and the sidebar.
+export async function Home({
   children,
   type,
   st,
   countryData,
   categoryData,
   listingType,
-  potentialSession = false,
-  meta,
+  allCategory,
 }: HomeProps) {
-  const router = useRouter();
-  const { authenticated } = usePrivy();
+  const viewer = await getViewer();
 
-  const { data: totalUsers } = useQuery(userCountQuery);
+  const currentCategory = ((): CategoryTypes | null => {
+    if (allCategory === undefined) return null;
+    const param = allCategory.toLowerCase();
+    if (!param || param === 'all' || param === 'for you') return 'all';
+    const category = asCategoryType(param);
+    return category === 'all' ? null : category;
+  })();
 
-  const currentCategory = useMemo(() => {
-    const categoryParam = router.query.category?.toString().toLowerCase();
-    const isAllPage = router.asPath.includes('/all');
-
-    if (isAllPage) {
-      if (
-        !categoryParam ||
-        categoryParam === 'all' ||
-        categoryParam === 'for you'
-      ) {
-        return 'all';
-      }
-      if (
-        categoryParam === 'development' ||
-        categoryParam === 'design' ||
-        categoryParam === 'content' ||
-        categoryParam === 'other'
-      ) {
-        return categoryParam as CategoryTypes;
-      }
-      return null;
-    }
-    return null;
-  }, [router.query.category, router.asPath]);
+  const showWelcome = !currentCategory && type === 'listing' && !listingType;
+  const counts = showWelcome && !viewer ? await homeCounts() : null;
 
   return (
-    <Default
-      className="bg-white"
-      meta={
-        meta || (
-          <Meta
-            title="Superteam Earn | Work to Earn in Crypto"
-            description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-            canonical="https://superteam.fun/earn"
-          />
-        )
-      }
-    >
+    <Default className="bg-white">
       {type === 'region' && st && <RegionBanner st={st} />}
       {type === 'region' && countryData && !st && (
         <CountryBanner
@@ -124,7 +89,7 @@ export function Home({
       )}
       {type === 'category' && categoryData && (
         <CategoryBanner
-          category={categoryData.name.toLowerCase() as CategoryTypes}
+          category={asCategoryType(categoryData.name.toLowerCase()) ?? 'all'}
         />
       )}
       {type === 'listing' && listingType && <TypeBanner type={listingType} />}
@@ -136,12 +101,15 @@ export function Home({
           <div className="flex items-start justify-between">
             <div className="w-full min-w-0 lg:border-r lg:border-slate-100">
               <div className="w-full lg:pr-6">
-                {!currentCategory && type === 'listing' && !listingType && (
+                {showWelcome && (
                   <div className="pt-3">
-                    {potentialSession || authenticated ? (
+                    {viewer ? (
                       <UserStatsBanner />
                     ) : (
-                      <BannerCarousel totalUsers={totalUsers?.totalUsers} />
+                      <BannerCarousel
+                        totalUsers={counts?.totalUsers}
+                        totalSponsors={counts?.totalSponsors}
+                      />
                     )}
                   </div>
                 )}

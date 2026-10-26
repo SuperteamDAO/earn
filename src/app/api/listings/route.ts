@@ -1,124 +1,41 @@
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import * as Effect from 'effect/Effect';
+import * as Option from 'effect/Option';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import { prisma } from '@/prisma';
-import {
-  type JsonValue,
-  PrismaClientKnownRequestError,
-} from '@/prisma/internal/prismaNamespace';
+import { json, sessionOf } from '@/lib/route-guard';
+import * as ListingLists from '@/server/listing-lists';
+import { runtime } from '@/server/runtime';
 
-import { getUserSession } from '@/features/auth/utils/getUserSession';
-import {
-  listingSelect,
-  QueryParamsSchema,
-} from '@/features/listings/constants/schema';
-import { buildListingQuery } from '@/features/listings/utils/query-builder';
-import { reorderFeaturedOngoing } from '@/features/listings/utils/reorderFeaturedOngoing';
-
+// A list's listings (the list pages' filters, Earn's /api/listings).
 export async function GET(request: NextRequest) {
-  try {
-    const requestHeaders = await headers();
-
-    const session = await getUserSession(requestHeaders);
-    if (session.error === 'User is blocked') {
-      return NextResponse.json(
-        { error: session.error },
-        { status: session.status },
-      );
-    }
-
-    const { searchParams } = new URL(request.url);
-    const queryParams = Object.fromEntries(searchParams.entries());
-
-    const validationResult = QueryParamsSchema.safeParse(queryParams);
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { errors: validationResult.error.flatten() },
-        { status: 400 },
-      );
-    }
-    const queryData = validationResult.data;
-
-    let user: {
-      id: string;
-      isTalentFilled: boolean;
-      location: string | null;
-      skills: JsonValue;
-    } | null = null;
-
-    const userId = session.data?.userId;
-
-    if (userId) {
-      user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-          id: true,
-          isTalentFilled: true,
-          location: true,
-          skills: true,
-        },
-      });
-    }
-
-    if (queryData.context === 'bookmarks' && !user?.id) {
-      return NextResponse.json([]);
-    }
-
-    // build optimized query
-    const { where, orderBy, take } = await buildListingQuery(queryData, user);
-
-    const listings = await prisma.bounties.findMany({
-      where,
-      orderBy,
-      take,
-      select: {
-        ...listingSelect,
-        ...(queryData.category === 'For You' && user?.id
-          ? {
-              SubscribeBounty: {
-                where: { userId: user.id },
-                select: { userId: true },
+  const params = Object.fromEntries(request.nextUrl.searchParams);
+  const query = ListingLists.decodeListQuery(params);
+  if (Option.isNone(query)) return json(400, { errors: 'Invalid query' });
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const lists = yield* ListingLists.ListingLists;
+      const privyDid = yield* sessionOf(request);
+      const viewer = Option.isSome(privyDid)
+        ? yield* lists.viewer(privyDid.value)
+        : null;
+      const listings = yield* lists.list(query.value, viewer);
+      return NextResponse.json(listings, {
+        headers:
+          query.value.context === 'bookmarks'
+            ? { 'Cache-Control': 'private, no-store', Vary: 'Cookie' }
+            : {
+                'Cache-Control':
+                  'private, max-age=300, stale-while-revalidate=600',
+                Vary: 'Cookie',
               },
-            }
-          : {}),
-      },
-    });
-
-    const reorderedListings = reorderFeaturedOngoing(listings);
-
-    const isBookmarksContext = queryData.context === 'bookmarks';
-    const headersInit = isBookmarksContext
-      ? {
-          'Cache-Control': 'private, no-store',
-          Vary: 'Cookie',
-        }
-      : {
-          'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
-          Vary: 'Cookie',
-        };
-
-    return NextResponse.json(reorderedListings, {
-      headers: headersInit,
-    });
-  } catch (error) {
-    console.error('Error in API handler:', error);
-
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { message: 'Invalid query parameters', errors: error.flatten() },
-        { status: 400 },
-      );
-    }
-
-    if (error instanceof PrismaClientKnownRequestError) {
-      console.error('Prisma error:', error.code, error.message);
-      return NextResponse.json({ message: 'Database error' }, { status: 500 });
-    }
-
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 },
-    );
-  }
+      });
+    }).pipe(
+      Effect.catchTags({
+        ViewerBlocked: () =>
+          Effect.succeed(json(403, { error: 'User is blocked' })),
+        DatabaseError: () =>
+          Effect.succeed(json(500, { message: 'Database error' })),
+      }),
+    ),
+  );
 }

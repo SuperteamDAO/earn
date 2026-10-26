@@ -1,5 +1,7 @@
+'use client';
+
 import { LucideListFilter } from 'lucide-react';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import {
   DropdownMenu,

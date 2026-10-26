@@ -1,125 +1,70 @@
-import { useCallback } from 'react';
+import 'server-only';
 
-import { EmptySection } from '@/components/shared/EmptySection';
-import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { cn } from '@/utils/cn';
+import * as Effect from 'effect/Effect';
 
-import { CategoryPill } from '@/features/listings/components/CategoryPill';
-import { ListingCardSkeleton } from '@/features/listings/components/ListingCard';
-import { ViewAllButton } from '@/features/listings/components/ViewAllButton';
-import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
+import { getViewer } from '@/lib/session';
+import * as GrantLists from '@/server/grant-lists';
+import { runtime } from '@/server/runtime';
 
-import { type GrantContext, useGrants } from '../hooks/useGrants';
-import { useGrantState } from '../hooks/useGrantState';
-import { GrantsCard } from './GrantsCard';
+import { GrantsSectionView } from './GrantsSectionView';
 
-const SKELETON_COUNT = 5;
-const skeletonArray = Array.from({ length: SKELETON_COUNT }, (_, i) => i);
+type SearchParams = Readonly<Record<string, string | string[] | undefined>>;
 
 interface GrantSectionProps {
-  type: GrantContext;
-  region?: string;
-  sponsor?: string;
-  category?: string;
-  hideWhenEmpty?: boolean;
-  hideCategoryPills?: boolean;
+  readonly type: GrantLists.GrantListQuery['context'];
+  // This page's search params (`grantCategory`).
+  readonly searchParams?: SearchParams;
+  readonly region?: string;
+  readonly sponsor?: string;
+  readonly category?: string;
+  readonly hideWhenEmpty?: boolean;
+  readonly hideCategoryPills?: boolean;
 }
 
-export const GrantsSection = ({
+// Earn's Grants list, rendered on the server for this page's category.
+export async function GrantsSection({
   type,
+  searchParams = {},
   region,
   sponsor,
   category: categoryProp,
   hideWhenEmpty,
   hideCategoryPills,
-}: GrantSectionProps) => {
-  const { activeCategory, handleCategoryChange } = useGrantState();
-
+}: GrantSectionProps) {
+  const param = searchParams.grantCategory;
+  const activeCategory = GrantLists.asGrantCategory(
+    Array.isArray(param) ? param[0] : param,
+  );
   // For category contexts, use the category prop (route category)
   // For other contexts, use activeCategory (filter selection)
   const effectiveCategory =
-    type === 'category' ? categoryProp || activeCategory : activeCategory;
-  const isMd = useBreakpoint('md');
+    type === 'category' && categoryProp
+      ? GrantLists.asGrantCategory(categoryProp)
+      : activeCategory;
 
-  const {
-    data: grants,
-    isLoading,
-    error,
-  } = useGrants({
-    context: type,
-    category: effectiveCategory,
-    region,
-    sponsor,
-  });
+  const viewer = await getViewer();
+  const grants = await runtime.runPromise(
+    GrantLists.GrantLists.use((lists) =>
+      lists.list(
+        {
+          context: type,
+          category: effectiveCategory,
+          ...(region ? { region } : {}),
+          ...(sponsor ? { sponsor } : {}),
+        },
+        viewer,
+      ),
+    ).pipe(Effect.orElseSucceed(() => null)),
+  );
 
-  const handleAllCategoryClick = useCallback(() => {
-    handleCategoryChange('All', 'all_navpill');
-  }, [handleCategoryChange]);
-
-  if (hideWhenEmpty && !isLoading && !grants?.length) {
-    return null;
-  }
-
-  const renderContent = () => {
-    if (isLoading) {
-      return skeletonArray.map((index) => <ListingCardSkeleton key={index} />);
-    }
-
-    if (error) {
-      return <EmptySection title="Error loading grants" />;
-    }
-
-    if (!grants?.length) {
-      return <EmptySection title="No grants found" />;
-    }
-
-    return (
-      <>
-        {grants.map((grant) => (
-          <GrantsCard key={grant.id} grant={grant} />
-        ))}
-        {type === 'home' && (
-          <ViewAllButton
-            posthogEvent="viewall bottom_grants"
-            href="/earn/grants"
-          />
-        )}
-      </>
-    );
-  };
+  if (hideWhenEmpty && !grants?.length) return null;
 
   return (
-    <div className={cn('mx-auto my-10 w-[98%] md:w-full')}>
-      <p className="mb-1.5 text-lg font-semibold text-slate-800">Grants</p>
-
-      <div className="mb-3 h-px w-full bg-slate-200" />
-
-      {!hideCategoryPills && type !== 'category' && (
-        <div className="mb-2 flex gap-1 overflow-x-auto pb-1">
-          <CategoryPill
-            key="all"
-            phEvent="all_navpill"
-            isActive={activeCategory === 'All'}
-            onClick={handleAllCategoryClick}
-          >
-            All
-          </CategoryPill>
-          {CATEGORY_NAV_ITEMS?.map((navItem) => (
-            <CategoryPill
-              key={navItem.label}
-              phEvent={navItem.pillPH}
-              isActive={activeCategory === navItem.label}
-              onClick={() =>
-                handleCategoryChange(navItem.label, navItem.pillPH)
-              }
-            >
-              {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
-            </CategoryPill>
-          ))}
-        </div>
-      )}
-
-      {renderContent()}
-    </div>
+    <GrantsSectionView
+      type={type}
+      grants={grants}
+      category={activeCategory}
+      hideCategoryPills={hideCategoryPills}
+    />
   );
-};
+}

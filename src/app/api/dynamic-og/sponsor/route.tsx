@@ -8,8 +8,8 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const getParam = (name: any, processFn = (x: any) => x) =>
-      searchParams.has(name) ? processFn(searchParams.get(name)) : null;
+    const getParam = <T,>(name: string, processFn: (x: string) => T) =>
+      searchParams.has(name) ? processFn(searchParams.get(name) ?? '') : null;
 
     const title = getParam('title', (x) => formatString(x, 24));
     const slug = getParam('slug', (x) => formatString(x, 28));
@@ -82,7 +82,7 @@ export async function GET(request: Request) {
                 borderRadius: '30px',
               }}
               alt="logo"
-              src={sponsorLogo as string}
+              src={sponsorLogo ?? undefined}
             />
           </div>
           <div
@@ -162,8 +162,8 @@ export async function GET(request: Request) {
         ],
       },
     );
-  } catch (e: any) {
-    console.log(`${e.message}`);
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
     return new Response(`Failed to generate the image`, {
       status: 500,
     });

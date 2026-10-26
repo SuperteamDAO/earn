@@ -1,15 +1,10 @@
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+'use client';
 
-import {
-  ListingCategorySchema,
-  ListingSortOptionSchema,
-  ListingStatusSchema,
-  ListingTabSchema,
-  OrderDirectionSchema,
-} from '@/features/listings/constants/schema';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { posthog } from 'posthog-js';
+import { useCallback, useOptimistic, useTransition } from 'react';
+
+import { startTopLoader } from '@/components/ui/toploader';
 
 import type {
   ListingCategory,
@@ -19,223 +14,99 @@ import type {
   OrderDirection,
 } from './useListings';
 
-const DEFAULT_TAB_VALUE: ListingTab = ListingTabSchema._def.defaultValue();
-const DEFAULT_STATUS_VALUE: ListingStatus =
-  ListingStatusSchema._def.defaultValue();
-const DEFAULT_ORDER_VALUE: OrderDirection =
-  OrderDirectionSchema._def.defaultValue();
-const DEFAULT_SORT_BY_VALUE: ListingSortOption =
-  ListingSortOptionSchema._def.defaultValue();
-const DEFAULT_HOOK_INITIAL_CATEGORY_VALUE: ListingCategory =
-  ListingCategorySchema._def.defaultValue();
-
-interface UseListingStateProps {
-  readonly defaultCategory?: ListingCategory;
-  readonly defaultStatus?: ListingStatus;
-  readonly defaultSortBy?: ListingSortOption;
-  readonly defaultTab?: ListingTab;
+// What the server rendered the list with (from this page's search params).
+export interface ListingState {
+  readonly tab: ListingTab;
+  readonly category: ListingCategory;
+  readonly status: ListingStatus;
+  readonly sortBy: ListingSortOption;
+  readonly order: OrderDirection;
 }
 
 type QueryParamUpdates = Partial<
   Record<'tab' | 'category' | 'status' | 'sortBy' | 'order', string | null>
 >;
 
+// A list's filters live in the URL: a change navigates to the same page
+// with new search params, and the server renders the list again. The
+// chosen tab and pill light up at once; the old list stays until the new
+// one arrives.
 export const useListingState = ({
-  defaultCategory = DEFAULT_HOOK_INITIAL_CATEGORY_VALUE,
-  defaultStatus = DEFAULT_STATUS_VALUE,
-  defaultSortBy = DEFAULT_SORT_BY_VALUE,
-  defaultTab,
-}: UseListingStateProps) => {
+  state,
+  defaults,
+}: {
+  readonly state: ListingState;
+  // A parameter equal to its default is left out of the URL.
+  readonly defaults: ListingState;
+}) => {
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParamsFromHook = useSearchParams();
-
-  const searchParams = useMemo(
-    () => searchParamsFromHook ?? new URLSearchParams(),
-    [searchParamsFromHook],
-  );
-
-  const getTabFromParams = useCallback(
-    (params: URLSearchParams): ListingTab => {
-      const tabParam = params.get('tab');
-      if (tabParam === null) return defaultTab ?? DEFAULT_TAB_VALUE;
-      const parsed = ListingTabSchema.safeParse(tabParam);
-      if (parsed.success && parsed.data !== undefined) {
-        return parsed.data;
-      }
-      return defaultTab ?? DEFAULT_TAB_VALUE;
-    },
-    [defaultTab],
-  );
-
-  const getCategoryFromParams = useCallback(
-    (params: URLSearchParams, defaultCat: ListingCategory): ListingCategory => {
-      const categoryParam = params.get('category');
-      if (categoryParam === null) return defaultCat;
-      const parsed = ListingCategorySchema.safeParse(categoryParam);
-      if (parsed.success && parsed.data !== undefined) {
-        return parsed.data;
-      }
-      return defaultCat;
-    },
-    [],
-  );
-
-  const [internalActiveTab, setInternalActiveTab] = useState<ListingTab>(() =>
-    getTabFromParams(searchParams),
-  );
-
-  const [internalActiveCategory, setInternalActiveCategory] =
-    useState<ListingCategory>(() =>
-      getCategoryFromParams(searchParams, defaultCategory),
-    );
-
-  useEffect(() => {
-    const tabFromUrl = getTabFromParams(searchParams);
-    // This effect syncs the URL tab to the internal state, primarily for external navigation (back/forward) or initial load.
-    // internalActiveTab is intentionally omitted from deps to prevent this effect from reverting an optimistic update
-    // made by handleTabChange before searchParams has a chance to reflect that update.
-    // The functional update form of setInternalActiveTab ensures we compare against the most current state.
-
-    setInternalActiveTab((currentInternalTab) => {
-      if (tabFromUrl !== currentInternalTab) {
-        return tabFromUrl;
-      }
-      return currentInternalTab;
-    });
-  }, [searchParams, getTabFromParams]);
-
-  useEffect(() => {
-    const categoryFromUrl = getCategoryFromParams(
-      searchParams,
-      defaultCategory,
-    );
-    // Sync URL category to internal state for external navigation or initial load.
-    // internalActiveCategory is intentionally omitted from deps to prevent this effect
-    // from reverting an optimistic update made by handleCategoryChange.
-
-    setInternalActiveCategory((currentInternalCategory) => {
-      if (categoryFromUrl !== currentInternalCategory) {
-        return categoryFromUrl;
-      }
-      return currentInternalCategory;
-    });
-  }, [searchParams, getCategoryFromParams, defaultCategory]);
+  const pathname = usePathname() ?? '';
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+  const [optimistic, setOptimistic] = useOptimistic(state);
 
   const updateQueryParams = useCallback(
-    (updates: QueryParamUpdates) => {
-      const newParams = new URLSearchParams(Array.from(searchParams.entries()));
-
-      const paramDefaults: Record<keyof QueryParamUpdates, unknown> = {
-        tab: DEFAULT_TAB_VALUE,
-        category: defaultCategory,
-        status: defaultStatus,
-        sortBy: defaultSortBy,
-        order: DEFAULT_ORDER_VALUE,
-      };
-
-      for (const key in updates) {
-        const typedKey = key as keyof QueryParamUpdates;
-        const value = updates[typedKey];
-        const defaultValueForKey = paramDefaults[typedKey];
-
-        if (
-          value === null ||
-          value === undefined ||
-          value === defaultValueForKey
-        ) {
-          newParams.delete(typedKey);
+    (updates: QueryParamUpdates, next: ListingState) => {
+      const params = new URLSearchParams(searchParams?.toString() ?? '');
+      const names = ['tab', 'category', 'status', 'sortBy', 'order'] as const;
+      for (const name of names) {
+        if (!(name in updates)) continue;
+        const value = updates[name];
+        if (value === null || value === undefined || value === defaults[name]) {
+          params.delete(name);
         } else {
-          newParams.set(typedKey, String(value));
+          params.set(name, value);
         }
       }
-
-      const queryString = newParams.toString();
-      const newPath = `${pathname}${queryString ? `?${queryString}` : ''}`;
-      void router.replace(newPath, undefined, { shallow: true, scroll: false });
+      const query = params.toString();
+      startTopLoader();
+      startTransition(() => {
+        setOptimistic(next);
+        router.replace(`${pathname}${query ? `?${query}` : ''}`, {
+          scroll: false,
+        });
+      });
     },
-    [
-      searchParams,
-      router,
-      defaultCategory,
-      defaultStatus,
-      defaultSortBy,
-      pathname,
-    ],
+    [searchParams, defaults, pathname, router, setOptimistic],
   );
 
-  const activeStatus = useMemo((): ListingStatus => {
-    const statusParam = searchParams.get('status');
-    if (statusParam === null) return defaultStatus;
-    const parsed = ListingStatusSchema.safeParse(statusParam);
-    if (parsed.success && parsed.data !== undefined) {
-      return parsed.data;
-    }
-    return defaultStatus;
-  }, [searchParams, defaultStatus]);
-
-  const activeSortBy = useMemo((): ListingSortOption => {
-    const sortByParam = searchParams.get('sortBy');
-    if (sortByParam === null) return defaultSortBy;
-    const parsed = ListingSortOptionSchema.safeParse(sortByParam);
-    if (parsed.success && parsed.data !== undefined) {
-      return parsed.data;
-    }
-    return defaultSortBy;
-  }, [searchParams, defaultSortBy]);
-
-  const activeOrder = useMemo((): OrderDirection => {
-    const orderParam = searchParams.get('order');
-    if (orderParam === null) return DEFAULT_ORDER_VALUE;
-    const parsed = OrderDirectionSchema.safeParse(orderParam);
-    if (parsed.success && parsed.data !== undefined) {
-      return parsed.data;
-    }
-    return DEFAULT_ORDER_VALUE;
-  }, [searchParams]);
-
   const handleTabChange = useCallback(
-    (tabId: ListingTab, posthogEvent: string) => {
-      setInternalActiveTab(tabId);
-      updateQueryParams({ tab: tabId });
-      if (posthogEvent) {
-        posthog.capture(posthogEvent);
-      }
+    (tab: ListingTab, posthogEvent: string) => {
+      updateQueryParams({ tab }, { ...optimistic, tab });
+      if (posthogEvent) posthog.capture(posthogEvent);
     },
-    [updateQueryParams],
+    [updateQueryParams, optimistic],
   );
 
   const handleCategoryChange = useCallback(
     (category: ListingCategory, posthogEvent?: string) => {
-      setInternalActiveCategory(category);
-      updateQueryParams({ category });
-      if (posthogEvent) {
-        posthog.capture(posthogEvent);
-      }
+      updateQueryParams({ category }, { ...optimistic, category });
+      if (posthogEvent) posthog.capture(posthogEvent);
     },
-    [updateQueryParams],
+    [updateQueryParams, optimistic],
   );
 
   const handleStatusChange = useCallback(
     (status: ListingStatus) => {
-      updateQueryParams({ status });
+      updateQueryParams({ status }, { ...optimistic, status });
     },
-    [updateQueryParams],
+    [updateQueryParams, optimistic],
   );
 
   const handleSortChange = useCallback(
     (sortBy: ListingSortOption, order: OrderDirection) => {
-      updateQueryParams({ sortBy, order });
+      updateQueryParams({ sortBy, order }, { ...optimistic, sortBy, order });
     },
-    [updateQueryParams],
+    [updateQueryParams, optimistic],
   );
 
   return {
-    activeTab: internalActiveTab,
-    activeCategory: internalActiveCategory,
-    activeStatus,
-    activeSortBy,
-    activeOrder,
+    activeTab: optimistic.tab,
+    activeCategory: optimistic.category,
+    activeStatus: optimistic.status,
+    activeSortBy: optimistic.sortBy,
+    activeOrder: optimistic.order,
+    isPending,
     handleTabChange,
     handleCategoryChange,
     handleStatusChange,

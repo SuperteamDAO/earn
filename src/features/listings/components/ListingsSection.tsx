@@ -1,369 +1,154 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import 'server-only';
 
-import { EmptySection } from '@/components/shared/EmptySection';
-import { Separator } from '@/components/ui/separator';
-import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { useScrollShadow } from '@/hooks/use-scroll-shadow';
-import { cn } from '@/utils/cn';
+import * as Clock from 'effect/Clock';
+import * as Effect from 'effect/Effect';
+import type { ReactNode } from 'react';
 
-import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
-import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
-import { SponsorStage } from '@/features/home/types/sponsor-stage';
-import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
+import { getViewer } from '@/lib/session';
+import * as ListingLists from '@/server/listing-lists';
+import { runtime } from '@/server/runtime';
 
-const SKELETON_COUNT = 5;
-const skeletonArray = Array.from({ length: SKELETON_COUNT }, (_, i) => i);
-
-import {
-  type ListingCategory,
-  type ListingContext,
-  type ListingSortOption,
-  type ListingStatus,
-  type ListingTab,
-  useListings,
-} from '../hooks/useListings';
-import { useListingsFilterCount } from '../hooks/useListingsFilterCount';
-import { useListingState } from '../hooks/useListingState';
-import type { ListingTabsProps } from '../types';
-import { AddListingCard } from './AddListingCard';
-import { CategoryPill } from './CategoryPill';
-import { ListingCard, ListingCardSkeleton } from './ListingCard';
-import { ListingFilters } from './ListingFilters';
-import { ListingTabs } from './ListingTabs';
-import { ViewAllButton } from './ViewAllButton';
+import type { ListingCategory, ListingContext } from '../hooks/useListings';
+import type { ListingState } from '../hooks/useListingState';
+import { ListingsSectionView } from './ListingsSectionView';
 
 export type EmptySectionFilters = {
-  activeTab: ListingTab;
+  activeTab: string;
   activeCategory: ListingCategory;
-  activeStatus: ListingStatus;
-  activeSortBy: ListingSortOption;
+  activeStatus: ListingState['status'];
+  activeSortBy: ListingState['sortBy'];
 };
 
-interface ListingsSectionProps extends ListingTabsProps {
-  customEmptySection?:
-    | React.ReactNode
-    | ((filters: EmptySectionFilters) => React.ReactNode);
-}
-const FOR_YOU_SUPPORTED_TYPES: ReadonlyArray<ListingContext> = [
-  'home',
-  'all',
-] as const;
+type SearchParams = Readonly<Record<string, string | string[] | undefined>>;
 
-export const ListingsSection = ({
+const FOR_YOU_SUPPORTED_TYPES: ReadonlyArray<ListingContext> = ['home', 'all'];
+
+const firstValues = (params: SearchParams) =>
+  Object.fromEntries(
+    Object.entries(params).map(([key, value]) => [
+      key,
+      Array.isArray(value) ? value[0] : value,
+    ]),
+  );
+
+interface ListingsSectionProps {
+  readonly type: ListingContext;
+  // This page's search params: the list's filters.
+  readonly searchParams: SearchParams;
+  readonly region?: string;
+  readonly sponsor?: string;
+  // A category page's category.
+  readonly category?: ListingCategory;
+  readonly defaultTab?: 'bounties';
+  readonly customEmptySection?: (filters: EmptySectionFilters) => ReactNode;
+  // A new sponsor's "Your Bounty Here" card (the homepage).
+  readonly showAddListingCard?: boolean;
+}
+
+// Earn's "Browse Opportunities" list, rendered on the server for this
+// page's filters; changing them navigates (ListingsSectionView).
+export async function ListingsSection({
   type,
-  potentialSession,
+  searchParams,
   region,
   sponsor,
   category,
   defaultTab,
   customEmptySection,
-}: ListingsSectionProps) => {
-  const isMd = useBreakpoint('md');
-  const isLg = useBreakpoint('lg');
-  const isSponsorContext = type === 'sponsor';
-  const isBookmarksContext = type === 'bookmarks';
-
-  const { authenticated, ready } = usePrivy();
+  showAddListingCard = false,
+}: ListingsSectionProps) {
+  const viewer = await getViewer();
+  const isSponsorOrBookmarks = type === 'sponsor' || type === 'bookmarks';
   const supportsForYou = FOR_YOU_SUPPORTED_TYPES.includes(type);
-  // With a session hint, wait for Privy so we fetch once with the final auth
-  // state instead of rendering a throwaway signed-out result first.
-  const canFetch = !potentialSession || ready;
+  const listViewer: ListingLists.ListViewer | null =
+    viewer && !viewer.isBlocked
+      ? {
+          id: viewer.id,
+          isTalentFilled: viewer.isTalentFilled,
+          location: viewer.location,
+          skills: viewer.skills,
+        }
+      : null;
 
-  const { data: sponsorStageData } = useQuery({
-    ...sponsorStageQuery,
-    enabled: false,
-  });
+  const scope = {
+    context: type,
+    ...(region ? { region } : {}),
+    ...(sponsor ? { sponsor } : {}),
+  };
 
-  const shouldShowAddListingCard = useMemo(() => {
-    if (type !== 'home') return false;
-    if (!isLg) return false;
-    if (!sponsorStageData?.stage) return false;
-    return (
-      sponsorStageData.stage === SponsorStage.NEW_SPONSOR ||
-      sponsorStageData.stage === SponsorStage.NEXT_LISTING
-    );
-  }, [sponsorStageData, isLg, type]);
+  // "For You" is the default when they have more than two there.
+  const forYouCount =
+    supportsForYou && listViewer
+      ? await runtime.runPromise(
+          ListingLists.ListingLists.use((lists) =>
+            lists.counts(
+              {
+                ...ListingLists.LIST_DEFAULTS,
+                ...scope,
+                tab: defaultTab ?? 'all',
+                status: 'open',
+              },
+              listViewer,
+            ),
+          ).pipe(
+            Effect.map((counts) => counts['For You']),
+            Effect.orElseSucceed(() => 0),
+          ),
+        )
+      : 0;
+  const showForYou = supportsForYou && !!listViewer && forYouCount > 2;
 
-  const {
-    ref: scrollContainerRef,
-    showLeftShadow,
-    showRightShadow,
-  } = useScrollShadow<HTMLDivElement>();
+  const defaults: ListingState = {
+    tab: defaultTab ?? 'all',
+    category: showForYou ? 'For You' : 'All',
+    status: isSponsorOrBookmarks ? 'all' : 'open',
+    sortBy: isSponsorOrBookmarks ? 'Status' : 'Date',
+    order: 'asc',
+  };
+  const state = ListingLists.pageListQuery(firstValues(searchParams), defaults);
+  // Earn left the tab out of the URL when it was 'all'.
+  const urlDefaults: ListingState = { ...defaults, tab: 'all' };
 
-  const { data: categoryCounts, isPending: countsLoading } =
-    useListingsFilterCount({
-      context: type,
-      tab: defaultTab ?? 'all',
-      status: 'open',
-      region,
-      sponsor,
-      authenticated,
-      enabled: canFetch,
-    });
+  const queryCategory =
+    type === 'category' && category ? category : state.category;
 
-  const optimalDefaultCategory = useMemo((): ListingCategory => {
-    if (countsLoading || !categoryCounts) {
-      return (potentialSession || (ready && authenticated)) && supportsForYou
-        ? 'For You'
-        : 'All';
-    }
-
-    const forYouCount = categoryCounts['For You'] || 0;
-
-    if (
-      (potentialSession || (ready && authenticated)) &&
-      supportsForYou &&
-      forYouCount > 2
-    ) {
-      return 'For You';
-    }
-
-    return 'All';
-  }, [
-    categoryCounts,
-    countsLoading,
-    potentialSession,
-    authenticated,
-    ready,
-    supportsForYou,
+  const [listings, now] = await Promise.all([
+    viewer?.isBlocked
+      ? null
+      : runtime.runPromise(
+          ListingLists.ListingLists.use((lists) =>
+            lists.list(
+              { ...state, ...scope, category: queryCategory },
+              listViewer,
+            ),
+          ).pipe(Effect.orElseSucceed(() => null)),
+        ),
+    runtime.runPromise(Clock.currentTimeMillis),
   ]);
 
-  const {
-    activeTab,
-    activeCategory,
-    activeStatus,
-    activeSortBy,
-    activeOrder,
-    handleTabChange,
-    handleCategoryChange,
-    handleStatusChange,
-    handleSortChange,
-  } = useListingState({
-    defaultCategory: optimalDefaultCategory,
-    defaultStatus: isSponsorContext || isBookmarksContext ? 'all' : undefined,
-    defaultSortBy:
-      isSponsorContext || isBookmarksContext ? 'Status' : undefined,
-    defaultTab,
-  });
-
-  // For category contexts, use the category prop (route category)
-  // For other contexts, use activeCategory (filter selection)
   const effectiveCategory =
-    type === 'category'
-      ? (category as ListingCategory)
-      : type === 'bookmarks' && activeCategory === 'For You'
-        ? ('All' as ListingCategory)
-        : activeCategory;
-
-  const {
-    data: listings,
-    isPending,
-    error,
-  } = useListings({
-    context: type,
-    tab: activeTab,
-    category: effectiveCategory,
-    status: activeStatus,
-    sortBy: activeSortBy,
-    order: activeOrder,
-    region,
-    sponsor,
-    authenticated,
-    enabled: canFetch,
-  });
-
-  const shouldShowForYou = useMemo(() => {
-    if (!categoryCounts) return false;
-    return (
-      (potentialSession || (ready && authenticated)) &&
-      supportsForYou &&
-      (categoryCounts['For You'] || 0) > 2
-    );
-  }, [categoryCounts, potentialSession, authenticated, ready, supportsForYou]);
-
-  const visibleCategoryNavItems = CATEGORY_NAV_ITEMS;
-
-  const viewAllLink = () => {
-    if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
-      return `/earn/hackathon/${activeTab}`;
-    }
-    const params = new URLSearchParams();
-    params.set('category', activeCategory);
-    if (activeStatus) params.set('status', activeStatus);
-    if (activeSortBy) params.set('sortBy', activeSortBy);
-    if (activeOrder) params.set('order', activeOrder);
-    if (activeTab) params.set('tab', activeTab);
-    if (activeCategory) params.set('category', activeCategory);
-
-    return `/earn/all?${params.toString()}`;
-  };
-
-  const handleForYouClick = useCallback(() => {
-    handleCategoryChange('For You' as ListingCategory, 'foryou_navpill');
-  }, [handleCategoryChange]);
-
-  const handleAllCategoryClick = useCallback(() => {
-    handleCategoryChange('All' as ListingCategory, 'all_navpill');
-  }, [handleCategoryChange]);
-
-  const renderContent = () => {
-    if (isPending) {
-      return skeletonArray.map((index) => <ListingCardSkeleton key={index} />);
-    }
-
-    if (error) {
-      return <EmptySection title="Error loading listings" />;
-    }
-
-    if (!listings?.length) {
-      const emptySectionContent =
-        typeof customEmptySection === 'function'
-          ? customEmptySection({
-              activeTab,
-              activeCategory: effectiveCategory,
-              activeStatus,
-              activeSortBy,
-            })
-          : customEmptySection;
-
-      return (
-        <>
-          {shouldShowAddListingCard && <AddListingCard listingType="bounty" />}
-          {emptySectionContent ?? (
-            <EmptySection
-              title="No opportunities found"
-              message="We don't have any relevant opportunities for the current filters."
-            />
-          )}
-        </>
-      );
-    }
-
-    return (
-      <div className="space-y-1">
-        {shouldShowAddListingCard && <AddListingCard listingType="bounty" />}
-        {listings.map((listing) => (
-          <ListingCard key={listing.id} bounty={listing} />
-        ))}
-        {type === 'home' && (
-          <ViewAllButton
-            posthogEvent="viewall bottom_listings"
-            href={viewAllLink()}
-          />
-        )}
-      </div>
-    );
-  };
-
-  const getTitle = () => {
-    if (isSponsorContext) {
-      return 'All Listings';
-    }
-    return 'Browse Opportunities';
-  };
+    type === 'category' && category
+      ? category
+      : type === 'bookmarks' && state.category === 'For You'
+        ? 'All'
+        : state.category;
 
   return (
-    <div className="mt-5 mb-10">
-      <div className="flex w-full items-center justify-between md:mb-1.5">
-        {isBookmarksContext ? (
-          <p className="mb-2 text-xl font-semibold text-slate-700">Bookmarks</p>
-        ) : (
-          <div className="flex items-center">
-            <p className="text-lg font-semibold text-slate-800">{getTitle()}</p>
-
-            <div className="hidden items-center md:flex">
-              <Separator orientation="vertical" className="mx-3 h-6" />
-              <ListingTabs
-                type={type}
-                activeTab={activeTab}
-                handleTabChange={handleTabChange}
-              />
-            </div>
-          </div>
-        )}
-
-        <ListingFilters
-          activeStatus={activeStatus}
-          activeSortBy={activeSortBy}
-          activeOrder={activeOrder}
-          onStatusChange={handleStatusChange}
-          onSortChange={handleSortChange}
-          showAllFilter={isSponsorContext || isBookmarksContext}
-          showStatusSort={isSponsorContext || isBookmarksContext}
-        />
-      </div>
-      <div className="mt-2 mb-1 md:hidden">
-        <ListingTabs
-          type={type}
-          activeTab={activeTab}
-          handleTabChange={handleTabChange}
-        />
-      </div>
-
-      <div className="mb-2 h-px w-full bg-slate-200" />
-      {type !== 'category' && (
-        <div className="relative -mx-2 mb-1">
-          <div
-            className={cn(
-              'pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-8',
-              'bg-linear-to-r from-white/80 via-white/30 to-transparent',
-              'transition-opacity duration-300 ease-in-out',
-              showLeftShadow ? 'opacity-100' : 'opacity-0',
-            )}
-          />
-
-          <div
-            ref={scrollContainerRef}
-            className="hide-scrollbar flex gap-1.5 overflow-x-auto px-2 py-1"
-          >
-            {shouldShowForYou && (
-              <CategoryPill
-                key="foryou"
-                phEvent="foryou_navpill"
-                isActive={activeCategory === 'For You'}
-                onClick={handleForYouClick}
-              >
-                For You
-              </CategoryPill>
-            )}
-            <CategoryPill
-              key="all"
-              phEvent="all_navpill"
-              isActive={effectiveCategory === 'All'}
-              onClick={handleAllCategoryClick}
-            >
-              All
-            </CategoryPill>
-            {visibleCategoryNavItems?.map((navItem) => (
-              <CategoryPill
-                key={navItem.label}
-                phEvent={navItem.pillPH}
-                isActive={effectiveCategory === navItem.label}
-                onClick={() =>
-                  handleCategoryChange(
-                    navItem.label as ListingCategory,
-                    navItem.pillPH,
-                  )
-                }
-              >
-                {isMd ? navItem.label : navItem.mobileLabel || navItem.label}
-              </CategoryPill>
-            ))}
-          </div>
-          <div
-            className={cn(
-              'pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-8',
-              'bg-linear-to-l from-white/80 via-white/30 to-transparent',
-              'transition-opacity duration-300 ease-in-out',
-              showRightShadow ? 'opacity-100' : 'opacity-0',
-            )}
-          />
-        </div>
-      )}
-
-      {renderContent()}
-    </div>
+    <ListingsSectionView
+      type={type}
+      listings={listings}
+      now={now}
+      state={state}
+      defaults={urlDefaults}
+      category={category}
+      showForYou={showForYou}
+      showAddListingCard={showAddListingCard}
+      emptySection={customEmptySection?.({
+        activeTab: state.tab,
+        activeCategory: effectiveCategory,
+        activeStatus: state.status,
+        activeSortBy: state.sortBy,
+      })}
+    />
   );
-};
+}

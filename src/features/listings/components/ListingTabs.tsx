@@ -1,3 +1,5 @@
+'use client';
+
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { cn } from '@/utils/cn';
 
@@ -65,10 +67,7 @@ export const ListingTabs = ({
             key={hackathon.slug}
             isActive={activeTab === hackathon.slug}
             onClick={() =>
-              handleTabChange(
-                hackathon.slug as ListingTab,
-                `${hackathon.slug}_navpill`,
-              )
+              handleTabChange(hackathon.slug, `${hackathon.slug}_navpill`)
             }
           >
             <ExternalImage
