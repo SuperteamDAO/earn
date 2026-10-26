@@ -23,7 +23,6 @@ import { userStatsQuery } from '../queries/user-stats';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
-import { SidebarBanner } from './SidebarBanner';
 import { HomeSideBarSkeleton } from './SideBarSkeleton';
 import { SponsorBanner } from './SponsorBanner';
 import { SponsorFeatures } from './SponsorFeatures';
@@ -88,7 +87,7 @@ interface FeedSidebarContentProps {
 const FeedSidebarContent = ({ recentEarners }: FeedSidebarContentProps) => (
   <>
     <VibeCard />
-    <SidebarBanner />
+    {/* <SidebarBanner /> */}
     <LiveListings>
       <SectionHeader title="LIVE LISTINGS" href="/earn" />
     </LiveListings>
@@ -137,7 +136,7 @@ const NonSponsorSidebarContent = ({
         TVE={totals?.totalInUSD}
       />
     </div>
-    <SidebarBanner />
+    {/* <SidebarBanner /> */}
     <HowItWorks />
     {currentPath !== '/earn/bookmarks' && !!bookmarks?.length && (
       <YourBookmarks>
