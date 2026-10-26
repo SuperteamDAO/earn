@@ -75,7 +75,7 @@ cross-repo contracts.
   through `client.$transaction` inside one `query`.
 - Shared services (`src/server/runtime.ts` `shared`): AppConfig, Database,
   Sessions, Users, Credits, Queues (logicQueue), Locks, RateLimits,
-  Earncognito. Each product area merges its services in
+  Earncognito, Kyc (Sumsub), EmailCheck. Each product area merges its services in
   `src/server/areas/<area>.ts`; an area depends on the shared services and its
   own, never on another area's.
 - Config is read once, in `AppConfig`; nothing else on the server reads
