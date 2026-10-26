@@ -1,4 +1,6 @@
-import posthog from 'posthog-js';
+'use client';
+
+import { posthog } from 'posthog-js';
 
 import { cn } from '@/utils/cn';
 

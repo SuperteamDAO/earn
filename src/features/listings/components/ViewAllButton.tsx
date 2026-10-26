@@ -1,6 +1,8 @@
+'use client';
+
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 
