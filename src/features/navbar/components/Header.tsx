@@ -10,6 +10,7 @@ import { getJson } from '@/lib/fetch-json';
 import { useViewer } from '@/lib/viewer';
 
 import type { TokenAsset } from '@/features/wallet/types/TokenAsset';
+import { WALLET_CHANGED_EVENT } from '@/features/wallet/utils/wallet-messages';
 
 import { useSignInHref } from '../hooks/use-here';
 import { useShellData } from '../shell-data';
@@ -42,6 +43,13 @@ interface HeaderProps {
 // the page: it asks the chain, too slow to hold the page for.
 function useWalletBalance(enabled: boolean): number {
   const [balance, setBalance] = useState(0);
+  // Bumped when the wallet changes (a withdrawal), to load it again.
+  const [version, setVersion] = useState(0);
+  useEffect(() => {
+    const onChange = () => setVersion((value) => value + 1);
+    window.addEventListener(WALLET_CHANGED_EVENT, onChange);
+    return () => window.removeEventListener(WALLET_CHANGED_EVENT, onChange);
+  }, []);
   useEffect(() => {
     if (!enabled) return () => {};
     const controller = new AbortController();
@@ -53,7 +61,8 @@ function useWalletBalance(enabled: boolean): number {
       )
       .catch(() => undefined);
     return () => controller.abort();
-  }, [enabled]);
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- `version` asks again
+  }, [enabled, version]);
   return balance;
 }
 
@@ -106,11 +115,8 @@ export const Header = ({ snackbar }: HeaderProps = {}) => {
     const hashIndex = url.indexOf('#');
     const afterHash = hashIndex !== -1 ? url.substring(hashIndex + 1) : '';
     const [hashValue] = afterHash.split('?');
-    if (hashValue === 'wallet' && authenticated) {
-      posthog.capture('open_wallet_drawer');
-      // The wallet is its own page now (a Privy document).
-      window.location.assign('/earn/wallet/');
-    } else if (hashValue?.startsWith('dispute-submission-') && authenticated) {
+    // `#wallet` opens the wallet drawer (WalletDrawerProvider).
+    if (hashValue?.startsWith('dispute-submission-') && authenticated) {
       openCreditWithEvent();
     }
   }, [authenticated, openCreditWithEvent]);
