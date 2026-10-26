@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 
 import MdOutlineMail from '@/components/icons/MdOutlineMail';
@@ -48,9 +50,10 @@ const FooterColumn = ({
   </div>
 );
 
-export const Footer = () => {
-  const currentYear = new Date().getFullYear();
+// When this page loaded; good enough for a copyright line.
+const currentYear = new Date().getFullYear();
 
+export const Footer = () => {
   const about: FooterLink[] = [
     { text: 'Pricing', href: '#pricing' },
     { text: 'Customers', href: '#trusted-by' },

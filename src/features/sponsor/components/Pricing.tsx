@@ -1,9 +1,10 @@
-import { usePrivy } from '@privy-io/react-auth';
+'use client';
+
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { maxW } from '../utils/styles';
@@ -24,18 +25,16 @@ const PRICING_ITEMS: readonly PricingItem[] = [
   { label: 'Landing Page Developement', value: '$2,000 - $3,000' },
 ] as const;
 
-export function Pricing() {
-  const { authenticated } = usePrivy();
-  const { user } = useUser();
+function getStartedWhere(isAuthenticated: boolean, isSponsor: boolean): string {
+  if (!isAuthenticated) return '/earn/new/sponsor/';
+  if (!isSponsor) return '/earn/new/sponsor/';
+  return '/earn/dashboard/listings/?open=1';
+}
 
-  function getStartedWhere(
-    isAuthenticated: boolean,
-    isSponsor: boolean,
-  ): string {
-    if (!isAuthenticated) return '/earn/new/sponsor';
-    if (!isSponsor) return '/earn/new/sponsor';
-    return '/earn/dashboard/listings/?open=1';
-  }
+export function Pricing() {
+  const user = useViewer();
+  const authenticated = !!user;
+
   return (
     <>
       <span id="pricing" />

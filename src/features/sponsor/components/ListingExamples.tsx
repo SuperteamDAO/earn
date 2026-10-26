@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';

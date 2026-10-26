@@ -1,7 +1,8 @@
-import { usePrivy } from '@privy-io/react-auth';
+'use client';
+
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import { useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,10 @@ import { LocalImage } from '@/components/ui/local-image';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { useUser } from '@/store/user';
+import { ResumingAccount } from '@/lib/auth/resume-session';
+import { signInHref } from '@/lib/safe-next';
+import { useViewer } from '@/lib/viewer';
+import type { Viewer } from '@/server/users';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
@@ -26,7 +30,7 @@ const MobileSponsorDrawer = ({
   onDrawerClose: () => void;
   ready: boolean;
   authenticated: boolean;
-  user: ReturnType<typeof useUser>['user'];
+  user: Viewer | null;
 }) => {
   return (
     <Sheet open={isDrawerOpen} onOpenChange={onDrawerClose}>
@@ -106,15 +110,16 @@ const MobileSponsorDrawer = ({
   );
 };
 
-export const MobileNavbar = () => {
+export const MobileNavbar = ({ resuming }: { resuming: boolean }) => {
   const {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,
     onClose: onDrawerClose,
   } = useDisclosure();
 
-  const { authenticated, ready } = usePrivy();
-  const { user } = useUser();
+  const user = useViewer();
+  const authenticated = !!user;
+  const ready = !resuming;
 
   const btnRef = useRef<HTMLButtonElement>(null);
 
@@ -171,12 +176,17 @@ export const MobileNavbar = () => {
               <EarnAvatar
                 className="size-8"
                 id={user?.id}
-                avatar={user?.photo}
+                avatar={user?.photo ?? undefined}
               />
             </>
           ) : (
             <Menu className="size-6 text-slate-500" />
           )}
+        </div>
+      )}
+      {!ready && (
+        <div className="mr-2">
+          <ResumingAccount signIn={signInHref('/earn/sponsor/')} />
         </div>
       )}
       {ready && !authenticated && (

@@ -1,3 +1,5 @@
+'use client';
+
 import type { ClassNameValue } from 'cn';
 import { useState } from 'react';
 

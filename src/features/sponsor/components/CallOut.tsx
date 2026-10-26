@@ -1,24 +1,22 @@
-import { usePrivy } from '@privy-io/react-auth';
+'use client';
+
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
-export function CallOut() {
-  const { authenticated } = usePrivy();
-  const { user } = useUser();
+function getStartedWhere(isAuthenticated: boolean, isSponsor: boolean): string {
+  if (!isAuthenticated) return '/earn/new/sponsor/';
+  if (!isSponsor) return '/earn/new/sponsor/';
+  return '/earn/dashboard/listings/?open=1';
+}
 
-  function getStartedWhere(
-    isAuthenticated: boolean,
-    isSponsor: boolean,
-  ): string {
-    if (!isAuthenticated) return '/earn/new/sponsor';
-    if (!isSponsor) return '/earn/new/sponsor';
-    return '/earn/dashboard/listings/?open=1';
-  }
+export function CallOut() {
+  const user = useViewer();
+  const authenticated = !!user;
 
   return (
     <section

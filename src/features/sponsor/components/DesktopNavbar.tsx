@@ -1,25 +1,30 @@
-import { usePrivy } from '@privy-io/react-auth';
+'use client';
+
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+import { usePathname } from 'next/navigation';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useUser } from '@/store/user';
+import { ResumingAccount } from '@/lib/auth/resume-session';
+import { signInHref } from '@/lib/safe-next';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { UserMenu } from '@/features/navbar/components/UserMenu';
 
 import { NAV_LINKS } from '../utils/constants';
 
-export const DesktopNavbar = () => {
-  const { authenticated, ready } = usePrivy();
-  const { user } = useUser();
+// `resuming`: a lapsed session renews in place, where Earn showed a
+// skeleton while Privy got ready.
+export const DesktopNavbar = ({ resuming }: { resuming: boolean }) => {
+  const user = useViewer();
+  const authenticated = !!user;
+  const ready = !resuming;
 
-  const router = useRouter();
+  const pathname = usePathname() ?? '';
 
-  const isDashboardRoute = router.pathname.startsWith('/earn/dashboard');
+  const isDashboardRoute = pathname.startsWith('/earn/dashboard');
   const maxWValue = isDashboardRoute ? '' : 'max-w-7xl';
 
   return (
@@ -63,12 +68,7 @@ export const DesktopNavbar = () => {
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-4 py-2">
-          {!ready && (
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-4 w-20" />
-            </div>
-          )}
+          {!ready && <ResumingAccount signIn={signInHref(pathname)} />}
 
           <div className="flex gap-2">
             <div className="flex items-center">

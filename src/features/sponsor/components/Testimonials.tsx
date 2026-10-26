@@ -17,31 +17,31 @@ interface MetricsProps {
   className?: string;
 }
 
+const formatMetric = (key: string, value: string) => {
+  let label: string;
+  switch (key) {
+    case 'views':
+      label = 'Views';
+      break;
+    case 'submissions':
+      label = 'Submissions';
+      break;
+    case 'paidOut':
+      label = 'Paid Out';
+      break;
+    default:
+      return value;
+  }
+
+  return (
+    <span className="text-xs font-semibold whitespace-nowrap xl:text-base">
+      <span className="text-slate-600">{value}</span>{' '}
+      <span className="text-slate-500">{label}</span>
+    </span>
+  );
+};
+
 const Metrics = ({ data, className }: MetricsProps) => {
-  const formatMetric = (key: string, value: string) => {
-    let label: string;
-    switch (key) {
-      case 'views':
-        label = 'Views';
-        break;
-      case 'submissions':
-        label = 'Submissions';
-        break;
-      case 'paidOut':
-        label = 'Paid Out';
-        break;
-      default:
-        return value;
-    }
-
-    return (
-      <span className="text-xs font-semibold whitespace-nowrap xl:text-base">
-        <span className="text-slate-600">{value}</span>{' '}
-        <span className="text-slate-500">{label}</span>
-      </span>
-    );
-  };
-
   const items = Object.entries(data)
     .filter(([, value]) => value)
     .map(([key, value]) => ({ key, value }));

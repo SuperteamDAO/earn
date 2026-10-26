@@ -1,9 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
-
 import { cn } from '@/utils/cn';
-
-import { totalsQuery } from '@/features/home/queries/totals';
-import { userCountQuery } from '@/features/home/queries/user-count';
 
 import { maxW } from '../utils/styles';
 
@@ -21,10 +16,14 @@ const formatUSD = (value: number | undefined): string => {
   }).format(value);
 };
 
-export function Stats() {
-  const { data: users } = useQuery(userCountQuery);
-  const { data: totals } = useQuery(totalsQuery);
-
+// Loaded on the server (SponsorLanding); undefined when that failed.
+export function Stats({
+  users,
+  totals,
+}: {
+  users?: { totalUsers?: number };
+  totals?: { totalInUSD?: number };
+}) {
   const freelancers = formatNumber(users?.totalUsers);
   const paidOut = formatUSD(totals?.totalInUSD);
   const mav = '>50,000';

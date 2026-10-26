@@ -1,7 +1,7 @@
 import { ConfettiPoppers } from '../../icons/ConfettiPoppers';
 import { HighQualityImage } from '../HighQualityImage';
 
-const winners = [
+const [first, second, third] = [
   {
     name: 'Jake',
     avatar: '/landingsponsor/users/jake.webp',
@@ -20,7 +20,7 @@ const winners = [
     place: '3rd',
     amount: '500 UDC',
   },
-];
+] as const;
 
 function PlaceBadge({ label }: { label: string }) {
   return (
@@ -31,10 +31,6 @@ function PlaceBadge({ label }: { label: string }) {
 }
 
 export function StepThree() {
-  const first = winners[0]!;
-  const second = winners[1]!;
-  const third = winners[2]!;
-
   return (
     <div className="relative flex h-[14.75rem] w-[21.5rem] items-center justify-center overflow-visible rounded-md border border-slate-200 bg-white p-4 shadow-[0px_4px_6px_0px_rgba(226,232,240,0.41)]">
       <ConfettiPoppers className="pointer-events-none absolute inset-0 -z-0 select-none" />

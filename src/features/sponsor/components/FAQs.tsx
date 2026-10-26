@@ -82,6 +82,8 @@ export function FAQs() {
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pt-2 pb-5 text-base text-slate-700 [&_a]:text-blue-700 [&_a]:underline">
                   <div
+                    // Earn's own FAQ copy, sanitized.
+                    // oxlint-disable-next-line react/no-danger
                     dangerouslySetInnerHTML={{
                       __html: domPurify(faq.answer),
                     }}

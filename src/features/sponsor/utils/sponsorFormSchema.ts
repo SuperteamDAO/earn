@@ -110,7 +110,10 @@ export const transformFormToApiData = (data: SponsorFormValues) => {
 
 export const shouldUpdateUser = (
   formData: UserSponsorDetails,
-  currentUser: any,
+  currentUser:
+    | { readonly [K in keyof UserSponsorDetails]?: unknown }
+    | null
+    | undefined,
 ) => {
   return (
     formData.firstName !== currentUser?.firstName ||

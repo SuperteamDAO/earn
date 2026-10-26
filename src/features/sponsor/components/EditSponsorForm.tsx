@@ -1,14 +1,13 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { Info, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ImageUploader } from '@/components/shared/ImageUploader';
-import { RegionCombobox } from '@/components/shared/RegionCombobox';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -22,13 +21,10 @@ import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Tooltip } from '@/components/ui/tooltip';
-import { SponsorLayout } from '@/layouts/Sponsor';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson, RequestError } from '@/lib/fetch-json';
 
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
-import { sponsorQuery } from '@/features/sponsor-dashboard/queries/sponsor';
 import { useSlugValidation } from '@/features/sponsor/hooks/useSlugValidation';
 import { useSponsorNameValidation } from '@/features/sponsor/hooks/useSponsorNameValidation';
 import {
@@ -37,36 +33,56 @@ import {
 } from '@/features/sponsor/utils/sponsorFormSchema';
 import { IndustryList } from '@/features/talent/constants';
 
-export default function UpdateSponsor() {
+import { LocationCombobox } from './LocationCombobox';
+
+// The sponsor's profile as stored, for the form to start from.
+export interface EditableSponsor {
+  readonly name: string;
+  readonly slug: string;
+  readonly bio: string | null;
+  readonly logo: string | null;
+  readonly industry: string;
+  readonly url: string | null;
+  readonly twitter: string | null;
+  readonly entityName: string | null;
+  readonly location: string | null;
+}
+
+// /earn/dashboard/sponsor/edit/'s form for the current sponsor.
+export function EditSponsorForm({ sponsor }: { sponsor: EditableSponsor }) {
   const router = useRouter();
-  const { user, refetchUser } = useUser();
 
   const [uploadedLogoUrl, setUploadedLogoUrl] = useState<string | null>(null);
-  const [initialLogo, setInitialLogo] = useState<string | null>(null);
+  const [initialLogo, setInitialLogo] = useState<string | null>(
+    sponsor.logo || '',
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const form = useForm<SponsorBase>({
     resolver: zodResolver(sponsorBaseSchema),
     mode: 'onBlur',
     defaultValues: {
-      name: '',
-      slug: '',
-      bio: '',
-      logo: '',
-      industry: '',
-      url: '',
-      twitter: '',
-      entityName: '',
-      location: '',
+      name: sponsor.name,
+      slug: sponsor.slug,
+      bio: sponsor.bio ?? undefined,
+      logo: sponsor.logo ?? undefined,
+      industry: sponsor.industry,
+      url: sponsor.url ?? undefined,
+      twitter: sponsor.twitter
+        ? extractSocialUsername('twitter', sponsor.twitter) || undefined
+        : undefined,
+      entityName: sponsor.entityName ?? undefined,
+      location: sponsor.location ?? '',
     },
   });
+  const bio = useWatch({ control: form.control, name: 'bio' });
 
   const {
     setSponsorName,
     isInvalid: isSponsorNameInvalid,
     validationErrorMessage: sponsorNameValidationErrorMessage,
     sponsorName,
-  } = useSponsorNameValidation();
+  } = useSponsorNameValidation(sponsor.name);
 
   useEffect(() => {
     if (form.formState.touchedFields.name && sponsorName === '') {
@@ -79,6 +95,7 @@ export default function UpdateSponsor() {
         });
       }
     }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- Earn's form effects, run on these alone
   }, [
     sponsorNameValidationErrorMessage,
     isSponsorNameInvalid,
@@ -91,7 +108,7 @@ export default function UpdateSponsor() {
     isInvalid: isSlugInvalid,
     validationErrorMessage: slugValidationErrorMessage,
     slug,
-  } = useSlugValidation();
+  } = useSlugValidation(sponsor.slug);
 
   useEffect(() => {
     if (form.formState.touchedFields.slug && slug === '') {
@@ -103,46 +120,13 @@ export default function UpdateSponsor() {
         message: slugValidationErrorMessage,
       });
     }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- Earn's form effects, run on these alone
   }, [
     slugValidationErrorMessage,
     isSlugInvalid,
     form.formState.errors.slug?.message,
     slug,
   ]);
-
-  const { data: sponsorData } = useQuery(sponsorQuery(user?.currentSponsorId));
-
-  useEffect(() => {
-    if (sponsorData) {
-      const {
-        bio,
-        industry,
-        name,
-        slug,
-        logo,
-        twitter,
-        url,
-        entityName,
-        location,
-      } = sponsorData;
-      setSponsorName(name);
-      setSlug(slug);
-      setInitialLogo(logo || '');
-      form.reset({
-        name,
-        slug,
-        bio,
-        logo,
-        industry,
-        url,
-        twitter: twitter
-          ? extractSocialUsername('twitter', twitter) || undefined
-          : undefined,
-        entityName,
-        location: location ?? '',
-      });
-    }
-  }, [sponsorData, form.reset, setSlug, setSponsorName]);
 
   const hasLogo = uploadedLogoUrl || initialLogo;
   const isSubmitDisabled = useMemo(
@@ -158,19 +142,16 @@ export default function UpdateSponsor() {
 
       const finalLogo = uploadedLogoUrl || initialLogo;
 
-      await api.post('/api/sponsors/edit', {
+      await postJson('/api/sponsors/edit/', {
         ...data,
         logo: finalLogo,
       });
-      await refetchUser();
       toast.success('Sponsor profile updated successfully!');
-      router.push('/earn/dashboard/listings');
+      router.push('/earn/dashboard/listings/');
+      router.refresh();
     } catch (error) {
       console.error('Error updating sponsor:', error);
-      if (
-        axios.isAxiosError(error) &&
-        error.response?.data?.error?.code === 'P2002'
-      ) {
+      if (error instanceof RequestError && error.status === 409) {
         toast.error('Sorry! Sponsor name or username already exists.');
       } else {
         toast.error('Failed to update sponsor profile. Please try again.');
@@ -181,7 +162,7 @@ export default function UpdateSponsor() {
   };
 
   return (
-    <SponsorLayout>
+    <>
       <div className="mx-auto ml-4 flex flex-col gap-2 pr-4">
         <div className="flex flex-col gap-2">
           <p className="mb-4 text-2xl font-bold tracking-tight text-gray-900">
@@ -191,7 +172,7 @@ export default function UpdateSponsor() {
         <div className="flex w-full flex-col">
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}
               style={{ width: '100%' }}
             >
               <div className="flex w-full justify-between gap-4">
@@ -272,7 +253,7 @@ export default function UpdateSponsor() {
                     <FormItem>
                       <FormLabel isRequired>Company Location</FormLabel>
                       <FormControl>
-                        <RegionCombobox
+                        <LocationCombobox
                           className="h-9 w-full"
                           excludeSanctioned
                           placeholder="Where is your team based?"
@@ -328,9 +309,9 @@ export default function UpdateSponsor() {
                               value: value,
                             }))
                             .filter(Boolean)}
-                          onChange={(selected: any) => {
+                          onChange={(selected: { value: string }[]) => {
                             const values =
-                              selected?.map((item: any) => item.value) || [];
+                              selected?.map((item) => item.value) || [];
                             field.onChange(values.join(', '));
                           }}
                           className="mt-2"
@@ -354,7 +335,7 @@ export default function UpdateSponsor() {
                   />
                 </FormFieldWrapper>
                 <div className="text-right text-xs text-slate-400">
-                  {180 - (form.watch('bio')?.length || 0)} characters left
+                  {180 - (bio?.length || 0)} characters left
                 </div>
               </div>
               <div className="mt-8">
@@ -379,6 +360,6 @@ export default function UpdateSponsor() {
           </Form>
         </div>
       </div>
-    </SponsorLayout>
+    </>
   );
 }

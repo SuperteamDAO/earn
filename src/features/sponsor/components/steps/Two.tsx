@@ -22,18 +22,18 @@ interface ProfileProps {
   submissions: (typeof submissions)[0];
 }
 
-function Profile({ submissions }: ProfileProps) {
+function Profile({ submissions: submission }: ProfileProps) {
   return (
     <div className="flex w-full gap-4 rounded-md border border-slate-200 bg-white px-4 py-4 shadow-[0px_4px_6px_0px_rgba(226,232,240,0.41)]">
       <HighQualityImage
-        src={submissions.avatar}
-        alt={submissions.title}
+        src={submission.avatar}
+        alt={submission.title}
         className="h-12 w-12"
       />
       <div className="flex flex-col items-start gap-0">
-        <p className="text-sm font-medium">{submissions.title}</p>
+        <p className="text-sm font-medium">{submission.title}</p>
         <p className="text-sm font-medium text-slate-500">
-          {submissions.subtitle}
+          {submission.subtitle}
         </p>
       </div>
     </div>

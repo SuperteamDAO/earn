@@ -1,24 +1,25 @@
-import { usePrivy } from '@privy-io/react-auth';
+'use client';
+
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { AnimatedDots } from '@/components/shared/AnimatedDots';
 import { Button } from '@/components/ui/button';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 
 import { GridBg } from '../icons/GridBg';
 import { ShaderGradient } from '../icons/ShaderGradient';
 
+function getStartedWhere(isAuthenticated: boolean, isSponsor: boolean) {
+  if (!isAuthenticated) return '/earn/new/sponsor/';
+  if (!isSponsor) return '/earn/new/sponsor/';
+  return '/earn/dashboard/listings/?open=1';
+}
+
 export function Hero() {
-  const { authenticated } = usePrivy();
+  const user = useViewer();
+  const authenticated = !!user;
 
-  const { user } = useUser();
-
-  function getStartedWhere(isAuthenticated: boolean, isSponsor: boolean) {
-    if (!isAuthenticated) return '/earn/new/sponsor';
-    if (!isSponsor) return '/earn/new/sponsor';
-    return '/earn/dashboard/listings/?open=1';
-  }
   return (
     <div className="relative flex w-full flex-col items-center justify-start overflow-hidden pb-[1rem]">
       <div className="relative flex w-full flex-col items-center gap-8 bg-slate-50 px-8 pt-30 text-center md:pt-54">

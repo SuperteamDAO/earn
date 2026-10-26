@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -6,8 +9,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { JTTG } from '@/constants/Telegram';
 import { TERMS_OF_USE } from '@/constants/TERMS_OF_USE';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 
 export const EntityNameModal = ({
   isOpen,
@@ -20,21 +23,22 @@ export const EntityNameModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const { user, refetchUser } = useUser();
+  const user = useViewer();
+  const router = useRouter();
   if (!user?.currentSponsor?.id) return null;
 
   const setDBEntityName = async () => {
     setLoading(true);
     try {
       if (user.currentSponsor) {
-        await api.post('/api/sponsors/update-entity-name', {
+        await postJson('/api/sponsors/update-entity-name/', {
           entityName,
         });
-        await refetchUser();
+        router.refresh();
         onClose();
       }
     } catch (e) {
-      console.log('unable to set entity name ', e);
+      console.error('unable to set entity name ', e);
       setError(true);
     }
     setLoading(false);
@@ -85,7 +89,7 @@ export const EntityNameModal = ({
           </Link>
           <Button
             className="w-full"
-            onClick={setDBEntityName}
+            onClick={() => void setDBEntityName()}
             disabled={loading}
           >
             {loading ? <span>Updating...</span> : <span>Update</span>}

@@ -1,9 +1,12 @@
+import * as Effect from 'effect/Effect';
+import * as Option from 'effect/Option';
 import localFont from 'next/font/local';
-import { useState } from 'react';
 
-import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { Meta } from '@/layouts/Meta';
+import { pageMetadata } from '@/lib/metadata';
+import { canResume } from '@/lib/session';
+import { runtime } from '@/server/runtime';
+import * as SponsorLanding from '@/server/sponsor-landing';
 import { cn } from '@/utils/cn';
 import { generateOrganizationSchema } from '@/utils/json-ld';
 
@@ -15,11 +18,11 @@ import { Hero } from '@/features/sponsor/components/Hero';
 import { HowItWorks } from '@/features/sponsor/components/HowItWorks';
 import { ListingExamples } from '@/features/sponsor/components/ListingExamples';
 import { Pricing } from '@/features/sponsor/components/Pricing';
+import { SponsorVideo } from '@/features/sponsor/components/SponsorVideo';
 import { Stats } from '@/features/sponsor/components/Stats';
 import { SuperteamNetwork } from '@/features/sponsor/components/SuperteamNetwork';
 import { Testimonials } from '@/features/sponsor/components/Testimonials';
 import { TrustedTeams } from '@/features/sponsor/components/TrustedTeams';
-import { Video } from '@/features/sponsor/components/Video';
 import { WhyChooseEarn } from '@/features/sponsor/components/WhyChooseEarn';
 
 const font = localFont({
@@ -28,44 +31,43 @@ const font = localFont({
   preload: false,
 });
 
-const VideoPlayback = ({
-  setVideoPopup,
-}: {
-  setVideoPopup: (value: boolean) => void;
-}) => {
-  return (
-    <div
-      className="fixed z-50 grid h-screen w-screen place-content-center bg-[rgba(191,203,220,0.67)]"
-      onClick={() => setVideoPopup(false)}
-    >
-      <div className="relative flex w-[95vw] flex-col gap-5 overflow-hidden pt-[56.25%] lg:w-[60vw]">
-        <iframe
-          width="100%"
-          height="100%"
-          className="absolute inset-0"
-          src="https://www.youtube.com/embed/_OyQ_Bxz1xo?si=U12Uh2foC2Ma914e&autoplay=1&mute=1"
-        />
-      </div>
-    </div>
-  );
-};
+export const metadata = pageMetadata({
+  title: 'Find Top Talent for Your Crypto Projects on Superteam Earn',
+  description:
+    'Seeking top talent for your crypto project? Superteam Earn connects you with experts for Bounties, Projects, and Grants in the crypto space.',
+  canonical: 'https://superteam.fun/earn/sponsor/',
+  og: ASSET_URL + `/og/sponsor.png`,
+});
 
-const Sponsor = () => {
-  const [videoPopup, setVideoPopup] = useState<boolean>(false);
+// Earn's JsonLd, inline: App Router hoists nothing, and the script works in
+// the body as well.
+const organizationJsonLd = JSON.stringify(generateOrganizationSchema()).replace(
+  /</g,
+  '\\u003c',
+);
+
+export default async function SponsorLandingPage() {
+  const [stats, resuming] = await Promise.all([
+    // The numbers are decoration: without them the page still renders.
+    runtime.runPromise(
+      SponsorLanding.SponsorLanding.use((landing) => landing.stats).pipe(
+        Effect.option,
+        Effect.map(Option.getOrUndefined),
+      ),
+    ),
+    canResume(),
+  ]);
 
   return (
     <>
-      <Meta
-        title="Find Top Talent for Your Crypto Projects on Superteam Earn"
-        description="Seeking top talent for your crypto project? Superteam Earn connects you with experts for Bounties, Projects, and Grants in the crypto space."
-        canonical="https://superteam.fun/earn/sponsor/"
-        og={ASSET_URL + `/og/sponsor.png`}
+      <script
+        type="application/ld+json"
+        // JSON with `<` escaped, so it can't close the script.
+        // oxlint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: organizationJsonLd }}
       />
-      <JsonLd data={[generateOrganizationSchema()]} />
 
-      {videoPopup && <VideoPlayback setVideoPopup={setVideoPopup} />}
-
-      <Header />
+      <Header resuming={resuming} />
 
       <div
         className={cn(
@@ -77,10 +79,10 @@ const Sponsor = () => {
           <Hero />
           <TrustedTeams />
           <WhyChooseEarn />
-          <Video showVideo={() => setVideoPopup(true)} />
+          <SponsorVideo />
           <HowItWorks />
           <ListingExamples />
-          <Stats />
+          <Stats users={stats} totals={stats} />
           <Testimonials />
           <SuperteamNetwork />
           <Pricing />
@@ -91,6 +93,4 @@ const Sponsor = () => {
       </div>
     </>
   );
-};
-
-export default Sponsor;
+}
