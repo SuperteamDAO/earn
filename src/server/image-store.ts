@@ -54,7 +54,7 @@ const SOURCES: Record<ImageSource, { folder: string; eager: string }> = {
 
 // Cloudinary's request signature: the parameters sorted by name, joined as
 // a query string without encoding, then the secret, SHA-1'd.
-export function cloudinarySignature(
+function cloudinarySignature(
   params: Readonly<Record<string, string | number>>,
   secret: string,
 ): string {

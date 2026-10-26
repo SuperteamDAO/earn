@@ -8,8 +8,6 @@ export interface WithdrawFormData {
   recipientAddress: string;
 }
 
-export const SOL_MINT = 'So11111111111111111111111111111111111111112';
-
 const solErrorMessage = 'The Solana wallet address you entered is invalid';
 
 // What's wrong with each field, in Earn's words; empty when nothing is.

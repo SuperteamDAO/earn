@@ -11,7 +11,7 @@ import * as HomeChapters from '@/server/home-chapters';
 import { combinedRegionsFor } from '@/server/home-regions';
 
 // A listing as the list cards show it (Earn's `listingSelect`).
-export const LISTING_CARD = {
+const LISTING_CARD = {
   id: true,
   rewardAmount: true,
   deadline: true,
@@ -101,7 +101,7 @@ export type LiveGrant = Omit<GrantRow, 'GrantApplication' | '_count'> & {
 
 // Approved and completed applications: what they were granted, and how
 // many (plus those from before Earn).
-export const withApplicationTotals = ({
+const withApplicationTotals = ({
   GrantApplication,
   _count,
   ...grant

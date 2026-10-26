@@ -22,7 +22,7 @@ const start = (next: string) =>
 
 // Verifies an X account in this tab: off to X, and back to `next` (a path
 // on Earn) with `?x=verified&handle=…` or `?x=failed`.
-export async function startXVerification(next: string): Promise<void> {
+async function startXVerification(next: string): Promise<void> {
   window.location.assign(await start(next));
 }
 

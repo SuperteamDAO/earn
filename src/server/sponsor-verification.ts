@@ -59,7 +59,7 @@ const VerificationFields = Schema.Struct({
 
 export type VerificationBody = Readonly<Record<string, unknown>>;
 
-export function verificationFields(body: VerificationBody) {
+function verificationFields(body: VerificationBody) {
   const telegram =
     typeof body.telegram === 'string'
       ? extractSocialUsername('telegram', body.telegram)

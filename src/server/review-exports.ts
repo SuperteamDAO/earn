@@ -30,7 +30,7 @@ export class ExportFailed extends Schema.TaggedError<ExportFailed>()(
   }
 }
 
-export type ExportRow = Readonly<Record<string, string | number | null>>;
+type ExportRow = Readonly<Record<string, string | number | null>>;
 
 type ExportErrors =
   | ExportFailed

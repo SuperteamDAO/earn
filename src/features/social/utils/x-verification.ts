@@ -14,7 +14,7 @@ export const INVALID_X_STATUS_LINK_MESSAGE =
  * @param handle - Raw handle that may include @
  * @returns normalized handle (lowercase, no @)
  */
-export function normalizeXHandle(handle: string): string {
+function normalizeXHandle(handle: string): string {
   if (!handle || typeof handle !== 'string') {
     return '';
   }

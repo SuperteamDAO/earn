@@ -11,9 +11,7 @@ import * as ImageStore from '@/server/image-store';
 import * as RateLimits from '@/server/rate-limits';
 import { isSafeRemoteUrl, safeRemoteFetch } from '@/utils/safeRemoteFetch';
 
-export type OgMetadata = NonNullable<
-  Awaited<ReturnType<typeof unfurl>>['open_graph']
->;
+type OgMetadata = NonNullable<Awaited<ReturnType<typeof unfurl>>['open_graph']>;
 // 'error' is how Earn stores and answers "no preview".
 export type OgMetadataResult = OgMetadata | 'error';
 

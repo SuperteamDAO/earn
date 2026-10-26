@@ -56,7 +56,7 @@ function findChapterByLocation(
   );
 }
 
-export function findChapterByRegionInput(
+function findChapterByRegionInput(
   chapters: Chapters,
   region: string,
 ): ChapterRegion | null {
@@ -73,7 +73,7 @@ export function findChapterByRegionInput(
   );
 }
 
-export function regionsForChapterPage(
+function regionsForChapterPage(
   chapters: Chapters,
   chapterRegion: string,
 ): string[] {
@@ -93,7 +93,7 @@ export function regionsForChapterPage(
   return Array.from(new Set(regions));
 }
 
-export function regionsForMultiCountryRegionPage(
+function regionsForMultiCountryRegionPage(
   chapters: Chapters,
   regionName: string,
 ): string[] {
@@ -114,7 +114,7 @@ export function regionsForMultiCountryRegionPage(
   return Array.from(new Set(regions));
 }
 
-export function regionsForCountryPage(
+function regionsForCountryPage(
   chapters: Chapters,
   countryName: string,
 ): string[] {

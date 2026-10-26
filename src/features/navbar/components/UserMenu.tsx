@@ -47,7 +47,7 @@ const markSeen = () => {
   for (const listener of seenListeners) listener();
 };
 
-export function useSeenTelegramAlerts() {
+function useSeenTelegramAlerts() {
   const seen = useSyncExternalStore(
     subscribeSeen,
     () => localStorage.getItem(TELEGRAM_SEEN) === 'true',

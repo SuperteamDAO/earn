@@ -3,8 +3,6 @@ import type { SponsorType } from '@/interface/sponsor';
 import type { User } from '@/interface/user';
 import type { BountyType, status } from '@/prisma/enums';
 
-import type { ListingContext } from '../hooks/useListings';
-
 export interface Listing {
   id?: string;
   title?: string;
@@ -144,13 +142,4 @@ export interface References {
 
 export interface Rewards {
   [rank: number]: number;
-}
-
-export interface ListingTabsProps {
-  type: ListingContext;
-  potentialSession?: boolean;
-  region?: string;
-  sponsor?: string;
-  category?: string;
-  defaultTab?: 'bounties';
 }

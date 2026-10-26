@@ -24,7 +24,7 @@ import {
 } from '@/features/listings/utils/submissionRules';
 
 // Why Earn refuses a submission, in the order it checks.
-export class SubmissionRefused extends Schema.TaggedError<SubmissionRefused>()(
+class SubmissionRefused extends Schema.TaggedError<SubmissionRefused>()(
   'SubmissionRefused',
   {
     reason: Schema.Literals([
@@ -49,7 +49,7 @@ export class SubmissionRefused extends Schema.TaggedError<SubmissionRefused>()(
   }
 }
 
-export class InvalidSubmission extends Schema.TaggedError<InvalidSubmission>()(
+class InvalidSubmission extends Schema.TaggedError<InvalidSubmission>()(
   'InvalidSubmission',
   {
     issues: Schema.Array(

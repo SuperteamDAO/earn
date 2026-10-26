@@ -177,7 +177,7 @@ const markdown = (html: string | null) => turndown.turndown(html ?? '');
 
 // A deadline Airtable can read, or ten days after applying (Earn's fallback
 // for the free text it once took).
-export function deadlineOf(timeline: string, createdAt: Date): string {
+function deadlineOf(timeline: string, createdAt: Date): string {
   if (!Number.isNaN(new Date(timeline).getTime())) return timeline;
   const fallback = new Date(createdAt);
   fallback.setDate(fallback.getDate() + 10);
@@ -191,7 +191,7 @@ const STATUS: Record<string, string> = {
 };
 
 // Earn's convertGrantApplicationToAirtable.
-export function applicationFields(
+function applicationFields(
   application: AirtableApplication,
   region: string | null,
 ) {

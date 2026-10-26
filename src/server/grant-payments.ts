@@ -90,7 +90,7 @@ const keyOf = (key: unknown) =>
       : String(key);
 
 // Earn's payment check on a parsed transaction.
-export function checkTransfer(
+function checkTransfer(
   tx: unknown,
   {
     recipient,

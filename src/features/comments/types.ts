@@ -1,7 +1,7 @@
 import type { CommentRefType, CommentType } from '@/prisma/enums';
 
 // A commenter as comments show them (Earn's author select).
-export interface CommentAuthor {
+interface CommentAuthor {
   readonly id?: string;
   readonly firstName: string | null;
   readonly lastName: string | null;

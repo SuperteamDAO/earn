@@ -11,7 +11,7 @@ import * as AppConfig from '@/server/app-config';
 
 // The emails earn-emails sends, by its names for them. It expands each into
 // the concrete emails, so a job's shape is a contract with that repo.
-export type EmailType =
+type EmailType =
   | 'addPayment'
   | 'announceWinners'
   | 'application'

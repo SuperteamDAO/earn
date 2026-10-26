@@ -1,4 +1,4 @@
-export const ELIGIBLE_PEOPLE_TYPES = ['member', 'core'] as const;
+const ELIGIBLE_PEOPLE_TYPES = ['member', 'core'] as const;
 
 const ELIGIBLE_PEOPLE_TYPE_SET = new Set<string>(ELIGIBLE_PEOPLE_TYPES);
 

@@ -1,4 +1,4 @@
-export const GRANT_IMAGE_SOURCES = [
+const GRANT_IMAGE_SOURCES = [
   'grant-event-pictures',
   'grant-event-receipts',
   'grant-agentic-receipts',

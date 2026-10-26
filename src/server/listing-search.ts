@@ -131,12 +131,12 @@ export function parseSearchParams(
 }
 
 // One SQL statement and its bound values, in order.
-export interface Statement {
+interface Statement {
   readonly sql: string;
   readonly values: ReadonlyArray<string | number>;
 }
 
-export interface SearchStatements {
+interface SearchStatements {
   readonly hackathonLookup: Statement;
   readonly bountiesCount: (hackathonId: string | null) => Statement;
   readonly bounties: (hackathonId: string | null, limit: number) => Statement;
@@ -149,7 +149,7 @@ export interface SearchStatements {
 // Earn's queries, as pages/api/search/[query].ts built them. One change:
 // its grants count asked for `type IN ('bounty', 'hackathon')`, a column
 // Grants doesn't have, so every search with grants failed; it's left out.
-export function searchStatements(
+function searchStatements(
   params: SearchParams,
   userRegion: ReadonlyArray<string> | undefined,
 ): SearchStatements {
@@ -417,7 +417,7 @@ function sponsorOf(value: unknown): CardSponsor {
 
 const COMPENSATION = ['fixed', 'range', 'variable'] as const;
 
-export function listingResult(row: Row): ListingResult {
+function listingResult(row: Row): ListingResult {
   const compensation = COMPENSATION.find(
     (type) => type === row.compensationType,
   );
@@ -441,7 +441,7 @@ export function listingResult(row: Row): ListingResult {
   };
 }
 
-export function grantResult(row: Row): GrantsSearch {
+function grantResult(row: Row): GrantsSearch {
   const approvedApplications = num(row.approvedApplications);
   return {
     id: str(row.id),

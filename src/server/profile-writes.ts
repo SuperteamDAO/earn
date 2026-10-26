@@ -21,7 +21,7 @@ import {
   socialErrors,
 } from '@/features/talent/utils/profile-input';
 
-export class ProfileUserMissing extends Schema.TaggedError<ProfileUserMissing>()(
+class ProfileUserMissing extends Schema.TaggedError<ProfileUserMissing>()(
   'ProfileUserMissing',
   {},
 ) {

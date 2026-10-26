@@ -23,7 +23,7 @@ import {
 import type { ListingCardData } from '@/features/home/types/cards';
 
 // Earn's list parameters (features/listings/constants/schema.ts).
-export const CATEGORIES = [
+const CATEGORIES = [
   'For You',
   'All',
   'Content',
@@ -31,9 +31,9 @@ export const CATEGORIES = [
   'Development',
   'Other',
 ] as const;
-export const STATUSES = ['open', 'review', 'completed', 'all'] as const;
-export const SORTS = ['Date', 'Prize', 'Submissions', 'Status'] as const;
-export const CONTEXTS = [
+const STATUSES = ['open', 'review', 'completed', 'all'] as const;
+const SORTS = ['Date', 'Prize', 'Submissions', 'Status'] as const;
+const CONTEXTS = [
   'home',
   'all',
   'region',
@@ -124,7 +124,7 @@ export interface ListViewer {
 }
 
 // What a list card shows (Earn's listingSelect).
-export const LISTING_CARD = {
+const LISTING_CARD = {
   id: true,
   rewardAmount: true,
   deadline: true,

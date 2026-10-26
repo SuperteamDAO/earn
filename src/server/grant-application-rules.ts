@@ -46,7 +46,7 @@ export const ApplicationBody = Schema.Struct({
 });
 export type ApplicationBody = typeof ApplicationBody.Type;
 
-export interface GrantQuestionRule {
+interface GrantQuestionRule {
   readonly question: string;
   readonly optional?: boolean;
   readonly type?: 'text' | 'link';

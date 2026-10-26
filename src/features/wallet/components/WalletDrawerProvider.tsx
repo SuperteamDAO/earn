@@ -1,13 +1,7 @@
 'use client';
 
 import { posthog } from 'posthog-js';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 
 import { useSignIn } from '@/lib/auth/sign-in-dialog';
 import { useViewer } from '@/lib/viewer';
@@ -17,9 +11,6 @@ import { WalletDrawer } from './WalletDrawer';
 const WALLET_PATH = '/earn/wallet/';
 
 const WalletDrawerContext = createContext<() => void>(() => {});
-
-// Opens Earn's wallet drawer over the current page.
-export const useWalletDrawer = () => useContext(WalletDrawerContext);
 
 const isWalletUrl = (url: URL) =>
   url.origin === window.location.origin &&

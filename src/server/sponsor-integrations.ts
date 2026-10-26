@@ -39,7 +39,7 @@ export class SponsorIntegrations extends Context.Service<
 
 // Earn's extractPublicIdFromUrl: the path after `/upload/`, past any
 // transformations and the version, without the extension.
-export function cloudinaryPublicId(url: string): string | null {
+function cloudinaryPublicId(url: string): string | null {
   if (!url.includes('res.cloudinary.com')) return null;
   const afterUpload = url.split('/upload/')[1];
   if (!afterUpload) return null;

@@ -3,6 +3,9 @@
   // Named in tsconfig, but under TypeScript 7 the plugin comes from @effect/tsgo.
   // @prisma/client is imported by the generated client, which is gitignored
   // and so unseen by knip.
+  // Wired by config, not imports: the service worker that unregisters
+  // next-pwa's old one, and next.config's alias for walletconnect's logger.
+  "entry": ["public/sw.js", "src/shims/walletconnect-logger.ts"],
   "ignoreDependencies": ["@effect/language-service", "@prisma/client"],
   // shadcn components are vendored whole (Root, Content, Item…) so the CLI can
   // update them; unused parts of a used component are fine. Unused component

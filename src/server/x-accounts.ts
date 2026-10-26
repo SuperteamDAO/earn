@@ -35,7 +35,7 @@ export interface Authorization {
 export const X_CALLBACK_PATH = '/api/auth/callback/twitter';
 
 // A handle as Earn stores it in `linkedTwitter`: no @, lower case.
-export const normalizeXHandle = (handle: string) =>
+const normalizeXHandle = (handle: string) =>
   handle.replace(/^@/, '').toLowerCase().trim();
 
 // Proves someone owns an X account by having them sign in to it (OAuth 2.0

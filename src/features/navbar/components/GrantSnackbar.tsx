@@ -9,7 +9,7 @@ type GrantSnackbarType = {
   isPublished: boolean;
 };
 
-export const grantSnackbarAtom = atom<GrantSnackbarType | null>(null);
+const grantSnackbarAtom = atom<GrantSnackbarType | null>(null);
 
 export const GrantSnackbar = () => {
   const [grantSnackbar] = useAtom(grantSnackbarAtom);

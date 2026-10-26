@@ -18,7 +18,7 @@ import {
 import type { GrantCardData } from '@/features/home/types/cards';
 
 // Earn's grant list parameters (features/grants/constants/schema.ts).
-export const GRANT_CATEGORIES = [
+const GRANT_CATEGORIES = [
   'All',
   'Content',
   'Design',

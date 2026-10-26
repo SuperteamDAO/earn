@@ -43,7 +43,7 @@ const isQuestion = (value: unknown): value is Question =>
   typeof value.question === 'string';
 
 // The sponsor's questions, as Earn stores them (a JSON column).
-export const questionsOf = (eligibility: unknown): Array<Question> =>
+const questionsOf = (eligibility: unknown): Array<Question> =>
   Array.isArray(eligibility) ? eligibility.filter(isQuestion) : [];
 
 // Earn's submission rules (submissionFormSchema), the same on the form and

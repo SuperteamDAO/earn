@@ -10,7 +10,7 @@ import * as Schema from 'effect/Schema';
 import * as AppConfig from '@/server/app-config';
 
 // A perk as superteam.fun's /member-perks/ shows it: Airtable's fields.
-export interface Perk {
+interface Perk {
   readonly fields: {
     readonly Name: string;
     readonly Notes?: string;

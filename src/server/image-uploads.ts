@@ -22,7 +22,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_FILE_SIZE_LARGE = 15 * 1024 * 1024;
 
 // Earn's per-user signing limit, counted per server process as Earn did.
-export const RATE_LIMIT = { maxRequests: 20, windowMs: 60 * 1000 } as const;
+const RATE_LIMIT = { maxRequests: 20, windowMs: 60 * 1000 } as const;
 
 const PositiveInt = Schema.Finite.check(
   Schema.makeFilter(

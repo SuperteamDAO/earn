@@ -10,7 +10,7 @@ import * as Schema from 'effect/Schema';
 import * as AppConfig from '@/server/app-config';
 import * as Database from '@/server/database';
 
-export interface TweetMetrics {
+interface TweetMetrics {
   readonly views: number;
   readonly likes: number;
   readonly retweets: number;
@@ -73,9 +73,7 @@ const Tweets = Schema.Struct({
 });
 
 // X's numbers as the review table shows them: quotes count as reposts.
-export function toTweetMetrics(
-  metrics: PublicMetrics | undefined,
-): TweetMetrics {
+function toTweetMetrics(metrics: PublicMetrics | undefined): TweetMetrics {
   if (!metrics) {
     return { views: 0, likes: 0, retweets: 0, comments: 0, isAvailable: false };
   }

@@ -20,7 +20,7 @@ export interface ReviewPayment {
   readonly tranche: number;
 }
 
-export interface ReviewUser {
+interface ReviewUser {
   readonly id: string;
   readonly firstName: string | null;
   readonly lastName: string | null;
@@ -89,7 +89,7 @@ export function rewardsOf(value: unknown): Record<string, number> {
 }
 
 // Ranked places, without the bonus (Earn's cleanRewards(rewards, true)).
-export const podiumPositions = (rewards: Rewards) =>
+const podiumPositions = (rewards: Rewards) =>
   Object.keys(rewards)
     .map(Number)
     .filter((key) => !Number.isNaN(key) && key !== BONUS_POSITION);
@@ -194,21 +194,6 @@ export function matchesReview(
     if (submission.isWinner || submission.status === 'Rejected') return false;
     return submission.label === filter;
   });
-}
-
-// Whether winners may be announced: every ranked place given, and every
-// bonus spot too unless nobody is left to give one to.
-export function canAnnounce(
-  remainings: Remainings,
-  submissions: ReadonlyArray<Pick<ReviewSubmission, 'isWinner'>>,
-): boolean {
-  return (
-    remainings.podiums === 0 &&
-    !(
-      remainings.bonus > 0 &&
-      submissions.some((submission) => !submission.isWinner)
-    )
-  );
 }
 
 // A payment link or bare signature, as the signature (Earn's

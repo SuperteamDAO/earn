@@ -14,7 +14,7 @@ import { getRankLabels } from '@/utils/rank';
 // payout (Earn's ANNOUNCEMENT_CUTOFF_DATE).
 export const KYC_PAYOUT_CUTOFF = new Date('2025-08-06');
 
-export class AirtableError extends Schema.TaggedError<AirtableError>()(
+class AirtableError extends Schema.TaggedError<AirtableError>()(
   'AirtableError',
   { operation: Schema.String, cause: Schema.Defect() },
 ) {
@@ -128,7 +128,7 @@ const filled = (value: string | null | undefined): value is string =>
 
 // Why a winning submission can't be sent for payment yet, or what to send
 // (Earn's createPayment checks, then addPaymentInfoToAirtable's schema).
-export function payable(row: {
+function payable(row: {
   readonly id: string;
   readonly winnerPosition: number | null;
   readonly listing: {

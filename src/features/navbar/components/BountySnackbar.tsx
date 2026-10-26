@@ -23,7 +23,7 @@ type BountySnackbarType = {
   slug: string | undefined;
 };
 
-export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
+const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
 
 export const BountySnackbar = () => {
   const navigate = useShellNavigate();

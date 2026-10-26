@@ -103,7 +103,7 @@ function imageIdsOf(doc: unknown): Array<number> {
 
 // The document Sumsub accepted: matched by its accepted images, then by the
 // step's type or country, then the first, as Earn picks it.
-export function acceptedDocument(info: Json, identity: unknown): Json | null {
+function acceptedDocument(info: Json, identity: unknown): Json | null {
   const docs = Array.isArray(info.idDocs) ? info.idDocs.filter(isRecord) : [];
   const accepted: Array<number> = [];
   if (isRecord(identity)) {

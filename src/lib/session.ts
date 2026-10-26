@@ -36,17 +36,6 @@ export const canResume = cache(
     !(await getSession()) && (await hasPrivySession()),
 );
 
-// The email Privy verified for them, from Privy's signed identity token.
-export async function getSignInEmail(userId: string): Promise<string | null> {
-  const token = (await cookies()).get('privy-id-token')?.value;
-  if (!token) return null;
-  return runtime.runPromise(
-    Sessions.Sessions.use((sessions) =>
-      sessions.signInEmail(token, userId),
-    ).pipe(Effect.map(Option.getOrNull)),
-  );
-}
-
 // The signed-in person's Earn account, looked up once per request however
 // many components ask. null when signed out, without an Earn account, or
 // when the lookup fails.

@@ -109,7 +109,7 @@ export class HomeStats extends Context.Service<
 
 // Earn rounds its public counts up to the next ten; 289 accounts were
 // created in error and don't count.
-export const roundUpToTen = (value: number) => Math.ceil(value / 10) * 10;
+const roundUpToTen = (value: number) => Math.ceil(value / 10) * 10;
 const ERROR_ACCOUNTS = 289;
 
 const APPROVED = {

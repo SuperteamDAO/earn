@@ -79,11 +79,6 @@ export interface Payment {
   readonly txId: string;
 }
 
-export interface ApprovedGrantee {
-  readonly id: string;
-  readonly [key: string]: unknown;
-}
-
 type Errors = ReviewRefused | Database.DatabaseError;
 
 // The sponsor's side of a grant: its applications, tranches, payments and

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import IoIosStar from '@/components/icons/IoIosStar';
 import MdModeComment from '@/components/icons/MdModeComment';
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
-import { Skeleton } from '@/components/ui/skeleton';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { cn } from '@/utils/cn';
@@ -17,30 +16,6 @@ import type { ListingCardData } from '@/features/home/types/cards';
 
 import { getListingIcon } from '../utils/getListingIcon';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
-
-export const ListingCardSkeleton = () => {
-  return (
-    <div className="rounded-md px-1 py-4 sm:px-4">
-      <div className="flex w-full items-center justify-between">
-        <div className="flex h-14 w-full sm:h-16">
-          <Skeleton className="mr-3 h-14 w-[4.2rem] rounded-md sm:mr-5 sm:h-16 sm:w-[4.6rem]" />
-          <div className="flex w-full flex-col justify-between">
-            <Skeleton className="h-3.5 w-[60%]" />
-            <Skeleton className="h-3 w-[130px]" />
-            <div className="flex gap-2">
-              <Skeleton className="h-3 w-[56px]" />
-              <Skeleton className="h-3 w-[48px]" />
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Skeleton className="h-4 w-4 rounded-full" />
-          <Skeleton className="h-[14px] w-[54px]" />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // `now`: the server's clock when the list was loaded, so the server and
 // the browser render the same deadline text.

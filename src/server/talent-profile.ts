@@ -72,7 +72,7 @@ interface GrantStats {
   grantWinnings: number | null;
 }
 
-export const hashStringToInt = (input: string): number => {
+const hashStringToInt = (input: string): number => {
   let hash = 0;
   for (let i = 0; i < input.length; i++) {
     hash = (hash << 5) - hash + input.charCodeAt(i);

@@ -8,7 +8,7 @@ import { type ComponentProps, useCallback } from 'react';
 // shell on them must leave by full page loads, never client-side.
 const PRIVY_PAGES = ['/earn/signin', '/earn/wallet'];
 
-export function useOnPrivyPage(): boolean {
+function useOnPrivyPage(): boolean {
   const pathname = usePathname() ?? '';
   return PRIVY_PAGES.some(
     (page) => pathname === page || pathname.startsWith(`${page}/`),

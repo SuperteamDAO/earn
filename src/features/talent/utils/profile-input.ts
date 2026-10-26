@@ -62,7 +62,7 @@ export const ProfileBody = Schema.Struct({
 });
 export type ProfileBody = typeof ProfileBody.Type;
 
-export type SkillsValue = Array<{
+type SkillsValue = Array<{
   skills: ParentSkills;
   subskills: SubSkillsType[];
 }>;

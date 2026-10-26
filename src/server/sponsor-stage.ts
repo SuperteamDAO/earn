@@ -28,7 +28,7 @@ export interface SponsorStageData {
 
 const PAYMENT_REMINDER_MAX_DAYS = 7;
 
-export const STAGE_LISTING = {
+const STAGE_LISTING = {
   id: true,
   title: true,
   slug: true,
@@ -204,7 +204,7 @@ const Rewards = Schema.Record(Schema.String, Schema.Finite);
 const iso = (date: Date | null) => (date ? date.toISOString() : undefined);
 
 // As Earn's route sent it: dates as ISO strings, absent fields undefined.
-export function stageListingData(listing: StageListing): Listing {
+function stageListingData(listing: StageListing): Listing {
   return {
     id: listing.id,
     title: listing.title,

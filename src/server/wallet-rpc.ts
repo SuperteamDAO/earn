@@ -16,7 +16,7 @@ import * as Schema from 'effect/Schema';
 
 import * as AppConfig from '@/server/app-config';
 
-export class WalletRpcError extends Schema.TaggedError<WalletRpcError>()(
+class WalletRpcError extends Schema.TaggedError<WalletRpcError>()(
   'WalletRpcError',
   { operation: Schema.String, cause: Schema.Defect() },
 ) {
@@ -26,7 +26,7 @@ export class WalletRpcError extends Schema.TaggedError<WalletRpcError>()(
 }
 
 // No RPC host configured: the wallet can't be read at all.
-export class WalletRpcUnavailable extends Schema.TaggedError<WalletRpcUnavailable>()(
+class WalletRpcUnavailable extends Schema.TaggedError<WalletRpcUnavailable>()(
   'WalletRpcUnavailable',
   {},
 ) {
@@ -67,14 +67,14 @@ export interface ParsedTransaction {
   readonly instructions: ReadonlyArray<ParsedInstruction>;
 }
 
-export interface TokenBalance {
+interface TokenBalance {
   readonly accountIndex: number;
   readonly mint: string;
   readonly owner: string | null;
   readonly uiAmountString: string | null;
 }
 
-export interface ParsedInstruction {
+interface ParsedInstruction {
   readonly program: string | null;
   readonly type: string | null;
   readonly source: string | null;

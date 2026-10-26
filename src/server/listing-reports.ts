@@ -12,7 +12,7 @@ import * as RateLimits from '@/server/rate-limits';
 
 // What the report form sends (Earn's reportListingSchema). The reporter's
 // email is the account's, whatever the form says.
-export const ReportPayload = Schema.Struct({
+const ReportPayload = Schema.Struct({
   listingTitle: Schema.NonEmptyString,
   listingUrl: Schema.String.check(
     Schema.makeFilter(

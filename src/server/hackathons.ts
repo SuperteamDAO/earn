@@ -28,7 +28,7 @@ export class HackathonNotFound extends Schema.TaggedError<HackathonNotFound>()(
 }
 
 // The /api/hackathon list's parameters (Earn's HackathonQueryParamsSchema).
-export const HACKATHON_NAMES = [
+const HACKATHON_NAMES = [
   'Mobius',
   'Redacted',
   'Breakout',
@@ -83,7 +83,7 @@ export interface PublicStats {
   readonly announceDate: string;
 }
 
-export const LISTING_CARD = {
+const LISTING_CARD = {
   id: true,
   rewardAmount: true,
   deadline: true,

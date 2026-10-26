@@ -16,7 +16,7 @@ import { getAllRegionSlugs } from '@/features/listings/utils/region';
 type Entry = MetadataRoute.Sitemap[number];
 
 // One sitemap holds at most this many URLs.
-export const MAX_URLS = 50000;
+const MAX_URLS = 50000;
 
 // The sections, in the order their sitemaps are numbered.
 const SECTIONS = [
