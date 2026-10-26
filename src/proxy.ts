@@ -126,6 +126,9 @@ export function proxy(request: NextRequest) {
   // read `x-nonce` to hand it to Privy.
   const headers = new Headers(request.headers);
   headers.set('x-nonce', nonce);
+  // Server components can't see their own URL; sign-in redirects read it
+  // here (src/lib/request-path.ts). Set by the proxy, so never the client's.
+  headers.set('x-earn-path', pathname + request.nextUrl.search);
   headers.set('content-security-policy', csp);
 
   const response = NextResponse.next({ request: { headers } });

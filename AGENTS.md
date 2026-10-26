@@ -41,7 +41,7 @@ cross-repo contracts.
   `/earn/wallet/`); a lint rule enforces it. Links between
   public and Privy pages are plain `<a>` (full page loads), never
   `next/link`: each side has its own CSP (`src/proxy.ts`), and a CSP belongs
-  to a document. Signed-out visitors go to `signInHref(next)`
+  to a document. Signed-out visitors go to `signInHref(next)` (a server component gets its own URL from `requestPath()`, `src/lib/request-path.ts`)
   (`src/lib/safe-next.ts`); `AuthWrapper` does it for buttons.
 - KYC (Sumsub) pages are their own documents too: `/earn/kyc/…` and
   `/earn/grants/[slug]/kyc/`.

@@ -5,6 +5,7 @@ import { type ReactNode, Suspense } from 'react';
 import { Default } from '@/layouts/Default';
 import { ResumingPage } from '@/lib/auth/resume-session';
 import { pageMetadata } from '@/lib/metadata';
+import { requestPath } from '@/lib/request-path';
 import { signInHref } from '@/lib/safe-next';
 import { canResume, getSession, getViewer } from '@/lib/session';
 import { runtime } from '@/server/runtime';
@@ -38,6 +39,7 @@ export async function SponsorLayout({
   if (!viewer) {
     if (await getSession()) redirect('/earn/');
     const resume = await canResume();
+    here ??= (await requestPath()) ?? undefined;
     if (here) {
       if (resume) {
         return (
