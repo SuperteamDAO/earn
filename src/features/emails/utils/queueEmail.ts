@@ -28,7 +28,6 @@ type EmailType =
   | 'nonSTWinners'
   | 'commentReply'
   | 'commentTag'
-  | 'scoutInvite'
   | 'spamCredit'
   | 'telegramNewListing';
 

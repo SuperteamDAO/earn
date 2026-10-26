@@ -1,10 +1,9 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { atom, useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -17,8 +16,6 @@ import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { type SubmissionLabels } from '@/prisma/enums';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
-import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
@@ -27,7 +24,6 @@ import {
   selectedSubmissionIdsAtom,
 } from '@/features/sponsor-dashboard/atoms';
 import { PublishResults } from '@/features/sponsor-dashboard/components/PublishResults';
-import { ScoutTable } from '@/features/sponsor-dashboard/components/Scouts/ScoutTable';
 import { MultiActionModal } from '@/features/sponsor-dashboard/components/Submissions/Modals/MultiActionModal';
 import { Survey } from '@/features/sponsor-dashboard/components/Submissions/Modals/Survey';
 import { PayoutSection } from '@/features/sponsor-dashboard/components/Submissions/PayoutSection';
@@ -37,9 +33,7 @@ import { SubmissionPanel } from '@/features/sponsor-dashboard/components/Submiss
 import { SubmissionsPageSkeleton } from '@/features/sponsor-dashboard/components/Submissions/SubmissionsPageSkeleton';
 import { useAutoSwitchSponsor } from '@/features/sponsor-dashboard/hooks/use-auto-switch-sponsor';
 import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
-import { scoutsQuery } from '@/features/sponsor-dashboard/queries/scouts';
 import { submissionsQuery } from '@/features/sponsor-dashboard/queries/submissions';
-import { type ScoutRowType } from '@/features/sponsor-dashboard/types';
 
 interface Props {
   slug: string;
@@ -70,15 +64,12 @@ export default function BountySubmissions({ slug }: Props) {
 
   const searchParams = useSearchParams();
 
-  const queryClient = useQueryClient();
-
   const [selectedSubmissionIds, setSelectedSubmissionIds] = useAtom(
     selectedSubmissionIdsAtom,
   );
 
   const getActiveTab = () => {
     const tabParam = searchParams?.get('tab');
-    if (tabParam === 'scout') return 'scout';
     if (tabParam === 'payments') return 'payments';
     return 'submissions';
   };
@@ -243,18 +234,6 @@ export default function BountySubmissions({ slug }: Props) {
     [bounty, selectedSubmissionIds, remainings],
   );
 
-  const { data: scouts } = useQuery({
-    ...scoutsQuery({
-      bountyId: bounty?.id!,
-    }),
-    enabled: !!(
-      !!bounty?.id &&
-      bounty.isPublished &&
-      !bounty.isWinnersAnnounced &&
-      bounty.sponsorId === user?.currentSponsorId
-    ),
-  });
-
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const filteredSubmissions = useMemo(() => {
     if (!submissions) return [];
@@ -353,10 +332,6 @@ export default function BountySubmissions({ slug }: Props) {
   }, [bounty, submissions, user?.currentSponsorId, router, isSwitchingSponsor]);
 
   useEffect(() => {
-    if (searchParams?.has('scout')) posthog.capture('scout tab_scout');
-  }, []);
-
-  useEffect(() => {
     setIsToggledAll(isAllCurrentToggled());
   }, [selectedSubmissionIds, filteredSubmissions]);
 
@@ -388,8 +363,6 @@ export default function BountySubmissions({ slug }: Props) {
 
   const totalWinners = submissions?.filter((sub) => sub.isWinner).length;
   const totalPaymentsMade = submissions?.filter((sub) => sub.isPaid).length;
-
-  const isExpired = dayjs(bounty?.deadline).isBefore(dayjs());
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -459,16 +432,6 @@ export default function BountySubmissions({ slug }: Props) {
                       {submissions?.length}
                     </div>
                   </TabsTrigger>
-                  {!bounty?.isWinnersAnnounced && !isExpired && (
-                    <TabsTrigger
-                      value="scout"
-                      className={cn('ph-no-capture')}
-                      onClick={() => posthog.capture('scout tab_scout')}
-                    >
-                      Scout Talent
-                      <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
-                    </TabsTrigger>
-                  )}
                   {bounty?.isWinnersAnnounced && !bounty?.isFndnPaying && (
                     <TabsTrigger value="payments">Payments</TabsTrigger>
                   )}
@@ -540,31 +503,6 @@ export default function BountySubmissions({ slug }: Props) {
               )}
             </TabsContent>
 
-            {bounty &&
-              bounty.id &&
-              bounty.isPublished &&
-              !bounty.isWinnersAnnounced &&
-              !isExpired && (
-                <TabsContent value="scout" className="px-0">
-                  <ScoutTable
-                    bountyId={bounty.id}
-                    scouts={scouts || []}
-                    setInvited={(userId: string) => {
-                      queryClient.setQueryData(
-                        ['scouts', bounty.id],
-                        (oldData: ScoutRowType[] | undefined) => {
-                          if (!oldData) return oldData;
-                          return oldData.map((scout) =>
-                            scout.userId === userId
-                              ? { ...scout, invited: true }
-                              : scout,
-                          );
-                        },
-                      );
-                    }}
-                  />
-                </TabsContent>
-              )}
             <TabsContent value="payments">
               {submissions && bounty && (
                 <PayoutSection submissions={submissions} bounty={bounty} />

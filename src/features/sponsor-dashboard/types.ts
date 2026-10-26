@@ -4,19 +4,6 @@ import { type PrismaUserWithoutKYC } from '@/interface/user';
 import { type GrantApplicationModel } from '@/prisma/models/GrantApplication';
 import { type GrantTrancheModel } from '@/prisma/models/GrantTranche';
 
-export type ScoutRowType = {
-  id: string;
-  name: string;
-  pfp: string | null;
-  username: string | null;
-  dollarsEarned: number;
-  score: number;
-  skills: string[];
-  recommended: boolean;
-  invited: boolean;
-  userId: string;
-};
-
 type UserWithChapter = PrismaUserWithoutKYC & {
   peopleId?: string | null;
   people?: {

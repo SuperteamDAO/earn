@@ -3,20 +3,16 @@ import { useSetAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SponsorLayout } from '@/layouts/Sponsor';
 import { type SubmissionLabels } from '@/prisma/enums';
 import { useUser } from '@/store/user';
-import { cn } from '@/utils/cn';
-import { dayjs } from '@/utils/dayjs';
 import { cleanRewards } from '@/utils/rank';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
@@ -167,10 +163,6 @@ export default function BountySubmissions({ listing }: Props) {
     }
   }, [bounty, submissions, user?.currentSponsorId, router]);
 
-  useEffect(() => {
-    if (searchParams?.has('scout')) posthog.capture('scout tab_scout');
-  }, []);
-
   const usedPositions = submissions
     ?.filter((s: any) => s.isWinner)
     .map((s: any) => Number(s.winnerPosition))
@@ -178,10 +170,6 @@ export default function BountySubmissions({ listing }: Props) {
 
   const totalWinners = submissions?.filter((sub) => sub.isWinner).length;
   const totalPaymentsMade = submissions?.filter((sub) => sub.isPaid).length;
-
-  const isExpired = dayjs(bounty?.deadline).isBefore(dayjs());
-
-  const isSponsorVerified = bounty?.sponsor?.isVerified;
 
   return (
     <SponsorLayout isCollapsible={true}>
@@ -210,39 +198,9 @@ export default function BountySubmissions({ listing }: Props) {
             onWinnersAnnounceOpen={onOpen}
             activeTab={searchParams?.get('tab') || 'submissions'}
           />
-          <Tabs
-            defaultValue={searchParams?.has('scout') ? 'scout' : 'submissions'}
-          >
+          <Tabs defaultValue="submissions">
             <TabsList className="mt-4 gap-4 border-b font-medium text-slate-400">
               <TabsTrigger value="submissions">Submissions</TabsTrigger>
-
-              {bounty?.isPublished &&
-                !bounty?.isWinnersAnnounced &&
-                !isExpired && (
-                  <Tooltip
-                    content="Scout is an invite-only feature right now"
-                    contentProps={{
-                      className: 'rounded-lg px-4 py-2 font-sans',
-                    }}
-                    disabled={isSponsorVerified === true}
-                  >
-                    <TabsTrigger
-                      value="scout"
-                      className={cn(
-                        'ph-no-capture',
-                        !isSponsorVerified &&
-                          'cursor-not-allowed text-slate-400',
-                      )}
-                      disabled={!isSponsorVerified}
-                      onClick={() => posthog.capture('scout tab_scout')}
-                    >
-                      Scout Talent
-                      {!!isSponsorVerified && (
-                        <div className="ml-1.5 h-1.5 w-1.5 rounded-full bg-red-500" />
-                      )}
-                    </TabsTrigger>
-                  </Tooltip>
-                )}
 
               {bounty?.isPublished && bounty?.isWinnersAnnounced && (
                 <TabsTrigger value="submissions">Payments</TabsTrigger>

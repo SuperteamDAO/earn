@@ -1,7 +1,7 @@
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { Check, ChevronRight, Copy, Plus } from 'lucide-react';
+import { Check, ChevronRight, Copy } from 'lucide-react';
 import Link from 'next/link';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import FaXTwitter from '@/components/icons/FaXTwitter';
@@ -41,11 +41,6 @@ export const ListingSuccessModal = () => {
 
   const { hasCopied, onCopy } = useClipboard(listingLink());
 
-  const handleInvite = useMemo(
-    () => `/earn/dashboard/listings/${slug}/submissions?scout`,
-    [slug],
-  );
-
   return (
     <Dialog open={confirmModal === 'SUCCESS'} onOpenChange={() => null}>
       <DialogContent
@@ -83,12 +78,6 @@ export const ListingSuccessModal = () => {
                 <Copy className="h-5 w-5 text-slate-400" />
               )}
             </Button>
-
-            <Link href={handleInvite}>
-              <Button className="w-full gap-2">
-                <span>Invite Talent</span> <Plus className="h-4 w-4" />
-              </Button>
-            </Link>
 
             <div className="flex w-full justify-between text-sm font-medium text-slate-500">
               <Link

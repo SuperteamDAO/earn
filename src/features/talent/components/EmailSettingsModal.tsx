@@ -135,12 +135,6 @@ export const EmailSettingsModal = ({
                 selectedCategories={selectedCategories}
                 onCategoryChange={handleCategoryChange}
               />
-              <AlertOption
-                title="Sponsor Invitation Emails (Scout)"
-                category="scoutInvite"
-                selectedCategories={selectedCategories}
-                onCategoryChange={handleCategoryChange}
-              />
             </div>
           )}
           {(showTalentAlerts || showSponsorAlerts) && (

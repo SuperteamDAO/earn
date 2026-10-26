@@ -174,7 +174,6 @@ export async function POST(request: NextRequest) {
 
     const categories = new Set([
       'createListing',
-      'scoutInvite',
       'commentOrLikeSubmission',
       'weeklyListingRoundup',
       'replyOrTagComment',
