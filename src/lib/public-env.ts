@@ -3,6 +3,9 @@
 // AppConfig instead.
 export const publicEnv = {
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  // `getURL`'s base: the site URL when set, else Vercel's deployment host.
+  deploymentUrl:
+    process.env.NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_VERCEL_URL,
   vercelEnv: process.env.NEXT_PUBLIC_VERCEL_ENV,
   // Host of Earn's RPC, without the scheme.
   rpcUrl: process.env.NEXT_PUBLIC_RPC_URL,

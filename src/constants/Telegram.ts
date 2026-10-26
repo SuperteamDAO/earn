@@ -1,7 +1,9 @@
+import { publicEnv } from '@/lib/public-env';
+
 export const JTTG = 'https://t.me/jilltodkar/';
 
 const TELEGRAM_BOT_URL =
-  process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
+  publicEnv.vercelEnv === 'production'
     ? 'https://t.me/STEarnBot'
     : 'https://t.me/EarnNotificationsStagingBot';
 

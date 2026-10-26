@@ -53,11 +53,9 @@ export type ImageErrorCode =
   | 'NETWORK_ERROR';
 
 export interface UploadConfig {
-  folder: string;
   maxWidth: number;
   maxHeight: number;
   quality: number;
-  eager?: string;
 }
 
 export interface UploadProgress {

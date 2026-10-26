@@ -1,49 +1,36 @@
 import type { ImageSource, UploadConfig } from './types';
 
-const isDev = process.env.VERCEL_ENV !== 'production';
-const devSuffix = isDev ? '-dev' : '';
-
+// How the browser shrinks an image before uploading it. The folder and
+// eager transformation are the server's (`src/server/image-store.ts`).
 export const UPLOAD_CONFIGS: Record<ImageSource, UploadConfig> = {
   user: {
-    folder: `earn-pfp${devSuffix}`,
     maxWidth: 400,
     maxHeight: 400,
     quality: 85,
-    eager: 'c_fill,w_200,h_200,q_auto,f_webp',
   },
   sponsor: {
-    folder: `earn-sponsor${devSuffix}`,
     maxWidth: 800,
     maxHeight: 800,
     quality: 85,
-    eager: 'c_limit,w_400,h_400,q_auto,f_webp',
   },
   description: {
-    folder: `listing-description${devSuffix}`,
     maxWidth: 1920,
     maxHeight: 1080,
     quality: 85,
-    eager: 'c_limit,w_1200,q_auto,f_webp',
   },
   'grant-event-pictures': {
-    folder: `grant-event-pictures${devSuffix}`,
     maxWidth: 1920,
     maxHeight: 1080,
     quality: 85,
-    eager: 'c_limit,w_1200,q_auto,f_webp',
   },
   'grant-event-receipts': {
-    folder: `grant-event-receipts${devSuffix}`,
     maxWidth: 1920,
     maxHeight: 1080,
     quality: 85,
-    eager: 'c_limit,w_1200,q_auto,f_webp',
   },
   'grant-agentic-receipts': {
-    folder: `grant-agentic-receipts${devSuffix}`,
     maxWidth: 1920,
     maxHeight: 1080,
     quality: 85,
-    eager: 'c_limit,w_1200,q_auto,f_webp',
   },
 };
