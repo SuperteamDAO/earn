@@ -1,17 +1,39 @@
+import * as Effect from 'effect/Effect';
 import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { getTokenIcon } from '@/server/tokenList';
+import * as AppConfig from '@/server/app-config';
+import * as GrantPages from '@/server/grant-pages';
+import { runtime } from '@/server/runtime';
 import { convertToJpegUrl } from '@/utils/cloudinary';
 import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
-import { getURL } from '@/utils/validUrl';
+
+// The site's address with a trailing slash, as Earn's getURL gave it.
+const siteUrl = () =>
+  runtime.runPromise(
+    AppConfig.AppConfig.use((config) =>
+      Effect.succeed(
+        config.siteUrl.endsWith('/') ? config.siteUrl : `${config.siteUrl}/`,
+      ),
+    ),
+  );
+
+const tokenIcon = (symbol: string | null) =>
+  runtime.runPromise(
+    GrantPages.GrantPages.use((pages) => pages.tokenIcon(symbol)).pipe(
+      Effect.orElseSucceed(() => null),
+    ),
+  );
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
+    const base = await siteUrl();
 
-    const getParam = (name: string, processFn = (x: any) => x) =>
-      searchParams.has(name) ? processFn(searchParams.get(name)) : null;
+    const getParam = <T,>(name: string, processFn: (x: string) => T) => {
+      const value = searchParams.get(name);
+      return value === null ? null : processFn(value);
+    };
     const title = getParam('title', (x) =>
       formatString(decodeURIComponent(x), 97),
     );
@@ -25,7 +47,7 @@ export async function GET(request: Request) {
       }
 
       if (url.startsWith('/')) {
-        return new URL(url, getURL()).toString();
+        return new URL(url, base).toString();
       }
 
       return url;
@@ -56,9 +78,7 @@ export async function GET(request: Request) {
     const displayReward =
       minReward === '0' ? `Up to ${maxReward}` : `${minReward} - ${maxReward}`;
 
-    const icon = resolveAbsoluteUrl(
-      (await getTokenIcon(token, { format: 'png' })) ?? null,
-    );
+    const icon = resolveAbsoluteUrl(await tokenIcon(token));
 
     return new ImageResponse(
       <div
@@ -86,7 +106,7 @@ export async function GET(request: Request) {
               borderRadius: '12px',
             }}
             alt="logo"
-            src={logo as string}
+            src={logo ?? undefined}
             width="64px"
             height="64px"
           />
@@ -182,7 +202,7 @@ export async function GET(request: Request) {
                     objectFit: 'contain',
                   }}
                   alt="token"
-                  src={icon as string}
+                  src={icon}
                 />
               )}
               {displayReward && (
@@ -263,8 +283,8 @@ export async function GET(request: Request) {
         ],
       },
     );
-  } catch (e: any) {
-    console.log(`${e.message}`);
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : e);
     return new Response(`Failed to generate the image`, {
       status: 500,
     });

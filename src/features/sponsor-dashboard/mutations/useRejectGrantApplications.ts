@@ -1,13 +1,12 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+'use client';
+
 import { toast } from 'sonner';
 
-import { api } from '@/lib/api';
+import { postJson } from '@/lib/fetch-json';
 import { GrantApplicationStatus } from '@/prisma/enums';
 
-import { selectedGrantApplicationAtom } from '../atoms';
+import { useGrantReview } from '../components/GrantApplications/GrantReviewContext';
 import type { GrantApplicationStatusMutationResponse } from '../constants/grantApplicationMutation';
-import type { GrantApplicationsReturn } from '../queries/applications';
 import type { GrantApplicationWithUser } from '../types';
 
 type RejectGrantApplicationsInput =
@@ -28,11 +27,16 @@ const parseRejectGrantApplicationsInput = (
   return input;
 };
 
-export const useRejectGrantApplications = (slug: string) => {
-  const queryClient = useQueryClient();
-  const [selectedApplication, setSelectedApplication] = useAtom(
-    selectedGrantApplicationAtom,
-  );
+// Rejects applications, ten at a time, showing it before the server
+// answers.
+export const useRejectGrantApplications = () => {
+  const {
+    applications,
+    setApplications,
+    selectedApplication,
+    setSelectedApplication,
+    refresh,
+  } = useGrantReview();
 
   const moveToNextPendingApplication = (
     rejectedApplicationIds: string[],
@@ -72,16 +76,46 @@ export const useRejectGrantApplications = (slug: string) => {
     }
   };
 
-  return useMutation({
-    mutationFn: async (input: RejectGrantApplicationsInput) => {
-      const { applicationIds, customNote, skipCooldown } =
-        parseRejectGrantApplicationsInput(input);
+  const reject = async (input: RejectGrantApplicationsInput) => {
+    const { applicationIds, customNote, skipCooldown } =
+      parseRejectGrantApplicationsInput(input);
+
+    const previousApplications = applications;
+    const updatedData = applications.map((application) =>
+      applicationIds.includes(application.id)
+        ? {
+            ...application,
+            applicationStatus: GrantApplicationStatus.Rejected,
+            isCooldownSkipped: !!skipCooldown,
+            label:
+              application.label === 'Unreviewed' ||
+              application.label === 'Pending'
+                ? ('Reviewed' as const)
+                : application.label,
+          }
+        : application,
+    );
+    setApplications(updatedData);
+    if (
+      selectedApplication?.id &&
+      applicationIds.includes(selectedApplication.id)
+    ) {
+      const updatedSelectedApplication = updatedData.find(
+        (application) => application.id === selectedApplication.id,
+      );
+      if (updatedSelectedApplication) {
+        setSelectedApplication(updatedSelectedApplication);
+      }
+      moveToNextPendingApplication(applicationIds, updatedData);
+    }
+
+    try {
       const reviewerNote = customNote?.trim();
       const batchSize = 10;
       for (let i = 0; i < applicationIds.length; i += batchSize) {
         const batch = applicationIds.slice(i, i + batchSize);
-        await api.post<GrantApplicationStatusMutationResponse>(
-          '/api/sponsor-dashboard/grants/update-application-status',
+        await postJson<GrantApplicationStatusMutationResponse>(
+          '/api/sponsor-dashboard/grants/update-application-status/',
           {
             data: batch.map((id) => ({ id })),
             applicationStatus: 'Rejected',
@@ -90,92 +124,23 @@ export const useRejectGrantApplications = (slug: string) => {
           },
         );
       }
-      return applicationIds;
-    },
-    onMutate: async (input) => {
-      const { applicationIds, skipCooldown } =
-        parseRejectGrantApplicationsInput(input);
-
-      await queryClient.cancelQueries({
-        queryKey: ['sponsor-applications', slug],
-      });
-
-      const previousApplications =
-        queryClient.getQueryData<GrantApplicationsReturn>([
-          'sponsor-applications',
-          slug,
-        ]);
-
-      queryClient.setQueryData<GrantApplicationsReturn>(
-        ['sponsor-applications', slug],
-        (oldData) => {
-          if (!oldData) return oldData;
-
-          const updatedData = oldData.data.map((application) =>
-            applicationIds.includes(application.id)
-              ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Rejected,
-                  isCooldownSkipped: !!skipCooldown,
-                  label:
-                    application.label === 'Unreviewed' ||
-                    application.label === 'Pending'
-                      ? 'Reviewed'
-                      : application.label,
-                }
-              : application,
-          );
-
-          if (
-            selectedApplication?.id &&
-            applicationIds.includes(selectedApplication.id)
-          ) {
-            const updatedSelectedApplication = updatedData.find(
-              (application) => application.id === selectedApplication.id,
-            );
-            if (updatedSelectedApplication) {
-              setSelectedApplication(updatedSelectedApplication);
-            }
-            moveToNextPendingApplication(applicationIds, updatedData);
-          }
-
-          return {
-            ...oldData,
-            data: updatedData,
-          };
-        },
-      );
-
-      return { previousApplications };
-    },
-    onError: (_, input, context) => {
-      const { applicationIds } = parseRejectGrantApplicationsInput(input);
-
-      if (context?.previousApplications) {
-        queryClient.setQueryData<GrantApplicationsReturn>(
-          ['sponsor-applications', slug],
-          context.previousApplications,
-        );
-      }
-
-      const errorMessage =
-        applicationIds.length === 1
-          ? 'Failed to reject grant application. Please try again.'
-          : 'An error occurred while rejecting applications. Please try again.';
-
-      toast.error(errorMessage);
-    },
-    onSuccess: (applicationIds) => {
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-applications', slug],
-      });
-
-      const successMessage =
+      refresh();
+      toast.success(
         applicationIds.length === 1
           ? 'Application rejected successfully'
-          : 'Applications rejected successfully';
+          : 'Applications rejected successfully',
+      );
+    } catch {
+      setApplications(previousApplications);
+      toast.error(
+        applicationIds.length === 1
+          ? 'Failed to reject grant application. Please try again.'
+          : 'An error occurred while rejecting applications. Please try again.',
+      );
+    }
+  };
 
-      toast.success(successMessage);
-    },
-  });
+  return {
+    mutate: (input: RejectGrantApplicationsInput) => void reject(input),
+  };
 };

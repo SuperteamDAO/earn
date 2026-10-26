@@ -1,15 +1,15 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import { AlertTriangle, Loader2, Lock, Pencil } from 'lucide-react';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
+import { useChapters } from '@/features/listings/hooks/useChapters';
 import {
   getLocationCooldown,
   locationCooldownTooltip,
@@ -20,7 +20,7 @@ import {
 } from '@/features/listings/utils/region';
 
 import { useApplicationState } from '../hooks/useApplicationState';
-import { userApplicationQuery } from '../queries/user-application';
+import type { GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import type { Grant } from '../types';
 import { grantApplicationCooldownTooltip } from '../utils/grantApplicationCooldown';
 import { isUserEligibleForST } from '../utils/stGrant';
@@ -29,24 +29,23 @@ import { InfoWrapper } from './InfoWrapper';
 
 interface GrantApplicationButtonProps {
   grant: Grant;
+  // Their application to it, loaded with the page.
+  application: GrantApplicationWithTranchesAndUser | null;
 }
 
 export const ApplicationActionButton = ({
   grant,
+  application,
 }: GrantApplicationButtonProps) => {
-  const { user } = useUser();
-  const { authenticated } = usePrivy();
-  const isAuthenticated = authenticated;
+  const user = useViewer();
+  const isAuthenticated = !!user;
 
-  const { region, id, link, isNative, isPublished, isPaused, isST, sponsorId } =
+  const { region, link, isNative, isPublished, isPaused, isST, sponsorId } =
     grant;
   const isUserEligibleST = isUserEligibleForST(user);
 
-  const { data: application, isLoading: isUserApplicationLoading } = useQuery({
-    ...userApplicationQuery(id),
-    enabled: !!user?.id,
-  });
-  const { data: chapters = [] } = useQuery(chaptersQuery);
+  const isUserApplicationLoading = false;
+  const chapters = useChapters();
 
   const { buttonConfig, hasApplied, applicationState, tranches } =
     useApplicationState(application, grant);
@@ -55,7 +54,7 @@ export const ApplicationActionButton = ({
 
   const isUserEligibleByRegion = userRegionEligibilty({
     region,
-    userLocation: user?.location,
+    userLocation: user?.location ?? undefined,
     chapters,
   });
 
@@ -95,13 +94,11 @@ export const ApplicationActionButton = ({
 
   const isBtnDisabled =
     buttonConfig.isDisabled ||
-    Boolean(
-      !isPublished ||
-      isPausedForNewApplications ||
-      (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
-      (user?.id && user?.isTalentFilled && isNewApplicationLocationCooldown) ||
-      isNotEligibleForST,
-    );
+    !isPublished ||
+    isPausedForNewApplications ||
+    (!!user?.id && user.isTalentFilled && !isUserEligibleByRegion) ||
+    (!!user?.id && user.isTalentFilled && isNewApplicationLocationCooldown) ||
+    isNotEligibleForST;
 
   const getButtonText = () => {
     if (isPausedForNewApplications) {
@@ -138,6 +135,9 @@ export const ApplicationActionButton = ({
   const handleSubmit = () => {
     if (link && !isNative) {
       window.open(link, '_blank', 'noopener,noreferrer');
+    } else if (applicationState === 'KYC PENDING') {
+      // Sumsub runs on a page of its own (its own CSP), a full page load.
+      window.location.assign(`/earn/grants/${grant.slug}/kyc/`);
     } else {
       if (applicationState === 'ALLOW EDIT') {
         posthog.capture('edit_grant application');
@@ -162,9 +162,12 @@ export const ApplicationActionButton = ({
           isOpen={isOpen}
           grant={grant}
           editableGrantApplication={
-            applicationState === 'ALLOW EDIT' ? application : undefined
+            applicationState === 'ALLOW EDIT'
+              ? (application ?? undefined)
+              : undefined
           }
-          applicationId={application?.id}
+          application={application}
+          applicationState={applicationState}
           tranches={tranches}
         />
       )}

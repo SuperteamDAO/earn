@@ -1,9 +1,10 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { Check, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 import type { z } from 'zod';
 
@@ -30,16 +31,16 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson, RequestError } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
-import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
 import { sanitizeGrantApplicationHtml } from '@/features/grants/utils/sanitizeGrantApplicationHtml';
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { XVerificationModal } from '@/features/social/components/XVerificationModal';
+import { useXVerification } from '@/features/social/hooks/use-x-verification';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { twitterRegex } from '@/features/social/utils/regex';
 import {
@@ -48,7 +49,6 @@ import {
 } from '@/features/social/utils/x-verification';
 
 import type { UserApplicationResponse } from '../../constants/userApplication';
-import { userApplicationQuery } from '../../queries/user-application';
 import type { Grant, GrantQuestion } from '../../types';
 import {
   grantApplicationSchema,
@@ -67,6 +67,24 @@ import {
   WALLET_ADDRESS_CONFLICT_CODE,
   WALLET_ADDRESS_CONFLICT_MESSAGE,
 } from '../../utils/walletAddressOwnership.constants';
+
+// Their saved answer to a question, from the application's JSON.
+const savedAnswer = (answers: unknown, question: string): string => {
+  if (!Array.isArray(answers)) return '';
+  for (const entry of answers) {
+    if (
+      typeof entry === 'object' &&
+      entry !== null &&
+      'question' in entry &&
+      entry.question === question &&
+      'answer' in entry &&
+      typeof entry.answer === 'string'
+    ) {
+      return entry.answer || '';
+    }
+  }
+  return '';
+};
 
 const getSteps = (isST: boolean) => [
   { title: 'Basics' },
@@ -89,7 +107,16 @@ export const ApplicationModal = ({
   modalRef,
   onClose,
 }: Props) => {
-  const { user, refetchUser } = useUser();
+  const user = useViewer();
+  const router = useRouter();
+  // Their verified X handles, plus any verified while this form is open.
+  const [verifiedHandles, setVerifiedHandles] = useState<string[]>(() =>
+    Array.isArray(user?.linkedTwitter)
+      ? user.linkedTwitter.filter(
+          (handle): handle is string => typeof handle === 'string',
+        )
+      : [],
+  );
 
   const [activeStep, setActiveStep] = useState(0);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
@@ -128,7 +155,7 @@ export const ApplicationModal = ({
           maxReward || 1,
           token || 'USDC',
           grant.questions,
-          user,
+          verifiedHandles,
           isST,
           isAgenticEngineering,
         ),
@@ -138,7 +165,7 @@ export const ApplicationModal = ({
       maxReward,
       token,
       grant.questions,
-      user,
+      verifiedHandles,
       isST,
       isAgenticEngineering,
     ],
@@ -172,21 +199,15 @@ export const ApplicationModal = ({
         Array.isArray(questions) && questions.length > 0
           ? questions.map((q: GrantQuestion) => ({
               question: q.question,
-              answer:
-                (
-                  grantApplication?.answers as Array<{
-                    question: string;
-                    answer: string;
-                  }>
-                )?.find((a) => a.question === q.question)?.answer || '',
+              answer: savedAnswer(grantApplication?.answers, q.question),
             }))
           : [],
-      lumaLink: (grantApplication as any)?.lumaLink || '',
-      expenseBreakdown: (grantApplication as any)?.expenseBreakdown || '',
+      lumaLink: grantApplication?.lumaLink || '',
+      expenseBreakdown: grantApplication?.expenseBreakdown || '',
     },
   });
 
-  const twitterValue = form.watch('twitter');
+  const twitterValue = useWatch({ control: form.control, name: 'twitter' });
 
   const normalizedTwitterValue = useMemo(
     () => (twitterValue || '').trim(),
@@ -216,15 +237,13 @@ export const ApplicationModal = ({
 
   const needsXVerification = useMemo(() => {
     if (!xHandleForVerification) return false;
-    const verifiedHandles = user?.linkedTwitter || [];
     return !isHandleVerified(xHandleForVerification, verifiedHandles);
-  }, [xHandleForVerification, user?.linkedTwitter]);
+  }, [xHandleForVerification, verifiedHandles]);
 
   const isXVerified = useMemo(() => {
     if (!xHandleForVerification) return false;
-    const verifiedHandles = user?.linkedTwitter || [];
     return isHandleVerified(xHandleForVerification, verifiedHandles);
-  }, [xHandleForVerification, user?.linkedTwitter]);
+  }, [xHandleForVerification, verifiedHandles]);
 
   useEffect(() => {
     if (twitterValue && !isValidXProfileInput) {
@@ -246,7 +265,7 @@ export const ApplicationModal = ({
     form.clearErrors('twitter');
   }, [twitterValue, isValidXProfileInput, needsXVerification, form]);
 
-  const { signIn: popupSignIn } = usePopupAuth();
+  const { verify: verifyX } = useXVerification();
 
   const handleVerifyClick = async () => {
     if (!isValidXProfileInput) {
@@ -268,49 +287,26 @@ export const ApplicationModal = ({
       setVerificationHandle(handle);
       verificationModal.onOpen();
 
-      const success = await popupSignIn('twitter');
-
-      if (success) {
-        let attempts = 0;
-        const maxAttempts = 5;
-        const pollForUpdate = async (): Promise<boolean> => {
-          const { data: freshUser } = await refetchUser();
-
-          const currentVerifiedHandles = freshUser?.linkedTwitter || [];
-          const isNowVerified = isHandleVerified(
-            handle,
-            currentVerifiedHandles,
-          );
-
-          if (isNowVerified) {
-            form.trigger('twitter');
-            setVerificationHandle(null);
-            verificationModal.onClose();
-            return true;
-          }
-
-          attempts++;
-          if (attempts >= maxAttempts) {
-            setVerificationStatus('error');
-            return false;
-          }
-
-          const delay = Math.min(500 * Math.pow(2, attempts - 1), 5000);
-          await new Promise((resolve) => setTimeout(resolve, delay));
-          return pollForUpdate();
-        };
-
-        await pollForUpdate();
+      // X in a popup; the account's verified handles come back with it.
+      const result = await verifyX();
+      const verifiedHandle = result.handle;
+      if (
+        result.verified &&
+        verifiedHandle &&
+        isHandleVerified(handle, [verifiedHandle])
+      ) {
+        setVerifiedHandles((handles) => [...handles, verifiedHandle]);
+        setTimeout(() => void form.trigger('twitter'), 0);
+        setVerificationHandle(null);
+        verificationModal.onClose();
       } else {
         setVerificationStatus('error');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('X verification failed:', error);
       setVerificationStatus('error');
     }
   };
-
-  const queryClient = useQueryClient();
 
   const validateAcknowledgement = () => {
     if (grantApplication) {
@@ -357,7 +353,7 @@ export const ApplicationModal = ({
 
       const apiAction = grantApplication ? 'update' : 'create';
 
-      await api.post(`/api/grant-application/${apiAction}/`, {
+      await postJson(`/api/grant-application/${apiAction}/`, {
         grantId: id,
         projectTitle,
         projectOneLiner,
@@ -392,11 +388,8 @@ export const ApplicationModal = ({
       });
 
       form.reset();
-      await queryClient.invalidateQueries({
-        queryKey: userApplicationQuery(id).queryKey,
-      });
-
-      await refetchUser();
+      // The page loads their application (and account) again.
+      router.refresh();
 
       toast.success(
         grantApplication
@@ -407,14 +400,20 @@ export const ApplicationModal = ({
       onClose();
     } catch (e) {
       setIsLoading(false);
-      const serverMessage = axios.isAxiosError(e)
-        ? e.response?.data?.message || e.response?.data?.error
-        : undefined;
+      const body =
+        e instanceof RequestError &&
+        typeof e.body === 'object' &&
+        e.body !== null
+          ? (e.body as { message?: unknown; error?: unknown; code?: unknown })
+          : undefined;
+      const serverMessage =
+        typeof body?.message === 'string'
+          ? body.message
+          : typeof body?.error === 'string'
+            ? body.error
+            : undefined;
 
-      if (
-        axios.isAxiosError(e) &&
-        e.response?.data?.code === WALLET_ADDRESS_CONFLICT_CODE
-      ) {
+      if (body?.code === WALLET_ADDRESS_CONFLICT_CODE) {
         const walletErrorMessage =
           serverMessage || WALLET_ADDRESS_CONFLICT_MESSAGE;
         form.setError('walletAddress', {
@@ -468,7 +467,7 @@ export const ApplicationModal = ({
       ],
     };
 
-    form.trigger(fieldsToValidate[activeStep] as any).then((isValid) => {
+    void form.trigger(fieldsToValidate[activeStep]).then((isValid) => {
       if (isValid) {
         const nextStep = activeStep + 1;
         setActiveStep(nextStep);
@@ -491,7 +490,10 @@ export const ApplicationModal = ({
     form.setValue('walletAddress', user?.walletAddress || '');
   };
 
-  const currentWalletAddress = form.watch('walletAddress');
+  const currentWalletAddress = useWatch({
+    control: form.control,
+    name: 'walletAddress',
+  });
   const isSameAsEmbeddedWallet =
     currentWalletAddress?.toLowerCase() === user?.walletAddress?.toLowerCase();
 
@@ -583,23 +585,25 @@ export const ApplicationModal = ({
         <Form {...form}>
           <form
             style={{ width: '100%' }}
-            onSubmit={form.handleSubmit(
-              (data) => {
-                if (activeStep === steps.length - 1) {
-                  if (!validateAcknowledgement()) {
-                    return;
+            onSubmit={(event) =>
+              void form.handleSubmit(
+                (data) => {
+                  if (activeStep === steps.length - 1) {
+                    if (!validateAcknowledgement()) {
+                      return;
+                    }
+                    void submitApplication(data);
                   }
-                  submitApplication(data);
-                }
-              },
-              () => {
-                if (
-                  activeStep === steps.length - 1 &&
-                  !validateAcknowledgement()
-                ) {
-                }
-              },
-            )}
+                },
+                () => {
+                  if (
+                    activeStep === steps.length - 1 &&
+                    !validateAcknowledgement()
+                  ) {
+                  }
+                },
+              )(event)
+            }
           >
             {activeStep === 0 && (
               <div className="mb-5 flex flex-col gap-4">
@@ -754,10 +758,10 @@ export const ApplicationModal = ({
                       <FormItem className={cn('flex flex-col gap-2')}>
                         <div>
                           <FormLabel isRequired>
-                            {ST_GRANT_COPY.application.lumaLink!.label}
+                            {ST_GRANT_COPY.application.lumaLink?.label}
                           </FormLabel>
                           <FormDescription>
-                            {ST_GRANT_COPY.application.lumaLink!.description}
+                            {ST_GRANT_COPY.application.lumaLink?.description}
                           </FormDescription>
                         </div>
                         <div>
@@ -769,8 +773,8 @@ export const ApplicationModal = ({
                               <Input
                                 className={cn('h-full rounded-l-none')}
                                 placeholder={
-                                  ST_GRANT_COPY.application.lumaLink!
-                                    .placeholder
+                                  ST_GRANT_COPY.application.lumaLink
+                                    ?.placeholder
                                 }
                                 value={getLumaDisplayValue(field.value || '')}
                                 onChange={(e) => {
@@ -865,7 +869,7 @@ export const ApplicationModal = ({
                   showVerification
                   needsVerification={needsXVerification}
                   isVerified={isXVerified}
-                  onVerify={handleVerifyClick}
+                  onVerify={() => void handleVerifyClick()}
                 />
 
                 {!isST && (
@@ -890,14 +894,14 @@ export const ApplicationModal = ({
                   <FormFieldWrapper
                     control={form.control}
                     name="expenseBreakdown"
-                    label={ST_GRANT_COPY.application.expenseBreakdown!.label}
+                    label={ST_GRANT_COPY.application.expenseBreakdown?.label}
                     description={
-                      ST_GRANT_COPY.application.expenseBreakdown!.description
+                      ST_GRANT_COPY.application.expenseBreakdown?.description
                     }
                     isRequired
                     isRichEditor
                     richEditorPlaceholder={
-                      ST_GRANT_COPY.application.expenseBreakdown!.placeholder
+                      ST_GRANT_COPY.application.expenseBreakdown?.placeholder
                     }
                   />
                 )}
@@ -1020,7 +1024,7 @@ export const ApplicationModal = ({
                         )}
                         checked={acknowledgementAccepted}
                         onCheckedChange={(checked) => {
-                          setAcknowledgementAccepted(checked as boolean);
+                          setAcknowledgementAccepted(checked === true);
                           if (checked) {
                             setAcknowledgementError('');
                           }
@@ -1047,9 +1051,7 @@ export const ApplicationModal = ({
                         )}
                         checked={feedbackAcknowledgementAccepted}
                         onCheckedChange={(checked) => {
-                          setFeedbackAcknowledgementAccepted(
-                            checked as boolean,
-                          );
+                          setFeedbackAcknowledgementAccepted(checked === true);
                           if (checked) {
                             setFeedbackAcknowledgementError('');
                           }
@@ -1149,6 +1151,7 @@ export const ApplicationModal = ({
                         </span>
                         <div
                           className="prose prose-sm mt-1 max-w-none"
+                          // oxlint-disable-next-line react/no-danger -- sanitized with DOMPurify (sanitizeGrantApplicationHtml)
                           dangerouslySetInnerHTML={{
                             __html: sanitizeGrantApplicationHtml(
                               form.getValues('projectDetails') || '',
@@ -1173,6 +1176,7 @@ export const ApplicationModal = ({
                           </span>
                           <div
                             className="prose prose-sm mt-1 max-w-none"
+                            // oxlint-disable-next-line react/no-danger -- sanitized with DOMPurify (sanitizeGrantApplicationHtml)
                             dangerouslySetInnerHTML={{
                               __html: sanitizeGrantApplicationHtml(
                                 form.getValues('proofOfWork') || '',
@@ -1241,6 +1245,7 @@ export const ApplicationModal = ({
                           </span>
                           <div
                             className="prose prose-sm mt-1 max-w-none"
+                            // oxlint-disable-next-line react/no-danger -- sanitized with DOMPurify (sanitizeGrantApplicationHtml)
                             dangerouslySetInnerHTML={{
                               __html: sanitizeGrantApplicationHtml(
                                 form.getValues('expenseBreakdown') || '',
@@ -1280,6 +1285,7 @@ export const ApplicationModal = ({
                               ) : (
                                 <div
                                   className="prose prose-sm mt-1 max-w-none"
+                                  // oxlint-disable-next-line react/no-danger -- sanitized with DOMPurify (sanitizeGrantApplicationHtml)
                                   dangerouslySetInnerHTML={{
                                     __html:
                                       sanitizeGrantApplicationHtml(answerValue),
@@ -1306,6 +1312,7 @@ export const ApplicationModal = ({
                           </span>
                           <div
                             className="prose prose-sm mt-1 max-w-none"
+                            // oxlint-disable-next-line react/no-danger -- sanitized with DOMPurify (sanitizeGrantApplicationHtml)
                             dangerouslySetInnerHTML={{
                               __html: sanitizeGrantApplicationHtml(
                                 form.getValues('milestones') || '',
@@ -1321,6 +1328,7 @@ export const ApplicationModal = ({
                           </span>
                           <div
                             className="prose prose-sm mt-1 max-w-none"
+                            // oxlint-disable-next-line react/no-danger -- sanitized with DOMPurify (sanitizeGrantApplicationHtml)
                             dangerouslySetInnerHTML={{
                               __html: sanitizeGrantApplicationHtml(
                                 form.getValues('kpi') || '',

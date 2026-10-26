@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+'use client';
+
 import { LucideFlag } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -8,20 +8,14 @@ import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { api } from '@/lib/api';
+import { postJson } from '@/lib/fetch-json';
 import { GrantApplicationStatus, type SubmissionLabels } from '@/prisma/enums';
-import { useUser } from '@/store/user';
 
-import { applicationsAtom, selectedGrantApplicationAtom } from '../atoms';
 import type { GrantApplicationStatusMutationResponse } from '../constants/grantApplicationMutation';
 import { useRejectGrantApplications } from '../mutations/useRejectGrantApplications';
-import {
-  applicationsQuery,
-  type GrantApplicationsReturn,
-} from '../queries/applications';
-import { sponsorGrantQuery } from '../queries/grant';
 import { ApplicationDetails } from './GrantApplications/ApplicationDetails';
 import { ApplicationList } from './GrantApplications/ApplicationList';
+import { useGrantReview } from './GrantApplications/GrantReviewContext';
 import { ApproveModal } from './GrantApplications/Modals/ApproveModal';
 import { MultiActionModal } from './GrantApplications/Modals/MultiActionModal';
 import { RejectGrantApplicationModal } from './GrantApplications/Modals/RejectModal';
@@ -44,19 +38,15 @@ export const ApplicationsTab = ({ slug }: Props) => {
     Set<GrantApplicationStatus | SubmissionLabels>
   >(new Set());
 
-  const [allApplications, setAllApplications] = useAtom(applicationsAtom);
-
-  const { data: applicationReturn, isLoading: isApplicationsLoading } =
-    useQuery({
-      ...applicationsQuery(slug),
-      retry: false,
-    });
-
-  useEffect(() => {
-    if (applicationReturn?.data) {
-      setAllApplications(applicationReturn.data);
-    }
-  }, [applicationReturn?.data, setAllApplications]);
+  const {
+    grant,
+    applications: allApplications,
+    setApplications,
+    selectedApplication,
+    setSelectedApplication,
+    refresh,
+  } = useGrantReview();
+  const isApplicationsLoading = false;
 
   const applications = useMemo(() => {
     if (!allApplications) return [];
@@ -122,16 +112,6 @@ export const ApplicationsTab = ({ slug }: Props) => {
     selectedApplicationIdsRef.current = selectedApplicationIds;
   }, [selectedApplicationIds]);
 
-  const { user } = useUser();
-
-  const { data: grant } = useQuery(
-    sponsorGrantQuery(slug, user?.currentSponsorId),
-  );
-
-  const [selectedApplication, setSelectedApplication] = useAtom(
-    selectedGrantApplicationAtom,
-  );
-
   const {
     isOpen: isTogglerOpen,
     onOpen: onTogglerOpen,
@@ -183,81 +163,54 @@ export const ApplicationsTab = ({ slug }: Props) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [applications, selectedApplication, setSelectedApplication]);
 
-  const rejectGrantApplications = useRejectGrantApplications(slug);
+  const rejectGrantApplications = useRejectGrantApplications();
 
-  const queryClient = useQueryClient();
-
-  const approveGrantMutation = useMutation({
-    mutationFn: async ({
-      applicationId,
-      approvedAmount,
-      customNote,
-    }: {
-      applicationId: string;
-      approvedAmount: number;
-      customNote?: string;
-    }) => {
+  const approveGrant = async ({
+    applicationId,
+    approvedAmount,
+    customNote,
+  }: {
+    applicationId: string;
+    approvedAmount: number;
+    customNote?: string;
+  }) => {
+    const previousApplications = allApplications;
+    const updatedApplications = allApplications.map((application) =>
+      application.id === applicationId
+        ? {
+            ...application,
+            applicationStatus: GrantApplicationStatus.Approved,
+            approvedAmount: approvedAmount,
+            label:
+              application.label === 'Unreviewed' ||
+              application.label === 'Pending'
+                ? ('Reviewed' as const)
+                : application.label,
+          }
+        : application,
+    );
+    setApplications(updatedApplications);
+    setSelectedApplication(
+      updatedApplications.find(
+        (application) => application.id === applicationId,
+      ),
+    );
+    try {
       const reviewerNote = customNote?.trim();
-      await api.post<GrantApplicationStatusMutationResponse>(
-        '/api/sponsor-dashboard/grants/update-application-status',
+      await postJson<GrantApplicationStatusMutationResponse>(
+        '/api/sponsor-dashboard/grants/update-application-status/',
         {
           data: [{ id: applicationId, approvedAmount }],
           applicationStatus: 'Approved',
           ...(reviewerNote ? { customNote: reviewerNote } : {}),
         },
       );
-    },
-    onMutate: async ({ applicationId, approvedAmount }) => {
-      const previousApplications =
-        queryClient.getQueryData<GrantApplicationsReturn>([
-          'sponsor-applications',
-          grant?.slug,
-        ]);
-
-      queryClient.setQueryData<GrantApplicationsReturn>(
-        ['sponsor-applications', grant?.slug],
-        (oldData) => {
-          if (!oldData) return oldData;
-          const updatedApplications = oldData.data.map((application) =>
-            application.id === applicationId
-              ? {
-                  ...application,
-                  applicationStatus: GrantApplicationStatus.Approved,
-                  approvedAmount: approvedAmount,
-                  label:
-                    application.label === 'Unreviewed' ||
-                    application.label === 'Pending'
-                      ? 'Reviewed'
-                      : application.label,
-                }
-              : application,
-          );
-          const updatedApplication = updatedApplications.find(
-            (application) => application.id === applicationId,
-          );
-          setSelectedApplication(updatedApplication);
-          return {
-            ...oldData,
-            data: updatedApplications,
-          };
-        },
-      );
-
-      return { previousApplications };
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-applications', slug],
-      });
-    },
-    onError: (_, __, context) => {
-      queryClient.setQueryData<GrantApplicationsReturn>(
-        ['sponsor-applications', grant?.slug],
-        context?.previousApplications,
-      );
+      refresh();
+    } catch {
+      setApplications(previousApplications);
       toast.error('Failed to approve grant. Please try again.');
-    },
-  });
+    }
+  };
 
   const isAllCurrentToggled = useCallback(() => {
     return (
@@ -274,9 +227,10 @@ export const ApplicationsTab = ({ slug }: Props) => {
     } else {
       onTogglerClose();
     }
-  }, [selectedApplicationIds.size]); // Only depend on size, not the entire Set object
+  }, [selectedApplicationIds.size, onTogglerOpen, onTogglerClose]);
 
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect -- Earn's derived toggle, kept as it was
     setIsToggledAll(isAllCurrentToggled());
   }, [isAllCurrentToggled]);
 
@@ -311,14 +265,14 @@ export const ApplicationsTab = ({ slug }: Props) => {
 
   useEffect(() => {
     if (applications && applications.length > 0) {
-      setSelectedApplication((selectedApplication) => {
-        if (applications.find((appl) => appl.id === selectedApplication?.id)) {
-          return selectedApplication;
+      setSelectedApplication((selected) => {
+        if (applications.find((appl) => appl.id === selected?.id)) {
+          return selected;
         }
         return applications[0];
       });
     }
-  }, [applications, searchText]);
+  }, [applications, setSelectedApplication]);
 
   const toggleApplication = (id: string) => {
     setSelectedApplicationIds((prev) => {
@@ -336,7 +290,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
     (id: string) => {
       return selectedApplicationIds.has(id);
     },
-    [selectedApplicationIds, applications],
+    [selectedApplicationIds],
   );
 
   const toggleAllApplications = () => {
@@ -374,7 +328,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
     approvedAmount: number,
     customNote?: string,
   ) => {
-    approveGrantMutation.mutate({ applicationId, approvedAmount, customNote });
+    void approveGrant({ applicationId, approvedAmount, customNote });
   };
 
   const handleModalAction = (actionType: 'reject' | 'spam') => {

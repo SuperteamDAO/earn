@@ -1,6 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { useAtom } from 'jotai';
 import { ArrowRight, Check, Copy, X } from 'lucide-react';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -33,11 +31,11 @@ import {
 } from '@/features/social/components/SocialIcons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { selectedGrantApplicationAtom } from '../../atoms';
 import type { GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
-import type { GrantApplicationsReturn } from '../../queries/applications';
 import type { GrantApplicationWithUser } from '../../types';
 import { InfoBox } from '../InfoBox';
+import { type ApplicationAnswer, answersOf } from './answers';
+import { useGrantReview } from './GrantReviewContext';
 import { MarkCompleted } from './MarkCompleted';
 import { Notes } from './Notes';
 import { RecordPaymentButton } from './RecordPaymentButton';
@@ -69,9 +67,8 @@ export const ApplicationDetails = ({
   rejectedOnOpen,
   isLoading,
 }: Props) => {
-  const [selectedApplication, setSelectedApplication] = useAtom(
-    selectedGrantApplicationAtom,
-  );
+  const { selectedApplication, setSelectedApplication, setApplications } =
+    useGrantReview();
   const splitContainerRef = useRef<HTMLDivElement>(null);
   const [notesWidth, setNotesWidth] = useState(DEFAULT_NOTES_WIDTH);
   const isPending = selectedApplication?.applicationStatus === 'Pending';
@@ -89,15 +86,15 @@ export const ApplicationDetails = ({
       ? AGENTIC_ENGINEERING_GRANT_COPY.application
       : null;
 
-  const getAnswerQuestion = (answer: any): GrantQuestion | undefined =>
+  const getAnswerQuestion = (
+    answer: ApplicationAnswer,
+  ): GrantQuestion | undefined =>
     grant?.questions?.find((question) => question.question === answer.question);
 
-  const isLinkAnswer = (answer: any) => {
+  const isLinkAnswer = (answer: ApplicationAnswer) => {
     const grantQuestion = getAnswerQuestion(answer);
     return answer.type === 'link' || grantQuestion?.type === 'link';
   };
-
-  const queryClient = useQueryClient();
 
   const formattedCreatedAt = dayjs(selectedApplication?.createdAt).format(
     'DD MMM YYYY',
@@ -108,6 +105,7 @@ export const ApplicationDetails = ({
       window.localStorage.getItem(NOTES_WIDTH_STORAGE_KEY),
     );
     if (Number.isFinite(storedWidth) && storedWidth > 0) {
+      // oxlint-disable-next-line react/set-state-in-effect -- the saved width is only readable in the browser
       setNotesWidth(clampNotesWidth(storedWidth));
     }
   }, []);
@@ -151,20 +149,12 @@ export const ApplicationDetails = ({
         : currentApplication,
     );
 
-    queryClient.setQueryData<GrantApplicationsReturn>(
-      ['sponsor-applications', grant?.slug],
-      (oldData) => {
-        if (!oldData) return oldData;
-        const data = oldData?.data.map((application) =>
-          application.id === updatedApplication.id
-            ? { ...application, ...updatedApplication }
-            : application,
-        );
-        return {
-          ...oldData,
-          data,
-        };
-      },
+    setApplications((current) =>
+      current.map((application) =>
+        application.id === updatedApplication.id
+          ? { ...application, ...updatedApplication }
+          : application,
+      ),
     );
   };
 
@@ -216,7 +206,7 @@ export const ApplicationDetails = ({
                 <div className="self-start">
                   {isPending && (
                     <SelectLabel
-                      grantSlug={grant?.slug!}
+                      grantSlug={grant?.slug ?? ''}
                       application={undefined}
                     />
                   )}
@@ -225,7 +215,7 @@ export const ApplicationDetails = ({
               <div className="ph-no-capture flex w-full items-center justify-end gap-2">
                 {(isPending || selectedApplication?.label === 'Spam') && (
                   <SpamButton
-                    grantSlug={grant?.slug!}
+                    grantSlug={grant?.slug ?? ''}
                     isMultiSelectOn={isMultiSelectOn}
                   />
                 )}
@@ -332,7 +322,9 @@ export const ApplicationDetails = ({
                   />
 
                   <p className="text-sm font-semibold whitespace-nowrap text-slate-600">
-                    {`${selectedApplication?.approvedAmount?.toLocaleString('en-us')}`}
+                    {selectedApplication?.approvedAmount?.toLocaleString(
+                      'en-us',
+                    )}
                     <span className="ml-0.5 text-slate-400">
                       {grant?.token}
                     </span>
@@ -510,10 +502,10 @@ export const ApplicationDetails = ({
                 isHtml
               />
 
-              {isST && (selectedApplication as any)?.lumaLink && (
+              {isST && selectedApplication?.lumaLink && (
                 <InfoBox
-                  label={ST_GRANT_COPY.application.lumaLink!.label}
-                  content={(selectedApplication as any)?.lumaLink}
+                  label={ST_GRANT_COPY.application.lumaLink?.label ?? ''}
+                  content={selectedApplication?.lumaLink}
                 />
               )}
 
@@ -540,10 +532,12 @@ export const ApplicationDetails = ({
                 isHtml
               />
 
-              {isST && (selectedApplication as any)?.expenseBreakdown && (
+              {isST && selectedApplication?.expenseBreakdown && (
                 <InfoBox
-                  label={ST_GRANT_COPY.application.expenseBreakdown!.label}
-                  content={(selectedApplication as any)?.expenseBreakdown}
+                  label={
+                    ST_GRANT_COPY.application.expenseBreakdown?.label ?? ''
+                  }
+                  content={selectedApplication?.expenseBreakdown}
                   isHtml
                 />
               )}
@@ -568,15 +562,15 @@ export const ApplicationDetails = ({
               )}
 
               {Array.isArray(selectedApplication?.answers) &&
-                selectedApplication.answers.map(
-                  (answer: any, answerIndex: number) => {
+                answersOf(selectedApplication.answers).map(
+                  (answer, answerIndex) => {
                     const grantQuestion = getAnswerQuestion(answer);
                     const isOptional =
                       answer.optional ?? grantQuestion?.optional;
                     return (
                       <InfoBox
                         key={answerIndex}
-                        label={`${answer.question}${isOptional ? ' (Optional)' : ''}`}
+                        label={`${answer.question ?? ''}${isOptional ? ' (Optional)' : ''}`}
                         content={answer.answer}
                         isHtml={!isLinkAnswer(answer)}
                       />

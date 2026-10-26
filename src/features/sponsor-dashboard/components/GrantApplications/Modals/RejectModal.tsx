@@ -1,5 +1,5 @@
 import { ChevronDown, X } from 'lucide-react';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -99,7 +99,7 @@ export const RejectGrantApplicationModal = ({
     setLoading(true);
     try {
       posthog.capture('reject_grant application');
-      await onRejectGrant(
+      onRejectGrant(
         applicationId,
         enableCustomEmail && isCustomEmailOpen
           ? noteValidation.sanitized
@@ -114,12 +114,15 @@ export const RejectGrantApplicationModal = ({
     }
   };
 
+  // Each application (or tranche) opens the modal afresh.
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect
     setCustomNote('');
     setIsCustomEmailOpen(false);
     setSkipCooldown(false);
     setEmailError(null);
     setLoading(false);
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- reset whenever another one opens
   }, [applicationId]);
 
   const rejectButtonText = isCustomEmailOpen
@@ -224,7 +227,7 @@ export const RejectGrantApplicationModal = ({
                       isCustomEmailOpen &&
                       (!getCustomEmailPlainText(customNote) || !!emailError))
                   }
-                  onClick={rejectGrant}
+                  onClick={() => void rejectGrant()}
                 >
                   {loading ? (
                     <>

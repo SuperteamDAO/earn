@@ -1,5 +1,5 @@
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -172,7 +172,7 @@ export const ApproveModal = ({
     });
 
   const handleAmountChange = (value: number) => {
-    if (value > (ask as number)) {
+    if (value > (ask ?? Number.NaN)) {
       setWarningMessage(
         'Approved amount is greater than the requested amount.',
       );
@@ -198,7 +198,7 @@ export const ApproveModal = ({
     setLoading(true);
     try {
       posthog.capture('approve_grant application');
-      await onApproveGrant(
+      onApproveGrant(
         applicationId,
         approvedAmount,
         enableCustomEmail && isCustomEmailOpen
@@ -213,7 +213,9 @@ export const ApproveModal = ({
     }
   };
 
+  // Each application (or tranche) opens the modal afresh.
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect
     setApprovedAmount(ask);
     setCustomNote('');
     setIsCustomEmailOpen(false);
@@ -221,6 +223,7 @@ export const ApproveModal = ({
     setWarningMessage(null);
     setLoading(false);
   }, [
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- reset whenever another one opens
     applicationId,
     ask,
     granteeName,
@@ -339,7 +342,7 @@ export const ApproveModal = ({
                       isCustomEmailOpen &&
                       (!getCustomEmailPlainText(customNote) || !!emailError))
                   }
-                  onClick={approveGrant}
+                  onClick={() => void approveGrant()}
                 >
                   {loading ? (
                     <>

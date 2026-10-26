@@ -185,7 +185,7 @@ export const ApproveTrancheModal = ({
       setWarningMessage(
         `Amount exceeds remaining grant budget (${remainingAmount} ${token})`,
       );
-    } else if (value > (ask as number)) {
+    } else if (value > (ask ?? Number.NaN)) {
       setWarningMessage('Approved amount is greater than the requested amount');
     } else {
       setWarningMessage(null);
@@ -207,7 +207,7 @@ export const ApproveTrancheModal = ({
 
     setLoading(true);
     try {
-      await onApproveTranche(
+      onApproveTranche(
         trancheId,
         approvedAmount,
         enableCustomEmail && isCustomEmailOpen
@@ -222,7 +222,9 @@ export const ApproveTrancheModal = ({
     }
   };
 
+  // Each application (or tranche) opens the modal afresh.
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect
     setApprovedAmount(ask);
     setCustomNote('');
     setIsCustomEmailOpen(false);
@@ -230,6 +232,7 @@ export const ApproveTrancheModal = ({
     setWarningMessage(null);
     setLoading(false);
   }, [
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- reset whenever another one opens
     trancheId,
     ask,
     granteeName,
@@ -348,7 +351,7 @@ export const ApproveTrancheModal = ({
                       isCustomEmailOpen &&
                       (!getCustomEmailPlainText(customNote) || !!emailError))
                   }
-                  onClick={approveTranche}
+                  onClick={() => void approveTranche()}
                 >
                   {loading ? (
                     <>

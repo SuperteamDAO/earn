@@ -1,5 +1,3 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom, useSetAtom } from 'jotai';
 import { ChevronDown } from 'lucide-react';
 import { useMemo } from 'react';
 
@@ -10,121 +8,72 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
-import { api } from '@/lib/api';
+import { postJson } from '@/lib/fetch-json';
 import type { SubmissionLabels } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
-import {
-  applicationsAtom,
-  isStateUpdatingAtom,
-  selectedGrantApplicationAtom,
-} from '../../atoms';
-import { labelMenuOptionsGrants } from '../../constants';
-import type { GrantApplicationsReturn } from '../../queries/applications';
 import type { GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils/statusColorMap';
+import { useGrantReview } from './GrantReviewContext';
+import { grantLabelOptions } from './labels';
 
 interface Props {
   grantSlug: string;
   application: GrantApplicationWithUser | undefined;
 }
 
-export const SelectLabel = ({
-  grantSlug,
-  application: propApplication,
-}: Props) => {
-  const queryClient = useQueryClient();
-  const [selectedApplicationAtomValue, setSelectedApplication] = useAtom(
-    selectedGrantApplicationAtom,
-  );
+export const SelectLabel = ({ application: propApplication }: Props) => {
+  const {
+    selectedApplication: selectedApplicationAtomValue,
+    setSelectedApplication,
+    setApplications,
+    setStateUpdating: setLabelsUpdating,
+  } = useGrantReview();
 
   const targetApplication = propApplication || selectedApplicationAtomValue;
-
-  const setApplications = useSetAtom(applicationsAtom);
-  const setLabelsUpdating = useSetAtom(isStateUpdatingAtom);
 
   const selectLabel = async (
     label: SubmissionLabels,
     id: string | undefined,
   ) => {
     if (!id) return;
-    updateLabel({ id, label });
+    void updateLabel({ id, label });
   };
 
   let bg, color, border;
   if (targetApplication) {
-    ({ bg, color, border } =
-      colorMap[targetApplication?.label as SubmissionLabels]);
+    ({ bg, color, border } = colorMap[targetApplication.label]);
   }
 
-  const { mutate: updateLabel } = useMutation({
-    mutationFn: ({ id, label }: { id: string; label: SubmissionLabels }) =>
-      api.post(`/api/sponsor-dashboard/grants/update-label/`, {
+  const updateLabel = async ({
+    id,
+    label,
+  }: {
+    id: string;
+    label: SubmissionLabels;
+  }) => {
+    setLabelsUpdating(true);
+    try {
+      await postJson('/api/sponsor-dashboard/grants/update-label/', {
         id,
         label,
-      }),
-    onSuccess: (_, variables) => {
-      queryClient.setQueriesData(
-        {
-          predicate: (query) => {
-            const queryKey = query.queryKey as unknown[];
-            return (
-              Array.isArray(queryKey) &&
-              queryKey[0] === 'sponsor-applications' &&
-              queryKey[1] === grantSlug
-            );
-          },
-        },
-        (old: GrantApplicationsReturn | undefined) => {
-          if (!old) return old;
-          const data = old.data.map((application) =>
-            application.id === variables.id
-              ? { ...application, label: variables.label }
-              : application,
-          );
-          return {
-            ...old,
-            data,
-          };
-        },
-      );
-
-      setSelectedApplication((prev) =>
-        prev && prev.id === variables.id
-          ? { ...prev, label: variables.label }
-          : prev,
-      );
-
+      });
       setApplications((prev) =>
-        prev
-          ? prev.map((app) =>
-              app.id === variables.id
-                ? { ...app, label: variables.label }
-                : app,
-            )
-          : prev,
+        prev.map((app) => (app.id === id ? { ...app, label } : app)),
       );
-    },
-    onMutate: () => {
-      setLabelsUpdating(true);
-    },
-    onError: (e) => {
-      console.log(e);
-    },
-    onSettled: (_, error, variables) => {
       setLabelsUpdating(false);
-      if (error === null) {
-        setSelectedApplication((prev) =>
-          prev && prev.id === variables.id
-            ? { ...prev, label: variables.label }
-            : prev,
-        );
-      }
-    },
-  });
+      setSelectedApplication((prev) =>
+        prev && prev.id === id ? { ...prev, label } : prev,
+      );
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLabelsUpdating(false);
+    }
+  };
 
   const filterTriggerLabel = useMemo(() => {
-    const applicationLabel = labelMenuOptionsGrants.find(
+    const applicationLabel = grantLabelOptions.find(
       (s) => s.value === targetApplication?.label,
     );
     if (applicationLabel) return applicationLabel.label;
@@ -133,9 +82,9 @@ export const SelectLabel = ({
 
   const labelMenuOptionsGrantsPerAppl = useMemo(() => {
     if (targetApplication?.applicationStatus !== 'Pending') {
-      return labelMenuOptionsGrants.filter((s) => s.value !== 'Pending');
+      return grantLabelOptions.filter((s) => s.value !== 'Pending');
     }
-    return labelMenuOptionsGrants;
+    return grantLabelOptions;
   }, [targetApplication]);
 
   return (
@@ -164,16 +113,13 @@ export const SelectLabel = ({
               key={option.value}
               className="cursor-pointer px-2 py-1 text-center text-[0.7rem]"
               onClick={() =>
-                selectLabel(
-                  option.value as SubmissionLabels,
-                  targetApplication?.id,
-                )
+                void selectLabel(option.value, targetApplication?.id)
               }
             >
               <StatusPill
-                color={colorMap[option.value as SubmissionLabels].color}
-                backgroundColor={colorMap[option.value as SubmissionLabels].bg}
-                borderColor={colorMap[option.value as SubmissionLabels].border}
+                color={colorMap[option.value].color}
+                backgroundColor={colorMap[option.value].bg}
+                borderColor={colorMap[option.value].border}
                 className="w-fit text-[10px]"
               >
                 {option.label}

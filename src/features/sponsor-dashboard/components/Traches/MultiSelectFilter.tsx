@@ -27,6 +27,16 @@ const TRANCHE_STATUS_FILTERS: Array<{
   { label: 'Paid', value: 'Paid' },
 ];
 
+const getFilterColor = (value: GrantTrancheStatus) => {
+  return (
+    colorMap[value as keyof typeof colorMap] || {
+      bg: 'bg-slate-100',
+      color: 'text-slate-600',
+      border: 'border-slate-200',
+    }
+  );
+};
+
 export const MultiSelectFilter = ({
   selectedFilters,
   onFilterChange,
@@ -41,16 +51,6 @@ export const MultiSelectFilter = ({
       newFilters.add(value);
     }
     onFilterChange(newFilters);
-  };
-
-  const getFilterColor = (value: GrantTrancheStatus) => {
-    return (
-      colorMap[value as keyof typeof colorMap] || {
-        bg: 'bg-slate-100',
-        color: 'text-slate-600',
-        border: 'border-slate-200',
-      }
-    );
   };
 
   return (

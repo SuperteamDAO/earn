@@ -1,54 +1,34 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
-import { useAtom } from 'jotai';
+'use client';
+
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { api } from '@/lib/api';
+import { postJson } from '@/lib/fetch-json';
 import { GrantTrancheStatus } from '@/prisma/enums';
-import { useUser } from '@/store/user';
 
-import { selectedGrantTrancheAtom, tranchesAtom } from '../atoms';
-import { sponsorGrantQuery } from '../queries/grant';
-import {
-  type GrantTrancheWithApplication,
-  tranchesQuery,
-  type TranchesReturn,
-} from '../queries/tranches';
+import type { GrantTrancheWithApplication } from '../queries/tranches';
+import { useGrantReview } from './GrantApplications/GrantReviewContext';
 import { ApproveTrancheModal } from './Traches/ApproveTrancheModal';
 import { RejectTrancheModal } from './Traches/RejectTrancheModal';
 import { TrancheDetails } from './Traches/TrancheDetails';
 import { TrancheList } from './Traches/TrancheList';
 
-interface Props {
-  slug: string;
-}
-
-export const TranchesTab = ({ slug }: Props) => {
+export const TranchesTab = () => {
   const [searchText, setSearchText] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<
     Set<GrantTrancheStatus>
   >(new Set());
 
-  const [allTranches, setAllTranches] = useAtom(tranchesAtom);
-
-  const { data: trancheReturn, isLoading: isTrancheLoading } = useQuery({
-    ...tranchesQuery(slug),
-    retry: false,
-    placeholderData: keepPreviousData,
-  });
-
-  useEffect(() => {
-    if (trancheReturn?.data) {
-      setAllTranches(trancheReturn.data);
-    }
-  }, [trancheReturn?.data, setAllTranches]);
+  const {
+    grant,
+    tranches: allTranches,
+    setTranches,
+    selectedTranche,
+    setSelectedTranche,
+  } = useGrantReview();
+  const isTrancheLoading = false;
 
   const tranches = useMemo(() => {
     if (!allTranches) return [];
@@ -91,28 +71,16 @@ export const TranchesTab = ({ slug }: Props) => {
     return filtered;
   }, [allTranches, searchText, selectedFilters]);
 
-  const { user } = useUser();
-
-  const { data: grant } = useQuery(
-    sponsorGrantQuery(slug, user?.currentSponsorId),
-  );
-
-  const queryClient = useQueryClient();
-
-  const [selectedTranche, setSelectedTranche] = useAtom(
-    selectedGrantTrancheAtom,
-  );
-
   useEffect(() => {
     if (tranches && tranches.length > 0) {
-      setSelectedTranche((selectedTranche) => {
-        if (tranches.find((tranche) => tranche.id === selectedTranche?.id)) {
-          return selectedTranche;
+      setSelectedTranche((selected) => {
+        if (tranches.find((tranche) => tranche.id === selected?.id)) {
+          return selected;
         }
         return tranches[0];
       });
     }
-  }, [tranches, searchText]);
+  }, [tranches, setSelectedTranche]);
 
   const {
     isOpen: approveIsOpen,
@@ -142,134 +110,65 @@ export const TranchesTab = ({ slug }: Props) => {
     }
   };
 
-  const rejectGrantMutation = useMutation({
-    mutationFn: async ({
-      trancheId,
-      customNote,
-    }: {
-      trancheId: string;
-      customNote?: string;
-    }) => {
-      const reviewerNote = customNote?.trim();
-      await api.post('/api/sponsor-dashboard/grants/update-tranche-status', {
+  // Shows the decision at once; puts the list back if the server refuses.
+  const decideTranche = async (
+    trancheId: string,
+    update: Partial<GrantTrancheWithApplication>,
+    body: Record<string, unknown>,
+    failure: string,
+  ) => {
+    const previousTranches = allTranches;
+    const updatedTranches = allTranches.map(
+      (tranche: GrantTrancheWithApplication) =>
+        tranche.id === trancheId ? { ...tranche, ...update } : tranche,
+    );
+    setTranches(updatedTranches);
+    setSelectedTranche(
+      updatedTranches.find(
+        (tranche: GrantTrancheWithApplication) => tranche.id === trancheId,
+      ),
+    );
+    moveToNextPendingTranche();
+    try {
+      await postJson('/api/sponsor-dashboard/grants/update-tranche-status/', {
         id: trancheId,
-        status: 'Rejected',
-        ...(reviewerNote ? { customNote: reviewerNote } : {}),
+        ...body,
       });
-    },
-    onMutate: async ({ trancheId }) => {
-      const previousTranches = queryClient.getQueryData<TranchesReturn>([
-        'sponsor-tranches',
-        grant?.slug,
-      ]);
-
-      queryClient.setQueryData<TranchesReturn>(
-        ['sponsor-tranches', grant?.slug],
-        (oldData) => {
-          if (!oldData) return oldData;
-          const updatedTranches = oldData.data.map(
-            (tranche: GrantTrancheWithApplication) =>
-              tranche.id === trancheId
-                ? {
-                    ...tranche,
-                    status: GrantTrancheStatus.Rejected,
-                  }
-                : tranche,
-          );
-          const updatedTranche = updatedTranches.find(
-            (tranche: GrantTrancheWithApplication) => tranche.id === trancheId,
-          );
-          setSelectedTranche(updatedTranche);
-          moveToNextPendingTranche();
-          return {
-            ...oldData,
-            data: updatedTranches,
-          };
-        },
-      );
-
-      return { previousTranches };
-    },
-    onError: (_, __, context) => {
-      queryClient.setQueryData<TranchesReturn>(
-        ['sponsor-tranches', grant?.slug],
-        context?.previousTranches,
-      );
-      toast.error('Failed to reject grant. Please try again.');
-    },
-  });
-
-  const approveGrantMutation = useMutation({
-    mutationFn: async ({
-      trancheId,
-      approvedAmount,
-      customNote,
-    }: {
-      trancheId: string;
-      approvedAmount: number;
-      customNote?: string;
-    }) => {
-      const reviewerNote = customNote?.trim();
-      await api.post('/api/sponsor-dashboard/grants/update-tranche-status', {
-        id: trancheId,
-        status: 'Approved',
-        approvedAmount,
-        ...(reviewerNote ? { customNote: reviewerNote } : {}),
-      });
-    },
-    onMutate: async ({ trancheId, approvedAmount }) => {
-      const previousTranches = queryClient.getQueryData<TranchesReturn>([
-        'sponsor-tranches',
-        grant?.slug,
-      ]);
-
-      queryClient.setQueryData<TranchesReturn>(
-        ['sponsor-tranches', grant?.slug],
-        (oldData) => {
-          if (!oldData) return oldData;
-          const updatedTranches = oldData.data.map(
-            (tranche: GrantTrancheWithApplication) =>
-              tranche.id === trancheId
-                ? {
-                    ...tranche,
-                    status: GrantTrancheStatus.Approved,
-                    approvedAmount,
-                  }
-                : tranche,
-          );
-          const updatedTranche = updatedTranches.find(
-            (tranche: GrantTrancheWithApplication) => tranche.id === trancheId,
-          );
-          setSelectedTranche(updatedTranche);
-          moveToNextPendingTranche();
-          return {
-            ...oldData,
-            data: updatedTranches,
-          };
-        },
-      );
-
-      return { previousTranches };
-    },
-    onError: (_, __, context) => {
-      queryClient.setQueryData<TranchesReturn>(
-        ['sponsor-tranches', grant?.slug],
-        context?.previousTranches,
-      );
-      toast.error('Failed to approve grant. Please try again.');
-    },
-  });
+    } catch {
+      setTranches(previousTranches);
+      toast.error(failure);
+    }
+  };
 
   const handleApproveTranche = (
     trancheId: string,
     approvedAmount: number,
     customNote?: string,
   ) => {
-    approveGrantMutation.mutate({ trancheId, approvedAmount, customNote });
+    const reviewerNote = customNote?.trim();
+    void decideTranche(
+      trancheId,
+      { status: GrantTrancheStatus.Approved, approvedAmount },
+      {
+        status: 'Approved',
+        approvedAmount,
+        ...(reviewerNote ? { customNote: reviewerNote } : {}),
+      },
+      'Failed to approve grant. Please try again.',
+    );
   };
 
   const handleRejectTranche = (trancheId: string, customNote?: string) => {
-    rejectGrantMutation.mutate({ trancheId, customNote });
+    const reviewerNote = customNote?.trim();
+    void decideTranche(
+      trancheId,
+      { status: GrantTrancheStatus.Rejected },
+      {
+        status: 'Rejected',
+        ...(reviewerNote ? { customNote: reviewerNote } : {}),
+      },
+      'Failed to reject grant. Please try again.',
+    );
   };
 
   const enableCustomEmail = grant?.isNative === true || grant?.isST === true;

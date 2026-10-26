@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { api } from '@/lib/api';
+import { postJson } from '@/lib/fetch-json';
 
 import type { GrantApplicationMutationResponse } from '../../../constants/grantApplicationMutation';
 
@@ -76,32 +76,34 @@ export const RecordPaymentModal = ({
     },
   });
 
-  const addPaymentMutation = useMutation({
-    mutationFn: async (data: PaymentFormInputs) => {
-      const response = await api.post<GrantApplicationMutationResponse>(
-        `/api/sponsor-dashboard/grants/add-tranche`,
-        {
-          id: applicationId,
-          trancheAmount: data.amount,
-          txId: data.transactionLink,
-        },
-      );
-      return response.data;
-    },
-    onSuccess: (updatedApplication) => {
+  const [isPending, setIsPending] = useState(false);
+  const addPayment = async (data: PaymentFormInputs) => {
+    setIsPending(true);
+    try {
+      const updatedApplication =
+        await postJson<GrantApplicationMutationResponse>(
+          `/api/sponsor-dashboard/grants/add-tranche/`,
+          {
+            id: applicationId,
+            trancheAmount: data.amount,
+            txId: data.transactionLink,
+          },
+        );
       onPaymentRecorded(updatedApplication);
       toast.success('Payment recorded successfully');
       form.reset();
       recordPaymentOnClose();
-    },
-    onError: (error) => {
+    } catch (error) {
       console.error(error);
       toast.error('Error recording payment. Please try again.');
-    },
-  });
+    } finally {
+      setIsPending(false);
+    }
+  };
+  const addPaymentMutation = { isPending };
 
   const onSubmit = (data: PaymentFormInputs) => {
-    addPaymentMutation.mutate(data);
+    void addPayment(data);
   };
 
   return (
@@ -114,7 +116,7 @@ export const RecordPaymentModal = ({
         <div className="px-6 pb-6 text-[0.95rem]">
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}
               className="font-medium"
             >
               <FormField

@@ -1,141 +1,52 @@
-import { headers } from 'next/headers';
-import { NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import * as Schema from 'effect/Schema';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
-import { safeStringify } from '@/utils/safeStringify';
+import { decodeBody, guardUser, json } from '@/lib/route-guard';
+import * as GrantApplications from '@/server/grant-applications';
+import { trancheResponse } from '@/server/grant-responses';
+import { runtime } from '@/server/runtime';
 
-import { getUserSession } from '@/features/auth/utils/getUserSession';
-import {
-  createTranche,
-  TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE,
-} from '@/features/grants/utils/createTranche';
-import {
-  WALLET_ADDRESS_CONFLICT_CODE,
-  WALLET_ADDRESS_CONFLICT_MESSAGE,
-} from '@/features/grants/utils/walletAddressOwnership.constants';
+const Body = Schema.Struct({
+  applicationId: Schema.optional(Schema.String),
+  walletAddress: Schema.optional(Schema.String),
+  helpWanted: Schema.optional(Schema.Unknown),
+  projectUpdate: Schema.optional(Schema.Unknown),
+  eventPictures: Schema.optional(Schema.Unknown),
+  eventReceipts: Schema.optional(Schema.Unknown),
+  attendeeCount: Schema.optional(Schema.Unknown),
+  socialPost: Schema.optional(Schema.Unknown),
+  colosseumLink: Schema.optional(Schema.Unknown),
+  githubRepo: Schema.optional(Schema.Unknown),
+  aiReceipt: Schema.optional(Schema.Unknown),
+  aiReceipts: Schema.optional(Schema.Unknown),
+});
 
-export async function POST(request: Request) {
-  try {
-    const session = await getUserSession(await headers());
-
-    if (session.error || !session.data) {
-      return NextResponse.json(
-        { error: session.error },
-        { status: session.status },
-      );
-    }
-
-    const { userId } = session.data;
-    const body = await request.json();
-    const {
-      applicationId,
-      helpWanted,
-      projectUpdate,
-      walletAddress,
-      eventPictures,
-      eventReceipts,
-      attendeeCount,
-      socialPost,
-      colosseumLink,
-      githubRepo,
-      aiReceipt,
-      aiReceipts,
-    } = body;
-
-    logger.debug(`Request body: ${safeStringify(body)}`);
-    logger.debug(`User ID: ${userId}`);
-
-    if (!applicationId) {
-      return NextResponse.json(
-        { message: 'Application ID is required' },
-        { status: 400 },
-      );
-    }
-
-    if (!walletAddress) {
-      return NextResponse.json(
-        { message: 'Wallet address is required' },
-        { status: 400 },
-      );
-    }
-
-    try {
-      await withRedisLock(
-        `locks:create-tranche:${applicationId}`,
-        async () => {
-          await createTranche({
+// Asks for the grant's next tranche.
+export function POST(request: NextRequest) {
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const writer = yield* guardUser(request);
+      if (writer instanceof NextResponse) return writer;
+      const body = yield* decodeBody(request, Body);
+      if (body instanceof NextResponse) return body;
+      const { applicationId, walletAddress } = body;
+      if (!applicationId) {
+        return json(400, { message: 'Application ID is required' });
+      }
+      if (!walletAddress) {
+        return json(400, { message: 'Wallet address is required' });
+      }
+      return yield* trancheResponse(
+        GrantApplications.GrantApplications.use((applications) =>
+          applications.requestTranche(writer.userId, {
+            ...body,
             applicationId,
-            requesterUserId: userId,
-            helpWanted,
-            update: projectUpdate,
             walletAddress,
-            eventPictures,
-            eventReceipts,
-            attendeeCount,
-            socialPost,
-            colosseumLink,
-            githubRepo,
-            aiReceipts:
-              Array.isArray(aiReceipts) && aiReceipts.length > 0
-                ? aiReceipts
-                : typeof aiReceipt === 'string' && aiReceipt.trim()
-                  ? [aiReceipt]
-                  : undefined,
-          });
-        },
-        { ttlSeconds: 300 },
+          }),
+        ),
+        applicationId,
       );
-
-      return NextResponse.json({
-        message: 'Tranche requested successfully',
-      });
-    } catch (error: any) {
-      if (error instanceof LockNotAcquiredError) {
-        return NextResponse.json(
-          {
-            error: 'Tranche creation already in progress',
-            message: `Tranche creation is already being processed for application with id=${applicationId}.`,
-          },
-          { status: 409 },
-        );
-      }
-      if (error.message === WALLET_ADDRESS_CONFLICT_MESSAGE) {
-        return NextResponse.json(
-          {
-            code: WALLET_ADDRESS_CONFLICT_CODE,
-            error: WALLET_ADDRESS_CONFLICT_MESSAGE,
-            message: WALLET_ADDRESS_CONFLICT_MESSAGE,
-          },
-          { status: 409 },
-        );
-      }
-      if (error.message === TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE) {
-        return NextResponse.json(
-          {
-            error: TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE,
-            message: TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE,
-          },
-          { status: 403 },
-        );
-      }
-      logger.error(`Unable to create grant tranche: ${safeStringify(error)}`);
-      return NextResponse.json(
-        {
-          error: 'Internal Server Error',
-          message: 'Error occurred while creating tranche.',
-        },
-        { status: 500 },
-      );
-    }
-  } catch (error: any) {
-    logger.error(`Unable to request grant tranche: ${safeStringify(error)}`);
-    return NextResponse.json(
-      {
-        error: 'Internal Server Error',
-        message: 'Error occurred while creating tranche.',
-      },
-      { status: 500 },
-    );
-  }
+    }),
+  );
 }

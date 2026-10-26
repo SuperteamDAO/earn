@@ -29,7 +29,7 @@ export const useCustomNoteCloseGuard = ({
     isEnabled && getCustomEmailPlainText(customNote).length > 0;
 
   useEffect(() => {
-    if (!hasUnsavedCustomNote) return;
+    if (!hasUnsavedCustomNote) return undefined;
 
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();

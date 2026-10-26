@@ -1,5 +1,6 @@
+'use client';
+
 import dayjs from 'dayjs';
-import { useAtomValue } from 'jotai';
 import { ArrowRight, Check, X } from 'lucide-react';
 import Link from 'next/link';
 
@@ -28,8 +29,13 @@ import {
 } from '@/features/social/components/SocialIcons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { selectedGrantTrancheAtom } from '../../atoms';
 import type { GrantTrancheWithApplication } from '../../queries/tranches';
+import {
+  type ApplicationAnswer,
+  answersOf,
+  stringsOf,
+} from '../GrantApplications/answers';
+import { useGrantReview } from '../GrantApplications/GrantReviewContext';
 import { ImageGallery } from '../ImageGallery';
 import { InfoBox } from '../InfoBox';
 
@@ -47,7 +53,7 @@ export const TrancheDetails = ({
   approveOnOpen,
   rejectedOnOpen,
 }: Props) => {
-  const selectedTranche = useAtomValue(selectedGrantTrancheAtom);
+  const { selectedTranche } = useGrantReview();
   const isPending = selectedTranche?.status === 'Pending';
   const isApproved = selectedTranche?.status === 'Approved';
   const isRejected = selectedTranche?.status === 'Rejected';
@@ -59,10 +65,12 @@ export const TrancheDetails = ({
       ? AGENTIC_ENGINEERING_GRANT_COPY.tranche
       : null;
 
-  const getAnswerQuestion = (answer: any): GrantQuestion | undefined =>
+  const getAnswerQuestion = (
+    answer: ApplicationAnswer,
+  ): GrantQuestion | undefined =>
     grant?.questions?.find((question) => question.question === answer.question);
 
-  const isLinkAnswer = (answer: any) => {
+  const isLinkAnswer = (answer: ApplicationAnswer) => {
     const grantQuestion = getAnswerQuestion(answer);
     return answer.type === 'link' || grantQuestion?.type === 'link';
   };
@@ -336,26 +344,26 @@ export const TrancheDetails = ({
               {isST && (
                 <>
                   <ImageGallery
-                    label={ST_GRANT_COPY.tranche.eventPictures!.label}
-                    images={selectedTranche?.eventPictures as string[] | null}
+                    label={ST_GRANT_COPY.tranche.eventPictures?.label ?? ''}
+                    images={stringsOf(selectedTranche?.eventPictures)}
                   />
 
                   <ImageGallery
-                    label={ST_GRANT_COPY.tranche.eventReceipts!.label}
-                    images={selectedTranche?.eventReceipts as string[] | null}
+                    label={ST_GRANT_COPY.tranche.eventReceipts?.label ?? ''}
+                    images={stringsOf(selectedTranche?.eventReceipts)}
                   />
 
                   {selectedTranche?.attendeeCount !== null &&
                     selectedTranche?.attendeeCount !== undefined && (
                       <InfoBox
-                        label={ST_GRANT_COPY.tranche.attendeeCount!.label}
+                        label={ST_GRANT_COPY.tranche.attendeeCount?.label ?? ''}
                         content={String(selectedTranche.attendeeCount)}
                       />
                     )}
 
                   {selectedTranche?.socialPost && (
                     <InfoBox
-                      label={ST_GRANT_COPY.tranche.socialPost!.label}
+                      label={ST_GRANT_COPY.tranche.socialPost?.label ?? ''}
                       content={selectedTranche.socialPost}
                     />
                   )}
@@ -407,8 +415,8 @@ export const TrancheDetails = ({
               />
 
               {Array.isArray(selectedTranche?.GrantApplication?.answers) &&
-                selectedTranche?.GrantApplication?.answers.map(
-                  (answer: any, answerIndex: number) => {
+                answersOf(selectedTranche?.GrantApplication?.answers).map(
+                  (answer, answerIndex) => {
                     const grantQuestion = getAnswerQuestion(answer);
                     const isOptional =
                       answer.optional ?? grantQuestion?.optional;

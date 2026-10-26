@@ -1,15 +1,13 @@
-import { useAtom } from 'jotai';
 import { X } from 'lucide-react';
 import { useRef } from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import type { UserApplicationResponse } from '../constants/userApplication';
+import type { ApplicationState } from '../hooks/useApplicationState';
 import type { Grant } from '../types';
 import { ApplicationModal } from './Modals/ApplicationModal';
-import { KYCModal } from './Modals/KYCModal';
 import { TrancheFormModal } from './Modals/TrancheFormModal';
 
 interface Props {
@@ -17,7 +15,8 @@ interface Props {
   onClose: () => void;
   grant: Grant;
   editableGrantApplication?: UserApplicationResponse;
-  applicationId?: string;
+  application?: UserApplicationResponse | null;
+  applicationState: ApplicationState;
   tranches?: number;
 }
 
@@ -26,11 +25,11 @@ export const GrantModal = ({
   onClose,
   grant,
   editableGrantApplication,
-  applicationId,
+  application,
+  applicationState,
   tranches,
 }: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
-  const [applicationState] = useAtom(applicationStateAtom(grant.id));
 
   const detailStates = ['APPLIED', 'ALLOW NEW', 'ALLOW EDIT'];
   const newTrancheFormStates =
@@ -63,17 +62,10 @@ export const GrantModal = ({
               onClose={onClose}
             />
           )}
-          {applicationState === 'KYC PENDING' && (
-            <KYCModal
-              applicationId={applicationId!}
-              grantId={grant.id}
-              onClose={onClose}
-            />
-          )}
-          {newTrancheFormStates.includes(applicationState) && (
+          {newTrancheFormStates.includes(applicationState) && application && (
             <TrancheFormModal
               grant={grant}
-              applicationId={applicationId!}
+              grantApplication={application}
               onClose={onClose}
             />
           )}

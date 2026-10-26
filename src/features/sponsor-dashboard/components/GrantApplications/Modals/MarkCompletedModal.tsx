@@ -1,14 +1,15 @@
-import { useMutation } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { Check } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { api } from '@/lib/api';
+import { RequestError } from '@/lib/fetch-json';
 
 import type { GrantApplicationMutationResponse } from '@/features/sponsor-dashboard/constants/grantApplicationMutation';
+
+import { putJson } from '../put-json';
 
 interface Props {
   isOpen: boolean;
@@ -25,42 +26,44 @@ export function MarkCompleteModal({
   applicationId,
   onMarkCompleted,
 }: Props) {
-  const { mutate: markCompletedMutation, isPending: markCompletePending } =
-    useMutation({
-      mutationFn: async () => {
-        const response = await api.put<GrantApplicationMutationResponse>(
-          `/api/sponsor-dashboard/grants/update-ship-progress`,
+  const [markCompletePending, setMarkCompletePending] = useState(false);
+  const markCompletedMutation = async () => {
+    setMarkCompletePending(true);
+    try {
+      const updatedApplication =
+        await putJson<GrantApplicationMutationResponse>(
+          `/api/sponsor-dashboard/grants/update-ship-progress/`,
           {
             id: applicationId,
           },
         );
-        return response.data;
-      },
-      onSuccess: (updatedApplication) => {
-        onMarkCompleted(updatedApplication);
-        toast.success('Application Marked as Completed');
-        onClose();
-      },
-      onError: (error) => {
-        console.error(error);
-        if (error instanceof AxiosError) {
-          const responseError = error.response?.data?.error;
-          if (
-            typeof responseError === 'string' &&
-            responseError.toLowerCase().includes('airtable recipient')
-          ) {
-            toast.error('User has not filled the Grant Onboarding form');
-            return;
-          }
+      onMarkCompleted(updatedApplication);
+      toast.success('Application Marked as Completed');
+      onClose();
+    } catch (error) {
+      console.error(error);
+      if (error instanceof RequestError) {
+        const body = error.body;
+        const responseError =
+          typeof body === 'object' && body !== null && 'error' in body
+            ? body.error
+            : undefined;
+        if (
+          typeof responseError === 'string' &&
+          responseError.toLowerCase().includes('airtable recipient')
+        ) {
+          toast.error('User has not filled the Grant Onboarding form');
+          return;
         }
-        toast.error(
-          'Error marking application as completed. Please try again.',
-        );
-      },
-    });
+      }
+      toast.error('Error marking application as completed. Please try again.');
+    } finally {
+      setMarkCompletePending(false);
+    }
+  };
 
   const handleMarkAsCompleted = () => {
-    markCompletedMutation();
+    void markCompletedMutation();
   };
 
   return (

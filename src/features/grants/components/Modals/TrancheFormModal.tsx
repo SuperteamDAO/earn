@@ -1,8 +1,9 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
 
@@ -20,14 +21,14 @@ import {
 } from '@/components/ui/form';
 import { FormFieldWrapper } from '@/components/ui/form-field-wrapper';
 import { Input } from '@/components/ui/input';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson, RequestError } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import { SubmissionTerms } from '@/features/listings/components/Submission/SubmissionTerms';
 
-import { userApplicationQuery } from '../../queries/user-application';
+import type { GrantApplicationWithTranchesAndUser } from '../../queries/user-application';
 import type { Grant } from '../../types';
 import {
   AGENTIC_ENGINEERING_GRANT_COPY,
@@ -158,15 +159,21 @@ const createTrancheFormSchema = (
 
 interface Props {
   grant: Grant;
-  applicationId: string;
+  // Their approved application, loaded with the page.
+  grantApplication: GrantApplicationWithTranchesAndUser;
   onClose: () => void;
 }
 
-export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
+export const TrancheFormModal = ({
+  grant,
+  grantApplication,
+  onClose,
+}: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTOSModalOpen, setIsTOSModalOpen] = useState(false);
-  const queryClient = useQueryClient();
-  const { user, refetchUser } = useUser();
+  const router = useRouter();
+  const user = useViewer();
+  const applicationId = grantApplication.id;
   const isST = grant.isST === true;
   const isAgenticEngineering = isAgenticEngineeringGrant(grant);
   const trancheCopy = isST
@@ -181,8 +188,6 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
   );
 
   type TrancheFormValues = z.infer<typeof trancheFormSchema>;
-
-  const { data: grantApplication } = useQuery(userApplicationQuery(grant.id));
 
   const lastWalletAddress =
     grantApplication?.GrantTranche?.length &&
@@ -210,7 +215,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
   const onSubmit = async (values: TrancheFormValues) => {
     try {
       setIsSubmitting(true);
-      await api.post('/api/grant-application/request-tranche', {
+      await postJson('/api/grant-application/request-tranche/', {
         applicationId,
         walletAddress: values.walletAddress,
         projectUpdate: values.projectUpdate,
@@ -228,22 +233,30 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
         }),
       });
       form.reset();
-      await queryClient.invalidateQueries({
-        queryKey: userApplicationQuery(grant.id).queryKey,
-      });
-      await refetchUser();
+      // The page loads their application again.
+      router.refresh();
       toast.success('Tranche request submitted successfully');
       onClose();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error submitting tranche request:', error);
-      const serverMessage = axios.isAxiosError(error)
-        ? error.response?.data?.message || error.response?.data?.error
-        : undefined;
+      const body =
+        error instanceof RequestError &&
+        typeof error.body === 'object' &&
+        error.body !== null
+          ? (error.body as {
+              message?: unknown;
+              error?: unknown;
+              code?: unknown;
+            })
+          : undefined;
+      const serverMessage =
+        typeof body?.message === 'string'
+          ? body.message
+          : typeof body?.error === 'string'
+            ? body.error
+            : undefined;
 
-      if (
-        axios.isAxiosError(error) &&
-        error.response?.data?.code === WALLET_ADDRESS_CONFLICT_CODE
-      ) {
+      if (body?.code === WALLET_ADDRESS_CONFLICT_CODE) {
         const walletErrorMessage =
           serverMessage || WALLET_ADDRESS_CONFLICT_MESSAGE;
         form.setError('walletAddress', {
@@ -260,7 +273,10 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
     }
   };
 
-  const currentWalletAddress = form.watch('walletAddress');
+  const currentWalletAddress = useWatch({
+    control: form.control,
+    name: 'walletAddress',
+  });
   const isSameAsEmbeddedWallet =
     currentWalletAddress?.toLowerCase() === user?.walletAddress?.toLowerCase();
 
@@ -292,7 +308,10 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
       </DialogTitle>
       <div className="px-8 py-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}
+            className="space-y-6"
+          >
             {!isAgenticEngineering && (
               <FormFieldWrapper
                 control={form.control}
@@ -323,7 +342,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                     <FormItem className="flex flex-col gap-2">
                       <MultiImageUploader
                         source="grant-event-pictures"
-                        value={(field.value as string[]) || []}
+                        value={field.value || []}
                         onChange={field.onChange}
                         maxImages={5}
                         minImages={1}
@@ -343,7 +362,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                     <FormItem className="flex flex-col gap-2">
                       <MultiImageUploader
                         source="grant-event-receipts"
-                        value={(field.value as string[]) || []}
+                        value={field.value || []}
                         onChange={field.onChange}
                         maxImages={10}
                         minImages={1}
@@ -494,7 +513,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                     <FormItem className="flex flex-col gap-2">
                       <MultiImageUploader
                         source="grant-agentic-receipts"
-                        value={(field.value as string[]) || []}
+                        value={field.value || []}
                         onChange={field.onChange}
                         maxImages={3}
                         minImages={1}

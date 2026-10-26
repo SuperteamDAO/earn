@@ -1,4 +1,5 @@
-import { useMutation } from '@tanstack/react-query';
+'use client';
+
 import {
   ChevronLeft,
   CopyIcon,
@@ -7,7 +8,8 @@ import {
   MoreVertical,
   Sheet,
 } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import {
@@ -24,14 +26,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { StatusPill } from '@/components/ui/status-pill';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { api } from '@/lib/api';
-import { getURL } from '@/utils/validUrl';
+import { publicEnv } from '@/lib/public-env';
 
 import type { Grant } from '@/features/grants/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
-import { ExportSheetsModal } from '@/features/sponsor-dashboard/components/Modals/ExportSheetsModal';
+
+import { ExportSheetsModal } from './Modals/ExportSheetsModal';
 
 interface GrantWithApplicationCount extends Grant {
   totalApplications: number;
@@ -40,6 +42,19 @@ interface GrantWithApplicationCount extends Grant {
 interface Props {
   grant: GrantWithApplicationCount | undefined;
 }
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text).then(
+    () => {
+      toast.success('Link Copied', {
+        duration: 3000,
+      });
+    },
+    (err) => {
+      console.error('Failed to copy text: ', err);
+    },
+  );
+};
 
 export const ApplicationHeader = ({ grant }: Props) => {
   const listingPath = `earn/grants/${grant?.slug}`;
@@ -52,80 +67,61 @@ export const ApplicationHeader = ({ grant }: Props) => {
     onClose: exportSheetsOnClose,
   } = useDisclosure();
 
-  const exportMutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.get(
-        `/api/sponsor-dashboard/application/export/`,
+  const [isExporting, setIsExporting] = useState(false);
+  const exportMutation = { isPending: isExporting };
+
+  // The handler answers with the CSV itself (Earn uploaded it to
+  // Cloudinary first and sent the link).
+  const exportCsv = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch(
+        `/api/sponsor-dashboard/application/export/?${new URLSearchParams({ grantId: grant?.id ?? '' })}`,
         {
-          params: { grantId: grant?.id },
+          headers: {
+            Accept: 'text/csv,application/octet-stream',
+          },
         },
       );
-      return response.data;
-    },
-    onSuccess: async (data) => {
-      const url = data?.url || '';
-      if (url) {
-        try {
-          const response = await fetch(url, {
-            headers: {
-              Accept: 'text/csv,application/octet-stream',
-            },
-          });
 
-          if (!response.ok) {
-            throw new Error(`Failed to download: ${response.status}`);
-          }
-
-          const blob = await response.blob();
-
-          const blobUrl = window.URL.createObjectURL(
-            new Blob([blob], { type: 'text/csv' }),
-          );
-
-          const link = document.createElement('a');
-          link.href = blobUrl;
-          link.setAttribute('download', `${grant?.slug || 'applications'}.csv`);
-
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-
-          window.URL.revokeObjectURL(blobUrl);
-
-          toast.success('CSV exported successfully');
-        } catch (error) {
-          console.error('Download error:', error);
-          toast.error('Failed to download CSV. Please try again.');
-        }
-      } else {
-        toast.error('Export URL is empty');
+      if (!response.ok) {
+        throw new Error(`Failed to download: ${response.status}`);
       }
-    },
-    onError: (error) => {
+
+      const blob = await response.blob();
+
+      const blobUrl = window.URL.createObjectURL(
+        new Blob([blob], { type: 'text/csv' }),
+      );
+
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.setAttribute('download', `${grant?.slug || 'applications'}.csv`);
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      window.URL.revokeObjectURL(blobUrl);
+
+      toast.success('CSV exported successfully');
+    } catch (error) {
       console.error(error);
       toast.error('Failed to export CSV. Please try again.');
-    },
-  });
-
-  const handleExport = () => {
-    exportMutation.mutate();
+    } finally {
+      setIsExporting(false);
+    }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(
-      () => {
-        toast.success('Link Copied', {
-          duration: 3000,
-        });
-      },
-      (err) => {
-        console.error('Failed to copy text: ', err);
-      },
-    );
+  const handleExport = () => {
+    void exportCsv();
   };
 
   const getGrantUrl = () => {
-    return `${getURL()}earn/grants/${grant?.slug}`;
+    const base = publicEnv.siteUrl.endsWith('/')
+      ? publicEnv.siteUrl
+      : `${publicEnv.siteUrl}/`;
+    return `${base}earn/grants/${grant?.slug}`;
   };
 
   return (
@@ -184,9 +180,7 @@ export const ApplicationHeader = ({ grant }: Props) => {
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                onClick={() =>
-                  window.open(`${router.basePath}/${listingPath}`, '_blank')
-                }
+                onClick={() => window.open(`/${listingPath}`, '_blank')}
                 className="cursor-pointer"
               >
                 <ExternalLink className="size-4" />

@@ -10,8 +10,8 @@ import { StatusPill } from '@/components/ui/status-pill';
 import { Switch } from '@/components/ui/switch';
 import type { GrantApplicationStatus, SubmissionLabels } from '@/prisma/enums';
 
-import { labelMenuOptionsGrants } from '../../constants';
 import { colorMap } from '../../utils/statusColorMap';
+import { grantLabelOptions } from './labels';
 
 interface Props {
   selectedFilters: Set<GrantApplicationStatus | SubmissionLabels>;
@@ -30,12 +30,19 @@ const DECISION_FILTERS: Array<{
   { label: 'Rejected', value: 'Rejected' },
 ];
 
-const LABEL_FILTERS = labelMenuOptionsGrants
-  .filter((option) => option.value !== 'Pending')
-  .map((option) => ({
-    label: option.label,
-    value: option.value as SubmissionLabels,
-  }));
+const LABEL_FILTERS = grantLabelOptions.filter(
+  (option) => option.value !== 'Pending',
+);
+
+const getFilterColor = (value: GrantApplicationStatus | SubmissionLabels) => {
+  return (
+    colorMap[value as keyof typeof colorMap] || {
+      bg: 'bg-slate-100',
+      color: 'text-slate-600',
+      border: 'border-slate-200',
+    }
+  );
+};
 
 export const MultiSelectFilter = ({
   selectedFilters,
@@ -51,16 +58,6 @@ export const MultiSelectFilter = ({
       newFilters.add(value);
     }
     onFilterChange(newFilters);
-  };
-
-  const getFilterColor = (value: GrantApplicationStatus | SubmissionLabels) => {
-    return (
-      colorMap[value as keyof typeof colorMap] || {
-        bg: 'bg-slate-100',
-        color: 'text-slate-600',
-        border: 'border-slate-200',
-      }
-    );
   };
 
   return (

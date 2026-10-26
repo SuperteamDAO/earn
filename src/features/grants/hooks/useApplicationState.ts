@@ -1,105 +1,87 @@
-import { useAtom } from 'jotai';
-import { useEffect } from 'react';
+import { useMemo } from 'react';
 
-import { applicationStateAtom } from '../atoms/applicationStateAtom';
 import type { GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import type { Grant } from '../types';
 import { isGrantApplicationInCooldown } from '../utils/grantApplicationCooldown';
 import { isAgenticEngineeringGrant } from '../utils/stGrant';
 
+export type ApplicationState =
+  | 'ALLOW NEW'
+  | 'APPLIED'
+  | 'ALLOW EDIT'
+  | 'COOLDOWN'
+  | 'KYC PENDING'
+  | 'KYC APPROVED'
+  | 'TRANCHE1 PENDING'
+  | 'TRANCHE1 APPROVED'
+  | 'TRANCHE1 PAID'
+  | 'TRANCHE2 PENDING'
+  | 'TRANCHE2 APPROVED'
+  | 'TRANCHE2 PAID'
+  | 'TRANCHE3 PENDING'
+  | 'TRANCHE3 APPROVED'
+  | 'TRANCHE3 PAID'
+  | 'TRANCHE4 PENDING'
+  | 'TRANCHE4 APPROVED'
+  | 'TRANCHE4 PAID';
+
+const TRANCHE_STATES: Record<string, ApplicationState> = {
+  '1 Pending': 'TRANCHE1 PENDING',
+  '1 Approved': 'TRANCHE1 APPROVED',
+  '1 Paid': 'TRANCHE1 PAID',
+  '2 Pending': 'TRANCHE2 PENDING',
+  '2 Approved': 'TRANCHE2 APPROVED',
+  '2 Paid': 'TRANCHE2 PAID',
+  '3 Pending': 'TRANCHE3 PENDING',
+  '3 Approved': 'TRANCHE3 APPROVED',
+  '3 Paid': 'TRANCHE3 PAID',
+  '4 Pending': 'TRANCHE4 PENDING',
+  '4 Approved': 'TRANCHE4 APPROVED',
+  '4 Paid': 'TRANCHE4 PAID',
+};
+
+// Where their latest application leaves them, as Earn's grant page reads it
+// (a verified applicant with no tranche yet still sees "Submit KYC").
+export function applicationStateOf(
+  application: GrantApplicationWithTranchesAndUser | null | undefined,
+  grant: Grant,
+): ApplicationState {
+  if (!application) return 'ALLOW NEW';
+  if (application.applicationStatus === 'Rejected') {
+    return !application.isCooldownSkipped &&
+      isGrantApplicationInCooldown(application.decidedAt)
+      ? 'COOLDOWN'
+      : 'ALLOW NEW';
+  }
+  if (application.applicationStatus === 'Pending') {
+    return grant.isNative ? 'ALLOW EDIT' : 'APPLIED';
+  }
+  if (application.applicationStatus === 'Approved') {
+    const hasSpecialTranches =
+      (grant.isNative && grant.airtableId) || isAgenticEngineeringGrant(grant);
+    if (!hasSpecialTranches) return 'APPLIED';
+    const validTranches = application.GrantTranche.filter(
+      (tranche) => tranche.status !== 'Rejected',
+    );
+    const trancheNumber = validTranches.length;
+    if (!application.user.isKYCVerified || trancheNumber === 0) {
+      return 'KYC PENDING';
+    }
+    const status = validTranches[trancheNumber - 1]?.status;
+    return TRANCHE_STATES[`${trancheNumber} ${status}`] ?? 'ALLOW NEW';
+  }
+  return 'ALLOW NEW';
+}
+
 export const useApplicationState = (
-  application: GrantApplicationWithTranchesAndUser | undefined,
+  application: GrantApplicationWithTranchesAndUser | null | undefined,
   grant: Grant,
 ) => {
-  const [applicationState, setApplicationState] = useAtom(
-    applicationStateAtom(grant.id),
+  const applicationState = useMemo(
+    () => applicationStateOf(application, grant),
+    [application, grant],
   );
   const tranches = application?.totalTranches ?? 0;
-
-  const hasSpecialTranches =
-    (grant.isNative && grant.airtableId) || isAgenticEngineeringGrant(grant);
-
-  useEffect(() => {
-    if (!application) return;
-
-    if (application.applicationStatus === 'Rejected') {
-      setApplicationState(
-        !application.isCooldownSkipped &&
-          isGrantApplicationInCooldown(application.decidedAt)
-          ? 'COOLDOWN'
-          : 'ALLOW NEW',
-      );
-      return;
-    }
-
-    if (application.applicationStatus === 'Pending') {
-      if (grant.isNative) {
-        setApplicationState('ALLOW EDIT');
-      } else {
-        setApplicationState('APPLIED');
-      }
-      return;
-    }
-
-    if (application.applicationStatus === 'Approved') {
-      const validTranches = application.GrantTranche.filter(
-        (tranche) => tranche.status !== 'Rejected',
-      );
-      const trancheNumber = validTranches.length;
-
-      if (hasSpecialTranches) {
-        if (!application.user.isKYCVerified) {
-          setApplicationState('KYC PENDING');
-        } else if (application.user.isKYCVerified) {
-          if (trancheNumber === 0) {
-            setApplicationState('KYC PENDING');
-          } else if (trancheNumber === 0) {
-            setApplicationState('KYC APPROVED');
-          } else if (trancheNumber === 1) {
-            const trancheStatus = validTranches[0]?.status;
-            if (trancheStatus === 'Pending')
-              setApplicationState('TRANCHE1 PENDING');
-            else if (trancheStatus === 'Approved')
-              setApplicationState('TRANCHE1 APPROVED');
-            else if (trancheStatus === 'Paid')
-              setApplicationState('TRANCHE1 PAID');
-          } else if (trancheNumber === 2) {
-            const trancheStatus = validTranches[1]?.status;
-            if (trancheStatus === 'Pending')
-              setApplicationState('TRANCHE2 PENDING');
-            else if (trancheStatus === 'Approved')
-              setApplicationState('TRANCHE2 APPROVED');
-            else if (trancheStatus === 'Paid')
-              setApplicationState('TRANCHE2 PAID');
-          } else if (trancheNumber === 3) {
-            const trancheStatus = validTranches[2]?.status;
-            if (trancheStatus === 'Pending')
-              setApplicationState('TRANCHE3 PENDING');
-            else if (trancheStatus === 'Approved')
-              setApplicationState('TRANCHE3 APPROVED');
-            else if (trancheStatus === 'Paid')
-              setApplicationState('TRANCHE3 PAID');
-          } else if (trancheNumber === 4) {
-            const trancheStatus = validTranches[3]?.status;
-            if (trancheStatus === 'Pending')
-              setApplicationState('TRANCHE4 PENDING');
-            else if (trancheStatus === 'Approved')
-              setApplicationState('TRANCHE4 APPROVED');
-            else if (trancheStatus === 'Paid')
-              setApplicationState('TRANCHE4 PAID');
-          }
-        }
-      } else {
-        setApplicationState('APPLIED');
-      }
-    }
-  }, [
-    application,
-    grant.id,
-    grant.isNative,
-    hasSpecialTranches,
-    setApplicationState,
-  ]);
 
   const getButtonConfig = () => {
     switch (applicationState) {

@@ -1,14 +1,10 @@
-import { useAtom } from 'jotai';
 import { useCallback, useMemo } from 'react';
 
 import FaCheck from '@/components/icons/FaCheck';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getPayoutCopy } from '@/utils/payout-date';
 
-import {
-  type ApplicationState,
-  applicationStateAtom,
-} from '../atoms/applicationStateAtom';
+import type { ApplicationState } from '../hooks/useApplicationState';
 import type { GrantApplicationWithTranchesAndUser } from '../queries/user-application';
 import type { GrantWithApplicationCount } from '../types';
 
@@ -36,6 +32,7 @@ const STATE_ORDER: ApplicationState[] = [
 interface Props {
   application: GrantApplicationWithTranchesAndUser;
   grant: GrantWithApplicationCount;
+  applicationState: ApplicationState;
 }
 
 const CheckIcon = () => (
@@ -77,13 +74,15 @@ const ConnectingLine = ({
   </div>
 );
 
-export const ApprovalStages = ({ application, grant }: Props) => {
-  const [applicationState] = useAtom(applicationStateAtom(grant.id));
-
+export const ApprovalStages = ({
+  application,
+  grant,
+  applicationState,
+}: Props) => {
   const isStateCompleted = useCallback(
-    (state: ApplicationState) => {
+    (state: string) => {
       const currentStateIndex = STATE_ORDER.indexOf(applicationState);
-      const checkStateIndex = STATE_ORDER.indexOf(state);
+      const checkStateIndex = STATE_ORDER.findIndex((each) => each === state);
       return currentStateIndex >= checkStateIndex && checkStateIndex !== -1;
     },
     [applicationState],
@@ -91,12 +90,9 @@ export const ApprovalStages = ({ application, grant }: Props) => {
 
   const getTrancheStatus = useCallback(
     (trancheNum: number) => {
-      if (isStateCompleted(`TRANCHE${trancheNum} PAID` as ApplicationState))
-        return 'Paid';
-      if (isStateCompleted(`TRANCHE${trancheNum} APPROVED` as ApplicationState))
-        return 'Approved';
-      if (isStateCompleted(`TRANCHE${trancheNum} PENDING` as ApplicationState))
-        return 'Pending';
+      if (isStateCompleted(`TRANCHE${trancheNum} PAID`)) return 'Paid';
+      if (isStateCompleted(`TRANCHE${trancheNum} APPROVED`)) return 'Approved';
+      if (isStateCompleted(`TRANCHE${trancheNum} PENDING`)) return 'Pending';
       return 'Pending';
     },
     [isStateCompleted],

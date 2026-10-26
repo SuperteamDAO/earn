@@ -1,6 +1,7 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+'use client';
+
 import { ChevronUp, ExternalLink, Search } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
@@ -13,8 +14,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { TokenIcon } from '@/components/ui/token-icon';
+import { getJson } from '@/lib/fetch-json';
 import type { GrantTrancheModel } from '@/prisma/models/GrantTranche';
-import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
@@ -22,15 +23,9 @@ import type { Grant } from '@/features/grants/types';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import type { GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
-import { approvedGranteesQuery } from '../../queries/approved-grantees';
 import type { GrantApplicationWithUser } from '../../types';
+import { type GrantPaymentDetail, paymentsOf } from './answers';
 import { RecordPaymentButton } from './RecordPaymentButton';
-
-interface GrantPaymentDetailProps {
-  tranche: number;
-  amount: number;
-  txId?: string;
-}
 
 const extractTxId = (url: string) => {
   const match = url.match(/tx\/([a-zA-Z0-9]+)/);
@@ -41,7 +36,7 @@ const PaymentDetailsRow = ({
   paymentDetails,
   token,
 }: {
-  paymentDetails: GrantPaymentDetailProps[];
+  paymentDetails: GrantPaymentDetail[];
   token: string;
 }) => {
   return (
@@ -52,7 +47,7 @@ const PaymentDetailsRow = ({
             <div className="flex items-center gap-1">
               <TokenIcon
                 className="h-4 w-4 rounded-full"
-                alt={`${token}`}
+                alt={token}
                 symbol={token}
               />
               <p className="text-sm font-medium text-slate-700">
@@ -112,7 +107,7 @@ const GrantTrancheRow = ({
             <div className="flex items-center gap-1">
               <TokenIcon
                 className="h-4 w-4 rounded-full"
-                alt={`${token}`}
+                alt={token}
                 symbol={token}
               />
               <p className="text-sm font-medium text-slate-700">
@@ -147,21 +142,40 @@ const GrantTh = ({ children }: { children?: string }) => {
 export const PaymentsHistoryTab = ({
   grantId,
   grant,
+  grantees: loadedGrantees,
 }: {
   grantId: string | undefined;
   grant: Grant | undefined;
+  // The approved grantees, as the page loaded them (no search yet).
+  grantees: GrantApplicationWithUser[];
 }) => {
-  const { user } = useUser();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState('');
-  const queryClient = useQueryClient();
+  const [grantees, setGrantees] = useState(loadedGrantees);
+  const searched = useRef(false);
 
   const isNativeAndNonST = !grant?.airtableId && grant?.isNative;
   const isST = !!grant?.airtableId && grant?.isNative;
 
-  const { data: grantees } = useQuery(
-    approvedGranteesQuery(grantId, user?.currentSponsorId, searchTerm),
-  );
+  useEffect(() => {
+    if (!searched.current) setGrantees(loadedGrantees);
+  }, [loadedGrantees]);
+
+  // Each keystroke asks again, as Earn's query did.
+  useEffect(() => {
+    if (!searched.current && !searchTerm) return undefined;
+    searched.current = true;
+    if (!grantId) return undefined;
+    const controller = new AbortController();
+    const params = new URLSearchParams({ grantId, search: searchTerm });
+    getJson<GrantApplicationWithUser[]>(
+      `/api/sponsor-dashboard/grants/approved-grantees/?${params}`,
+      controller.signal,
+    )
+      .then(setGrantees)
+      .catch(() => {});
+    return () => controller.abort();
+  }, [grantId, searchTerm]);
 
   const toggleExpandRow = (id: string) => {
     setExpandedRows((prev) => {
@@ -178,14 +192,12 @@ export const PaymentsHistoryTab = ({
   const handlePaymentRecorded = (
     updatedApplication: GrantApplicationMutationResponse,
   ) => {
-    queryClient.setQueryData<GrantApplicationWithUser[]>(
-      ['approved-grantees', grantId, searchTerm],
-      (oldData) =>
-        oldData?.map((grantee) =>
-          grantee.id === updatedApplication.id
-            ? { ...grantee, ...updatedApplication }
-            : grantee,
-        ),
+    setGrantees((oldData) =>
+      oldData.map((grantee) =>
+        grantee.id === updatedApplication.id
+          ? { ...grantee, ...updatedApplication }
+          : grantee,
+      ),
     );
   };
 
@@ -230,7 +242,7 @@ export const PaymentsHistoryTab = ({
                         <div className="flex items-center gap-2">
                           <EarnAvatar
                             id={grantee.userId}
-                            avatar={grantee.user.photo!}
+                            avatar={grantee.user.photo ?? undefined}
                             className="h-9 w-9"
                           />
                           <div className="flex flex-col">
@@ -314,9 +326,7 @@ export const PaymentsHistoryTab = ({
                       <TableRow>
                         <TableCell />
                         <PaymentDetailsRow
-                          paymentDetails={
-                            grantee.paymentDetails as unknown as GrantPaymentDetailProps[]
-                          }
+                          paymentDetails={paymentsOf(grantee.paymentDetails)}
                           token={grant?.token || 'USDC'}
                         />
                       </TableRow>
@@ -340,7 +350,7 @@ export const PaymentsHistoryTab = ({
                         <div className="flex items-center gap-2">
                           <EarnAvatar
                             id={grantee.userId}
-                            avatar={grantee.user.photo!}
+                            avatar={grantee.user.photo ?? undefined}
                             className="h-9 w-9"
                           />
                           <div className="flex flex-col">

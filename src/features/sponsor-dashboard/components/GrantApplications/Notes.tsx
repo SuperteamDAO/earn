@@ -1,18 +1,15 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { Loader2 } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { api } from '@/lib/api';
+import { postJson } from '@/lib/fetch-json';
 
-import { isStateUpdatingAtom, selectedGrantApplicationAtom } from '../../atoms';
-import type { GrantApplicationsReturn } from '../../queries/applications';
 import {
   convertTextToNotesHTML,
   getTextCharacterCount,
 } from '../../utils/convertTextToNotesHTML';
 import { NotesRichEditor } from '../NotesRichEditor';
+import { useGrantReview } from './GrantReviewContext';
 
 const MAX_CHARACTERS = 2000;
 
@@ -28,15 +25,16 @@ type Props = {
   slug: string | undefined;
 };
 
-export const Notes = ({ slug }: Props) => {
-  const [selectedApplication, setSelectedApplication] = useAtom(
-    selectedGrantApplicationAtom,
-  );
-  const setNotesUpdating = useSetAtom(isStateUpdatingAtom);
+export const Notes = (_: Props) => {
+  const {
+    selectedApplication,
+    setSelectedApplication,
+    setApplications,
+    setStateUpdating: setNotesUpdating,
+  } = useGrantReview();
   const [notes, setNotes] = useState(() =>
     normalizeNotesForEditor(selectedApplication?.notes),
   );
-  const queryClient = useQueryClient();
   const applicationId = useMemo(
     () => selectedApplication?.id,
     [selectedApplication],
@@ -45,46 +43,37 @@ export const Notes = ({ slug }: Props) => {
     selectedApplication?.id,
   );
 
-  const { mutate: updateNotes, isPending: isSaving } = useMutation({
-    mutationFn: (content: string) =>
-      api.post('/api/sponsor-dashboard/grants/update-notes', {
-        id: applicationId,
-        notes: content,
-      }),
-    onSuccess: (_, variables) => {
-      queryClient.setQueriesData<GrantApplicationsReturn>(
-        {
-          predicate: (query) =>
-            query.queryKey[0] === 'sponsor-applications' &&
-            query.queryKey.includes(slug),
-        },
-        (old) => {
-          if (!old) return old;
-          const data = old?.data.map((application) =>
-            application.id === applicationId
-              ? { ...application, notes: variables }
-              : application,
-          );
-          return {
-            ...old,
-            data,
-          };
-        },
-      );
-      if (selectedApplication) {
-        setSelectedApplication({
-          ...selectedApplication,
-          notes: variables,
+  const [isSaving, setIsSaving] = useState(false);
+  const updateNotes = useCallback(
+    async (content: string) => {
+      setIsSaving(true);
+      try {
+        await postJson('/api/sponsor-dashboard/grants/update-notes/', {
+          id: applicationId,
+          notes: content,
         });
+        setApplications((applications) =>
+          applications.map((application) =>
+            application.id === applicationId
+              ? { ...application, notes: content }
+              : application,
+          ),
+        );
+        setSelectedApplication((application) =>
+          application && application.id === applicationId
+            ? { ...application, notes: content }
+            : application,
+        );
+      } catch (error) {
+        console.error('Error saving notes:', error);
+      } finally {
+        setIsSaving(false);
+        setNotesUpdating(false);
       }
     },
-    onError: (error) => {
-      console.error('Error saving notes:', error);
-    },
-    onSettled: () => {
-      setNotesUpdating(false);
-    },
-  });
+    // oxlint-disable-next-line react/memo-dependencies -- the context's setters
+    [applicationId, setApplications, setSelectedApplication, setNotesUpdating],
+  );
 
   const debouncedUpdateNotesRef = useRef<
     ReturnType<typeof debounce> | undefined
@@ -92,13 +81,14 @@ export const Notes = ({ slug }: Props) => {
 
   useEffect(() => {
     debouncedUpdateNotesRef.current = debounce(
-      (content: string) => updateNotes(content),
+      (content: string) => void updateNotes(content),
       1000,
     );
 
     return () => {
       debouncedUpdateNotesRef.current?.cancel();
     };
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- a fresh debounce per application, as Earn
   }, [applicationId, updateNotes]);
 
   useEffect(() => {

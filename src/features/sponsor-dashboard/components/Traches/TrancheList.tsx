@@ -1,22 +1,20 @@
-import { useAtom } from 'jotai';
+'use client';
+
 import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
 import { Input } from '@/components/ui/input';
 import { StatusPill } from '@/components/ui/status-pill';
-import type {
-  GrantApplicationStatus,
-  GrantTrancheStatus,
-} from '@/prisma/enums';
+import type { GrantTrancheStatus } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { nthLabelGenerator } from '@/utils/rank';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { selectedGrantTrancheAtom } from '../../atoms';
 import type { GrantTrancheWithApplication } from '../../queries/tranches';
 import { colorMap } from '../../utils/statusColorMap';
+import { useGrantReview } from '../GrantApplications/GrantReviewContext';
 import { MultiSelectFilter } from './MultiSelectFilter';
 
 interface Props {
@@ -35,9 +33,7 @@ export const TrancheList = ({
   const debouncedSetSearchTextRef = useRef<
     ReturnType<typeof debounce> | undefined
   >(undefined);
-  const [selectedTranche, setSelectedTranche] = useAtom(
-    selectedGrantTrancheAtom,
-  );
+  const { selectedTranche, setSelectedTranche } = useGrantReview();
 
   useEffect(() => {
     debouncedSetSearchTextRef.current = debounce(setSearchText, 300);
@@ -74,7 +70,7 @@ export const TrancheList = ({
             bg: statusBg,
             color: statusColor,
             border: statusBorder,
-          } = colorMap[trancheStatus as GrantApplicationStatus];
+          } = colorMap[trancheStatus];
 
           return (
             <div

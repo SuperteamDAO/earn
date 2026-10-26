@@ -1,4 +1,5 @@
-import { useAtom } from 'jotai';
+'use client';
+
 import debounce from 'lodash.debounce';
 import { Search } from 'lucide-react';
 import { useEffect, useRef } from 'react';
@@ -13,10 +14,10 @@ import { cn } from '@/utils/cn';
 import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { selectedGrantApplicationAtom } from '../../atoms';
 import { labelMenuOptionsGrants } from '../../constants';
 import type { GrantApplicationWithUser } from '../../types';
 import { colorMap } from '../../utils/statusColorMap';
+import { useGrantReview } from './GrantReviewContext';
 import { MultiSelectFilter } from './MultiSelectFilter';
 import { SelectLabel } from './SelectLabel';
 
@@ -50,9 +51,7 @@ export const ApplicationList = ({
   const debouncedSetSearchTextRef = useRef<
     ReturnType<typeof debounce> | undefined
   >(undefined);
-  const [selectedApplication, setSelectedApplication] = useAtom(
-    selectedGrantApplicationAtom,
-  );
+  const { selectedApplication, setSelectedApplication } = useGrantReview();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -118,7 +117,7 @@ export const ApplicationList = ({
             bg: statusBg,
             color: statusColor,
             border: statusBorder,
-          } = colorMap[applicationStatus as GrantApplicationStatus];
+          } = colorMap[applicationStatus];
           const {
             bg: labelBg,
             color: labelColor,

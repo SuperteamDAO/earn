@@ -66,6 +66,9 @@ export const CustomNoteEditor = ({
               <div className="mx-auto rounded-md border border-slate-200 bg-white px-5 py-4 shadow-sm">
                 <div
                   className="prose prose-sm max-w-none text-slate-600"
+                  // The sponsor's own email preview: Earn's template with
+                  // their sanitized note.
+                  // oxlint-disable-next-line react/no-danger
                   dangerouslySetInnerHTML={{ __html: previewHtml }}
                 />
               </div>

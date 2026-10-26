@@ -90,7 +90,7 @@ export const RejectTrancheModal = ({
 
     setLoading(true);
     try {
-      await onRejectTranche(
+      onRejectTranche(
         trancheId,
         enableCustomEmail && isCustomEmailOpen
           ? noteValidation.sanitized
@@ -104,11 +104,14 @@ export const RejectTrancheModal = ({
     }
   };
 
+  // Each application (or tranche) opens the modal afresh.
   useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect
     setCustomNote('');
     setIsCustomEmailOpen(false);
     setEmailError(null);
     setLoading(false);
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- reset whenever another one opens
   }, [trancheId]);
 
   return (
@@ -189,7 +192,7 @@ export const RejectTrancheModal = ({
                       isCustomEmailOpen &&
                       (!getCustomEmailPlainText(customNote) || !!emailError))
                   }
-                  onClick={rejectTranche}
+                  onClick={() => void rejectTranche()}
                 >
                   {loading ? (
                     <>

@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 import { URL_REGEX } from '@/constants/URL_REGEX';
-import type { User } from '@/interface/user';
 import { validateSolAddress } from '@/utils/validateSolAddress';
 
 import { twitterRegex } from '@/features/social/utils/regex';
@@ -81,7 +80,8 @@ export const grantApplicationSchema = (
   maxReward: number,
   token: string,
   questions?: GrantQuestion[],
-  user?: User | null,
+  // Their verified X handles (User.linkedTwitter).
+  verifiedXHandles: string[] = [],
   isST = false,
   isAgenticEngineering = false,
 ) => {
@@ -174,8 +174,7 @@ export const grantApplicationSchema = (
 
         const handle = extractXHandle(value);
         if (handle) {
-          const verifiedHandles = user?.linkedTwitter || [];
-          const isVerified = isHandleVerified(handle, verifiedHandles);
+          const isVerified = isHandleVerified(handle, verifiedXHandles);
 
           if (!isVerified) {
             ctx.addIssue({

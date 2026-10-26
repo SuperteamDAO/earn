@@ -1,16 +1,13 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { useAtom } from 'jotai';
 import { AlertTriangle, Flag, X } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { api } from '@/lib/api';
+import { postJson } from '@/lib/fetch-json';
 
-import { selectedGrantApplicationAtom } from '../../../atoms';
 import { useRejectGrantApplications } from '../../../mutations/useRejectGrantApplications';
-import type { GrantApplicationsReturn } from '../../../queries/applications';
+import { useGrantReview } from '../GrantReviewContext';
 
 type ActionType = 'reject' | 'spam';
 
@@ -41,13 +38,11 @@ export const MultiActionModal = ({
   setSelectedApplicationIds,
   allApplicationsLength,
   actionType,
-  slug,
 }: MultiActionModalProps) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const queryClient = useQueryClient();
-  const [, setSelectedApplication] = useAtom(selectedGrantApplicationAtom);
+  const { setApplications, setSelectedApplication } = useGrantReview();
 
-  const rejectGrantApplications = useRejectGrantApplications(slug);
+  const rejectGrantApplications = useRejectGrantApplications();
 
   const isMultiple = applicationIds.length > 1;
   const isRejectingAll =
@@ -88,7 +83,7 @@ export const MultiActionModal = ({
         };
 
       default:
-        throw new Error(`Unknown action type: ${actionType}`);
+        throw new Error(`Unknown action type: ${String(actionType)}`);
     }
   };
 
@@ -101,34 +96,25 @@ export const MultiActionModal = ({
           setSelectedApplicationIds(new Set());
           break;
         case 'spam':
-          await api.post(`/api/sponsor-dashboard/grants/update-label/`, {
+          await postJson(`/api/sponsor-dashboard/grants/update-label/`, {
             ids: applicationIds,
             label: 'Spam',
           });
           rejectGrantApplications.mutate(applicationIds);
 
-          queryClient.setQueryData<GrantApplicationsReturn>(
-            ['sponsor-applications', slug],
-            (old: GrantApplicationsReturn | undefined) => {
-              if (!old) return old;
-              return {
-                ...old,
-                data: old.data.map((application) => {
-                  if (applicationIds.includes(application.id)) {
-                    return { ...application, label: 'Spam' as any };
-                  }
-                  return application;
-                }),
-              };
-            },
+          setApplications((applications) =>
+            applications.map((application) =>
+              applicationIds.includes(application.id)
+                ? { ...application, label: 'Spam' as const }
+                : application,
+            ),
           );
 
-          setSelectedApplication((prev: any) => {
-            if (prev && applicationIds.includes(prev.id)) {
-              return { ...prev, label: 'Spam' as any };
-            }
-            return prev;
-          });
+          setSelectedApplication((prev) =>
+            prev && applicationIds.includes(prev.id)
+              ? { ...prev, label: 'Spam' as const }
+              : prev,
+          );
 
           setSelectedApplicationIds(new Set());
           break;
@@ -169,7 +155,7 @@ export const MultiActionModal = ({
             <Button
               className={`flex-1 ${config.buttonClass}`}
               disabled={loading}
-              onClick={handleAction}
+              onClick={() => void handleAction()}
             >
               {loading ? (
                 <>
