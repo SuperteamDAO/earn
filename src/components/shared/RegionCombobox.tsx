@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
 import { Check, ChevronsUpDown, Earth } from 'lucide-react';
 import React, { type JSX, useMemo } from 'react';
 
@@ -20,7 +20,7 @@ import {
 import { countries, SANCTIONED_COUNTRY_CODES } from '@/constants/country';
 import { cn } from '@/utils/cn';
 
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
+import { useChapters } from '@/features/chapters/queries/chapters';
 
 interface CountryOption {
   value: string;
@@ -126,7 +126,7 @@ export function RegionCombobox({
   className,
   classNames,
 }: RegionComboboxProps): JSX.Element {
-  const { data: chapters = [] } = useQuery(chaptersQuery);
+  const chapters = useChapters();
 
   const options: SelectOption[] = useMemo(() => {
     const isoCountries = countries.filter(

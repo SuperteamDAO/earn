@@ -1,5 +1,4 @@
 'use client';
-import { useQuery } from '@tanstack/react-query';
 import { ChevronsUpDown } from 'lucide-react';
 import React, { type JSX, useMemo } from 'react';
 
@@ -22,7 +21,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { cn } from '@/utils/cn';
 
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
+import { useChapters } from '@/features/chapters/queries/chapters';
 
 interface SuperteamOption {
   value: string;
@@ -98,7 +97,7 @@ export function SuperteamCombobox({
   className,
   classNames,
 }: SuperteamComboboxProps): JSX.Element {
-  const { data: chapters = [] } = useQuery(chaptersQuery);
+  const chapters = useChapters();
 
   const options: SuperteamOption[] = useMemo(() => {
     const baseOptions = chapters.map((chapter) => ({

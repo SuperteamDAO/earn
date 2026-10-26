@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 
-import { api } from '@/lib/api';
+import { deleteJson, postJson } from '@/lib/fetch-json';
 import {
   compressImage,
   detectFormat,
@@ -140,16 +140,14 @@ export function useImageUpload({
 
         updateProgress(40, 100);
 
-        const signResponse = await api.post<SignedUploadParams>(
-          '/api/image/sign',
+        const signedParams = await postJson<SignedUploadParams>(
+          '/api/image/sign/',
           {
             source,
             contentType: mimeType as 'image/jpeg' | 'image/png' | 'image/webp',
             contentLength: processedFile.size,
           },
         );
-
-        const signedParams = signResponse.data;
 
         updateProgress(50, 100);
 
@@ -262,9 +260,7 @@ export function useImageUpload({
       }
 
       try {
-        await api.delete('/api/image/delete', {
-          data: { publicId, source },
-        });
+        await deleteJson('/api/image/delete/', { publicId, source });
       } catch (err) {
         console.warn('Failed to delete old image:', err);
       }

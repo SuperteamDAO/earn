@@ -12,7 +12,7 @@ import StarterKit from '@tiptap/starter-kit';
 import * as React from 'react';
 import { toast } from 'sonner';
 
-import { api } from '@/lib/api';
+import { deleteJson, postJson } from '@/lib/fetch-json';
 import {
   compressImage,
   detectFormat,
@@ -88,13 +88,11 @@ async function uploadImageToCloudinary(
     | 'image/png'
     | 'image/webp';
 
-  const signResponse = await api.post<SignedUploadParams>('/api/image/sign', {
+  const signedParams = await postJson<SignedUploadParams>('/api/image/sign/', {
     source,
     contentType: mimeType,
     contentLength: processedFile.size,
   });
-
-  const signedParams = signResponse.data;
 
   const formData = new FormData();
   formData.append('file', processedFile);
@@ -140,9 +138,7 @@ async function deleteImageFromCloudinary(
   if (!publicId) return;
 
   try {
-    await api.delete('/api/image/delete', {
-      data: { publicId, source },
-    });
+    await deleteJson('/api/image/delete/', { publicId, source });
   } catch (err) {
     console.warn('Failed to delete image:', err);
   }
