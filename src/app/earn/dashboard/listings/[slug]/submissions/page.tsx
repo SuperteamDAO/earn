@@ -14,10 +14,8 @@ export default async function BountySubmissionsPage(
   props: PageProps<'/earn/dashboard/listings/[slug]/submissions'>,
 ) {
   const { slug } = await props.params;
-  const tab = (await props.searchParams).tab;
-  const here = `/earn/dashboard/listings/${encodeURIComponent(slug)}/submissions/${tab === 'payments' ? '?tab=payments' : ''}`;
   return (
-    <SponsorLayout isCollapsible here={here}>
+    <SponsorLayout isCollapsible>
       <Suspense fallback={<SubmissionsPageSkeleton />}>
         <ReviewPage slug={slug} hackathon={false} />
       </Suspense>

@@ -14,10 +14,7 @@ export default async function HackathonSubmissionsPage(
 ) {
   const { listing } = await props.params;
   return (
-    <SponsorLayout
-      isCollapsible
-      here={`/earn/dashboard/hackathon/${encodeURIComponent(listing)}/submissions/`}
-    >
+    <SponsorLayout isCollapsible>
       <Suspense fallback={<SubmissionsPageSkeleton />}>
         <ReviewPage slug={listing} hackathon />
       </Suspense>
