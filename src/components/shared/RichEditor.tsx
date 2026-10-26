@@ -34,7 +34,6 @@ interface RichEditorProps {
   height?: string;
   placeholder?: string;
   error?: boolean;
-  isPro?: boolean;
 }
 
 export const RichEditor: React.FC<RichEditorProps> = ({
@@ -44,7 +43,6 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   height = '10rem',
   placeholder = 'Write something...',
   error = false,
-  isPro = false,
 }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const editor = useEditor({
@@ -108,9 +106,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
           '[&_.ProseMirror_p.is-editor-empty:first-child::before]:opacity-70',
           height,
           error ? 'border-destructive border' : 'border-input',
-          isPro
-            ? 'focus-within:border focus-within:border-zinc-400'
-            : 'focus-within:border-brand-purple focus-within:border',
+          'focus-within:border-brand-purple focus-within:border',
           `editor-${id}`,
           styles.resetDes,
         )}

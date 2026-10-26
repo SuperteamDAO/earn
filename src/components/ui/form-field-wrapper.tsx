@@ -27,7 +27,6 @@ interface FormFieldWrapperProps<T extends FieldValues> {
   richEditorPlaceholder?: string;
   className?: string;
   onChange?: (e: any) => void;
-  isPro?: boolean;
 }
 
 export function FormFieldWrapper<T extends FieldValues>({
@@ -43,7 +42,6 @@ export function FormFieldWrapper<T extends FieldValues>({
   richEditorPlaceholder,
   className,
   onChange,
-  isPro = false,
 }: FormFieldWrapperProps<T>) {
   return (
     <FormField
@@ -67,7 +65,6 @@ export function FormFieldWrapper<T extends FieldValues>({
                   }}
                   error={false}
                   placeholder={richEditorPlaceholder}
-                  isPro={isPro}
                 />
               ) : isTokenInput ? (
                 <TokenInput
@@ -77,7 +74,6 @@ export function FormFieldWrapper<T extends FieldValues>({
                     field.onChange(e);
                     onChange?.(e);
                   }}
-                  isPro={isPro}
                 />
               ) : (
                 React.cloneElement(children as React.ReactElement<any>, {
@@ -88,7 +84,6 @@ export function FormFieldWrapper<T extends FieldValues>({
                   },
                   className: cn(
                     (children as React.ReactElement<any>).props?.className,
-                    isPro && 'focus-visible:ring-zinc-400',
                   ),
                 })
               )}

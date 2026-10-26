@@ -138,7 +138,6 @@ export function GrantPageLayout({
                 references={grant.references}
                 isPublished={grant.isPublished || false}
                 isApproved={isApproved}
-                isPro={grant.isPro}
                 isST={grant.isST}
               />
 

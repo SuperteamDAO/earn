@@ -23,7 +23,7 @@ export async function GET(_request: NextRequest) {
 
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: userId },
-      select: { createdAt: true, isPro: true },
+      select: { createdAt: true },
     });
 
     const userCreatedAt = dayjs(user.createdAt).utc();
@@ -128,7 +128,7 @@ export async function GET(_request: NextRequest) {
       const entries = groupedByMonth.get(monthKey) ?? [];
 
       const ledgerSum = entries.reduce((sum, e) => sum + (e.change ?? 0), 0);
-      const baseCredits = user.isPro ? 4 : 3;
+      const baseCredits = 3;
 
       if (
         monthKey !== startOfCurrentMonthISO &&

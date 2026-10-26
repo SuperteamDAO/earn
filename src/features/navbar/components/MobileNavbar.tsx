@@ -95,9 +95,7 @@ export const MobileNavbar = ({
                   size="sm"
                   className={cn(
                     'text-brand-purple hover:text-brand-purple bg-indigo-50 text-xs font-semibold hover:bg-indigo-100',
-                    user?.isPro
-                      ? 'bg-zinc-200 text-zinc-700 hover:bg-zinc-300 hover:text-zinc-700'
-                      : 'bg-indigo-50 text-xs font-semibold hover:bg-indigo-100',
+                    'bg-indigo-50 text-xs font-semibold hover:bg-indigo-100',
                   )}
                   onClick={onReferralOpen}
                 >
@@ -110,10 +108,7 @@ export const MobileNavbar = ({
                     onClick={openCreditDrawer}
                   >
                     <CreditIcon
-                      className={cn(
-                        'size-4.5',
-                        user?.isPro ? 'text-zinc-600' : 'text-brand-purple',
-                      )}
+                      className={cn('size-4.5', 'text-brand-purple')}
                     />
                     <p className="text-sm font-medium">{creditBalance}</p>
                   </div>

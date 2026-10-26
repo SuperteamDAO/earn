@@ -14,7 +14,6 @@ import {
   calculateTotalPrizes,
   scaleRewardsForTargetUsd,
 } from '@/features/listing-builder/utils/rewards';
-import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { useListingForm } from '../../../hooks';
 import { BOOST_STEP_TO_AMOUNT_USD } from '../Boost/constants';
@@ -36,7 +35,6 @@ function RewardsFooter({
   setOpen,
   boostStep,
   isBoostFromUrl,
-  proAdjustment,
   shouldShowFeaturedWarning,
   setFeaturedWarningAction,
 }: {
@@ -45,7 +43,6 @@ function RewardsFooter({
   setOpen: (open: boolean, options?: { bypassPrompt?: boolean }) => void;
   boostStep?: number;
   isBoostFromUrl?: boolean;
-  proAdjustment?: { increasedBy: number; minRequired: number } | null;
   shouldShowFeaturedWarning?: boolean;
   setFeaturedWarningAction?: (action: 'close' | 'boost' | null) => void;
 }) {
@@ -169,21 +166,6 @@ function RewardsFooter({
 
   return (
     <div className="w-full space-y-4 bg-white">
-      {proAdjustment && panel === 'rewards' && (
-        <div className="mr-3 flex rounded-lg border border-slate-200 bg-slate-50 p-3">
-          <ProBadge
-            containerClassName="mr-5 bg-slate-300 px-3 py-1"
-            iconClassName="size-2.5 text-slate-700"
-            textClassName="text-xxs ml-1 font-medium text-slate-700"
-          />
-          <p className="text-sm font-medium text-slate-600">
-            We increased your prize by $
-            {proAdjustment.increasedBy.toLocaleString()} to meet the $
-            {proAdjustment.minRequired.toLocaleString()} cap for the PRO
-            Listing.
-          </p>
-        </div>
-      )}
       {!!tokenUsdValue && totalUsdPrize <= 100 && panel === 'rewards' && (
         <p className="text-[0.8rem] text-yellow-600">
           {`Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability.`}
@@ -306,10 +288,6 @@ function RewardsFooter({
           className="w-full"
           onClick={async () => {
             if (await form.validateRewards()) {
-              if (proAdjustment) {
-                setOpen(false, { bypassPrompt: true });
-                return;
-              }
               // Check if we should show featured removal warning
               if (shouldShowFeaturedWarning && setFeaturedWarningAction) {
                 setFeaturedWarningAction('boost');

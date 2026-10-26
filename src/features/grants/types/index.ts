@@ -57,7 +57,6 @@ interface Grant {
   emailSalutation?: string | null;
   isNative?: boolean;
   ai?: GrantsAi;
-  isPro?: boolean;
   isST?: boolean;
 }
 

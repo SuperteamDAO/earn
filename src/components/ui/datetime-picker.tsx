@@ -144,7 +144,6 @@ export type DateTimePickerProps = {
    * Whether to use pro theme styling.
    * @default false
    */
-  isPro?: boolean;
 };
 
 type DateTimeRenderTriggerProps = {
@@ -174,7 +173,6 @@ export function DateTimePicker({
   minDateTooltipContent,
   maxDateTooltipContent,
   defaultDisplayValue = 'Pick a date',
-  isPro = false,
   ...props
 }: DateTimePickerProps & CalendarProps) {
   const [open, setOpen] = useState(false);
@@ -419,9 +417,7 @@ export function DateTimePicker({
               range_end: 'day-range-end',
               selected: cn(
                 'text-primary-foreground rounded-l-md rounded-r-md',
-                isPro
-                  ? 'bg-zinc-800 hover:bg-zinc-900 focus:bg-zinc-800'
-                  : 'bg-primary hover:bg-primary focus:bg-primary',
+                'bg-primary hover:bg-primary focus:bg-primary',
               ),
               today: 'bg-accent text-accent-foreground',
               outside:
@@ -446,7 +442,6 @@ export function DateTimePicker({
             onChange={onMonthYearChanged}
             minDate={minDate}
             maxDate={maxDate}
-            isPro={isPro}
             className={cn(
               'absolute top-0 right-0 bottom-0 left-0',
               monthYearPicker ? '' : 'hidden',
@@ -484,7 +479,6 @@ function MonthYearPicker({
   mode = 'month',
   onChange,
   className,
-  isPro = false,
 }: {
   value: Date;
   mode: 'month' | 'year';
@@ -492,7 +486,6 @@ function MonthYearPicker({
   maxDate?: Date;
   onChange: (value: Date, mode: 'month' | 'year') => void;
   className?: string;
-  isPro?: boolean;
 }) {
   const yearRef = useRef<HTMLDivElement>(null);
   const years = useMemo(() => {
@@ -552,12 +545,7 @@ function MonthYearPicker({
                 <Button
                   disabled={year.disabled}
                   variant={getYear(value) === year.value ? 'default' : 'ghost'}
-                  className={cn(
-                    'rounded-full',
-                    isPro &&
-                      getYear(value) === year.value &&
-                      'bg-zinc-800 hover:bg-zinc-900',
-                  )}
+                  className={cn('rounded-full')}
                   onClick={() => onYearChange(year)}
                 >
                   <span>{year.label}</span>
@@ -574,12 +562,7 @@ function MonthYearPicker({
                 size="lg"
                 disabled={month.disabled}
                 variant={getMonth(value) === month.value ? 'default' : 'ghost'}
-                className={cn(
-                  'rounded-full',
-                  isPro &&
-                    getMonth(value) === month.value &&
-                    'bg-zinc-800 hover:bg-zinc-900',
-                )}
+                className={cn('rounded-full')}
                 onClick={() =>
                   onChange(setMonthFns(value, month.value), 'month')
                 }

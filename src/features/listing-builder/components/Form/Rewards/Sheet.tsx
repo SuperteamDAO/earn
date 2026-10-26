@@ -54,10 +54,6 @@ export function RewardsSheet() {
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<'rewards' | 'boost'>('rewards');
   const [boostStep, setBoostStep] = useState<BoostStep>(0);
-  const [proAdjustment, setProAdjustment] = useState<{
-    increasedBy: number;
-    minRequired: number;
-  } | null>(null);
   const [isBoostDismissPromptOpen, setIsBoostDismissPromptOpen] =
     useState(false);
   const [featuredWarningAction, setFeaturedWarningAction] = useState<
@@ -76,12 +72,6 @@ export function RewardsSheet() {
       setPanel('boost');
     }
   }, [params]);
-
-  useEffect(() => {
-    if (!open) {
-      setProAdjustment(null);
-    }
-  }, [open]);
 
   const type = useWatch({
     control: form.control,
@@ -221,26 +211,6 @@ export function RewardsSheet() {
     }
   };
 
-  useEffect(() => {
-    const handleProAdjustment = (event: CustomEvent) => {
-      const { increasedBy, minRequired } = event.detail;
-      setProAdjustment({ increasedBy, minRequired });
-      setOpen(true);
-      setPanel('rewards');
-    };
-
-    window.addEventListener(
-      'openRewardsWithProAdjustment' as any,
-      handleProAdjustment as any,
-    );
-    return () => {
-      window.removeEventListener(
-        'openRewardsWithProAdjustment' as any,
-        handleProAdjustment as any,
-      );
-    };
-  }, []);
-
   return (
     <>
       <Sheet open={open} onOpenChange={handleOpenChange}>
@@ -334,7 +304,6 @@ export function RewardsSheet() {
                 setOpen={changeOpen}
                 boostStep={boostStep}
                 isBoostFromUrl={isBoostFromUrl}
-                proAdjustment={proAdjustment}
                 shouldShowFeaturedWarning={shouldShowFeaturedWarning}
                 setFeaturedWarningAction={setFeaturedWarningAction}
               />

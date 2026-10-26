@@ -46,14 +46,6 @@ import { SelectHackathon } from '@/features/sponsor-dashboard/components/SelectH
 import { SelectSponsor } from '@/features/sponsor-dashboard/components/SelectSponsor';
 import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/active-hackathons';
 
-const ProListingsAnnouncement = dynamic(
-  () =>
-    import('@/features/announcements/components/ProListingsAnnouncement').then(
-      (m) => m.ProListingsAnnouncement,
-    ),
-  { ssr: false },
-);
-
 const Login = dynamic(
   () => import('@/features/auth/components/Login').then((m) => m.Login),
   { ssr: false },
@@ -261,8 +253,6 @@ export function SponsorLayout({
     ? user?.hackathonId || user?.role === 'GOD'
     : user?.currentSponsor?.id;
 
-  const isAnyModalOpen = isOpen || isSponsorInfoModalOpen || isEntityModalOpen;
-
   return (
     <SolanaWalletProvider>
       <Default
@@ -279,12 +269,6 @@ export function SponsorLayout({
           onClose={onSponsorInfoModalClose}
           isOpen={isSponsorInfoModalOpen}
         />
-
-        {/* {router.pathname === '/dashboard/listings' && (
-          <SponsorAnnouncements isAnyModalOpen={isAnyModalOpen} />
-        )} */}
-
-        <ProListingsAnnouncement isAnyModalOpen={isAnyModalOpen} />
 
         <EntityNameModal
           isOpen={isEntityModalOpen}

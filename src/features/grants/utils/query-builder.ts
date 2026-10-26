@@ -173,10 +173,6 @@ export async function buildGrantsQuery(
     }
   }
 
-  if (context === 'pro') {
-    where.isPro = true;
-  }
-
   const shouldSkipCategoryFilter = context === 'skill' && category === 'All';
 
   const skillFilter = getSkillFilter(category);

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 
 import BsFillCircleFill from '@/components/icons/BsFillCircleFill';
@@ -13,7 +12,6 @@ import { RegionLabel } from '@/features/listings/components/ListingPage/RegionLa
 import { ListingHeaderSeparator } from '@/features/listings/components/ListingPage/Separator';
 import { ShareListing } from '@/features/listings/components/ListingPage/ShareListing';
 import { StatusBadge } from '@/features/listings/components/ListingPage/StatusBadge';
-import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { type GrantWithApplicationCount } from '../types';
 
@@ -32,7 +30,6 @@ interface Props {
   references: any;
   isPublished: boolean;
   isApproved: boolean;
-  isPro?: boolean;
   isST?: boolean;
 }
 export const GrantsHeader = ({
@@ -45,7 +42,6 @@ export const GrantsHeader = ({
   references,
   isPublished,
   isApproved,
-  isPro,
   isST,
 }: Props) => {
   let statusTextColor = '';
@@ -66,8 +62,6 @@ export const GrantsHeader = ({
     statusTextColor = 'text-slate-400';
     statusText = 'Closed';
   }
-
-  const router = useRouter();
 
   return (
     <div className="w-full bg-white">
@@ -135,18 +129,6 @@ export const GrantsHeader = ({
                   <ListingHeaderSeparator />
                 </>
               )}
-              {isPro && !isST && (
-                <>
-                  <Link href="/earn/pro">
-                    <ProBadge
-                      containerClassName="bg-transparent px-0 py-0 gap-1"
-                      iconClassName="size-3 text-zinc-600"
-                      textClassName="text-xs font-medium text-zinc-800"
-                    />
-                  </Link>
-                  <ListingHeaderSeparator />
-                </>
-              )}
               <RegionLabel region={region} isGrant />
             </div>
           </div>
@@ -161,20 +143,14 @@ export const GrantsHeader = ({
             className="pointer-events-none hidden md:flex md:w-[22rem]"
             href={`/earn/grants/${slug}/`}
             text={isApproved ? 'Your Ongoing Grant' : 'Prizes'}
-            isActive={false}
           />
 
-          <ListingTabLink
-            href={`/earn/grants/${slug}/`}
-            text="Details"
-            isActive={!router.asPath.split('/')[3]?.includes('references')}
-          />
+          <ListingTabLink href={`/earn/grants/${slug}/`} text="Details" />
 
           {references && references?.length > 0 && (
             <ListingTabLink
               href={`/earn/grants/${slug}/references`}
               text="References"
-              isActive={!!router.asPath.split('/')[3]?.includes('references')}
             />
           )}
         </div>

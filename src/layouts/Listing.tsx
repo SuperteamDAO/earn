@@ -10,7 +10,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { ErrorSection } from '@/components/shared/ErrorSection';
 import { type User } from '@/interface/user';
 import { Default } from '@/layouts/Default';
-import { useUser } from '@/store/user';
 import { normalizeCanonicalUrl } from '@/utils/canonical';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
@@ -41,7 +40,6 @@ export function ListingPageLayout({
 }: ListingPageProps) {
   const router = useRouter();
   const [, setBountySnackbar] = useAtom(bountySnackbarAtom);
-  const { user } = useUser();
 
   const { data: submissionNumber = 0, isLoading: isSubmissionNumberLoading } =
     useQuery(submissionCountQuery(initialListing?.id ?? ''));
@@ -261,9 +259,6 @@ export function ListingPageLayout({
                     isDisabled={
                       !initialListing.isPublished &&
                       initialListing.status === 'OPEN'
-                    }
-                    isListingAndUserPro={
-                      (initialListing?.isPro ?? false) && (user?.isPro ?? false)
                     }
                   />
                 </div>

@@ -9,13 +9,11 @@ function TokenInput({
   token,
   onChange,
   value,
-  isPro = false,
   ...props
 }: React.ComponentProps<typeof Input> & {
   token: string | undefined;
   onChange?: (value: number | null) => void;
   value?: number | null;
-  isPro?: boolean;
 }) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -67,10 +65,7 @@ function TokenInput({
       </div>
       <Input
         data-slot="token-input-field"
-        className={cn(
-          'rounded-l-none',
-          isPro && 'focus-visible:ring-1 focus-visible:ring-zinc-400',
-        )}
+        className={cn('rounded-l-none')}
         onChange={handleInputChange}
         type="number"
         inputMode="decimal"

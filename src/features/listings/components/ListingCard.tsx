@@ -11,8 +11,6 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { timeAgoShort } from '@/utils/timeAgo';
 
-import { ProBadge } from '@/features/pro/components/ProBadge';
-
 import { type Listing } from '../types';
 import { getListingIcon } from '../utils/getListingIcon';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
@@ -57,7 +55,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     maxRewardAsk,
     winnersAnnouncedAt,
     _count,
-    isPro,
   } = bounty;
 
   const { serverTime } = useServerTimeSync();
@@ -162,18 +159,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
               <p className="hidden text-[10px] text-slate-300 sm:flex sm:text-xs md:text-sm">
                 |
               </p>
-              {!!isPro && (
-                <>
-                  <ProBadge
-                    containerClassName="bg-transparent p-0 gap-1"
-                    iconClassName="size-2.5 text-zinc-500"
-                    textClassName="text-xxs font-medium text-zinc-700"
-                  />
-                  <p className="hidden text-[10px] text-slate-300 sm:flex sm:text-xs md:text-sm">
-                    |
-                  </p>
-                </>
-              )}
               {!!_count?.Comments && _count?.Comments > 0 && (
                 <div
                   className={cn(

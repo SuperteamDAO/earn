@@ -30,7 +30,6 @@ export const publicListingDetailsSelect = {
   minRewardAsk: true,
   isFndnPaying: true,
   winnersAnnouncedAt: true,
-  isPro: true,
   sponsor: {
     select: {
       name: true,

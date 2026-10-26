@@ -5,14 +5,6 @@ import { cn } from '@/utils/cn';
 
 import { Header } from '@/features/navbar/components/Header';
 
-const ProUpgradeOverlay = dynamic(
-  () =>
-    import('@/features/pro/components/ProUpgradeOverlay').then(
-      (mod) => mod.ProUpgradeOverlay,
-    ),
-  { ssr: false },
-);
-
 interface IDefaultProps {
   readonly meta: ReactNode;
   readonly children: ReactNode;
@@ -51,7 +43,6 @@ export const Default = ({
       <Header />
       <div className="flex flex-1 flex-col">{children}</div>
       {!hideFooter && <Footer />}
-      <ProUpgradeOverlay />
     </div>
   );
 };

@@ -45,7 +45,6 @@ export interface Listing {
   hackathonprize?: boolean;
   publishedAt?: string;
   isPrivate?: boolean;
-  isPro?: boolean;
   agentAccess?: 'HUMAN_ONLY' | 'AGENT_ALLOWED' | 'AGENT_ONLY';
   Hackathon?: ListingHackathon;
   compensationType?: 'fixed' | 'range' | 'variable';
@@ -102,7 +101,6 @@ type PublicListingDetailsFields =
   | 'minRewardAsk'
   | 'isFndnPaying'
   | 'winnersAnnouncedAt'
-  | 'isPro'
   | 'Hackathon';
 
 export type PublicListingDetails = Omit<

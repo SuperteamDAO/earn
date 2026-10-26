@@ -34,7 +34,6 @@ export const getGrantBySlug = async (slug: string) => {
       isNative: true,
       airtableId: true,
       references: true,
-      isPro: true,
       isST: true,
       sponsor: {
         select: {

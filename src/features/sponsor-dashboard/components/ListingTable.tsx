@@ -16,7 +16,6 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import IoDuplicateOutline from '@/components/icons/IoDuplicateOutline';
-import ProIcon from '@/components/icons/ProIcon';
 import { SortableTH } from '@/components/shared/sortable-th';
 import { Button } from '@/components/ui/button';
 import {
@@ -271,9 +270,6 @@ export const ListingTable = ({
                           onClick={onClick}
                         >
                           {titleElement}
-                          {listing.isPro && (
-                            <ProIcon className="size-3.5 text-slate-400" />
-                          )}
                         </Link>
                       ) : (
                         titleElement

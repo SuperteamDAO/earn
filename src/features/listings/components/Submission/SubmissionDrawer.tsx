@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { Loader2, Lock, X } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { type JSX, useEffect, useMemo, useState } from 'react';
@@ -87,7 +87,6 @@ export const SubmissionDrawer = ({
     Hackathon,
     isFndnPaying,
     region,
-    isPro,
   } = listing;
   const { data: chapters = [] } = useQuery(chaptersQuery);
 
@@ -112,7 +111,6 @@ export const SubmissionDrawer = ({
   );
 
   const { user, refetchUser } = useUser();
-  const isNotEligibleForPro = isPro && !user?.isPro;
 
   const form = useForm<FormData>({
     resolver: zodResolver(
@@ -358,8 +356,7 @@ export const SubmissionDrawer = ({
         hasInvalidTweetStatusFormat ||
         hasInvalidLinkStatusFormat ||
         needsXVerification ||
-        needsLinkVerification ||
-        (isPro && !user?.isPro),
+        needsLinkVerification,
       ),
 
     [
@@ -377,8 +374,6 @@ export const SubmissionDrawer = ({
       hasInvalidLinkStatusFormat,
       needsXVerification,
       needsLinkVerification,
-      isPro,
-      user?.isPro,
     ],
   );
 
@@ -631,8 +626,6 @@ export const SubmissionDrawer = ({
                                           (needsLinkVerification ||
                                             isLinkVerified) &&
                                             'pr-10',
-                                          isPro &&
-                                            'focus-visible:ring-zinc-400',
                                         )}
                                         autoComplete="off"
                                       />
@@ -645,7 +638,6 @@ export const SubmissionDrawer = ({
                                           size="sm"
                                           className={cn(
                                             'absolute top-1/2 right-1 h-7 -translate-y-1/2 px-3 text-xs',
-                                            isPro && 'bg-zinc-900',
                                           )}
                                         >
                                           Verify
@@ -693,8 +685,6 @@ export const SubmissionDrawer = ({
                                           (needsXVerification ||
                                             isTweetVerified) &&
                                             'pr-10',
-                                          isPro &&
-                                            'focus-visible:ring-zinc-400',
                                         )}
                                         autoComplete="off"
                                       />
@@ -707,7 +697,6 @@ export const SubmissionDrawer = ({
                                           size="sm"
                                           className={cn(
                                             'absolute top-1/2 right-1 h-7 -translate-y-1/2 px-3 text-xs',
-                                            isPro && 'bg-zinc-900',
                                           )}
                                         >
                                           Verify
@@ -752,11 +741,7 @@ export const SubmissionDrawer = ({
                                       <Input
                                         {...field}
                                         placeholder="Add a link..."
-                                        className={cn(
-                                          'rounded-l-none',
-                                          isPro &&
-                                            'focus-visible:ring-zinc-400',
-                                        )}
+                                        className={cn('rounded-l-none')}
                                         autoComplete="off"
                                       />
                                     </div>
@@ -767,7 +752,6 @@ export const SubmissionDrawer = ({
                                       value={field.value || ''}
                                       error={false}
                                       placeholder={'Write something...'}
-                                      isPro={isPro}
                                     />
                                   )}
                                 </FormControl>
@@ -786,7 +770,6 @@ export const SubmissionDrawer = ({
                         isRequired
                         isTokenInput
                         token={token}
-                        isPro={isPro}
                       />
                     )}
                     {isProject && (
@@ -798,7 +781,6 @@ export const SubmissionDrawer = ({
                         formLabel="Your Telegram username"
                         control={form.control}
                         height="h-9"
-                        isPro={isPro}
                       />
                     )}
                     <FormFieldWrapper
@@ -808,7 +790,6 @@ export const SubmissionDrawer = ({
                       description="If you have any other links or information you'd like to share with us, please add them here!"
                       isRichEditor
                       richEditorPlaceholder="Add info or link"
-                      isPro={isPro}
                     />
                   </div>
                 </div>
@@ -821,8 +802,6 @@ export const SubmissionDrawer = ({
                       id="terms"
                       className={cn(
                         'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple mt-1',
-                        isPro &&
-                          'border-zinc-400 data-[state=checked]:border-zinc-400 data-[state=checked]:bg-zinc-700',
                       )}
                       checked={termsAccepted}
                       onCheckedChange={(checked) =>
@@ -848,8 +827,6 @@ export const SubmissionDrawer = ({
                       id="kyc-acknowledgement"
                       className={cn(
                         'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple',
-                        isPro &&
-                          'border-zinc-400 data-[state=checked]:border-zinc-400 data-[state=checked]:bg-zinc-700',
                       )}
                       checked={kycAcknowledged}
                       onCheckedChange={(checked) =>
@@ -869,23 +846,10 @@ export const SubmissionDrawer = ({
                   <Button
                     className={cn(
                       'ph-no-capture h-11 w-full gap-4',
-                      isNotEligibleForPro
-                        ? 'disabled:opacity-100'
-                        : 'disabled:cursor-default disabled:opacity-70',
-                      isNotEligibleForPro
-                        ? 'bg-zinc-300 text-zinc-700'
-                        : user?.isPro && isPro
-                          ? 'bg-zinc-900'
-                          : 'bg-brand-purple',
+                      'disabled:cursor-default disabled:opacity-70',
+                      'bg-brand-purple',
                       editMode &&
-                        (isPro
-                          ? 'border-zinc-900 text-white hover:text-white'
-                          : 'border-brand-purple hover:text-brand-purple-dark text-white'),
-                      user?.isPro && isPro && 'hover:bg-black',
-                      !user?.isPro &&
-                        isPro &&
-                        !isNotEligibleForPro &&
-                        'hover:opacity-90',
+                        'border-brand-purple hover:text-brand-purple-dark text-white',
                     )}
                     disabled={isDisabled}
                     type="submit"
@@ -898,32 +862,15 @@ export const SubmissionDrawer = ({
                           {editMode ? 'Updating...' : 'Submitting...'}
                         </span>
                       </>
-                    ) : isNotEligibleForPro ? (
-                      <span className="flex items-center gap-2">
-                        <Lock className="h-4 w-4" />
-                        <span>Not Eligible</span>
-                      </span>
                     ) : isProject ? (
                       <span className="flex items-center gap-2">
-                        {editMode
-                          ? 'Update'
-                          : user?.isPro && isPro
-                            ? 'Apply'
-                            : 'Apply using 1 credit'}
-                        {!editMode && !(user?.isPro && isPro) && (
-                          <CreditIcon className="ml-1 size-6" />
-                        )}
+                        {editMode ? 'Update' : 'Apply using 1 credit'}
+                        {!editMode && <CreditIcon className="ml-1 size-6" />}
                       </span>
                     ) : isBounty ? (
                       <span className="flex items-center gap-2">
-                        {editMode
-                          ? 'Update'
-                          : user?.isPro && isPro
-                            ? 'Submit'
-                            : 'Submit using 1 credit'}
-                        {!editMode && !(user?.isPro && isPro) && (
-                          <CreditIcon className="ml-1 size-6" />
-                        )}
+                        {editMode ? 'Update' : 'Submit using 1 credit'}
+                        {!editMode && <CreditIcon className="ml-1 size-6" />}
                       </span>
                     ) : (
                       <span className="flex items-center gap-2">

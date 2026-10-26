@@ -40,7 +40,6 @@ interface Props {
   isTemplate?: boolean;
   onSuccess?: (newComment: Comment) => void;
   isDisabled?: boolean;
-  isListingAndUserPro?: boolean;
 }
 export const Comments = ({
   refId,
@@ -57,7 +56,6 @@ export const Comments = ({
   take = 10,
   setCount,
   onSuccess,
-  isListingAndUserPro = false,
 }: Props) => {
   const queryClient = useQueryClient();
   const setValidUsernames = useSetAtom(validUsernamesAtom);
@@ -198,7 +196,6 @@ export const Comments = ({
         }}
         isTemplate={isTemplate}
         isDisabled={isDisabled}
-        isListingAndUserPro={isListingAndUserPro}
       />
       <div
         className={cn(
@@ -224,7 +221,6 @@ export const Comments = ({
               isVerified={isVerified}
               isTemplate={isTemplate}
               isDisabled={isDisabled}
-              isListingAndUserPro={isListingAndUserPro}
             />
           );
         })}

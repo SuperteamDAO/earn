@@ -14,12 +14,8 @@ import { type UserRoleHint, useUser } from '@/store/user';
 import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
 import { yourBookmarksQuery } from '@/features/listings/queries/your-bookmarks';
 import { type Listing } from '@/features/listings/types';
-import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
-import { ProIntro } from '@/features/pro/components/ProIntro';
-import { useProUpgradeFlow } from '@/features/pro/state/pro-upgrade-flow';
 
 import { totalsQuery } from '../queries/totals';
-import { userStatsQuery } from '../queries/user-stats';
 import { HowItWorks } from './HowItWorks';
 import { RecentActivity } from './RecentActivity';
 import { RecentEarners } from './RecentEarners';
@@ -113,7 +109,6 @@ interface NonSponsorSidebarContentProps {
   bookmarks: Listing[] | undefined;
   currentPath: string;
   showSponsorBanner: boolean;
-  showProIntro: boolean;
   onBookmarksClick: () => void;
 }
 
@@ -124,13 +119,11 @@ const NonSponsorSidebarContent = ({
   bookmarks,
   currentPath,
   showSponsorBanner,
-  showProIntro,
   onBookmarksClick,
 }: NonSponsorSidebarContentProps) => (
   <>
     <div className="flex flex-col gap-4">
       {showSponsorBanner && <SponsorBanner />}
-      {showProIntro && <ProIntro origin="sidebar" />}
       <TotalStats
         isTotalLoading={isTotalsLoading}
         bountyCount={totals?.count}
@@ -158,7 +151,6 @@ export const HomeSideBar = ({ type, roleHint }: SideBarProps) => {
   const { user, isLoading: isUserLoading } = useUser();
   const isLg = useBreakpoint('lg');
   const { ready } = usePrivy();
-  const { flow } = useProUpgradeFlow();
 
   const { data: totals, isLoading: isTotalsLoading } = useQuery({
     ...totalsQuery,
@@ -170,9 +162,6 @@ export const HomeSideBar = ({ type, roleHint }: SideBarProps) => {
   });
   const { data: bookmarks } = useQuery(yourBookmarksQuery({ take: 5 }));
 
-  const { data: stats, isLoading: isStatsLoading } = useQuery(userStatsQuery);
-  const hasEligibleMembership = isEligiblePeopleType(user?.people?.type);
-
   const isSponsor = !!(ready && !isUserLoading && user?.currentSponsorId);
   // Avoid flashing talent content for a sponsor while the user resolves.
   const isResolvingSponsor =
@@ -183,17 +172,6 @@ export const HomeSideBar = ({ type, roleHint }: SideBarProps) => {
     ready &&
     !isUserLoading &&
     (!user || (!user.isTalentFilled && !user.currentSponsorId));
-
-  const showProIntro = !!(
-    !user?.isPro &&
-    user?.isTalentFilled &&
-    !isStatsLoading &&
-    ((stats?.totalWinnings && stats.totalWinnings >= 1000) ||
-      hasEligibleMembership)
-  );
-  const isSidebarFlowActive =
-    flow.source === 'sidebar' && flow.status !== 'idle';
-  const shouldRenderProIntro = (showProIntro ?? false) || isSidebarFlowActive;
 
   const handleBookmarksClick = useCallback(() => {
     posthog.capture('bookmarks_sidebar');
@@ -220,7 +198,6 @@ export const HomeSideBar = ({ type, roleHint }: SideBarProps) => {
         bookmarks={bookmarks}
         currentPath={router.asPath}
         showSponsorBanner={showSponsorBanner}
-        showProIntro={shouldRenderProIntro}
         onBookmarksClick={handleBookmarksClick}
       />
     );

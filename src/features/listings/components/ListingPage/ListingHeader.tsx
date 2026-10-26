@@ -17,7 +17,6 @@ import { dayjs } from '@/utils/dayjs';
 
 import { getHackathonPageHref } from '@/features/hackathon/utils/getHackathonPageHref';
 import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
-import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { type Listing, type ListingHackathon } from '../../types';
 import { getListingIcon } from '../../utils/getListingIcon';
@@ -79,7 +78,6 @@ const HeaderSub = ({
   statusText,
   statusTextColor,
   region,
-  isPro,
 }: {
   sponsor: SponsorType | undefined;
   title: string | undefined;
@@ -93,7 +91,6 @@ const HeaderSub = ({
   statusText: string;
   statusTextColor: string;
   region: string | undefined;
-  isPro: boolean | undefined;
 }) => {
   const isFrontierHackathon = Hackathon?.slug === 'crypto-worlds-fair';
   const hackathonLogo =
@@ -161,18 +158,6 @@ const HeaderSub = ({
         />
       </div>
       <ListingHeaderSeparator />
-      {isPro && (
-        <>
-          <Link href="/earn/pro">
-            <ProBadge
-              containerClassName="bg-transparent px-0 py-0 gap-1"
-              iconClassName="size-3 text-zinc-600"
-              textClassName="text-xs font-medium text-zinc-800"
-            />
-          </Link>
-          <ListingHeaderSeparator />
-        </>
-      )}
       <RegionLabel region={region} />
       {!!commentCount && (
         <>
@@ -216,7 +201,6 @@ export function ListingHeader({
     isPublished,
     Hackathon,
     isPrivate,
-    isPro,
   } = listing;
   const router = useRouter();
 
@@ -300,7 +284,6 @@ export function ListingHeader({
                 statusText={statusText}
                 statusTextColor={statusTextColor}
                 region={region}
-                isPro={isPro}
               />
             </div>
           </div>
@@ -331,7 +314,6 @@ export function ListingHeader({
           statusText={statusText}
           statusTextColor={statusTextColor}
           region={region}
-          isPro={isPro}
         />
       </div>
       <div className="flex h-10 w-full max-w-7xl items-center">
@@ -347,8 +329,6 @@ export function ListingHeader({
                     : 'Inviting Proposals'
                   : 'Prizes'
               }
-              isActive={false}
-              isPro={isPro}
             />
           )}
 
@@ -359,9 +339,7 @@ export function ListingHeader({
                 : `/earn/templates/listings/${slug}/`
             }
             text="Details"
-            isActive={!router.asPath.split('/')[3]?.includes('submission')}
             className="mr-6"
-            isPro={isPro}
           />
 
           {!isProject && isWinnersAnnounced && (
@@ -369,11 +347,9 @@ export function ListingHeader({
               onClick={() => posthog.capture('submissions tab_listing')}
               href={`/earn/listing/${slug}/submission`}
               text="Submissions"
-              isActive={!!router.asPath.split('/')[3]?.includes('submission')}
               subText={
                 isSubmissionNumberLoading ? '...' : submissionNumber + ''
               }
-              isPro={isPro}
             />
           )}
         </div>

@@ -43,8 +43,6 @@ function Grants({ grant: initialGrant }: InitialGrant) {
       <GrantsPop />
       <DescriptionUI
         description={(initialGrant?.description as string) ?? ''}
-        isPro={initialGrant?.isPro}
-        type="grant"
         sponsorId={initialGrant?.sponsorId ?? ''}
         isST={initialGrant?.isST}
       />

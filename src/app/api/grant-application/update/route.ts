@@ -205,15 +205,6 @@ export async function POST(request: NextRequest) {
           { status: 403 },
         );
       }
-    } else if (grant.isPro && !user.isPro) {
-      logger.debug(`User is not eligible for pro grant`, {
-        grantId,
-        userId,
-      });
-      return NextResponse.json(
-        { error: 'This grant is only available for PRO members' },
-        { status: 403 },
-      );
     }
 
     const result = await updateGrantApplication(

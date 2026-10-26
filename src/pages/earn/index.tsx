@@ -15,7 +15,6 @@ import {
   generateWebSiteSchema,
 } from '@/utils/json-ld';
 
-import { ProListingsAnnouncement } from '@/features/announcements/components/ProListingsAnnouncement';
 import { BannerCarousel } from '@/features/home/components/Banner';
 import { HomeSideBarSkeleton } from '@/features/home/components/SideBarSkeleton';
 import { SponsorStageBanner } from '@/features/home/components/SponsorStage/SponsorStageBanner';
@@ -142,7 +141,6 @@ export default function HomePage({
         </div>
       </div>
       <HomepagePop />
-      <ProListingsAnnouncement />
     </Default>
   );
 }

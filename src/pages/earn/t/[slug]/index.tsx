@@ -49,8 +49,6 @@ const AddProject = dynamic(
   { ssr: false },
 );
 import { AgentBadge } from '@/features/agents/components/AgentBadge';
-import { ProBadge } from '@/features/pro/components/ProBadge';
-import { ProBG } from '@/features/pro/components/ProBg';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { TalentProfileBackground } from '@/features/talent/components/TalentProfileBackground';
 const ShareProfile = dynamic(
@@ -109,14 +107,12 @@ const ProfileActionButton = memo(function ProfileActionButton({
   text,
   onClick,
   outline = false,
-  isPro,
   isMD,
 }: {
   icon: JSX.Element;
   text: string;
   onClick: () => void;
   outline?: boolean;
-  isPro?: boolean;
   isMD: boolean;
 }) {
   if (isMD) {
@@ -126,12 +122,8 @@ const ProfileActionButton = memo(function ProfileActionButton({
           className={cn(
             'ph-no-capture w-full text-sm font-medium',
             outline
-              ? isPro
-                ? 'border-zinc-400 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-600'
-                : 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-              : isPro
-                ? 'border-zinc-600 bg-zinc-700 text-white hover:bg-zinc-800 hover:text-white'
-                : 'border-brand-purple/5 bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20',
+              ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+              : 'border-brand-purple/5 bg-brand-purple/10 text-brand-purple hover:bg-brand-purple/20',
           )}
           onClick={onClick}
           variant={outline ? 'outline' : 'default'}
@@ -151,12 +143,8 @@ const ProfileActionButton = memo(function ProfileActionButton({
         className={cn(
           'inline-flex h-9 w-9 items-center justify-center rounded border p-2 text-sm font-medium transition',
           outline
-            ? isPro
-              ? 'border-zinc-400 bg-zinc-100 text-zinc-600 hover:bg-zinc-200 hover:text-zinc-600'
-              : 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
-            : isPro
-              ? 'border-zinc-600 bg-zinc-700 text-white hover:bg-zinc-800 hover:text-white'
-              : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
+            ? 'border-slate-400 bg-white text-slate-500 hover:bg-gray-100'
+            : 'border-indigo-100 bg-indigo-100 text-indigo-600 hover:bg-indigo-200',
         )}
       >
         {icon}
@@ -279,10 +267,7 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
   }, [talent, workPreferenceText, stats, isPublicProfile]);
 
   const ogImage = useMemo(() => {
-    const path = talent?.isPro
-      ? `${getURL()}api/dynamic-og/pro-talent/`
-      : `${getURL()}api/dynamic-og/talent/`;
-    const url = new URL(path);
+    const url = new URL(`${getURL()}api/dynamic-og/talent/`);
     url.searchParams.set('name', `${talent?.firstName} ${talent?.lastName}`);
     url.searchParams.set('username', talent?.username!);
     url.searchParams.set('skills', JSON.stringify(talent?.skills));
@@ -297,7 +282,6 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
     }
     return url;
   }, [
-    talent?.isPro,
     talent?.firstName,
     talent?.lastName,
     talent?.username,
@@ -411,17 +395,10 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
       )}
       {!!talent?.id && (
         <div className="bg-white">
-          {talent?.isPro ? (
-            <ProBG
-              origin="dialog"
-              className="h-[100px] w-full rounded-none md:h-[30vh]"
-            />
-          ) : (
-            <TalentProfileBackground
-              bgIndex={bgIndex}
-              className="h-[100px] w-full rounded-none md:h-[30vh]"
-            />
-          )}
+          <TalentProfileBackground
+            bgIndex={bgIndex}
+            className="h-[100px] w-full rounded-none md:h-[30vh]"
+          />
           <div className="relative top-0 mx-auto max-w-[700px] rounded-[20px] bg-white px-4 py-7 md:-top-40 md:px-7">
             <div className="flex justify-between">
               <div>
@@ -437,20 +414,12 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
                   <p className="text-lg font-semibold text-slate-900 md:text-xl">
                     {talent?.firstName} {talent?.lastName}
                   </p>
-                  {talent?.isAgent ? (
+                  {talent?.isAgent && (
                     <AgentBadge
                       containerClassName="bg-slate-900 px-2 py-[3px] gap-[3px]"
                       iconClassName="size-2 md:size-2 text-slate-200"
                       textClassName="text-[8px] md:text-[9px] font-medium text-white"
                     />
-                  ) : (
-                    talent?.isPro && (
-                      <ProBadge
-                        containerClassName="bg-zinc-700 px-2 py-[3px] gap-[3px]"
-                        iconClassName="size-2 md:size-2 text-zinc-400"
-                        textClassName="text-[8px] md:text-[9px] font-medium text-white"
-                      />
-                    )
                   )}
                 </div>
                 <p className="text-base font-semibold text-slate-500">
@@ -468,7 +437,6 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
                     icon={<SquarePen />}
                     text="Edit Profile"
                     onClick={handleEditProfileClick}
-                    isPro={talent?.isPro}
                     isMD={isMD}
                   />
                 )}
@@ -477,7 +445,6 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
                   text="Share"
                   onClick={onOpen}
                   outline
-                  isPro={talent?.isPro}
                   isMD={isMD}
                 />
               </div>
@@ -766,7 +733,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           currentEmployer: true,
           location: true,
           private: true,
-          isPro: true,
           isAgent: true,
         },
       }),
@@ -834,12 +800,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const bgIndex = talent?.id ? hashStringToInt(talent.id) % 5 : 0;
     const bgNum = bgIndex + 1;
 
-    if (!talent.isPro) {
-      context.res.setHeader(
-        'Link',
-        `</assets/backgrounds/${bgNum}-mobile.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(max-width: 639px)", </assets/backgrounds/${bgNum}-desktop.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(min-width: 640px)"`,
-      );
-    }
+    context.res.setHeader(
+      'Link',
+      `</assets/backgrounds/${bgNum}-mobile.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(max-width: 639px)", </assets/backgrounds/${bgNum}-desktop.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(min-width: 640px)"`,
+    );
 
     return {
       props: { talent, stats, bgIndex, shouldNoIndex },

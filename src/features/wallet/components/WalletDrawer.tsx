@@ -82,12 +82,7 @@ export function WalletDrawer({
             className="absolute top-0 right-0 size-4 cursor-pointer text-slate-400 hover:text-slate-700"
             onClick={() => toast.dismiss()}
           />
-          <div
-            className={cn(
-              'text-brand-purple mt-1 pr-6 text-xl font-bold',
-              user?.isPro && 'text-zinc-700',
-            )}
-          >
+          <div className={cn('text-brand-purple mt-1 pr-6 text-xl font-bold')}>
             Two-Factor Auth is Mandatory
           </div>
           <div className="text-sm text-slate-600">
@@ -101,7 +96,6 @@ export function WalletDrawer({
             }}
             className={cn(
               'bg-brand-purple hover:bg-brand-purple-dark mt-2 w-full rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition-colors',
-              user?.isPro && 'bg-zinc-700 hover:bg-zinc-800',
             )}
           >
             Set up 2FA
@@ -182,7 +176,6 @@ export function WalletDrawer({
                     onClick={handleWithdraw}
                     className={cn(
                       'bg-brand-purple mt-3 rounded-lg px-5 text-base',
-                      user?.isPro && 'bg-zinc-700 hover:bg-zinc-800',
                     )}
                     disabled={!tokens?.length}
                   >

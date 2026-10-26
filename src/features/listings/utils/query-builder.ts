@@ -372,10 +372,6 @@ export async function buildListingQuery(
     }
   }
 
-  if (context === 'pro') {
-    where.isPro = true;
-  }
-
   // Handle opportunity context - supports region, skill, category, and type filters
   if (context === 'opportunity') {
     // Region filter (same logic as region context)

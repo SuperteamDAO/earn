@@ -31,7 +31,6 @@ interface Props extends TextareaAutosizeProps {
   autoFocusOn?: boolean;
   variant?: 'default' | 'flushed';
   onKeyDown?: (e: React.KeyboardEvent) => void;
-  isListingAndUserPro?: boolean;
 }
 
 export const UserSuggestionTextarea = ({
@@ -42,7 +41,6 @@ export const UserSuggestionTextarea = ({
   variant = 'default',
   className,
   onKeyDown,
-  isListingAndUserPro = false,
   ...props
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -104,15 +102,11 @@ export const UserSuggestionTextarea = ({
               ? [
                   'border-x-0 border-t-0 border-b-2 border-slate-200',
                   'rounded-none px-0 py-0',
-                  isListingAndUserPro
-                    ? 'focus:border-zinc-800'
-                    : 'focus:border-brand-purple',
+                  'focus:border-brand-purple',
                 ]
               : [
                   'rounded-md border border-slate-200',
-                  isListingAndUserPro
-                    ? 'focus:border-zinc-800 focus:ring-zinc-800'
-                    : 'focus:border-brand-purple focus:ring-brand-purple',
+                  'focus:border-brand-purple focus:ring-brand-purple',
                 ],
             className,
           )}

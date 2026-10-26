@@ -25,7 +25,6 @@ export async function validateGrantRequest(
       questions: true,
       isNative: true,
       airtableId: true,
-      isPro: true,
       isST: true,
       sponsor: {
         select: {
@@ -53,7 +52,6 @@ export async function validateGrantRequest(
       id: true,
       isBlocked: true,
       isTalentFilled: true,
-      isPro: true,
       location: true,
       locationUpdatedAt: true,
       peopleId: true,

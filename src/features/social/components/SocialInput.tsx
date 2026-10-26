@@ -72,7 +72,6 @@ interface SocialInputProps {
   needsVerification?: boolean;
   isVerified?: boolean;
   onVerify?: () => void;
-  isPro?: boolean;
   readOnly?: boolean;
 }
 export const SocialInput = ({
@@ -90,7 +89,6 @@ export const SocialInput = ({
   needsVerification = false,
   isVerified = false,
   onVerify,
-  isPro = false,
   readOnly = false,
 }: SocialInputProps) => {
   const social = useMemo(
@@ -157,7 +155,6 @@ export const SocialInput = ({
                         showVerification &&
                           (needsVerification || isVerified) &&
                           'pr-10',
-                        isPro && 'focus-visible:ring-zinc-400',
                         readOnly &&
                           'cursor-not-allowed bg-slate-50 text-slate-600',
                         classNames?.input,

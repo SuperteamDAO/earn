@@ -116,23 +116,12 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
   logger.debug(`User: ${safeStringify(userId)}`);
 
   try {
-    const { listing, user } = await validateSubmissionRequest(
+    const { listing } = await validateSubmissionRequest(
       userId as string,
       listingId,
     );
 
     const isHackathon = listing.type === 'hackathon';
-    const isPro = listing.isPro;
-
-    if (isPro && !user.isPro) {
-      logger.warn(
-        `User ${userId} attempted to submit pro listing without pro membership`,
-      );
-      return res.status(403).json({
-        error: 'Pro membership required',
-        message: 'You need a Pro membership to submit to this listing.',
-      });
-    }
 
     const result = await prisma.$transaction(async (tx) => {
       await tx.$queryRaw`
@@ -141,7 +130,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         FOR UPDATE
       `;
 
-      if (!isHackathon && !isPro) {
+      if (!isHackathon) {
         const hasCredits = await canUserSubmit(userId as string, tx);
         if (!hasCredits) {
           throw new Error('Insufficient credits');
@@ -156,7 +145,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
         { client: tx },
       );
 
-      if (!isHackathon && !isPro) {
+      if (!isHackathon) {
         await consumeCredit(userId, submission.id, tx);
         logger.info(`Consumed 1 credit from user ${userId} for submission`);
       }

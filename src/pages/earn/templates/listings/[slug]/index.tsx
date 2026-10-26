@@ -22,8 +22,6 @@ function BountyDetails({ bounty }: BountyDetailsProps) {
       )}
       <DescriptionUI
         description={bounty?.description}
-        isPro={bounty?.isPro ?? false}
-        type={bounty?.type ?? 'bounty'}
         sponsorId={bounty?.sponsorId ?? ''}
       />
     </ListingPageLayout>

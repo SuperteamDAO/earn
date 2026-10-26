@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { Check, Loader2, Lock } from 'lucide-react';
+import { Check, Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -108,11 +108,8 @@ export const ApplicationModal = ({
     null,
   );
 
-  const { id, token, minReward, maxReward, questions, isPro } = grant;
+  const { id, token, minReward, maxReward, questions } = grant;
   const tokenLabel = token ?? 'token';
-  const isUserPro = user?.isPro;
-  const isProGrant = isPro && isUserPro;
-  const isNotEligibleForPro = isPro && !isUserPro;
   const isST = grant.isST === true;
   const isAgenticEngineering = isAgenticEngineeringGrant(grant);
   const applicationCopy = isST
@@ -538,10 +535,7 @@ export const ApplicationModal = ({
             "If you're working on a project that will help the sponsor's ecosystem grow, apply with your proposal here and we'll respond soon!"}
         </p>
         <Progress
-          className={cn(
-            'mt-6 h-[2px] bg-slate-200',
-            isProGrant && '[&>div]:bg-zinc-800',
-          )}
+          className={cn('mt-6 h-[2px] bg-slate-200')}
           value={(activeStep / steps.length) * 100 + 33}
         />
         <div className="mt-3 flex w-full items-center justify-between">
@@ -558,11 +552,7 @@ export const ApplicationModal = ({
                     : i - 1 < activeStep
                       ? 'border-slate-500'
                       : 'border-slate-300',
-                  i < activeStep
-                    ? isProGrant
-                      ? 'bg-zinc-800'
-                      : 'bg-brand-purple'
-                    : 'bg-transparent',
+                  i < activeStep ? 'bg-brand-purple' : 'bg-transparent',
                   i - 1 < activeStep ? 'text-slate-500' : 'text-slate-400',
                   i - 1 < activeStep ? 'font-medium' : 'font-normal',
                 )}
@@ -622,7 +612,6 @@ export const ApplicationModal = ({
                     'What should we call your project?'
                   }
                   isRequired
-                  isPro={isProGrant}
                 >
                   <Input
                     placeholder={
@@ -644,7 +633,6 @@ export const ApplicationModal = ({
                     'Describe your idea in one sentence.'
                   }
                   isRequired
-                  isPro={isProGrant}
                 >
                   <Input
                     placeholder={
@@ -666,7 +654,6 @@ export const ApplicationModal = ({
                     isRequired
                     isTokenInput
                     token={token}
-                    isPro={isProGrant}
                   />
                 )}
 
@@ -684,7 +671,6 @@ export const ApplicationModal = ({
                     control={form.control}
                     height="h-9"
                     showIcon={false}
-                    isPro={isProGrant}
                   />
                 )}
                 <FormField
@@ -717,9 +703,7 @@ export const ApplicationModal = ({
                         <FormControl>
                           <Input
                             placeholder="Add your Solana wallet address"
-                            className={cn(
-                              isProGrant && 'focus-visible:ring-zinc-400',
-                            )}
+                            className={cn()}
                             {...field}
                           />
                         </FormControl>
@@ -760,7 +744,6 @@ export const ApplicationModal = ({
                     applicationCopy?.projectDetails.placeholder ??
                     'Describe the problem & solution'
                   }
-                  isPro={isProGrant}
                 />
 
                 {isST && (
@@ -784,10 +767,7 @@ export const ApplicationModal = ({
                                 {LUMA_LABEL}
                               </div>
                               <Input
-                                className={cn(
-                                  'h-full rounded-l-none',
-                                  isProGrant && 'focus-visible:ring-zinc-400',
-                                )}
+                                className={cn('h-full rounded-l-none')}
                                 placeholder={
                                   ST_GRANT_COPY.application.lumaLink!
                                     .placeholder
@@ -846,7 +826,6 @@ export const ApplicationModal = ({
                               hideTime={true}
                               minDateTooltipContent="Deadline cannot be in the past"
                               defaultDisplayValue="Pick a date"
-                              isPro={isProGrant}
                             />
                           </FormControl>
                           <FormMessage className="pt-1" />
@@ -870,7 +849,6 @@ export const ApplicationModal = ({
                     applicationCopy?.proofOfWork.placeholder ??
                     'Provide links to your portfolio or previous work'
                   }
-                  isPro={isProGrant}
                 />
 
                 <SocialInput
@@ -888,7 +866,6 @@ export const ApplicationModal = ({
                   needsVerification={needsXVerification}
                   isVerified={isXVerified}
                   onVerify={handleVerifyClick}
-                  isPro={isProGrant}
                 />
 
                 {!isST && (
@@ -906,7 +883,6 @@ export const ApplicationModal = ({
                     }
                     control={form.control}
                     height="h-9"
-                    isPro={isProGrant}
                   />
                 )}
 
@@ -923,7 +899,6 @@ export const ApplicationModal = ({
                     richEditorPlaceholder={
                       ST_GRANT_COPY.application.expenseBreakdown!.placeholder
                     }
-                    isPro={isProGrant}
                   />
                 )}
 
@@ -951,11 +926,7 @@ export const ApplicationModal = ({
                                     https://
                                   </div>
                                   <Input
-                                    className={cn(
-                                      'h-full rounded-l-none',
-                                      isProGrant &&
-                                        'focus-visible:ring-zinc-400',
-                                    )}
+                                    className={cn('h-full rounded-l-none')}
                                     placeholder="Add a link..."
                                     value={
                                       field.value?.replace(
@@ -993,7 +964,6 @@ export const ApplicationModal = ({
                       label={question.question}
                       isRequired={!question.optional}
                       isRichEditor
-                      isPro={isProGrant}
                     />
                   );
                 })}
@@ -1017,7 +987,6 @@ export const ApplicationModal = ({
                     applicationCopy?.milestones.placeholder ??
                     'Outline your project goals and milestones'
                   }
-                  isPro={isProGrant}
                 />
 
                 {!isST && (
@@ -1038,7 +1007,6 @@ export const ApplicationModal = ({
                       applicationCopy?.kpi?.placeholder ??
                       "What's the key metric for success"
                     }
-                    isPro={isProGrant}
                   />
                 )}
                 {!grantApplication && (
@@ -1048,9 +1016,7 @@ export const ApplicationModal = ({
                         id="acknowledgement"
                         className={cn(
                           'mt-1',
-                          isProGrant
-                            ? 'border-zinc-400 data-[state=checked]:border-zinc-800 data-[state=checked]:bg-zinc-800'
-                            : 'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple',
+                          'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple',
                         )}
                         checked={acknowledgementAccepted}
                         onCheckedChange={(checked) => {
@@ -1077,9 +1043,7 @@ export const ApplicationModal = ({
                         id="feedback-acknowledgement"
                         className={cn(
                           'mt-1',
-                          isProGrant
-                            ? 'border-zinc-400 data-[state=checked]:border-zinc-800 data-[state=checked]:bg-zinc-800'
-                            : 'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple',
+                          'data-[state=checked]:border-brand-purple data-[state=checked]:bg-brand-purple',
                         )}
                         checked={feedbackAcknowledgementAccepted}
                         onCheckedChange={(checked) => {
@@ -1385,11 +1349,7 @@ export const ApplicationModal = ({
               {activeStep === steps.length - 1 ? (
                 <>
                   <Button
-                    className={cn(
-                      'ph-no-capture w-full',
-                      isProGrant &&
-                        'border-zinc-800 text-zinc-800 hover:bg-zinc-100',
-                    )}
+                    className={cn('ph-no-capture w-full')}
                     onClick={() => setIsPreviewOpen(true)}
                     variant="outline"
                     type="button"
@@ -1397,13 +1357,8 @@ export const ApplicationModal = ({
                     Preview
                   </Button>
                   <Button
-                    className={cn(
-                      'ph-no-capture w-full',
-                      isNotEligibleForPro
-                        ? 'bg-zinc-300 text-zinc-700 disabled:opacity-100'
-                        : isProGrant && 'bg-zinc-800 hover:bg-black',
-                    )}
-                    disabled={isLoading || (isPro && !isUserPro)}
+                    className="ph-no-capture w-full"
+                    disabled={isLoading}
                     type="submit"
                   >
                     {isLoading ? (
@@ -1411,11 +1366,6 @@ export const ApplicationModal = ({
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         <span>Applying...</span>
                       </>
-                    ) : isNotEligibleForPro ? (
-                      <span className="flex items-center gap-2">
-                        <Lock className="h-4 w-4" />
-                        <span>Not Eligible</span>
-                      </span>
                     ) : grantApplication ? (
                       <span>Update</span>
                     ) : (
@@ -1425,10 +1375,7 @@ export const ApplicationModal = ({
                 </>
               ) : (
                 <Button
-                  className={cn(
-                    'ph-no-capture w-full',
-                    isProGrant && 'bg-zinc-800 hover:bg-black',
-                  )}
+                  className={cn('ph-no-capture w-full')}
                   onClick={handleNext}
                   type="button"
                 >

@@ -18,7 +18,6 @@ import {
   getRegionTooltipLabel,
   userRegionEligibilty,
 } from '@/features/listings/utils/region';
-import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { useApplicationState } from '../hooks/useApplicationState';
 import { userApplicationQuery } from '../queries/user-application';
@@ -39,18 +38,8 @@ export const ApplicationActionButton = ({
   const { authenticated } = usePrivy();
   const isAuthenticated = authenticated;
 
-  const {
-    region,
-    id,
-    link,
-    isNative,
-    isPublished,
-    isPaused,
-    isPro,
-    isST,
-    sponsorId,
-  } = grant;
-  const isUserPro = user?.isPro;
+  const { region, id, link, isNative, isPublished, isPaused, isST, sponsorId } =
+    grant;
   const isUserEligibleST = isUserEligibleForST(user);
 
   const { data: application, isLoading: isUserApplicationLoading } = useQuery({
@@ -97,13 +86,12 @@ export const ApplicationActionButton = ({
     Boolean(isPaused) && applicationState === 'ALLOW NEW';
 
   const isGrantSponsor = user?.currentSponsorId === sponsorId;
-  const isProRestricted = isST
-    ? !isUserEligibleST && !isGrantSponsor && applicationState === 'ALLOW NEW'
-    : isPro &&
-      !isUserPro &&
-      !isGrantSponsor &&
-      applicationState === 'ALLOW NEW';
-  const isNotEligibleForPro = isAuthenticated && isProRestricted;
+  const isSTRestricted =
+    !!isST &&
+    !isUserEligibleST &&
+    !isGrantSponsor &&
+    applicationState === 'ALLOW NEW';
+  const isNotEligibleForST = isAuthenticated && isSTRestricted;
 
   const isBtnDisabled =
     buttonConfig.isDisabled ||
@@ -112,7 +100,7 @@ export const ApplicationActionButton = ({
       isPausedForNewApplications ||
       (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
       (user?.id && user?.isTalentFilled && isNewApplicationLocationCooldown) ||
-      isNotEligibleForPro,
+      isNotEligibleForST,
     );
 
   const getButtonText = () => {
@@ -122,7 +110,7 @@ export const ApplicationActionButton = ({
     if (isNewApplicationLocationCooldown) {
       return 'Ineligible';
     }
-    if (isProRestricted && !isUserApplicationLoading) {
+    if (isSTRestricted && !isUserApplicationLoading) {
       if (!isAuthenticated) {
         return 'Check Eligibility';
       }
@@ -138,14 +126,11 @@ export const ApplicationActionButton = ({
     if (isNewApplicationLocationCooldown) {
       return 'bg-brand-purple-400';
     }
-    if (isProRestricted && !isUserApplicationLoading) {
+    if (isSTRestricted && !isUserApplicationLoading) {
       if (!isAuthenticated) {
         return 'bg-zinc-700';
       }
       return 'bg-zinc-300';
-    }
-    if (isUserPro && isPro && applicationState === 'ALLOW NEW') {
-      return 'bg-zinc-800';
     }
     return buttonConfig.bg;
   };
@@ -202,7 +187,7 @@ export const ApplicationActionButton = ({
                 <Button
                   className={cn(
                     'h-12 w-full gap-4',
-                    isProRestricted
+                    isSTRestricted
                       ? 'disabled:opacity-100'
                       : 'disabled:opacity-70',
                     'text-base md:text-lg',
@@ -210,13 +195,9 @@ export const ApplicationActionButton = ({
                     grant?.link && !grant?.isNative ? 'mt-4' : '',
                     getButtonBg(),
                     'size-lg',
-                    isNotEligibleForPro && 'text-zinc-700',
+                    isNotEligibleForST && 'text-zinc-700',
                     applicationState === 'ALLOW EDIT' &&
-                      (isPro
-                        ? 'border-zinc-700 text-zinc-700 hover:bg-zinc-100'
-                        : 'border-brand-purple text-brand-purple hover:text-brand-purple-dark'),
-                    isUserPro && isPro && 'hover:bg-black',
-                    !isUserPro && isPro && 'hover:opacity-90',
+                      'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
                   )}
                   disabled={isBtnDisabled}
                   onClick={handleSubmit}
@@ -231,25 +212,12 @@ export const ApplicationActionButton = ({
                     </>
                   ) : (
                     <>
-                      {isNotEligibleForPro && <Lock className="h-4 w-4" />}
+                      {isNotEligibleForST && <Lock className="h-4 w-4" />}
                       {applicationState === 'ALLOW EDIT' && <Pencil />}
                       <span>{getButtonText()}</span>
                     </>
                   )}
                 </Button>
-                {!isST &&
-                  isUserPro &&
-                  isPro &&
-                  applicationState === 'ALLOW NEW' &&
-                  !isUserApplicationLoading && (
-                    <div className="absolute top-1/2 right-4 -translate-y-1/2">
-                      <ProBadge
-                        containerClassName="bg-zinc-700 px-2 py-0.5 gap-1"
-                        iconClassName="size-2.5 text-zinc-400"
-                        textClassName="text-[10px] font-medium text-white"
-                      />
-                    </div>
-                  )}
               </div>
             </AuthWrapper>
           </InfoWrapper>
@@ -263,24 +231,15 @@ export const ApplicationActionButton = ({
             </p>
           </div>
         )}
-        {(isPro || isST) && (isST ? !isUserEligibleST : !isUserPro) && (
+        {isST && !isUserEligibleST && (
           <div className="mt-1 md:my-1.5 md:flex">
             <p className="mx-auto w-full rounded-md bg-gray-50 px-2 py-2 text-center text-xs text-slate-600 md:text-xs">
-              {isST ? (
-                <>
-                  You need to be a <strong>Superteam member</strong> to be able
-                  to apply for this grant
-                </>
-              ) : (
-                <>
-                  You need to be a part of the <strong>PRO membership</strong>{' '}
-                  to apply for this grant
-                </>
-              )}
+              You need to be a <strong>Superteam member</strong> to be able to
+              apply for this grant
             </p>
           </div>
         )}
-        {grantCreditConditions && !isPro && (
+        {grantCreditConditions && (
           <div className="mt-1 md:my-1.5 md:flex">
             <p className="mx-auto w-full rounded-md bg-[#62F6FF10] py-0.5 text-center text-xs font-medium text-[#1A7F86] md:text-xs">
               Grant applications do not require credits

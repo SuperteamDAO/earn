@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { ArrowRight, Gift, Loader2, Lock, Pencil, X } from 'lucide-react';
+import { ArrowRight, Gift, Loader2, Pencil, X } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
@@ -23,7 +23,6 @@ import { Nudge } from '@/features/credits/components/Nudge';
 import { ReferralModal } from '@/features/credits/components/ReferralModal';
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { SurveyModal } from '@/features/listings/components/Submission/Survey';
-import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
 import { type Listing } from '../../types';
@@ -58,7 +57,6 @@ const InfoWrapper = ({
   isBounty,
   isEditMode,
   isAuthenticated,
-  isPro,
   isLocationCooldown,
   locationCooldownLabel,
 }: {
@@ -73,7 +71,6 @@ const InfoWrapper = ({
   isBounty: boolean;
   isEditMode: boolean;
   isAuthenticated: boolean;
-  isPro: boolean;
   isLocationCooldown: boolean;
   locationCooldownLabel: string;
 }) => {
@@ -89,7 +86,6 @@ const InfoWrapper = ({
           !(
             creditBalance === 0 &&
             (isProject || isBounty) &&
-            !isPro &&
             !isEditMode &&
             !pastDeadline
           ))
@@ -101,7 +97,7 @@ const InfoWrapper = ({
             ? locationCooldownLabel
             : !hasHackathonStarted
               ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
-              : creditBalance === 0 && (isProject || isBounty) && !isPro
+              : creditBalance === 0 && (isProject || isBounty)
                 ? "You don't have enough credits to" +
                   (isProject ? ' apply' : ' submit')
                 : null
@@ -128,7 +124,6 @@ export const SubmissionActionButton = ({
     isWinnersAnnounced,
     isFndnPaying,
     Hackathon,
-    isPro,
   } = listing;
 
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
@@ -223,8 +218,6 @@ export const SubmissionActionButton = ({
   const isBounty = type === 'bounty';
   const isHackathon = type === 'hackathon';
 
-  const isUserPro = user?.isPro;
-
   const isListingSponsor = user?.currentSponsorId === listing.sponsorId;
   const isNotPublished = bountyDraftStatus !== 'PUBLISHED' && !query['preview'];
 
@@ -317,58 +310,36 @@ export const SubmissionActionButton = ({
       break;
 
     default:
+      buttonText = isProject ? 'Apply Now' : 'Submit Now';
       if (
-        isPro &&
-        !isUserPro &&
-        !isListingSponsor &&
-        buttonState === 'submit' &&
-        !isUserSubmissionLoading
-      ) {
-        if (!isAuthenticated) {
-          buttonText = 'Check Eligibility';
-          buttonBG = 'bg-zinc-700';
-          isBtnDisabled = false;
-        } else {
-          buttonText = 'Not Eligible';
-          buttonBG = 'bg-zinc-300';
-          isBtnDisabled = true;
-        }
-        btnLoadingText = null;
-      } else {
-        buttonText = isProject ? 'Apply Now' : 'Submit Now';
-        if (
-          listing.compensationType === 'variable' ||
-          listing.compensationType === 'range'
-        )
-          buttonText = 'Send Quote';
-        buttonBG = isUserPro && isPro ? 'bg-zinc-800' : 'bg-brand-purple';
-        if (isNotPublished && !isListingSponsor) {
-          buttonText = 'Paused';
-        }
-        isBtnDisabled = Boolean(
-          pastDeadline ||
-          (user?.id &&
-            user?.isTalentFilled &&
-            (!hasHackathonStarted || !isUserEligibleByRegion)) ||
-          (!isAuthenticated ? false : !hasHackathonStarted) ||
-          (isAuthenticated &&
-            user?.id &&
-            user?.isTalentFilled &&
-            creditBalance === 0 &&
-            (isProject || isBounty) &&
-            !isPro) ||
-          (isNotPublished && !isListingSponsor),
-        );
-        isSubmitDisabled = Boolean(
-          pastDeadline ||
-          (user?.id &&
-            user?.isTalentFilled &&
-            (isNotPublished ||
-              !hasHackathonStarted ||
-              !isUserEligibleByRegion)),
-        );
-        btnLoadingText = 'Checking Submission..';
+        listing.compensationType === 'variable' ||
+        listing.compensationType === 'range'
+      )
+        buttonText = 'Send Quote';
+      buttonBG = 'bg-brand-purple';
+      if (isNotPublished && !isListingSponsor) {
+        buttonText = 'Paused';
       }
+      isBtnDisabled = Boolean(
+        pastDeadline ||
+        (user?.id &&
+          user?.isTalentFilled &&
+          (!hasHackathonStarted || !isUserEligibleByRegion)) ||
+        (!isAuthenticated ? false : !hasHackathonStarted) ||
+        (isAuthenticated &&
+          user?.id &&
+          user?.isTalentFilled &&
+          creditBalance === 0 &&
+          (isProject || isBounty)) ||
+        (isNotPublished && !isListingSponsor),
+      );
+      isSubmitDisabled = Boolean(
+        pastDeadline ||
+        (user?.id &&
+          user?.isTalentFilled &&
+          (isNotPublished || !hasHackathonStarted || !isUserEligibleByRegion)),
+      );
+      btnLoadingText = 'Checking Submission..';
       break;
   }
 
@@ -379,18 +350,10 @@ export const SubmissionActionButton = ({
     isSubmitDisabled = true;
   }
 
-  const isNotEligibleForPro =
-    isPro && !isUserPro && !isListingSponsor && buttonState === 'submit';
-  const isNotEligible = isAuthenticated && isNotEligibleForPro;
-  if (
-    !isNotEligible &&
-    isDeadlineOver(deadline, serverTime()) &&
-    !isWinnersAnnounced
-  ) {
+  if (isDeadlineOver(deadline, serverTime()) && !isWinnersAnnounced) {
     buttonText = 'Submissions in Review';
     buttonBG = 'bg-gray-500';
   } else if (
-    !isNotEligible &&
     isWinnersAnnounced &&
     !['kyc', 'kyc_done', 'paid'].includes(buttonState)
   ) {
@@ -415,8 +378,7 @@ export const SubmissionActionButton = ({
     !isEditMode &&
     !isUserSubmissionLoading &&
     !pastDeadline &&
-    isAuthenticated &&
-    !isPro;
+    isAuthenticated;
 
   const hackathonCreditConditions =
     isHackathon &&
@@ -460,7 +422,6 @@ export const SubmissionActionButton = ({
             setTimeout(() => setNudgeOpen(true), 150);
           }}
           isProject={isProject}
-          isPro={isPro ?? false}
         />
       )}
       {isDesktop &&
@@ -518,7 +479,6 @@ export const SubmissionActionButton = ({
             isBounty={isBounty}
             isEditMode={isEditMode}
             isAuthenticated={isAuthenticated}
-            isPro={isPro ?? false}
             isLocationCooldown={isLocationCooldown}
             locationCooldownLabel={locationCooldownLabel}
           >
@@ -534,19 +494,12 @@ export const SubmissionActionButton = ({
                   className={cn(
                     'h-12 w-full gap-4',
                     'disabled:cursor-default',
-                    isNotEligibleForPro
-                      ? 'disabled:opacity-100'
-                      : 'disabled:opacity-70',
+                    'disabled:opacity-70',
                     'text-base md:text-lg',
                     'font-semibold sm:font-semibold',
                     buttonBG,
-                    isNotEligible && 'text-zinc-700',
                     isEditMode &&
-                      (isPro
-                        ? 'border-zinc-700 text-zinc-700 hover:text-white'
-                        : 'border-brand-purple text-brand-purple hover:text-brand-purple-dark'),
-                    isUserPro && isPro && 'hover:bg-black',
-                    !isUserPro && isPro && 'hover:opacity-90',
+                      'border-brand-purple text-brand-purple hover:text-brand-purple-dark',
                   )}
                   disabled={isBtnDisabled}
                   onClick={handleSubmit}
@@ -559,7 +512,6 @@ export const SubmissionActionButton = ({
                     </>
                   ) : (
                     <>
-                      {isNotEligible && <Lock className="h-4 w-4" />}
                       {isEditMode && <Pencil />}
                       <span>{buttonText}</span>
                       {requiresCredits && (
@@ -568,36 +520,10 @@ export const SubmissionActionButton = ({
                     </>
                   )}
                 </Button>
-                {isUserPro &&
-                  isPro &&
-                  !isEditMode &&
-                  buttonState === 'submit' && (
-                    <div className="absolute top-1/2 right-4 -translate-y-1/2">
-                      <ProBadge
-                        containerClassName="bg-zinc-700 px-2 py-0.5 gap-1"
-                        iconClassName="size-2.5 text-zinc-400"
-                        textClassName="text-[10px] font-medium text-white"
-                      />
-                    </div>
-                  )}
               </div>
             </AuthWrapper>
           </InfoWrapper>
         </div>
-        {isPro && (
-          <div className="mt-1 md:my-1.5 md:flex">
-            <p className="mx-auto w-full rounded-md bg-gray-50 px-2 py-2 text-center text-xs text-slate-600 md:text-xs">
-              {user?.isPro ? (
-                `PRO listings cost 0 credits to submit :)`
-              ) : (
-                <>
-                  You need to be a part of the <strong>PRO membership</strong>{' '}
-                  to participate in this opportunity
-                </>
-              )}
-            </p>
-          </div>
-        )}
         {requiresCredits && user?.isTalentFilled && (
           <div className="mt-1 md:my-1.5 md:flex">
             {creditBalance > 0 && (

@@ -19,7 +19,6 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 import { CreditIcon } from '@/features/credits/icon/credit';
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
-import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { LISTING_NAV_ITEMS } from '../constants';
 import { LogoContextMenu } from './LogoContextMenu';
@@ -109,8 +108,6 @@ export const DesktopNavbar = ({
     onCreditOpen();
   };
 
-  const isPro = user?.isPro;
-
   return (
     <div
       className={cn(
@@ -157,7 +154,6 @@ export const DesktopNavbar = ({
                 const isCurrent = `${navItem.href}` === router.asPath;
                 return (
                   <NavLink
-                    isPro={isPro}
                     className="ph-no-capture"
                     onClick={() => {
                       posthog.capture(navItem.posthog);
@@ -169,23 +165,6 @@ export const DesktopNavbar = ({
                   />
                 );
               })}
-
-              <NavLink
-                isPro={isPro}
-                className="ph-no-capture"
-                onClick={() => {
-                  posthog.capture('pro_navbar');
-                }}
-                href="/earn/pro"
-                label={
-                  <ProBadge
-                    containerClassName="gap-1 mt-px"
-                    iconClassName="size-4 text-zinc-600"
-                    textClassName="text-xs font-medium text-slate-600"
-                  />
-                }
-                isActive={router.pathname === '/earn/pro'}
-              />
 
               {HACKATHONS.map((hackathon) => (
                 <Link
@@ -248,8 +227,6 @@ export const DesktopNavbar = ({
                   size="sm"
                   className={cn(
                     'text-brand-purple hover:text-brand-purple bg-indigo-50 text-xs font-semibold hover:bg-indigo-100',
-                    isPro &&
-                      'bg-zinc-200 text-zinc-700 hover:bg-zinc-300 hover:text-zinc-700',
                   )}
                   onClick={onReferralOpen}
                 >
@@ -264,17 +241,9 @@ export const DesktopNavbar = ({
                     className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
                     onClick={openCreditDrawer}
                   >
-                    <CreditIcon
-                      className={cn(
-                        'size-4',
-                        isPro ? 'text-zinc-600' : 'text-brand-purple',
-                      )}
-                    />
+                    <CreditIcon className={cn('size-4', 'text-brand-purple')} />
                     <p
-                      className={cn(
-                        'text-sm font-semibold',
-                        isPro ? 'text-zinc-600' : 'text-slate-500',
-                      )}
+                      className={cn('text-sm font-semibold', 'text-slate-500')}
                     >
                       {creditBalance}
                     </p>
@@ -285,15 +254,12 @@ export const DesktopNavbar = ({
                       onClick={onWalletOpen}
                     >
                       <IoWalletOutline
-                        className={cn(
-                          'size-6',
-                          isPro ? 'text-zinc-600' : 'text-brand-purple',
-                        )}
+                        className={cn('size-6', 'text-brand-purple')}
                       />
                       <span
                         className={cn(
                           'absolute top-px -right-1.5 block rounded-md px-1 py-px text-[10px] font-semibold tracking-tight text-white',
-                          isPro ? 'bg-zinc-700' : 'bg-brand-purple/95',
+                          'bg-brand-purple/95',
                         )}
                       >
                         ${formatNumberWithSuffix(walletBalance || 0, 1, false)}

@@ -238,7 +238,6 @@ export function transformListingToFormListing(
     hackathonId: listing.hackathonId,
     status: listing.status,
     isPrivate: listing.isPrivate || false,
-    isPro: listing.isPro || false,
     agentAccess: listing.agentAccess || 'HUMAN_ONLY',
     templateId: listing.templateId,
     sponsorId: listing.sponsorId,

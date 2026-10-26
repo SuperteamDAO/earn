@@ -28,7 +28,6 @@ type BountyGrant = {
   createdAt: Date;
   submissionCount: number;
   isFndnPaying: string;
-  isPro: boolean;
 };
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
@@ -58,7 +57,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           b.createdAt,
           b.isFndnPaying,
           b.usdValue,
-          b.isPro,
           NULL as airtableId,
           CAST((SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id) AS SIGNED) as submissionCount
         FROM Bounties b
@@ -89,7 +87,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           g.createdAt,
           NULL as isFndnPaying,
           NULL as usdValue,
-          0 as isPro,
           g.airtableId,
           NULL as maxBonusSpots,
           CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
@@ -113,7 +110,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ...item,
       submissionCount: Number(item.submissionCount),
       isFndnPaying: Boolean(Number(item.isFndnPaying)),
-      isPro: Boolean(Number(item.isPro)),
     }));
 
     logger.info(

@@ -9,44 +9,28 @@ import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { cn } from '@/utils/cn';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   isProject: boolean;
-  isPro: boolean;
 }
 
-const createDecorateOptions = (isPro: boolean): TDecorateOptionsFn => {
+const createDecorateOptions = (): TDecorateOptionsFn => {
   return (options) => {
-    const colors = isPro
-      ? [
-          '#FFD700',
-          '#FFA500',
-          '#FFC125',
-          '#DAA520',
-          '#F4A460',
-          '#FFB347',
-          '#FFD700',
-          '#E6C200',
-          '#FFE135',
-          '#FFC72C',
-          '#F5DEB3',
-        ]
-      : [
-          '#E63946',
-          '#F1FAEE',
-          '##A8DADC',
-          '#457B9D',
-          '#1D3557',
-          '#F4A261',
-          '#E9C46A',
-          '#2A9D8F',
-          '#FF5733',
-          '#FF2400',
-          '#FFC0CB',
-        ];
+    const colors = [
+      '#E63946',
+      '#F1FAEE',
+      '##A8DADC',
+      '#457B9D',
+      '#1D3557',
+      '#F4A261',
+      '#E9C46A',
+      '#2A9D8F',
+      '#FF5733',
+      '#FF2400',
+      '#FFC0CB',
+    ];
     const selectedColors: string[] = [];
 
     while (selectedColors.length < 5) {
@@ -65,29 +49,15 @@ const createDecorateOptions = (isPro: boolean): TDecorateOptionsFn => {
   };
 };
 
-function MainContent({
-  isProject,
-  isPro,
-}: {
-  isProject: boolean;
-  isPro: boolean;
-}) {
+function MainContent({ isProject }: { isProject: boolean }) {
   const isMD = useBreakpoint('md');
   return (
     <>
       <Pride
         autorun={{ speed: isMD ? 10 : 5 }}
-        decorateOptions={createDecorateOptions(isPro)}
+        decorateOptions={createDecorateOptions()}
         className="absolute -z-10 h-full w-full"
       />
-      {isPro && (
-        <>
-          <div className="absolute -top-40 right-1/2 -z-30 size-96 translate-x-1/2 rounded-full bg-[#3D3D3D] blur-[180px]" />
-          <div className="absolute right-1/2 -bottom-40 -z-30 size-96 translate-x-1/2 rounded-full bg-[#3D3D3D] blur-[120px]" />
-          <div className="absolute right-100 bottom-40 -z-30 size-96 translate-x-1/2 rounded-full bg-white/10 blur-[140px]" />
-          <div className="absolute bottom-40 left-100 -z-30 size-96 translate-x-1/2 rounded-full bg-white/10 blur-[140px]" />
-        </>
-      )}
       <div className="container mx-auto mt-auto px-4 md:mt-6">
         <div className="mx-auto mt-6 mb-6 w-14 md:mb-11 md:w-28">
           <ExternalImage
@@ -131,7 +101,7 @@ function MainContent({
   );
 }
 
-export const EasterEgg = ({ isOpen, onClose, isProject, isPro }: Props) => {
+export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   useEffect(() => {
@@ -146,16 +116,13 @@ export const EasterEgg = ({ isOpen, onClose, isProject, isPro }: Props) => {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent
-          className={cn(
-            'h-screen w-screen max-w-none overflow-hidden rounded-none',
-            isPro ? 'bg-black' : 'bg-[#5243FF]',
-          )}
+          className="h-screen w-screen max-w-none overflow-hidden rounded-none bg-[#5243FF]"
           onInteractOutside={(e) => e.preventDefault()}
           classNames={{
             closeIcon: 'text-white',
           }}
         >
-          <MainContent isProject={isProject} isPro={isPro} />
+          <MainContent isProject={isProject} />
         </DialogContent>
       </Dialog>
     );
@@ -163,15 +130,8 @@ export const EasterEgg = ({ isOpen, onClose, isProject, isPro }: Props) => {
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent
-        className={cn(
-          'h-screen w-screen max-w-none overflow-hidden rounded-none',
-          isPro
-            ? 'bg-gradient-to-b from-amber-900 via-yellow-900 to-amber-950'
-            : 'bg-[#5243FF]',
-        )}
-      >
-        <MainContent isProject={isProject} isPro={isPro} />
+      <DrawerContent className="h-screen w-screen max-w-none overflow-hidden rounded-none bg-[#5243FF]">
+        <MainContent isProject={isProject} />
       </DrawerContent>
     </Drawer>
   );

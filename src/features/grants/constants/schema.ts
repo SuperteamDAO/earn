@@ -16,7 +16,6 @@ export const GrantContextSchema = z
     'category',
     'category-all',
     'opportunity',
-    'pro',
   ])
   .default('all');
 
@@ -37,7 +36,6 @@ export const grantsSelect = {
   historicalApplications: true,
   totalPaid: true,
   logo: true,
-  isPro: true,
   isST: true,
   sponsor: {
     select: {
