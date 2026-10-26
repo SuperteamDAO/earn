@@ -13,6 +13,9 @@ import {
 } from '@/components/ui/select';
 import { cn } from '@/utils/cn';
 
+import { HomepagePop } from '@/features/conversion-popups/components/HomepagePop';
+import { VibeCard } from '@/features/home/components/VibeCard';
+
 import {
   DEFAULT_TIME_PERIOD,
   type FeedDataProps,
@@ -85,6 +88,7 @@ export const Feed = ({
 
   return (
     <>
+      <HomepagePop />
       <div className="border-b border-slate-200 px-5 pt-6">
         <h1 className="text-lg font-semibold text-slate-900 lg:text-xl">
           Activity Feed
@@ -92,6 +96,9 @@ export const Feed = ({
         <p className="mt-1 text-sm text-slate-500 lg:text-base">
           Discover the best work on Earn
         </p>
+        <div className="flex w-full pt-4 lg:hidden">
+          <VibeCard />
+        </div>
         <div className="mt-4 -mb-px flex h-12 items-stretch justify-between gap-4">
           <div className="flex shrink-0 gap-5">
             <MenuOption

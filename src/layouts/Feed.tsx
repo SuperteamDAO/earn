@@ -9,6 +9,7 @@ import {
   HomeIcon,
   WinnersIcon,
 } from '@/features/feed/components/icons';
+import { HomeSideBar } from '@/features/home/components/SideBar';
 
 interface NavItemProps {
   name: string;
@@ -32,9 +33,8 @@ interface FeedPageProps {
   isHomePage?: boolean;
 }
 
-// Earn's feed frame: Home's `type="feed"` layout around the feed's own
-// navigation. Home's sidebar joins once the home area's `Home` layout runs
-// under the App Router.
+// Earn's feed frame: Home's `type="feed"` layout (with its sidebar) around
+// the feed's own navigation.
 export const FeedPageLayout = ({
   children,
   isHomePage = false,
@@ -69,6 +69,9 @@ export const FeedPageLayout = ({
                   </div>
                 </div>
               </div>
+            </div>
+            <div className="hidden lg:flex">
+              <HomeSideBar type="feed" />
             </div>
           </div>
         </div>

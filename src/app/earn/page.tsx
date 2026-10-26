@@ -96,7 +96,7 @@ export default async function HomePage({ searchParams }: PageProps<'/earn'>) {
               </div>
             </div>
             <div className="hidden lg:flex">
-              <HomeSideBar type="landing" isHomepage />
+              <HomeSideBar type="landing" />
             </div>
           </div>
         </div>
