@@ -1,5 +1,9 @@
+'use client';
+
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useState, useTransition } from 'react';
+
+import { startTopLoader } from '@/components/ui/toploader';
 
 import {
   type SearchSkills,
@@ -16,127 +20,51 @@ type QueryParamUpdates = Partial<
   Record<'q' | 'status' | 'skills', string | null>
 >;
 
+const statusesFrom = (params: URLSearchParams | null): SearchStatus[] =>
+  (params?.get('status') ?? '')
+    .split(',')
+    .filter(Boolean)
+    .flatMap((status) => {
+      const parsed = SearchStatusSchema.safeParse(status);
+      return parsed.success ? [parsed.data] : [];
+    });
+
+const skillsFrom = (params: URLSearchParams | null): SearchSkills[] =>
+  (params?.get('skills') ?? '')
+    .split(',')
+    .filter(Boolean)
+    .flatMap((skill) => {
+      const parsed = SearchSkillsSchema.safeParse(skill);
+      return parsed.success ? [parsed.data] : [];
+    });
+
+// The search page's query and filters, kept in the URL: a change navigates
+// with the new parameters and the server renders the new first page. The
+// page remounts on every URL (see the search page), so state starts from
+// the URL each time.
 export const useSearchState = ({
   defaultSearchTerm = '',
 }: UseSearchStateProps = {}) => {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParamsFromHook = useSearchParams();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
-  const searchParams = useMemo(
-    () => searchParamsFromHook ?? new URLSearchParams(),
-    [searchParamsFromHook],
+  const [internalSearchTerm, setInternalSearchTerm] = useState<string>(
+    () => searchParams?.get('q') ?? defaultSearchTerm,
   );
-
-  const getSearchTermFromParams = useCallback(
-    (params: URLSearchParams): string => {
-      const searchParam = params.get('q');
-      return searchParam ?? defaultSearchTerm;
-    },
-    [defaultSearchTerm],
-  );
-
-  const getStatusFromParams = useCallback(
-    (params: URLSearchParams): SearchStatus[] => {
-      const statusParam = params.get('status');
-      if (!statusParam) return [];
-
-      const statusArray = statusParam.split(',').filter(Boolean);
-      const validStatuses: SearchStatus[] = [];
-
-      for (const status of statusArray) {
-        const parsed = SearchStatusSchema.safeParse(status);
-        if (parsed.success) {
-          validStatuses.push(parsed.data);
-        }
-      }
-
-      return validStatuses;
-    },
-    [],
-  );
-
-  const getSkillsFromParams = useCallback(
-    (params: URLSearchParams): SearchSkills[] => {
-      const skillsParam = params.get('skills');
-      if (!skillsParam) return [];
-
-      const skillsArray = skillsParam.split(',').filter(Boolean);
-      const validSkills: SearchSkills[] = [];
-
-      for (const skill of skillsArray) {
-        const parsed = SearchSkillsSchema.safeParse(skill);
-        if (parsed.success) {
-          validSkills.push(parsed.data);
-        }
-      }
-
-      return validSkills;
-    },
-    [],
-  );
-
-  const [internalSearchTerm, setInternalSearchTerm] = useState<string>(() =>
-    getSearchTermFromParams(searchParams),
-  );
-
   const [internalActiveStatus, setInternalActiveStatus] = useState<
     SearchStatus[]
-  >(() => getStatusFromParams(searchParams));
-
+  >(() => statusesFrom(searchParams));
   const [internalActiveSkills, setInternalActiveSkills] = useState<
     SearchSkills[]
-  >(() => getSkillsFromParams(searchParams));
-
-  useEffect(() => {
-    const searchTermFromUrl = getSearchTermFromParams(searchParams);
-
-    setInternalSearchTerm((currentInternalTerm) => {
-      if (searchTermFromUrl !== currentInternalTerm) {
-        return searchTermFromUrl;
-      }
-      return currentInternalTerm;
-    });
-  }, [searchParams, getSearchTermFromParams]);
-
-  useEffect(() => {
-    const statusFromUrl = getStatusFromParams(searchParams);
-
-    setInternalActiveStatus((currentInternalStatus) => {
-      const statusChanged =
-        statusFromUrl.length !== currentInternalStatus.length ||
-        statusFromUrl.some(
-          (status) => !currentInternalStatus.includes(status),
-        ) ||
-        currentInternalStatus.some((status) => !statusFromUrl.includes(status));
-
-      if (statusChanged) {
-        return statusFromUrl;
-      }
-      return currentInternalStatus;
-    });
-  }, [searchParams, getStatusFromParams]);
-
-  useEffect(() => {
-    const skillsFromUrl = getSkillsFromParams(searchParams);
-
-    setInternalActiveSkills((currentInternalSkills) => {
-      const skillsChanged =
-        skillsFromUrl.length !== currentInternalSkills.length ||
-        skillsFromUrl.some(
-          (skill, index) => skill !== currentInternalSkills[index],
-        );
-
-      if (skillsChanged) {
-        return skillsFromUrl;
-      }
-      return currentInternalSkills;
-    });
-  }, [searchParams, getSkillsFromParams]);
+  >(() => skillsFrom(searchParams));
 
   const updateQueryParams = useCallback(
     (updates: QueryParamUpdates) => {
-      const newParams = new URLSearchParams(Array.from(searchParams.entries()));
+      const newParams = new URLSearchParams(
+        Array.from(searchParams?.entries() ?? []),
+      );
 
       const paramDefaults: Record<keyof QueryParamUpdates, unknown> = {
         q: defaultSearchTerm,
@@ -144,26 +72,27 @@ export const useSearchState = ({
         skills: null,
       };
 
-      for (const key in updates) {
-        const typedKey = key as keyof QueryParamUpdates;
+      for (const typedKey of ['q', 'status', 'skills'] as const) {
+        if (!(typedKey in updates)) continue;
         const value = updates[typedKey];
-        const defaultValueForKey = paramDefaults[typedKey];
-
         if (
           value === null ||
           value === undefined ||
-          value === defaultValueForKey ||
+          value === paramDefaults[typedKey] ||
           value === ''
         ) {
           newParams.delete(typedKey);
         } else {
-          newParams.set(typedKey, String(value));
+          newParams.set(typedKey, value);
         }
       }
 
       const queryString = newParams.toString();
       const newPath = `${pathname}${queryString ? `?${queryString}` : ''}`;
-      router.replace(newPath, { scroll: false });
+      startTopLoader();
+      startTransition(() => {
+        router.replace(newPath, { scroll: false });
+      });
     },
     [searchParams, router, defaultSearchTerm, pathname],
   );
@@ -179,8 +108,9 @@ export const useSearchState = ({
   const handleStatusChange = useCallback(
     (statuses: SearchStatus[]) => {
       setInternalActiveStatus(statuses);
-      const statusParam = statuses.length > 0 ? statuses.join(',') : null;
-      updateQueryParams({ status: statusParam });
+      updateQueryParams({
+        status: statuses.length > 0 ? statuses.join(',') : null,
+      });
     },
     [updateQueryParams],
   );
@@ -188,30 +118,31 @@ export const useSearchState = ({
   const handleSkillsChange = useCallback(
     (skills: SearchSkills[]) => {
       setInternalActiveSkills(skills);
-      const skillsParam = skills.length > 0 ? skills.join(',') : null;
-      updateQueryParams({ skills: skillsParam });
+      updateQueryParams({
+        skills: skills.length > 0 ? skills.join(',') : null,
+      });
     },
     [updateQueryParams],
   );
 
   const handleToggleStatus = useCallback(
     (status: SearchStatus) => {
-      const newStatuses = internalActiveStatus.includes(status)
-        ? internalActiveStatus.filter((s) => s !== status)
-        : [...internalActiveStatus, status];
-
-      handleStatusChange(newStatuses);
+      handleStatusChange(
+        internalActiveStatus.includes(status)
+          ? internalActiveStatus.filter((s) => s !== status)
+          : [...internalActiveStatus, status],
+      );
     },
     [internalActiveStatus, handleStatusChange],
   );
 
   const handleToggleSkill = useCallback(
     (skill: SearchSkills) => {
-      const newSkills = internalActiveSkills.includes(skill)
-        ? internalActiveSkills.filter((s) => s !== skill)
-        : [...internalActiveSkills, skill];
-
-      handleSkillsChange(newSkills);
+      handleSkillsChange(
+        internalActiveSkills.includes(skill)
+          ? internalActiveSkills.filter((s) => s !== skill)
+          : [...internalActiveSkills, skill],
+      );
     },
     [internalActiveSkills, handleSkillsChange],
   );
@@ -226,6 +157,8 @@ export const useSearchState = ({
     searchTerm: internalSearchTerm,
     activeStatus: internalActiveStatus,
     activeSkills: internalActiveSkills,
+    // A navigation to new parameters is on its way.
+    isPending,
     handleSearchTermChange,
     handleStatusChange,
     handleSkillsChange,

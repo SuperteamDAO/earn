@@ -1,3 +1,5 @@
+'use client';
+
 import debounce from 'lodash.debounce';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -16,12 +18,9 @@ export function PillsFilter({
   onSkillsChange,
   disabled = false,
 }: PillsFilterProps) {
+  // The page remounts on every new filter, so this starts from them.
   const [localActiveSkills, setLocalActiveSkills] =
     useState<SearchSkills[]>(activeSkills);
-
-  useEffect(() => {
-    setLocalActiveSkills(activeSkills);
-  }, [activeSkills]);
 
   const debouncedSkillsChange = useMemo(
     () =>

@@ -1,3 +1,5 @@
+'use client';
+
 import { ChevronDown, LucideListFilter, X } from 'lucide-react';
 
 import { Checkbox } from '@/components/ui/checkbox';

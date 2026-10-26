@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 
 import { GrantsCard } from '@/features/grants/components/GrantsCard';
@@ -6,7 +8,9 @@ import { ListingCard } from '@/features/listings/components/ListingCard';
 import type { SearchResult } from '../types';
 
 interface ResultsProps {
-  allResults: SearchResult[];
+  allResults: ReadonlyArray<SearchResult>;
+  // The server's clock when the first page was loaded.
+  now: number;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
   error: unknown;
@@ -32,10 +36,12 @@ function SearchIcon() {
   );
 }
 
-function ResultItem({ result }: { result: SearchResult }) {
+function ResultItem({ result, now }: { result: SearchResult; now: number }) {
   return (
     <div className="flex w-full justify-between" key={result.id}>
-      {result.searchType === 'listing' && <ListingCard bounty={result} />}
+      {result.searchType === 'listing' && (
+        <ListingCard bounty={result} now={now} />
+      )}
       {result.searchType === 'grants' && <GrantsCard grant={result} />}
     </div>
   );
@@ -43,6 +49,7 @@ function ResultItem({ result }: { result: SearchResult }) {
 
 export function Results({
   allResults,
+  now,
   hasNextPage,
   isFetchingNextPage,
   error,
@@ -104,7 +111,7 @@ export function Results({
     <div className="flex w-full flex-col">
       <div className="flex w-full flex-col gap-2">
         {allResults.map((result) => (
-          <ResultItem result={result} key={result.id} />
+          <ResultItem result={result} now={now} key={result.id} />
         ))}
       </div>
       {hasNextPage && (

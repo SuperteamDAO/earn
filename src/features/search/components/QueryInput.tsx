@@ -1,6 +1,8 @@
+'use client';
+
 import { Loader2, Search, Undo2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -72,16 +74,8 @@ export function QueryInput({
   loading = false,
   onQueryEmptyChange,
 }: QueryInputProps) {
+  // The page remounts on every new query, so this starts from it.
   const [localQuery, setLocalQuery] = useState(query);
-
-  useEffect(() => {
-    setLocalQuery(query);
-  }, [query]);
-
-  useEffect(() => {
-    const isQueryEmpty = localQuery.trim() === '';
-    onQueryEmptyChange?.(isQueryEmpty);
-  }, [query, localQuery, onQueryEmptyChange]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -104,7 +98,10 @@ export function QueryInput({
               name="query"
               className="ph-no-capture rounded-lg border-slate-200 pr-2 pl-13 text-sm font-normal text-slate-600 placeholder:text-sm md:text-base"
               autoFocus
-              onChange={(e) => setLocalQuery(e.target.value)}
+              onChange={(e) => {
+                setLocalQuery(e.target.value);
+                onQueryEmptyChange?.(e.target.value.trim() === '');
+              }}
               placeholder="Search for Listings"
               value={localQuery}
               autoComplete="off"
