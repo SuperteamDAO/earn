@@ -22,14 +22,9 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
     token,
     slug,
     compensationType,
-    minRewardAsk,
-    maxRewardAsk,
     winnersAnnouncedAt,
     isWinnersAnnounced,
   } = bounty;
-
-  const isVariable = compensationType === 'variable';
-  const showToken = !isVariable || (isVariable && isWinnersAnnounced);
 
   const { serverTime } = useServerTimeSync();
   const isBeforeDeadline = dayjs(serverTime()).isBefore(dayjs(deadline));
@@ -83,25 +78,20 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
             </Link>
             <div className="mt-px flex flex-wrap items-center gap-1">
               <div className="flex items-center justify-start">
-                {!!showToken && (
+                {
                   <TokenIcon
                     className="mr-0.5 h-4 w-4 rounded-full"
                     alt={token ?? 'token'}
                     symbol={token}
                   />
-                )}
+                }
                 <div className="flex items-baseline">
                   <CompensationAmount
                     compensationType={compensationType}
-                    maxRewardAsk={maxRewardAsk}
-                    minRewardAsk={minRewardAsk}
                     rewardAmount={rewardAmount}
-                    isWinnersAnnounced={isWinnersAnnounced}
                     className="text-xs font-semibold whitespace-nowrap text-slate-600"
                   />
-                  {!!showToken && (
-                    <p className="text-xs font-medium text-gray-400">{token}</p>
-                  )}
+                  {<p className="text-xs font-medium text-gray-400">{token}</p>}
                 </div>
                 <p className="ml-1 text-xs text-slate-300 md:text-sm">|</p>
               </div>

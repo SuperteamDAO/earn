@@ -35,7 +35,6 @@ import { cn } from '@/utils/cn';
 import { usePopupAuth } from '@/features/auth/hooks/use-popup-auth';
 import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { CreditIcon } from '@/features/credits/icon/credit';
-import { SocialInput } from '@/features/social/components/SocialInput';
 import { XVerificationModal } from '@/features/social/components/XVerificationModal';
 import {
   extractXHandle,
@@ -74,22 +73,10 @@ export const SubmissionDrawer = ({
   isSubmitDisabled,
   showEasterEgg,
 }: Props) => {
-  const {
-    id,
-    type,
-    eligibility,
-    compensationType,
-    token,
-    minRewardAsk,
-    maxRewardAsk,
-    Hackathon,
-    isFndnPaying,
-    region,
-  } = listing;
+  const { id, type, eligibility, Hackathon, isFndnPaying, region } = listing;
   const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const queryClient = useQueryClient();
-  const isProject = type === 'project';
   const isBounty = type === 'bounty';
   const isHackathon = type === 'hackathon';
   const [isLoading, setIsLoading] = useState(false);
@@ -111,11 +98,8 @@ export const SubmissionDrawer = ({
   const { user, refetchUser } = useUser();
 
   const form = useForm<FormData>({
-    resolver: zodResolver(
-      submissionSchema(listing, minRewardAsk || 0, maxRewardAsk || 0, user),
-    ),
+    resolver: zodResolver(submissionSchema(listing, user)),
     defaultValues: {
-      telegram: user?.telegram || '',
       eligibilityAnswers:
         Array.isArray(listing.eligibility) && listing.eligibility.length > 0
           ? listing.eligibility.map((q) => ({
@@ -262,8 +246,6 @@ export const SubmissionDrawer = ({
       link: '',
       tweet: '',
       otherInfo: '',
-      ask: null,
-      telegram: user?.telegram || '',
       eligibilityAnswers: Array.isArray(listing.eligibility)
         ? listing.eligibility.map((q) => ({
             question: q.question,
@@ -284,8 +266,7 @@ export const SubmissionDrawer = ({
             params: { id },
           });
 
-          const { link, tweet, otherInfo, eligibilityAnswers, ask, telegram } =
-            response.data;
+          const { link, tweet, otherInfo, eligibilityAnswers } = response.data;
 
           const reconciledAnswers =
             Array.isArray(listing.eligibility) && listing.eligibility.length > 0
@@ -327,8 +308,6 @@ export const SubmissionDrawer = ({
             link,
             tweet,
             otherInfo,
-            ask,
-            telegram: telegram || user?.telegram || '',
             eligibilityAnswers: reconciledAnswers,
           });
         } catch (error) {
@@ -339,7 +318,7 @@ export const SubmissionDrawer = ({
     };
 
     fetchData();
-  }, [id, editMode, form.reset, listing.eligibility, user?.telegram]);
+  }, [id, editMode, form.reset, listing.eligibility]);
 
   const isDisabled = useMemo(
     () =>
@@ -452,9 +431,7 @@ export const SubmissionDrawer = ({
         link: data.link || '',
         tweet: data.tweet || '',
         otherInfo: data.otherInfo || '',
-        ask: data.ask || null,
         eligibilityAnswers: data.eligibilityAnswers || [],
-        telegram: data.telegram || user?.telegram || '',
       });
 
       form.reset();
@@ -499,7 +476,7 @@ export const SubmissionDrawer = ({
             .includes('submissions closed')
         ) {
           toast.error(
-            `Unfortunately, you ${isProject ? 'application' : 'submission'} couldn't be added because the deadline of the listing has passed.`,
+            `Unfortunately, your submission couldn't be added because the deadline of the listing has passed.`,
           );
         } else {
           toast.error('Failed to submit. Please try again or contact support.');
@@ -513,28 +490,6 @@ export const SubmissionDrawer = ({
   let headerText = '';
   let subheadingText: JSX.Element | string = '';
   switch (type) {
-    case 'project':
-      headerText = 'Submit Your Application';
-      subheadingText = (
-        <>
-          <p>
-            {`Don't start working on the scope just yet! Apply first. Only the winning candidate will have to work on the scope mentioned in this listing. `}
-          </p>
-          <p className="mt-2">Note:</p>
-          <p>
-            1. The sponsor might contact you to assess fit before picking the
-            winner.
-          </p>
-          <p>
-            2. You can edit this application until the deadline of this listing.
-          </p>
-          <p>
-            3. If this listing is unpublished, you will receive your credit back
-            the following month.
-          </p>
-        </>
-      );
-      break;
     case 'bounty':
       headerText = 'Bounty Submission';
       subheadingText = (
@@ -589,7 +544,7 @@ export const SubmissionDrawer = ({
                 </div>
                 <div>
                   <div className="mb-5 flex flex-col gap-4">
-                    {!isProject && (
+                    {
                       <>
                         <FormField
                           control={form.control}
@@ -708,7 +663,7 @@ export const SubmissionDrawer = ({
                           )}
                         />
                       </>
-                    )}
+                    }
                     {eligibility?.map((e, index) => {
                       return (
                         <FormField
@@ -758,27 +713,6 @@ export const SubmissionDrawer = ({
                         />
                       );
                     })}
-                    {compensationType !== 'fixed' && (
-                      <FormFieldWrapper
-                        control={form.control}
-                        name="ask"
-                        label="What's the compensation you require to complete this fully?"
-                        isRequired
-                        isTokenInput
-                        token={token}
-                      />
-                    )}
-                    {isProject && (
-                      <SocialInput
-                        name="telegram"
-                        socialName={'telegram'}
-                        placeholder="Telegram username"
-                        required
-                        formLabel="Your Telegram username"
-                        control={form.control}
-                        height="h-9"
-                      />
-                    )}
                     <FormFieldWrapper
                       control={form.control}
                       name="otherInfo"
@@ -858,11 +792,6 @@ export const SubmissionDrawer = ({
                           {editMode ? 'Updating...' : 'Submitting...'}
                         </span>
                       </>
-                    ) : isProject ? (
-                      <span className="flex items-center gap-2">
-                        {editMode ? 'Update' : 'Apply using 1 credit'}
-                        {!editMode && <CreditIcon className="ml-1 size-6" />}
-                      </span>
                     ) : isBounty ? (
                       <span className="flex items-center gap-2">
                         {editMode ? 'Update' : 'Submit using 1 credit'}

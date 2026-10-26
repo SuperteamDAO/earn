@@ -39,12 +39,10 @@ export const MultiSelectFilter = ({
     [listingType],
   );
 
-  const availableFilters = useMemo(() => {
-    if (listingType === 'project') {
-      return DECISION_FILTERS;
-    }
-    return DECISION_FILTERS.filter((filter) => filter.value !== 'Rejected');
-  }, [listingType, DECISION_FILTERS]);
+  const availableFilters = useMemo(
+    () => DECISION_FILTERS.filter((filter) => filter.value !== 'Rejected'),
+    [DECISION_FILTERS],
+  );
 
   const hasActiveFilters = selectedFilters.size > 0;
 

@@ -24,28 +24,15 @@ export async function updateSubmission(
     where: { id: userId },
   });
 
-  const validationResult = submissionSchema(
-    listing,
-    listing.minRewardAsk || 0,
-    listing.maxRewardAsk || 0,
-    user as any,
-  ).safeParse(data);
+  const validationResult = submissionSchema(listing, user as any).safeParse(
+    data,
+  );
 
   if (!validationResult.success) {
     throw new Error(JSON.stringify(validationResult.error.formErrors));
   }
 
   const validatedData = validationResult.data;
-  const submissionTelegram =
-    listing.type === 'project' ? validatedData.telegram || null : null;
-
-  if (validatedData.telegram && !user.telegram) {
-    await prisma.user.update({
-      where: { id: userId },
-      data: { telegram: validatedData.telegram },
-    });
-  }
-
   const existingSubmission = await prisma.submission.findFirst({
     where: { userId, listingId },
     select: {
@@ -71,8 +58,6 @@ export async function updateSubmission(
     otherInfo: sanitizeGrantApplicationHtml(validatedData.otherInfo),
     eligibilityAnswers:
       sanitizeGrantApplicationAnswers(validatedData.eligibilityAnswers) || [],
-    ask: validatedData.ask || 0,
-    telegram: submissionTelegram,
   };
 
   return prisma.submission.update({

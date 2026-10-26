@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, CopyIcon, ExternalLink, Trash2, X } from 'lucide-react';
+import { Check, CopyIcon, ExternalLink, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -56,7 +56,6 @@ export const VerifyPaymentModal = ({
   const [status, setStatus] = useState<
     'idle' | 'retry' | 'loading' | 'success' | 'error'
   >('idle');
-  const [showMultiplePayments, setShowMultiplePayments] = useState(false);
   const queryClient = useQueryClient();
   const { data, isLoading, error, refetch } = useQuery({
     ...submissionsQuery(listing?.slug ?? '', isHackathonPage),
@@ -72,7 +71,6 @@ export const VerifyPaymentModal = ({
 
   useEffect(() => {
     setStatus('idle');
-    setShowMultiplePayments(false);
   }, [listing?.slug]);
 
   const refetchQueries = async () => {
@@ -126,40 +124,20 @@ export const VerifyPaymentModal = ({
       return;
     }
 
-    const isProject = listing?.type === 'project';
-
-    if (isProject) {
-      reset(
-        {
-          paymentLinks: [
-            {
-              submissionId:
-                listingSubmissionData.find((sub) => sub.winnerPosition === 1)
-                  ?.id || '',
-              link: '',
-              isVerified: false,
-              txId: '',
-            },
-          ],
-        },
-        resetFormOptions,
-      );
-    } else {
-      reset(
-        {
-          paymentLinks: listingSubmissionData
-            .filter((sub) => sub.winnerPosition !== null)
-            .sort((a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0))
-            .map((submission) => ({
-              submissionId: submission.id,
-              link: '',
-              isVerified: submission.isPaid,
-              txId: submission.paymentDetails?.[0]?.txId || '',
-            })),
-        },
-        resetFormOptions,
-      );
-    }
+    reset(
+      {
+        paymentLinks: listingSubmissionData
+          .filter((sub) => sub.winnerPosition !== null)
+          .sort((a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0))
+          .map((submission) => ({
+            submissionId: submission.id,
+            link: '',
+            isVerified: submission.isPaid,
+            txId: submission.paymentDetails?.[0]?.txId || '',
+          })),
+      },
+      resetFormOptions,
+    );
   };
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -173,7 +151,6 @@ export const VerifyPaymentModal = ({
 
   useEffect(() => {
     reset({});
-    setShowMultiplePayments(false);
   }, [listing?.slug]);
 
   const verifyPaymentMutation = async (body: VerifyPaymentsFormData) => {
@@ -258,47 +235,18 @@ export const VerifyPaymentModal = ({
     const { data: refreshedData } = await refetch();
     syncPaymentLinks(refreshedData ?? data);
     setStatus('idle');
-    setShowMultiplePayments(false);
     clearErrors();
   };
 
   const handleModalOpenChange = (open: boolean) => {
     if (open) {
       setStatus('idle');
-      setShowMultiplePayments(false);
       clearErrors();
     } else {
       reset({});
       setStatus('idle');
-      setShowMultiplePayments(false);
       clearErrors();
       onClose();
-    }
-  };
-
-  const addPaymentField = () => {
-    const currentLinks = paymentLinks || [];
-    const winnerSubmission = data?.find((sub) => sub.winnerPosition === 1);
-    if (winnerSubmission) {
-      setValue('paymentLinks', [
-        ...currentLinks,
-        {
-          submissionId: winnerSubmission.id,
-          link: '',
-          isVerified: false,
-          txId: '',
-        },
-      ]);
-    }
-  };
-
-  const removePaymentField = (indexToRemove: number) => {
-    const currentLinks = paymentLinks || [];
-    if (indexToRemove > 0 && currentLinks.length > 1) {
-      const newLinks = currentLinks.filter(
-        (_, index) => index !== indexToRemove,
-      );
-      setValue('paymentLinks', newLinks);
     }
   };
 
@@ -603,228 +551,6 @@ export const VerifyPaymentModal = ({
                         )}
                       />
                     ))}
-                {listing?.type === 'project' && (
-                  <div className="flex flex-col gap-6">
-                    <div className="flex flex-col gap-4">
-                      {(() => {
-                        const winnerSubmission = data?.find(
-                          (sub) => sub.winnerPosition === 1,
-                        );
-                        const totalPrizeAmount = listing?.rewards?.[1] || 0;
-                        const totalPaidAmount =
-                          winnerSubmission?.paymentDetails?.reduce(
-                            (sum, payment) => sum + payment.amount,
-                            0,
-                          ) || 0;
-                        const remainingAmount =
-                          totalPrizeAmount - totalPaidAmount;
-
-                        return (
-                          <>
-                            <div className="flex flex-col gap-3">
-                              <div className="flex items-center">
-                                <p className="w-32 font-normal text-slate-500">
-                                  Winner Amount
-                                </p>
-                                <div className="flex items-center gap-1">
-                                  <img
-                                    className="h-[1.2rem] w-[1.2rem] rounded-full"
-                                    alt={selectedToken?.tokenName}
-                                    src={selectedToken?.icon}
-                                  />
-                                  <p className="font-medium text-slate-800">
-                                    {formatNumberWithSuffix(
-                                      totalPrizeAmount,
-                                      2,
-                                      true,
-                                    )}
-                                  </p>
-                                  <p className="font-medium text-slate-400">
-                                    {selectedToken?.tokenSymbol}
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div className="flex items-center">
-                                <p className="w-32 font-normal text-slate-500">
-                                  Wallet Address
-                                </p>
-                                {winnerSubmission?.user?.walletAddress ? (
-                                  <CopyButton
-                                    text={winnerSubmission.user.walletAddress}
-                                    contentProps={{
-                                      side: 'right',
-                                      className: 'text-[0.6875rem] px-2 py-0.5',
-                                    }}
-                                  >
-                                    <div className="flex items-center gap-1">
-                                      <p className="text-sm font-medium text-slate-800">
-                                        {truncatePublicKey(
-                                          winnerSubmission.user.walletAddress,
-                                          8,
-                                        )}
-                                      </p>
-                                      <CopyIcon className="h-3 w-3" />
-                                    </div>
-                                  </CopyButton>
-                                ) : (
-                                  <p className="text-sm text-slate-400">
-                                    Wallet unavailable
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-
-                            {totalPaidAmount > 0 && (
-                              <>
-                                <div className="flex items-center gap-8">
-                                  <p className="font-normal text-slate-500">
-                                    Remaining Amount
-                                  </p>
-                                  <div className="flex items-center gap-1">
-                                    <img
-                                      className="h-[1.2rem] w-[1.2rem] rounded-full"
-                                      alt={selectedToken?.tokenName}
-                                      src={selectedToken?.icon}
-                                    />
-                                    <p className="font-medium text-slate-800">
-                                      {formatNumberWithSuffix(
-                                        remainingAmount,
-                                        2,
-                                        true,
-                                      )}
-                                    </p>
-                                    <p className="font-medium text-slate-400">
-                                      {selectedToken?.tokenSymbol}
-                                    </p>
-                                  </div>
-                                </div>
-
-                                {winnerSubmission?.paymentDetails &&
-                                  winnerSubmission.paymentDetails.length >
-                                    0 && (
-                                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-                                      <p className="mb-3 text-sm font-medium text-slate-700">
-                                        Existing Payments
-                                      </p>
-                                      <div className="space-y-2">
-                                        {winnerSubmission.paymentDetails.map(
-                                          (payment, index) => (
-                                            <div
-                                              key={index}
-                                              className="flex items-center justify-between rounded bg-white p-3 text-sm"
-                                            >
-                                              <div className="flex items-center gap-2">
-                                                <span className="text-slate-600">
-                                                  Tranche {payment.tranche}:
-                                                </span>
-                                                <div className="flex items-center gap-1">
-                                                  <img
-                                                    className="h-4 w-4 rounded-full"
-                                                    alt={
-                                                      selectedToken?.tokenName
-                                                    }
-                                                    src={selectedToken?.icon}
-                                                  />
-                                                  <span className="font-medium text-slate-800">
-                                                    {formatNumberWithSuffix(
-                                                      payment.amount,
-                                                      2,
-                                                      true,
-                                                    )}
-                                                  </span>
-                                                  <span className="text-slate-400">
-                                                    {selectedToken?.tokenSymbol}
-                                                  </span>
-                                                </div>
-                                              </div>
-                                              <a
-                                                href={`https://solscan.io/tx/${payment.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-blue-600 hover:text-blue-800"
-                                              >
-                                                <ExternalLink className="h-4 w-4" />
-                                              </a>
-                                            </div>
-                                          ),
-                                        )}
-                                      </div>
-                                    </div>
-                                  )}
-                              </>
-                            )}
-                          </>
-                        );
-                      })()}
-                    </div>
-
-                    <div className="flex flex-col gap-4">
-                      <p className="text-sm font-medium tracking-wide text-slate-600 uppercase">
-                        Transaction Link
-                      </p>
-
-                      {paymentLinks?.map((_, index) => (
-                        <div key={index} className="flex items-start gap-2">
-                          <FormField
-                            control={control}
-                            name={`paymentLinks.${index}.link`}
-                            render={({ field }) => (
-                              <FormItem className="flex-1">
-                                <FormControl>
-                                  <Input
-                                    {...field}
-                                    className="text-sm placeholder:text-slate-400"
-                                    placeholder="Paste your link here"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          {index > 0 && (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              className="mt-0 flex size-9 items-center justify-center p-0 text-red-500 hover:bg-red-50 hover:text-red-600"
-                              onClick={() => removePaymentField(index)}
-                            >
-                              <Trash2 className="size-3" />
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-
-                      {!showMultiplePayments && (
-                        <Button
-                          type="button"
-                          variant="link"
-                          className="text-brand-purple hover:text-brand-purple-dark w-fit p-0 text-sm"
-                          onClick={() => {
-                            setShowMultiplePayments(true);
-                            addPaymentField();
-                          }}
-                        >
-                          Multiple payments? Click here to add multiple tx links
-                        </Button>
-                      )}
-
-                      {showMultiplePayments &&
-                        paymentLinks &&
-                        paymentLinks.length < 5 && (
-                          <Button
-                            type="button"
-                            variant="link"
-                            className="text-brand-purple hover:text-brand-purple-dark w-fit p-0 text-sm"
-                            onClick={addPaymentField}
-                          >
-                            Click here to add another payment link
-                          </Button>
-                        )}
-                    </div>
-                  </div>
-                )}
               </div>
               <FormField
                 name={`paymentLinks.root` as any}

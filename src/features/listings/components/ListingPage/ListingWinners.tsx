@@ -38,8 +38,6 @@ const getOrRemoveBonuses = (
 };
 
 export function ListingWinners({ bounty }: Props) {
-  const isProject = bounty?.type === 'project';
-
   const isMD = useBreakpoint('md');
   const isSM = useBreakpoint('sm');
   const isLG = useBreakpoint('lg');
@@ -125,16 +123,12 @@ export function ListingWinners({ bounty }: Props) {
               .map((submission) => (
                 <Link
                   key={submission.id}
-                  href={
-                    !isProject
-                      ? `/earn/feed/submission/${submission?.id}`
-                      : `/earn/t/${submission?.user?.username}`
-                  }
+                  href={`/earn/feed/submission/${submission?.id}`}
                   passHref
                   className="flex cursor-pointer flex-col items-center justify-center"
                 >
                   <div className="relative">
-                    {!isProject && (
+                    {
                       <div
                         className={cn(
                           'absolute bottom-[-12px] left-1/2 -translate-x-1/2',
@@ -146,7 +140,7 @@ export function ListingWinners({ bounty }: Props) {
                       >
                         {nthLabelGenerator(submission?.winnerPosition ?? 0)}
                       </div>
-                    )}
+                    }
                     <EarnAvatar
                       className="h-14 w-14 md:h-16 md:w-16"
                       id={submission?.user?.id}
@@ -183,11 +177,7 @@ export function ListingWinners({ bounty }: Props) {
               <Tooltip content={<p>{submission?.user?.firstName}</p>}>
                 <Link
                   key={submission.id}
-                  href={
-                    !isProject
-                      ? `/earn/feed/submission/${submission?.id}`
-                      : `/earn/t/${submission?.user?.username}`
-                  }
+                  href={`/earn/feed/submission/${submission?.id}`}
                   className="inline-block"
                 >
                   <EarnAvatar

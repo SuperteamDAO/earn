@@ -26,8 +26,6 @@ async function wait(ms: number) {
   return await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const PROJECT_PAYMENT_OVERPAY_TOLERANCE_PERCENT = 0.005; // 0.5%
-
 export const config = {
   maxDuration: 300,
 };
@@ -185,7 +183,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           throw new Error('Winner Position has no reward');
         }
 
-        const isProject = listing.type === 'project';
         const existingPayments = (submission.paymentDetails as any[]) || [];
         const totalAlreadyPaid = existingPayments.reduce(
           (sum, payment) => sum + payment.amount,
@@ -197,10 +194,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           throw new Error('This submission is already fully paid');
         }
 
-        let expectedAmount = winnerReward;
-        if (isProject) {
-          expectedAmount = 0;
-        }
+        const expectedAmount = winnerReward;
 
         const rpcValidationResult: ValidationResult = await validatePayment({
           txId: paymentLink.txId,
@@ -214,23 +208,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           throw new Error(`Failed (${rpcValidationResult.error})`);
         }
 
-        const actualPaidAmount = isProject
-          ? rpcValidationResult.actualAmount || 0
-          : winnerReward;
-
-        if (isProject) {
-          if (actualPaidAmount <= 0) {
-            throw new Error('Invalid payment amount');
-          }
-
-          const maxAllowedAmount =
-            remainingAmount * (1 + PROJECT_PAYMENT_OVERPAY_TOLERANCE_PERCENT);
-          if (actualPaidAmount > maxAllowedAmount) {
-            throw new Error(
-              `Payment amount (${actualPaidAmount}) exceeds remaining amount (${remainingAmount})`,
-            );
-          }
-        }
+        const actualPaidAmount = winnerReward;
 
         validationResults.push({
           submissionId: paymentLink.submissionId,
@@ -284,7 +262,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         submission.winnerPosition + ''
       ] as number;
 
-      const isProject = listing.type === 'project';
       const existingPayments = (submission.paymentDetails as any[]) || [];
 
       const newPayments = results
@@ -294,10 +271,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           ): result is ValidatePaymentResult & { actualAmount: number } =>
             typeof result.actualAmount === 'number' && result.actualAmount > 0,
         )
-        .map((result, i) => ({
+        .map((result) => ({
           txId: result.txId,
           amount: result.actualAmount,
-          tranche: isProject ? existingPayments.length + 1 + i : 1,
+          tranche: 1,
         }));
 
       const allPayments = [...existingPayments, ...newPayments];

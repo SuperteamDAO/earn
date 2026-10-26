@@ -13,10 +13,6 @@ import { RewardsLabel } from './Sheet';
 
 function RewardsFooter({ setOpen }: { setOpen: (open: boolean) => void }) {
   const form = useListingForm();
-  const type = useWatch({
-    control: form.control,
-    name: 'type',
-  });
   const rewards = useWatch({
     control: form.control,
     name: 'rewards',
@@ -33,22 +29,10 @@ function RewardsFooter({ setOpen }: { setOpen: (open: boolean) => void }) {
     control: form.control,
     name: 'token',
   });
-  const compensationType = useWatch({
-    control: form.control,
-    name: 'compensationType',
-  });
-  const minRewardAsk = useWatch({
-    control: form.control,
-    name: 'minRewardAsk',
-  });
-  const maxRewardAsk = useWatch({
-    control: form.control,
-    name: 'maxRewardAsk',
-  });
 
   const totalPrize = useMemo(
     () => calculateTotalPrizes(rewards, maxBonusSpots || 0),
-    [type, maxBonusSpots, rewards],
+    [maxBonusSpots, rewards],
   );
 
   const { data: tokenUsdValueData } = useQuery(
@@ -57,27 +41,7 @@ function RewardsFooter({ setOpen }: { setOpen: (open: boolean) => void }) {
   const tokenUsdValue =
     typeof tokenUsdValueData === 'number' ? tokenUsdValueData : 1;
 
-  const totalUsdPrize = useMemo(() => {
-    if (type !== 'project') return (tokenUsdValue || 1) * (rewardAmount || 0);
-    else {
-      if (compensationType === 'fixed')
-        return (tokenUsdValue || 1) * (rewardAmount || 0);
-      else if (compensationType === 'range')
-        return (
-          (tokenUsdValue || 1) *
-          (((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2)
-        );
-      else if (compensationType === 'variable') return 1000;
-    }
-    return 0;
-  }, [
-    tokenUsdValue,
-    rewardAmount,
-    type,
-    compensationType,
-    minRewardAsk,
-    maxRewardAsk,
-  ]);
+  const totalUsdPrize = (tokenUsdValue || 1) * (rewardAmount || 0);
 
   return (
     <div className="w-full space-y-4 bg-white">
@@ -87,16 +51,12 @@ function RewardsFooter({ setOpen }: { setOpen: (open: boolean) => void }) {
         </p>
       )}
       <div className="flex items-center justify-between text-sm font-medium">
-        {type !== 'project' ? (
-          <span className="flex gap-2">
-            <p className="">{totalPrize}</p>
-            <p className="text-slate-400">
-              Total {totalPrize > 1 ? 'Prizes' : 'Prize'}
-            </p>
-          </span>
-        ) : (
-          <p className="text-slate-400">Total Prize</p>
-        )}
+        <span className="flex gap-2">
+          <p className="">{totalPrize}</p>
+          <p className="text-slate-400">
+            Total {totalPrize > 1 ? 'Prizes' : 'Prize'}
+          </p>
+        </span>
         <div className="flex">
           <RewardsLabel hideCompensationType />
         </div>

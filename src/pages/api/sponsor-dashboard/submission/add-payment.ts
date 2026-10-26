@@ -100,31 +100,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    const isProject = listing.type === 'project';
-    if (!isProject) {
-      if (paymentDetails.length > 1 || paymentDetail.tranche !== 1) {
-        logger.warn('Bounties only support single payment with tranche 1');
-        return res.status(400).json({
-          error: 'Bounties only support single payment with tranche 1',
-          message: 'Bounties only support single payment with tranche 1',
-        });
-      }
-    } else {
-      const existingPayments =
-        (currentSubmission.paymentDetails as any[]) || [];
-      const existingTranches = existingPayments.map((p) => p.tranche);
-      const newTranche = paymentDetail.tranche;
-      const expectedNextTranche = existingTranches.length + 1;
-
-      if (newTranche !== expectedNextTranche) {
-        logger.warn(
-          `Project tranche ${newTranche} is not the expected next tranche ${expectedNextTranche}`,
-        );
-        return res.status(400).json({
-          error: `Expected tranche ${expectedNextTranche}, but received tranche ${newTranche}`,
-          message: `Expected tranche ${expectedNextTranche}, but received tranche ${newTranche}`,
-        });
-      }
+    if (paymentDetails.length > 1 || paymentDetail.tranche !== 1) {
+      logger.warn('Bounties only support single payment with tranche 1');
+      return res.status(400).json({
+        error: 'Bounties only support single payment with tranche 1',
+        message: 'Bounties only support single payment with tranche 1',
+      });
     }
 
     if (!winnerPosition) {
@@ -180,12 +161,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    const finalPaymentDetails = isProject
-      ? [
-          ...((currentSubmission.paymentDetails as any[]) || []),
-          ...paymentDetails,
-        ]
-      : paymentDetails;
+    const finalPaymentDetails = paymentDetails;
 
     const totalAllPayments = finalPaymentDetails.reduce(
       (sum, payment) => sum + payment.amount,

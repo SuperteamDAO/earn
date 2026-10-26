@@ -16,7 +16,6 @@ import {
 import { type SubmissionMutationResponse } from '@/features/listings/types';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
-import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 
 type PrismaLike = Pick<typeof prisma, 'user' | 'submission'>;
 
@@ -33,28 +32,15 @@ export async function createSubmission(
     where: { id: userId },
   });
 
-  const validationResult = submissionSchema(
-    listing,
-    listing.minRewardAsk || 0,
-    listing.maxRewardAsk || 0,
-    user as any,
-  ).safeParse(data);
+  const validationResult = submissionSchema(listing, user as any).safeParse(
+    data,
+  );
 
   if (!validationResult.success) {
     throw new Error(JSON.stringify(validationResult.error.formErrors));
   }
 
   const validatedData = validationResult.data;
-  const submissionTelegram =
-    listing.type === 'project' ? validatedData.telegram || null : null;
-
-  if (validatedData.telegram && !user.telegram) {
-    await client.user.update({
-      where: { id: userId },
-      data: { telegram: validatedData.telegram },
-    });
-  }
-
   const existingSubmission = await client.submission.findFirst({
     where: { userId, listingId },
   });
@@ -70,8 +56,6 @@ export async function createSubmission(
       otherInfo: sanitizeGrantApplicationHtml(validatedData.otherInfo),
       eligibilityAnswers:
         sanitizeGrantApplicationAnswers(validatedData.eligibilityAnswers) || [],
-      ask: validatedData.ask || null,
-      telegram: submissionTelegram,
     },
     include: {
       listing: {
@@ -95,16 +79,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
   }
 
-  const {
-    listingId,
-    link,
-    tweet,
-    otherInfo,
-    eligibilityAnswers,
-    ask,
-    telegram: telegramUsername,
-  } = req.body;
-  const telegram = extractSocialUsername('telegram', telegramUsername);
+  const { listingId, link, tweet, otherInfo, eligibilityAnswers } = req.body;
 
   logger.debug(`Request body: ${safeStringify(req.body)}`);
   logger.debug(`User: ${safeStringify(userId)}`);
@@ -134,7 +109,7 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       const submission = await createSubmission(
         userId as string,
         listingId,
-        { link, tweet, otherInfo, eligibilityAnswers, ask, telegram },
+        { link, tweet, otherInfo, eligibilityAnswers },
         listing,
         { client: tx },
       );

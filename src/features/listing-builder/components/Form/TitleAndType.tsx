@@ -32,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { CompensationType } from '@/prisma/enums';
 
 import { getVisibleHackathons } from '@/features/hackathon/utils/getVisibleHackathons';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
@@ -44,10 +43,7 @@ import { slugCheckQuery } from '../../queries/slug-check';
 import { calculateTotalRewardsForPodium } from '../../utils/rewards';
 import { getSuggestions } from '../../utils/suggestions';
 
-const typeOptions = [
-  { value: 'bounty', label: 'Bounty' },
-  { value: 'project', label: 'Project' },
-] as const;
+const typeOptions = [{ value: 'bounty', label: 'Bounty' }] as const;
 
 export function TitleAndType() {
   const form = useListingForm();
@@ -62,10 +58,7 @@ export function TitleAndType() {
   }, [safeTitle, type]);
 
   const isEditing = useAtomValue(isEditingAtom);
-  const placeholder = useMemo(() => {
-    if (type === 'project') return 'Frontend Development for Superteam';
-    else return 'Write a Deep Dive on IBRL';
-  }, [type]);
+  const placeholder = 'Write a Deep Dive on IBRL';
 
   const debouncedTitle = useDebounce(safeTitle);
   const slugifiedTitle = useMemo(() => {
@@ -203,7 +196,6 @@ function Type() {
     () => getVisibleHackathons(hackathons),
     [hackathons],
   );
-  const [prevCompType, setPrevCompType] = useState<CompensationType>('fixed');
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [pendingTypeChange, setPendingTypeChange] = useState<string | null>(
     null,
@@ -216,16 +208,12 @@ function Type() {
     name: 'hackathonId',
     control: form.control,
   });
-  const compensationType = useWatch({
-    name: 'compensationType',
-    control: form.control,
-  });
   const currentHackathon = useMemo(() => {
     return hackathons?.find((h) => h.id === hackathonId);
   }, [hackathonId, hackathons]);
 
   const handleTypeChange = (newType: string) => {
-    if (newType !== 'bounty' && newType !== 'project') {
+    if (newType !== 'bounty') {
       form.setValue('type', 'hackathon');
       const hackathon = hackathons?.find((s) => s.slug === newType);
       if (hackathon) {
@@ -236,43 +224,19 @@ function Type() {
     } else {
       form.setValue('type', newType);
       form.setValue('hackathonId', undefined);
-    }
-    if (newType === 'bounty') {
-      form.setValue('eligibility', []);
-    }
-    if (newType === 'project') {
       form.setValue('eligibility', []);
     }
     const values = form.getValues();
-    setPrevCompType(values.compensationType);
-    if (newType !== 'project') {
-      form.setValue('compensationType', 'fixed');
-      form.setValue(
-        'rewardAmount',
-        calculateTotalRewardsForPodium(
-          values.rewards || {},
-          values.maxBonusSpots || 0,
-        ),
-      );
-      if (Object.keys(values.rewards || {}).length === 0) {
-        form.setValue('rewards', { '1': NaN });
-      }
-    } else {
-      form.setValue('compensationType', prevCompType);
-      if (prevCompType === 'fixed') {
-        form.setValue('rewardAmount', values.rewards?.[1]);
-      } else {
-        form.setValue('rewardAmount', undefined);
-        console.log('pre type change ', values.rewards);
-        if (
-          values.rewards &&
-          Object.values(values.rewards).some(
-            (v) => v === null || v === undefined || v === 0 || Number.isNaN(v),
-          )
-        ) {
-          form.setValue('rewards', {});
-        }
-      }
+    form.setValue('compensationType', 'fixed');
+    form.setValue(
+      'rewardAmount',
+      calculateTotalRewardsForPodium(
+        values.rewards || {},
+        values.maxBonusSpots || 0,
+      ),
+    );
+    if (Object.keys(values.rewards || {}).length === 0) {
+      form.setValue('rewards', { '1': NaN });
     }
 
     form.clearErrors([
@@ -371,50 +335,14 @@ function Type() {
                   <AlertDialogDescription>
                     Changing the listing type will affect your listing details.
                     <ul className="list-inside list-disc py-2">
-                      {pendingTypeChange === 'project' &&
-                        field.value !== 'project' && (
-                          <>
-                            <li>
-                              Your rewards structure will change from Podiums to{' '}
-                              <span className="capitalize">{prevCompType}</span>{' '}
-                              type
-                            </li>
-                            <li>
-                              Your existing custom questions will be cleared
-                            </li>
-                          </>
-                        )}
-                      {pendingTypeChange !== 'project' &&
-                        field.value === 'project' && (
-                          <>
-                            <li>
-                              Your rewards structure will change from{' '}
-                              <span className="capitalize">
-                                {compensationType}
-                              </span>{' '}
-                              type to Podiums
-                            </li>
-                            <li>
-                              Your existing custom questions will be cleared
-                              {pendingTypeChange !== 'bounty' && (
-                                <span>
-                                  {' '}
-                                  and replaced by hackathon custom questions
-                                </span>
-                              )}
-                            </li>
-                          </>
-                        )}
-                      {pendingTypeChange === 'bounty' &&
-                        field.value !== 'project' && (
-                          <>
-                            <li>
-                              Your existing custom questions will be cleared
-                            </li>
-                          </>
-                        )}
+                      {pendingTypeChange === 'bounty' && (
+                        <>
+                          <li>
+                            Your existing custom questions will be cleared
+                          </li>
+                        </>
+                      )}
                       {pendingTypeChange !== 'bounty' &&
-                        pendingTypeChange !== 'project' &&
                         field.value === 'bounty' && (
                           <>
                             <li>
@@ -424,7 +352,6 @@ function Type() {
                           </>
                         )}
                       {pendingTypeChange !== 'bounty' &&
-                        pendingTypeChange !== 'project' &&
                         field.value === 'hackathon' && (
                           <>
                             <li>

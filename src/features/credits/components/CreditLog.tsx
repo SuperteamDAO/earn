@@ -364,15 +364,11 @@ function getEntryTitle(entry: CreditEntry): string {
     case 'SPAM_PENALTY':
       return 'Submission Flagged as Spam';
     case 'WIN_BONUS':
-      return entry.submission.listing.type === 'project'
-        ? 'Won a Project'
-        : entry.submission.listing.type === 'bounty'
-          ? 'Won a Bounty'
-          : 'Won a Hackathon Track';
+      return entry.submission.listing.type === 'hackathon'
+        ? 'Won a Hackathon Track'
+        : 'Won a Bounty';
     case 'SUBMISSION':
-      return entry.submission.listing.type === 'project'
-        ? 'Applied for Project'
-        : 'Submitted to a Bounty';
+      return 'Submitted to a Bounty';
     case 'GRANT_SPAM_PENALTY':
       return 'Application Flagged as Spam';
     case 'GRANT_WIN_BONUS':
@@ -406,11 +402,9 @@ function getEntryTitle(entry: CreditEntry): string {
 function getEntrySubtitle(entry: CreditEntry, name: string, title: string) {
   switch (entry.type) {
     case 'REFERRAL_INVITEE_WIN_BONUS_INVITER':
-      return entry.submission.listing.type === 'project'
-        ? name + ' won a project'
-        : entry.submission.listing.type === 'bounty'
-          ? name + ' won a bounty'
-          : name + ' won a hackathon track';
+      return entry.submission.listing.type === 'hackathon'
+        ? name + ' won a hackathon track'
+        : name + ' won a bounty';
     case 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER':
       return name + ' made an eligible submission';
     case 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITEE':

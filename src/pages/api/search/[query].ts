@@ -218,6 +218,7 @@ s.name LIKE CONCAT('%', ?, '%')
     WHERE (1=1) AND (
     b.isPublished = 1 AND
     b.isPrivate = 0 AND
+    b.type IN ('bounty', 'hackathon') AND
     (
       ${combinedWordClause} 
       ${hackathonId ? `OR ${hackathonIdQuery}` : ''}
@@ -239,6 +240,7 @@ s.name LIKE CONCAT('%', ?, '%')
     b.isActive = 1 AND
     b.isArchived = 0 AND
     b.isPrivate = 0 AND
+    b.type IN ('bounty', 'hackathon') AND
     ${combinedWordClause}
     ) ${skills ? ` AND (${skillsQuery})` : ''}
     ${regionFilter}
@@ -280,6 +282,7 @@ s.name LIKE CONCAT('%', ?, '%')
     WHERE (1=1) AND (
     b.isPublished = 1 AND
     b.isPrivate = 0 AND
+    b.type IN ('bounty', 'hackathon') AND
     (
       ${combinedWordClause}
       ${hackathonId ? `OR ${hackathonIdQuery}` : ''}

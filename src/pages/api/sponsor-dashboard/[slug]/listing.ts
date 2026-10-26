@@ -12,7 +12,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   const params = req.query;
   const slug = params.slug as string;
-  const type = params.type as 'bounty' | 'project' | 'hackathon';
+  const type = params.type as 'bounty' | 'hackathon';
 
   logger.debug(`Request query: ${safeStringify(params)}`);
 

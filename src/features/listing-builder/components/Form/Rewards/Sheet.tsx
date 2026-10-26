@@ -23,21 +23,13 @@ import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
 import { useListingForm } from '../../../hooks';
 import { Footer } from './Footer';
-import { PaymentType } from './PaymentType';
 import { TokenLabel } from './Tokens/TokenLabel';
 import { TokenSelect } from './Tokens/TokenSelect';
-import { Fixed } from './Types/Fixed';
 import { Podiums } from './Types/Podiums';
-import { Range } from './Types/Range';
 
 export function RewardsSheet() {
   const form = useListingForm();
   const [open, setOpen] = useState(false);
-
-  const type = useWatch({
-    control: form.control,
-    name: 'type',
-  });
 
   const hasRewardsErrors = useMemo(() => {
     const errors = form.formState.errors;
@@ -94,14 +86,13 @@ export function RewardsSheet() {
         <SheetHeader className="shrink-0 space-y-6 p-6 pb-0">
           <SheetTitle>Add Rewards</SheetTitle>
           <TokenSelect />
-          {type === 'project' && <PaymentType />}
         </SheetHeader>
 
         <div
           className="flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pt-4 pb-16"
           id="main-content"
         >
-          <Type />
+          <Podiums />
         </div>
 
         <div className="relative shrink-0 bg-white">
@@ -115,47 +106,12 @@ export function RewardsSheet() {
   );
 }
 
-const Type = memo(() => {
-  const form = useListingForm();
-  const type = useWatch({
-    control: form.control,
-    name: 'type',
-  });
-  const compensationType = useWatch({
-    control: form.control,
-    name: 'compensationType',
-  });
-  if (type !== 'project') {
-    return <Podiums />;
-  } else {
-    switch (compensationType) {
-      case 'fixed':
-        return <Fixed />;
-      case 'range':
-        return <Range />;
-      case 'variable':
-        return <></>;
-      default:
-        return null;
-    }
-  }
-});
-Type.displayName = 'CompensationType';
-
 interface RewardsLabelProps {
   hideCompensationType?: boolean;
 }
 export const RewardsLabel = memo(
   ({ hideCompensationType = false }: RewardsLabelProps) => {
     const form = useListingForm();
-    const type = useWatch({
-      control: form.control,
-      name: 'type',
-    });
-    const compensationType = useWatch({
-      control: form.control,
-      name: 'compensationType',
-    });
     const rewards = useWatch({
       control: form.control,
       name: 'rewards',
@@ -168,99 +124,27 @@ export const RewardsLabel = memo(
       control: form.control,
       name: 'rewardAmount',
     });
-    const minRewardAsk = useWatch({
-      control: form.control,
-      name: 'minRewardAsk',
-    });
-    const maxRewardAsk = useWatch({
-      control: form.control,
-      name: 'maxRewardAsk',
-    });
 
     const totalPrizes = useMemo(
       () => calculateTotalPrizes(rewards, maxBonusSpots || 0),
       [rewards, maxBonusSpots],
     );
 
-    if (type !== 'project') {
-      return (
-        <>
-          <TokenLabel
-            showIcon
-            showSymbol
-            amount={totalReward || 0}
-            classNames={{
-              amount: 'font-medium text-sm',
-            }}
-            formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
-          />
-          {!hideCompensationType && (
-            <TypeLabelText>
-              | {totalPrizes} {totalPrizes === 1 ? 'Prize' : 'Prizes'}
-            </TypeLabelText>
-          )}
-        </>
-      );
-    } else {
-      if (compensationType === 'fixed') {
-        return (
-          <>
-            <TokenLabel
-              showIcon
-              showSymbol
-              amount={totalReward || 0}
-              classNames={{
-                amount: 'font-medium text-sm',
-              }}
-              formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
-            />
-            {!hideCompensationType && (
-              <TypeLabelText>| Fixed Prize</TypeLabelText>
-            )}
-          </>
-        );
-      } else if (compensationType === 'range') {
-        return (
-          <>
-            <TokenLabel
-              showIcon
-              amount={minRewardAsk || 0}
-              classNames={{
-                amount: 'font-medium text-sm mr-0',
-              }}
-              formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
-              className="mr-1"
-            />
-            <p>-</p>
-            <TokenLabel
-              showIcon={false}
-              showSymbol
-              className="ml-1"
-              amount={maxRewardAsk || 0}
-              classNames={{
-                amount: 'font-medium text-sm ml-0',
-              }}
-              formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
-            />
-            {!hideCompensationType && (
-              <TypeLabelText>| Range Prize</TypeLabelText>
-            )}
-          </>
-        );
-      } else if (compensationType === 'variable') {
-        <>
-          <TokenLabel showIcon showSymbol />
-          {!hideCompensationType && (
-            <TypeLabelText>| Variable Prize</TypeLabelText>
-          )}
-        </>;
-      }
-    }
     return (
       <>
-        <TokenLabel showIcon showSymbol />
+        <TokenLabel
+          showIcon
+          showSymbol
+          amount={totalReward || 0}
+          classNames={{
+            amount: 'font-medium text-sm',
+          }}
+          formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
+        />
         {!hideCompensationType && (
-          <TypeLabelText>| Variable Prize</TypeLabelText>
+          <TypeLabelText>
+            | {totalPrizes} {totalPrizes === 1 ? 'Prize' : 'Prizes'}
+          </TypeLabelText>
         )}
       </>
     );

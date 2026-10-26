@@ -97,7 +97,7 @@ export async function GET(_request: NextRequest) {
             listing: {
               title: entry.application.grant.title,
               slug: entry.application.grant.slug,
-              type: 'project' as const,
+              type: 'bounty' as const,
               sponsor: entry.application.grant.sponsor,
             },
             user: { photo: '', id: '', firstName: '' },

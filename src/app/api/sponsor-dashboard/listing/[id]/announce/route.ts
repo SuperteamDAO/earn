@@ -363,8 +363,6 @@ export async function POST(
                   case 2:
                     if (listing.type === 'bounty')
                       comment = `Applaud ${extractedTags} for winning this Bounty`;
-                    if (listing.type === 'project')
-                      comment = `Applaud ${extractedTags} for winning this Project`;
                     break;
                 }
 
@@ -392,7 +390,7 @@ export async function POST(
                 triggeredBy: userId,
               });
 
-              if (listing.type !== 'project' && listing.isFndnPaying) {
+              if (listing.isFndnPaying) {
                 for (const winner of winners) {
                   const user = winner.user;
 

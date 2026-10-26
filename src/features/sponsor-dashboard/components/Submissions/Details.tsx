@@ -43,7 +43,6 @@ const isTweetStatusUrl = (url: string | undefined | null): boolean => {
 
 export const Details = ({ bounty, isHackathonPage }: Props) => {
   const selectedSubmission = useAtomValue(selectedSubmissionAtom);
-  const isProject = bounty?.type === 'project';
 
   return (
     <div className="flex max-h-[39.7rem] w-full">
@@ -54,7 +53,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
         )}
         type="auto"
       >
-        {!isProject && (
+        {
           <>
             <InfoBox
               label="Main Submission"
@@ -87,14 +86,7 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
                 />
               )}
           </>
-        )}
-        {bounty?.compensationType !== 'fixed' && (
-          <InfoBox
-            label="Ask"
-            content={`${selectedSubmission?.ask?.toLocaleString('en-us')} ${bounty?.token}`}
-          />
-        )}
-
+        }
         {selectedSubmission?.eligibilityAnswers &&
           selectedSubmission.eligibilityAnswers.map((answer: any) => (
             <InfoBox

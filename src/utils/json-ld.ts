@@ -331,7 +331,7 @@ export function generateJobPostingSchema(
     title: listing.title || 'Untitled Opportunity',
     description: stripHtml(listing.description) || 'No description provided',
     hiringOrganization,
-    employmentType: listing.type === 'project' ? 'CONTRACTOR' : 'PART_TIME',
+    employmentType: 'PART_TIME',
     baseSalary,
     datePosted: listing.publishedAt || new Date().toISOString(),
     validThrough: listing.deadline,

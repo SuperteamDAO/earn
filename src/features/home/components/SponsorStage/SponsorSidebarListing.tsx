@@ -125,8 +125,6 @@ export function SponsorListing() {
                 )}
                 <SponsorPrize
                   compensationType={listing?.compensationType}
-                  maxRewardAsk={listing?.maxRewardAsk}
-                  minRewardAsk={listing?.minRewardAsk}
                   rewardAmount={listing?.rewardAmount}
                   className="text-base font-semibold text-slate-900"
                 />

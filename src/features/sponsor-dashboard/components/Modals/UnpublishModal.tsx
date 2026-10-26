@@ -68,26 +68,11 @@ export const UnpublishModal = ({
     updateMutation.mutate(status);
   };
 
-  const dialogContent: { header: string; subtext: React.ReactNode } =
-    listing?.type === 'project'
-      ? {
-          header: "Didn't find a suitable candidate?",
-          subtext: (
-            <>
-              You can unpublish this listing if you have not found any suitable
-              candidate.{' '}
-              <span className="font-semibold text-slate-500">
-                Unpublishing the listing will send rejection emails to all
-                applicants.
-              </span>
-            </>
-          ),
-        }
-      : {
-          header: 'Unpublish Listing?',
-          subtext:
-            'This listing will be hidden from the homepage once unpublished. Are you sure you want to unpublish this listing?',
-        };
+  const dialogContent = {
+    header: 'Unpublish Listing?',
+    subtext:
+      'This listing will be hidden from the homepage once unpublished. Are you sure you want to unpublish this listing?',
+  };
 
   return (
     <Dialog open={unpublishIsOpen} onOpenChange={unpublishOnClose}>

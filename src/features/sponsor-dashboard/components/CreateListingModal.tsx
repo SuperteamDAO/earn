@@ -10,7 +10,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { BountyIcon } from '@/svg/bounty-icon';
-import { ProjectIcon } from '@/svg/project-icon';
 
 import { getVisibleHackathons } from '@/features/hackathon/utils/getVisibleHackathons';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
@@ -35,11 +34,6 @@ export const CreateListingModal = ({
   const handleCreateBounty = () => {
     posthog.capture('create new bounty_sponsor');
     router.push('/earn/dashboard/new?type=bounty');
-  };
-
-  const handleCreateProject = () => {
-    posthog.capture('create new project_sponsor');
-    router.push('/earn/dashboard/new?type=project');
   };
 
   const handleCreateHackathon = (hackathon: string) => {
@@ -91,7 +85,7 @@ export const CreateListingModal = ({
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <Button
-                  className="flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
+                  className="col-span-2 flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
                   variant="outline"
                   onClick={handleCreateBounty}
                 >
@@ -109,28 +103,6 @@ export const CreateListingModal = ({
                     <p className="text-sm font-normal">
                       Get multiple submissions for your task and reward the best
                       work
-                    </p>
-                  </span>
-                </Button>
-                <Button
-                  className="flex h-55 flex-col gap-4 whitespace-normal text-slate-500 hover:text-slate-500"
-                  variant="outline"
-                  onClick={handleCreateProject}
-                >
-                  <ProjectIcon
-                    className="fill-slate-500"
-                    styles={{
-                      width: '3rem',
-                      height: '3rem',
-                    }}
-                  />
-                  <span className="flex max-w-11/12 flex-col gap-1">
-                    <h3 className="text-base font-medium text-slate-900">
-                      Project
-                    </h3>
-                    <p className="text-sm font-normal">
-                      Receive proposals for your work and pick the right
-                      candidate
                     </p>
                   </span>
                 </Button>

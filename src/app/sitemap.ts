@@ -41,12 +41,6 @@ function getStaticRoutes(now: Date): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/earn/jobs/`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.95,
-    },
-    {
       url: `${baseUrl}/earn/bounties/`,
       lastModified: now,
       changeFrequency: 'daily',
@@ -63,12 +57,6 @@ function getStaticRoutes(now: Date): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: 'daily',
       priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/earn/projects/`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.95,
     },
     {
       url: `${baseUrl}/earn/sponsor/`,
@@ -96,6 +84,7 @@ async function getListingsCount(): Promise<number> {
       isPublished: true,
       isActive: true,
       isPrivate: false,
+      type: { in: ['bounty', 'hackathon'] },
     },
   });
 }
@@ -365,6 +354,7 @@ export default async function sitemap(props: {
           isPublished: true,
           isActive: true,
           isPrivate: false,
+          type: { in: ['bounty', 'hackathon'] },
         },
         select: {
           slug: true,

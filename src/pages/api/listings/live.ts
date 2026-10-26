@@ -2,8 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type EnumBountyTypeFilter } from '@/prisma/commonInputTypes';
-import { type BountyType } from '@/prisma/enums';
 import { type BountiesFindManyArgs } from '@/prisma/models/Bounties';
 import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { getChapterRegions } from '@/utils/chapterRegion';
@@ -22,7 +20,7 @@ export default async function listings(
 ) {
   const params = req.query;
 
-  const type = params.type as EnumBountyTypeFilter | BountyType | undefined;
+  const type = params.type === 'hackathon' ? 'hackathon' : 'bounty';
   const takeResult = parseBoundedIntegerParam(params.take, {
     defaultValue: 10,
     maxValue: 50,
@@ -71,7 +69,7 @@ export default async function listings(
       isArchived: false,
       status: 'OPEN',
       deadline: { gte: deadline },
-      type: type || { in: ['bounty', 'project'] },
+      type,
       region: {
         in: userRegion?.name
           ? [

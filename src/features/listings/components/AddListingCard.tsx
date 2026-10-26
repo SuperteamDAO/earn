@@ -8,7 +8,7 @@ import { useUser } from '@/store/user';
 import { getListingIcon } from '../utils/getListingIcon';
 
 interface AddListingCardProps {
-  listingType?: 'bounty' | 'project' | 'grant';
+  listingType?: 'bounty' | 'grant';
 }
 
 export const AddListingCard = ({

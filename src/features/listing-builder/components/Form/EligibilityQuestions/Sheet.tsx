@@ -47,9 +47,7 @@ export function EligibilityQuestionsSheet() {
 
   const subtext = useMemo(
     () =>
-      type === 'project'
-        ? `Applicant's names, email IDs, SOL wallet, and Telegram username are collected by default. Please use this space to ask about anything else!`
-        : `The main ${type === 'bounty' ? 'bounty' : 'hackathon'} submission link, the submitter's names, email IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`,
+      `The main ${type === 'bounty' ? 'bounty' : 'hackathon'} submission link, the submitter's names, email IDs, and SOL wallet are collected by default. Please use this space to ask about anything else!`,
     [type],
   );
 
@@ -67,9 +65,7 @@ export function EligibilityQuestionsSheet() {
           render={({ field }) => (
             <FormItem className="items-start gap-1.5 pt-2">
               <div className="flex items-center gap-2">
-                <FormLabel isRequired={type === 'project'} className="">
-                  Custom Questions
-                </FormLabel>
+                <FormLabel className="">Custom Questions</FormLabel>
                 <Tooltip
                   delayDuration={100}
                   content={<p className="max-w-sm">{subtext}</p>}
@@ -113,9 +109,7 @@ export function EligibilityQuestionsSheet() {
         className="flex h-[100vh] flex-col p-0 sm:max-w-xl"
       >
         <SheetHeader className={cn('shrink-0 space-y-2 border-b p-6')}>
-          <SheetTitle>
-            {type === 'project' ? 'Application' : 'Submission'} Form
-          </SheetTitle>
+          <SheetTitle>Submission Form</SheetTitle>
           <SheetDescription className={cn('pb-4 text-sm text-slate-500')}>
             {subtext}
             <br />

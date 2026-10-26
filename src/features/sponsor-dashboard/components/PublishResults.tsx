@@ -1,5 +1,4 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useAtomValue } from 'jotai';
 import { AlertTriangle, Check, CheckCircle2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
@@ -16,8 +15,6 @@ import { cleanRewards } from '@/utils/rank';
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 
 import type { Listing } from '../../listings/types';
-import { selectedSubmissionAtom } from '../atoms';
-import { useToggleWinner } from '../mutations/useToggleWinner';
 
 interface Props {
   onClose: () => void;
@@ -46,20 +43,12 @@ export function PublishResults({
   const router = useRouter();
   const queryClient = useQueryClient();
   const isDeadlinePassed = dayjs().isAfter(bounty?.deadline);
-  const isProject = bounty?.type === 'project';
-  if (isProject) totalWinners = 1;
-
   const rewards =
-    bounty?.type === 'project'
-      ? 1
-      : cleanRewards(bounty?.rewards, true).length +
-        (bounty?.rewards?.[BONUS_REWARD_POSITION]
-          ? bounty?.maxBonusSpots || 0
-          : 0);
+    cleanRewards(bounty?.rewards, true).length +
+    (bounty?.rewards?.[BONUS_REWARD_POSITION] ? bounty?.maxBonusSpots || 0 : 0);
   const notEnoughSubmissionsForBonus =
     remainings && remainings.bonus > 0 && submissionsLeft < remainings.bonus;
   const isWinnersAllSelected =
-    isProject ||
     !remainings ||
     (remainings.podiums === 0 &&
       (remainings.bonus === 0 || notEnoughSubmissionsForBonus));
@@ -93,39 +82,14 @@ export function PublishResults({
     }.`;
   }
 
-  const selectedSubmission = useAtomValue(selectedSubmissionAtom);
-  const { mutateAsync: toggleWinner } = useToggleWinner(bounty);
-
   const publishResults = async () => {
     if (!bounty?.id) return;
     setIsPublishingResults(true);
     try {
-      if (isProject) {
-        if (selectedSubmission?.id) {
-          await toggleWinner([
-            {
-              winnerPosition: 1,
-              id: selectedSubmission?.id,
-              isWinner: true,
-            },
-          ]);
-        }
-      }
       await api.post(`/api/sponsor-dashboard/listing/${bounty?.id}/announce/`);
       setIsWinnersAnnounced(true);
       setIsPublishingResults(false);
     } catch (e) {
-      if (isProject) {
-        if (selectedSubmission?.id) {
-          await toggleWinner([
-            {
-              winnerPosition: null,
-              id: selectedSubmission?.id,
-              isWinner: false,
-            },
-          ]);
-        }
-      }
       setIsPublishingResults(false);
     }
   };

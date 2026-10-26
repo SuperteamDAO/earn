@@ -329,9 +329,6 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         throw new Error('Transaction confirmation timeout');
       }
 
-      const nextTranche = (submission?.paymentDetails?.length || 0) + 1;
-      const isProject = bounty?.type === 'project';
-
       payoutStage = 'persist-payment';
       await addPayment({
         id,
@@ -339,7 +336,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
           {
             txId: txSignature,
             amount,
-            tranche: isProject ? nextTranche : 1,
+            tranche: 1,
           },
         ],
       });

@@ -178,11 +178,8 @@ export async function buildListingQuery(
   if (context === 'home') {
     andConditions.push({
       language: { in: ['eng', 'sco'] },
-      OR: [
-        { compensationType: 'fixed', usdValue: { gt: 100 } },
-        { compensationType: 'range', maxRewardAsk: { gt: 100 } },
-        { compensationType: 'variable' },
-      ],
+      compensationType: 'fixed',
+      usdValue: { gt: 100 },
     });
   }
 
@@ -331,19 +328,16 @@ export async function buildListingQuery(
     });
   }
 
-  const standardTabs = ['all', 'bounties', 'projects'];
+  const standardTabs = ['all', 'bounties'];
 
   if (standardTabs.includes(tab)) {
     switch (tab) {
       case 'bounties':
         where.type = 'bounty';
         break;
-      case 'projects':
-        where.type = 'project';
-        break;
       case 'all':
         where.OR = [
-          { type: { not: 'hackathon' } },
+          { type: 'bounty' },
           { type: 'hackathon', isFeatured: true },
         ];
         break;

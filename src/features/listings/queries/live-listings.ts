@@ -7,7 +7,7 @@ import { type Listing } from '../types';
 interface ListingsParams {
   take?: number;
   deadline?: string;
-  type?: 'bounty' | 'project' | 'hackathon';
+  type?: 'bounty' | 'hackathon';
   order?: 'asc' | 'desc';
   excludeIds?: string[];
   exclusiveSponsorId?: string;

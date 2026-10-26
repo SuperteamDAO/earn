@@ -49,7 +49,6 @@ import { getListingStatus } from '@/features/listings/utils/status';
 import { VerifyPaymentModal } from '@/features/sponsor-dashboard/components/Modals/VerifyPayment';
 
 import { ExportSheetsModal } from '../Modals/ExportSheetsModal';
-import { UnpublishModal } from '../Modals/UnpublishModal';
 
 interface Props {
   bounty: Listing | undefined;
@@ -78,12 +77,6 @@ export const SubmissionHeader = ({
   } = useDisclosure();
 
   const {
-    isOpen: unpublishIsOpen,
-    onOpen: unpublishOnOpen,
-    onClose: unpublishOnClose,
-  } = useDisclosure();
-
-  const {
     isOpen: exportSheetsIsOpen,
     onOpen: exportSheetsOnOpen,
     onClose: exportSheetsOnClose,
@@ -96,7 +89,6 @@ export const SubmissionHeader = ({
   const listingPath = `earn/listing/${bounty?.slug}`;
 
   const bountyStatus = getListingStatus(bounty);
-  const isProject = bounty?.type === 'project';
 
   const afterAnnounceDate =
     bounty?.type === 'hackathon'
@@ -180,7 +172,6 @@ export const SubmissionHeader = ({
   const getEditText = () => {
     if (bounty?.type === 'grant') return null;
     if (bounty?.type === 'bounty') return 'Edit Bounty';
-    if (bounty?.type === 'project') return 'Edit Project';
     if (bounty?.type === 'hackathon') return 'Edit Track';
     return 'Edit';
   };
@@ -327,7 +318,7 @@ export const SubmissionHeader = ({
           </StatusPill>
         </div>
       </div>
-      {!isProject && !bounty?.isWinnersAnnounced && (
+      {!bounty?.isWinnersAnnounced && (
         <div className="flex flex-col items-end">
           {activeTab === 'submissions' && (
             <>
@@ -363,11 +354,7 @@ export const SubmissionHeader = ({
               {showWarning && (
                 <div className="my-2 flex w-52">
                   <p className="text-xxs text-red-400">
-                    There aren&apos;t enough eligible{' '}
-                    {bounty?.type === 'project'
-                      ? 'applications'
-                      : 'submissions'}
-                    .{' '}
+                    There aren&apos;t enough eligible submissions.{' '}
                     <a
                       href={JTTG}
                       target="_blank"
@@ -381,7 +368,6 @@ export const SubmissionHeader = ({
                 </div>
               )}
               {!!remainings &&
-                !isProject &&
                 !bounty?.isWinnersAnnounced &&
                 !isHackathonPage && (
                   <div className="flex w-full py-1 text-xs">
@@ -411,20 +397,6 @@ export const SubmissionHeader = ({
                 )}
             </>
           )}
-        </div>
-      )}
-
-      {isProject && !bounty?.isWinnersAnnounced && bounty?.isPublished && (
-        <div className="flex flex-row-reverse items-center gap-8">
-          <p className="text-slate-800">
-            {`Didn't find a suitable candidate? `}
-            <span
-              className="cursor-pointer text-blue-500 underline"
-              onClick={unpublishOnOpen}
-            >
-              Click here
-            </span>
-          </p>
         </div>
       )}
 
@@ -467,12 +439,6 @@ export const SubmissionHeader = ({
         isOpen={verifyPaymentIsOpen}
         onClose={verifyPaymentOnClose}
         isHackathonPage={isHackathonPage}
-      />
-
-      <UnpublishModal
-        unpublishIsOpen={unpublishIsOpen}
-        unpublishOnClose={unpublishOnClose}
-        listing={bounty}
       />
 
       <ExportSheetsModal

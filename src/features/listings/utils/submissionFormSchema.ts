@@ -3,9 +3,7 @@ import { z } from 'zod';
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import { type User } from '@/interface/user';
 
-import { extractSocialUsername } from '@/features/social/utils/extractUsername';
 import { tweetLinkRegex } from '@/features/social/utils/regex';
-import { telegramUsernameSchema } from '@/features/social/utils/schema';
 import {
   extractXHandle,
   INVALID_X_STATUS_LINK_MESSAGE,
@@ -16,17 +14,7 @@ import {
 
 import { type Listing } from '../types';
 
-const projectTelegramSchema = z.preprocess((value) => {
-  if (typeof value !== 'string') return value;
-  return extractSocialUsername('telegram', value) || value;
-}, telegramUsernameSchema);
-
-const submissionSchema = (
-  listing: Listing,
-  minRewardAsk: number,
-  maxRewardAsk: number,
-  user: User | null,
-) =>
+const submissionSchema = (listing: Listing, user: User | null) =>
   z
     .object({
       link: z
@@ -45,22 +33,6 @@ const submissionSchema = (
         ])
         .optional(),
       otherInfo: z.string().optional(),
-      ask: z
-        .union([
-          z
-            .number()
-            .min(0)
-            .refine(
-              (val) => {
-                const decimalPlaces = (val.toString().split('.')[1] || '')
-                  .length;
-                return decimalPlaces <= 4;
-              },
-              { message: 'Maximum 4 decimal places allowed' },
-            ),
-          z.null(),
-        ])
-        .optional(),
       eligibilityAnswers: z
         .array(
           z.object({
@@ -69,13 +41,9 @@ const submissionSchema = (
           }),
         )
         .optional(),
-      telegram:
-        listing?.type === 'project'
-          ? projectTelegramSchema
-          : z.string().nullable().optional(),
     })
     .superRefine((data, ctx) => {
-      if (listing.type !== 'project' && !data.link) {
+      if (!data.link) {
         ctx.addIssue({
           code: 'custom',
           path: ['link'],
@@ -132,34 +100,6 @@ const submissionSchema = (
               message: 'We need to verify that you own this X account.',
             });
           }
-        }
-      }
-
-      if (listing.type === 'project' && listing.compensationType !== 'fixed') {
-        if (data.ask === undefined || data.ask === null || !data.ask) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['ask'],
-            message: 'Compensation is required',
-          });
-        } else if (
-          listing.compensationType === 'range' &&
-          data.ask < minRewardAsk
-        ) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['ask'],
-            message: `Compensation must be at least ${minRewardAsk}`,
-          });
-        } else if (
-          listing.compensationType === 'range' &&
-          data.ask > maxRewardAsk
-        ) {
-          ctx.addIssue({
-            code: 'custom',
-            path: ['ask'],
-            message: `Compensation cannot exceed ${maxRewardAsk}`,
-          });
         }
       }
 

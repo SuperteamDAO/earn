@@ -7,7 +7,6 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { aiGenerateRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
-import { BountyType } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
@@ -16,7 +15,7 @@ import { generateListingTitlePrompt } from './prompt';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  type: z.nativeEnum(BountyType),
+  type: z.enum(['bounty', 'hackathon']),
 });
 
 const responseSchema = z.object({
@@ -27,7 +26,7 @@ const AI_GENERATION_TIMEOUT_MS = 15000;
 
 const getFallbackTitle = (
   _description: string,
-  type: BountyType,
+  type: 'bounty' | 'hackathon',
 ): TTitleGenerateResponse => {
   const typeLabel = type.replace(/_/g, ' ').trim();
 
@@ -59,7 +58,7 @@ export async function POST(request: Request) {
       return rateLimitResponse;
     }
 
-    let description: string, type: BountyType;
+    let description: string, type: 'bounty' | 'hackathon';
     try {
       const body = await request.json();
       logger.debug(`Request body: ${safeStringify(body)}`);

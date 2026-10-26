@@ -26,8 +26,6 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
   const photo = sub?.photo;
   const username = sub?.username;
 
-  const isProject = sub?.listingType === 'project';
-
   const listingLink = `${getURL()}earn/listing/${sub?.listingSlug}`;
 
   const submissionLink = sub?.link
@@ -45,10 +43,6 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
     case 'hackathon':
       winningText = 'won a hackathon track';
       submissionText = 'submitted to a hackathon';
-      break;
-    case 'project':
-      winningText = 'got selected for a project';
-      submissionText = 'applied to a project';
       break;
   }
 
@@ -92,40 +86,39 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
           <p>Private</p>
         </div>
       )}
-      {!isProject &&
-        (!sub?.id ? (
-          <Tooltip
-            content={
-              sub?.isPrivate
-                ? 'This is a private listing.'
-                : 'This submission will be accessible once winners for the listing have been announced.'
-            }
-          >
-            <div
-              onMouseEnter={() => setIsViewSubmissionHovered(true)}
-              onMouseLeave={() => setIsViewSubmissionHovered(false)}
-            >
-              <FeedCardLink
-                href={listingLink}
-                style="opacity-50 pointer-events-none"
-              >
-                View Submission
-              </FeedCardLink>
-            </div>
-          </Tooltip>
-        ) : (
+      {!sub?.id ? (
+        <Tooltip
+          content={
+            sub?.isPrivate
+              ? 'This is a private listing.'
+              : 'This submission will be accessible once winners for the listing have been announced.'
+          }
+        >
           <div
             onMouseEnter={() => setIsViewSubmissionHovered(true)}
             onMouseLeave={() => setIsViewSubmissionHovered(false)}
           >
             <FeedCardLink
-              href={submissionLink}
-              style="opacity-100 pointer-events-auto"
+              href={listingLink}
+              style="opacity-50 pointer-events-none"
             >
               View Submission
             </FeedCardLink>
           </div>
-        ))}
+        </Tooltip>
+      ) : (
+        <div
+          onMouseEnter={() => setIsViewSubmissionHovered(true)}
+          onMouseLeave={() => setIsViewSubmissionHovered(false)}
+        >
+          <FeedCardLink
+            href={submissionLink}
+            style="opacity-100 pointer-events-auto"
+          >
+            View Submission
+          </FeedCardLink>
+        </div>
+      )}
     </>
   );
 

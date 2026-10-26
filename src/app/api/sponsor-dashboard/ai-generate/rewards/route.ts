@@ -7,7 +7,7 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { aiGenerateRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
-import { BountyType, CompensationType } from '@/prisma/enums';
+import { CompensationType } from '@/prisma/enums';
 import { getTokenBySymbol } from '@/server/tokenList';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -21,7 +21,7 @@ import { generateListingRewardsPrompt } from './prompts';
 
 const requestBodySchema = z.object({
   description: z.string().min(1, 'Description cannot be empty'),
-  type: z.nativeEnum(BountyType),
+  type: z.enum(['bounty', 'hackathon']),
   token: z.string(),
   tokenUsdValue: z.number(),
 });

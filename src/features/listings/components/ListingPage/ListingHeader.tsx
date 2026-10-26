@@ -71,7 +71,6 @@ const HeaderSub = ({
   Hackathon,
   type,
   isPrivate,
-  isProject,
   commentCount,
   statusIcon,
   statusText,
@@ -84,7 +83,6 @@ const HeaderSub = ({
   Hackathon: ListingHackathon | undefined;
   type: string | undefined;
   isPrivate: boolean | undefined;
-  isProject: boolean;
   commentCount: number | undefined;
   statusIcon: React.JSX.Element;
   statusText: string;
@@ -133,16 +131,14 @@ const HeaderSub = ({
         <div className="flex">
           <Tooltip
             content={
-              isProject
-                ? 'A Project is a short-term gig where sponsors solicit applications from multiple people, and select the best one to work on the Project.'
-                : 'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
+              'Bounties are open for anyone to participate in and submit their work (as long as they meet the eligibility requirements mentioned below). The best submissions win!'
             }
             contentProps={{ className: 'max-w-80' }}
           >
             <div className="flex items-center gap-1">
               {getListingIcon(type!, 'fill-slate-400')}
               <p className="text-sm font-medium text-gray-400">
-                {isPrivate ? 'Private' : isProject ? 'Project' : 'Bounty'}
+                {isPrivate ? 'Private' : 'Bounty'}
               </p>
             </div>
           </Tooltip>
@@ -210,7 +206,6 @@ export function ListingHeader({
   const isMD = useMediaQuery('(min-width: 768px)');
   const hasDeadlineEnded = dayjs(serverTime()).isAfter(deadline);
   const hasHackathonStarted = dayjs(serverTime()).isAfter(Hackathon?.startDate);
-  const isProject = type === 'project';
   const isHackathon = Boolean(Hackathon);
 
   const statusIconStyles = 'w-5 h-5';
@@ -277,7 +272,6 @@ export function ListingHeader({
                 Hackathon={Hackathon}
                 type={type}
                 isPrivate={isPrivate}
-                isProject={isProject}
                 commentCount={commentCount}
                 statusIcon={statusIcon}
                 statusText={statusText}
@@ -305,7 +299,6 @@ export function ListingHeader({
           Hackathon={Hackathon}
           type={type}
           isPrivate={isPrivate}
-          isProject={isProject}
           commentCount={commentCount}
           statusIcon={statusIcon}
           statusText={statusText}
@@ -319,13 +312,7 @@ export function ListingHeader({
             <ListingTabLink
               className="pointer-events-none hidden px-0 md:flex md:w-[23rem]"
               href={`/earn/listing/${slug}/`}
-              text={
-                type === 'project'
-                  ? isWinnersAnnounced
-                    ? 'Proposals Selected'
-                    : 'Inviting Proposals'
-                  : 'Prizes'
-              }
+              text="Prizes"
             />
           )}
 
@@ -339,7 +326,7 @@ export function ListingHeader({
             className="mr-6"
           />
 
-          {!isProject && isWinnersAnnounced && (
+          {isWinnersAnnounced && (
             <ListingTabLink
               onClick={() => posthog.capture('submissions tab_listing')}
               href={`/earn/listing/${slug}/submission`}

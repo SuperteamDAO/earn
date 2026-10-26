@@ -57,18 +57,14 @@ interface EligibilityQuestionItemProps {
   field: FieldArrayWithId<ListingFormData, 'eligibility', 'id'>;
   index: number;
   form: UseListingFormReturn;
-  type: string | undefined;
   handleRemoveQuestion: (index: number) => void;
-  fieldsLength: number;
 }
 
 function EligibilityQuestionItem({
   field,
   index,
   form,
-  type,
   handleRemoveQuestion,
-  fieldsLength,
 }: EligibilityQuestionItemProps) {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -97,10 +93,7 @@ function EligibilityQuestionItem({
           <FormItem className="gap-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <FormLabel
-                  className="font-medium text-slate-500 sm:text-sm"
-                  isRequired={type === 'project' && index === 0}
-                >
+                <FormLabel className="font-medium text-slate-500 sm:text-sm">
                   Question {index + 1}
                 </FormLabel>
                 <button
@@ -112,7 +105,7 @@ function EligibilityQuestionItem({
                   <GripHorizontal className="h-4 w-4" />
                 </button>
               </div>
-              {!(type === 'project' && index === 0) && (
+              {
                 <FormField
                   control={form.control}
                   name={`eligibility.${index}.optional`}
@@ -130,7 +123,7 @@ function EligibilityQuestionItem({
                     </div>
                   )}
                 />
-              )}
+              }
             </div>
             <div className="ring-primary flex items-start rounded-md border has-focus:ring-1">
               <FormField
@@ -206,8 +199,7 @@ function EligibilityQuestionItem({
                           className={cn(
                             'absolute right-1 bottom-0 text-[0.625rem] text-slate-400',
                             questionLength > 200 && 'text-red-500',
-                            (fieldsLength !== 1 || type !== 'project') &&
-                              '-right-7',
+                            '-right-7',
                           )}
                         >
                           {questionLength}/200
@@ -226,7 +218,7 @@ function EligibilityQuestionItem({
                 )}
               />
 
-              {(fieldsLength !== 1 || type !== 'project') && (
+              {
                 <Button
                   type="button"
                   variant="ghost"
@@ -236,7 +228,7 @@ function EligibilityQuestionItem({
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
-              )}
+              }
             </div>
             <FormMessage />
           </FormItem>
@@ -299,14 +291,9 @@ export function EligibilityQuestionsForm() {
   const handleRemoveQuestion = useCallback(
     (index: number) => {
       remove(index);
-
-      if (type === 'project' && index === 0 && fields.length > 1) {
-        form.setValue('eligibility.0.optional', false);
-      }
-
       form.saveDraft();
     },
-    [form, remove, type, fields.length],
+    [form, remove],
   );
 
   const handleDragEnd = useCallback(
@@ -320,17 +307,12 @@ export function EligibilityQuestionsForm() {
       if (oldIndex !== newIndex) {
         move(oldIndex, newIndex);
 
-        // For project type, ensure first question remains required
-        if (type === 'project' && (oldIndex === 0 || newIndex === 0)) {
-          form.setValue('eligibility.0.optional', false);
-        }
-
         if (form.getValues().id) {
           form.saveDraft();
         }
       }
     },
-    [fields, move, type, form],
+    [fields, move, form],
   );
 
   return (
@@ -341,7 +323,7 @@ export function EligibilityQuestionsForm() {
         <FormItem className="flex h-full flex-col gap-2">
           <div className="flex items-center gap-2">
             <FormLabel className="font-medium text-slate-500 uppercase sm:text-xs">
-              {type === 'project' ? '' : 'Additional'} Custom Questions
+              Additional Custom Questions
             </FormLabel>
           </div>
           <DndContext
@@ -368,18 +350,14 @@ export function EligibilityQuestionsForm() {
                       field={field}
                       index={index}
                       form={form}
-                      type={type}
                       handleRemoveQuestion={handleRemoveQuestion}
-                      fieldsLength={fields.length}
                     />
                   ))}
                 </div>
               </SortableContext>
             </ScrollArea>
           </DndContext>
-          {(type !== 'bounty' && type !== 'project') ||
-          (type === 'bounty' && fields.length < 25) ||
-          (type === 'project' && fields.length < 10) ? (
+          {type !== 'bounty' || fields.length < 25 ? (
             <div
               className={cn(
                 'flex justify-between',

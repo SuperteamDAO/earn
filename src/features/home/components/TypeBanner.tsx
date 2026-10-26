@@ -7,7 +7,7 @@ import { useUser } from '@/store/user';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
-type TypeTypes = 'bounties' | 'projects';
+type TypeTypes = 'bounties';
 
 type TypeBanner = {
   img: string;
@@ -21,12 +21,6 @@ const banners: Record<TypeTypes, TypeBanner> = {
     heading: 'Crypto Bounties & Web3 Tasks',
     description:
       'Complete bounties and earn cryptocurrency. Browse the latest web3 bounties from top Solana projects — from development and design to content creation. Get paid in USDC, SOL, and other tokens.',
-  },
-  projects: {
-    img: ASSET_URL + '/banner/banner',
-    heading: 'Crypto Jobs & Web3 Opportunities',
-    description:
-      "Discover the best remote crypto jobs and web3 careers in the Solana ecosystem. Whether you're a developer, designer, or content creator, find bounties, freelance projects, and opportunities that pay in crypto.",
   },
 };
 

@@ -1,13 +1,10 @@
 import { Baseline, Link2 } from 'lucide-react';
 import { useWatch } from 'react-hook-form';
 
-import FaTelegram from '@/components/icons/FaTelegram';
 import { Tooltip } from '@/components/ui/tooltip';
 
 import { useListingForm } from '@/features/listing-builder/hooks';
 import { Twitter } from '@/features/social/components/SocialIcons';
-
-import { TokenLabel } from '../Rewards/Tokens/TokenLabel';
 
 export function DefaultEligibilityQuestions() {
   const form = useListingForm();
@@ -15,70 +12,33 @@ export function DefaultEligibilityQuestions() {
     control: form.control,
     name: 'type',
   });
-  const compensationType = useWatch({
-    control: form.control,
-    name: 'compensationType',
-  });
-  const token = useWatch({
-    control: form.control,
-    name: 'token',
-  });
-
-  const TOOLTIP_CONTENT = `This is a default field for your ${type === 'project' ? 'Application' : 'Submission'} form. This question cannot be edited or removed.`;
+  const TOOLTIP_CONTENT = `This is a default field for your Submission form. This question cannot be edited or removed.`;
   return (
     <div>
       <p className="pb-3 text-xs font-medium text-slate-500 uppercase">
         COLLECTED BY DEFAULT
       </p>
       <div className="flex flex-col gap-4">
-        {type !== 'project' && (
-          <>
-            <DefaultQuestionField
-              TOOLTIP_CONTENT={TOOLTIP_CONTENT}
-              icon={<Link2 className="h-4 w-4" />}
-              label={
-                type === 'bounty'
-                  ? 'Bounty submission link'
-                  : 'Hackathon submission link'
-              }
-              required
-            />
+        <>
+          <DefaultQuestionField
+            TOOLTIP_CONTENT={TOOLTIP_CONTENT}
+            icon={<Link2 className="h-4 w-4" />}
+            label={
+              type === 'bounty'
+                ? 'Bounty submission link'
+                : 'Hackathon submission link'
+            }
+            required
+          />
 
-            <DefaultQuestionField
-              TOOLTIP_CONTENT={TOOLTIP_CONTENT}
-              icon={
-                <Twitter className="h-4 w-4 text-slate-400 opacity-100 grayscale-0" />
-              }
-              label="X post"
-            />
-          </>
-        )}
-        {type === 'project' && compensationType !== 'fixed' && (
           <DefaultQuestionField
             TOOLTIP_CONTENT={TOOLTIP_CONTENT}
             icon={
-              <TokenLabel
-                symbol={token}
-                showIcon
-                classNames={{
-                  amount: 'font-medium text-base ml-0',
-                  symbol: 'font-medium text-base mr-0',
-                  icon: 'mr-0',
-                }}
-              />
+              <Twitter className="h-4 w-4 text-slate-400 opacity-100 grayscale-0" />
             }
-            label="Compensation Quote"
-            required
+            label="X post"
           />
-        )}
-        {type === 'project' && (
-          <DefaultQuestionField
-            TOOLTIP_CONTENT={TOOLTIP_CONTENT}
-            icon={<FaTelegram className="h-4 w-4 text-slate-400" />}
-            label="Telegram Username"
-            required
-          />
-        )}
+        </>
         <DefaultQuestionField
           TOOLTIP_CONTENT={TOOLTIP_CONTENT}
           icon={<Baseline className="h-4 w-4 text-slate-400" />}

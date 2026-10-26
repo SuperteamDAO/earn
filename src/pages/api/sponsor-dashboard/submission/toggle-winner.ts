@@ -162,31 +162,6 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    if (firstListing.type === 'project') {
-      const projectWinnersInRequest = requestSubmissions.filter(
-        (s) => s.isWinner === true,
-      );
-      if (projectWinnersInRequest.length > 1) {
-        logger.warn(
-          `User ${userId} attempted to set multiple winners for project listing ${listingId}. Count: ${projectWinnersInRequest.length}`,
-        );
-        return res.status(400).json({
-          error: 'For project listings, only one submission can be the winner.',
-        });
-      }
-      if (
-        projectWinnersInRequest.length === 1 &&
-        projectWinnersInRequest[0]?.winnerPosition !== 1
-      ) {
-        logger.warn(
-          `User ${userId} attempted to set winner position other than 1 for project listing ${listingId}. Position: ${projectWinnersInRequest[0]?.winnerPosition}`,
-        );
-        return res.status(400).json({
-          error: 'For project listings, the winner position must be 1.',
-        });
-      }
-    }
-
     const otherExistingWinners = await prisma.submission.findMany({
       where: {
         listingId: listingId,
@@ -279,47 +254,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       }
 
       logger.debug(`Updating submission with ID: ${id}`);
-      const result = await prisma.submission.update({
+      return prisma.submission.update({
         where: { id },
         data: updateData,
-        include: {
-          listing: true,
-        },
       });
-
-      const ask =
-        result.ask ||
-        (result.listing.type === 'project' &&
-        result.listing.compensationType === 'range'
-          ? ((result.listing.minRewardAsk || 0) +
-              (result.listing.maxRewardAsk || 0)) /
-            2
-          : 1);
-
-      if (currentSubmission.isWinner !== isWinner) {
-        logger.debug(
-          `Winner status changed for submission ${id}. Updating bounty details for listing ID: ${listingId}`,
-        );
-
-        if (firstListing.compensationType !== 'fixed') {
-          logger.debug(
-            `Fetching token USD value for variable or range compensation for submission ${id}`,
-          );
-          const tokenUSDValue: number | undefined = (firstListing as any)
-            .tokenUsdAtPublish as number | undefined;
-          const usdValue = (tokenUSDValue ?? 0) * ask;
-
-          await prisma.bounties.update({
-            where: { id: listingId },
-            data: {
-              rewards: { 1: ask },
-              rewardAmount: ask,
-              usdValue,
-            },
-          });
-        }
-      }
-      return result;
     });
 
     await Promise.all(updatePromises);

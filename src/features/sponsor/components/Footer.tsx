@@ -72,7 +72,6 @@ export const Footer = () => {
 
   const opportunities: FooterLink[] = [
     { text: 'Bounty', href: '/earn/bounties' },
-    { text: 'Project', href: '/earn/projects' },
     { text: 'Grants', href: '/earn/grants' },
   ];
 

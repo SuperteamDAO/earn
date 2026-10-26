@@ -302,8 +302,6 @@ export const ListingTable = ({
                       )}
                       <SponsorPrize
                         compensationType={listing?.compensationType}
-                        maxRewardAsk={listing?.maxRewardAsk}
-                        minRewardAsk={listing?.minRewardAsk}
                         rewardAmount={listing?.rewardAmount}
                         className="text-sm font-medium text-slate-700"
                       />
@@ -410,8 +408,7 @@ export const ListingTable = ({
                           </Link>
                         )}
 
-                        {(listing.type === 'bounty' ||
-                          listing.type === 'project') && (
+                        {listing.type === 'bounty' && (
                           <DropdownMenuItem
                             className="ph-no-capture cursor-pointer text-sm font-medium text-slate-500"
                             onClick={() => {

@@ -4,7 +4,6 @@ import { ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
-import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -50,11 +49,6 @@ export function PrePublish() {
   const setShowPreview = useSetAtom(previewAtom);
 
   const isEditing = useAtomValue(isEditingAtom);
-
-  const type = useWatch({
-    control: form.control,
-    name: 'type',
-  });
 
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
 
@@ -191,7 +185,7 @@ export function PrePublish() {
           <GeoLock />
           <ReferredBy />
           <Slug />
-          {isST && type !== 'project' && <Foundation />}
+          {isST && <Foundation />}
         </div>
         <DialogFooter className="flex w-full pt-10 sm:justify-between">
           {!isEditing && (

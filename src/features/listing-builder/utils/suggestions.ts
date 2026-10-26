@@ -47,8 +47,6 @@ const bountySuggestions: Suggestions[] = [
   },
 ];
 
-const projectSuggestions: Suggestions[] = [];
-
 const hackathonSuggestions: Suggestions[] = [];
 
 function calculateSuggestions(suggestions: Suggestions[], input: string) {
@@ -63,14 +61,11 @@ function calculateSuggestions(suggestions: Suggestions[], input: string) {
 
 export function getSuggestions(
   input: string | undefined,
-  type: 'bounty' | 'project' | 'hackathon',
+  type: 'bounty' | 'hackathon',
 ) {
   if (!input) return [];
   if (type === 'bounty') {
     return calculateSuggestions(bountySuggestions, input);
-  }
-  if (type === 'project') {
-    return calculateSuggestions(projectSuggestions, input);
   }
   if (type === 'hackathon') {
     return calculateSuggestions(hackathonSuggestions, input);

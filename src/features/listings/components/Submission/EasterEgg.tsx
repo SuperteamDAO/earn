@@ -13,7 +13,6 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  isProject: boolean;
 }
 
 const createDecorateOptions = (): TDecorateOptionsFn => {
@@ -49,7 +48,7 @@ const createDecorateOptions = (): TDecorateOptionsFn => {
   };
 };
 
-function MainContent({ isProject }: { isProject: boolean }) {
+function MainContent() {
   const isMD = useBreakpoint('md');
   return (
     <>
@@ -67,7 +66,7 @@ function MainContent({ isProject }: { isProject: boolean }) {
           />
         </div>
         <p className="text-center text-3xl font-medium text-white md:text-4xl">
-          {isProject ? 'Application' : 'Submission'} Received!
+          Submission Received!
         </p>
         <p className="mt-5 text-center text-2xl text-white opacity-60 md:text-3xl">
           Sending some vibes your way 💃 💃
@@ -101,7 +100,7 @@ function MainContent({ isProject }: { isProject: boolean }) {
   );
 }
 
-export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
+export const EasterEgg = ({ isOpen, onClose }: Props) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   useEffect(() => {
@@ -122,7 +121,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
             closeIcon: 'text-white',
           }}
         >
-          <MainContent isProject={isProject} />
+          <MainContent />
         </DialogContent>
       </Dialog>
     );
@@ -131,7 +130,7 @@ export const EasterEgg = ({ isOpen, onClose, isProject }: Props) => {
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
       <DrawerContent className="h-screen w-screen max-w-none overflow-hidden rounded-none bg-[#5243FF]">
-        <MainContent isProject={isProject} />
+        <MainContent />
       </DrawerContent>
     </Drawer>
   );

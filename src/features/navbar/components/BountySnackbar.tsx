@@ -81,16 +81,9 @@ export const BountySnackbar = () => {
       return `🕛 Expiring Soon: ${
         type === 'bounty' ? 'Submit' : 'Apply'
       } while you still have the chance!`;
-    if (
-      rewardAmount &&
-      ((type === 'bounty' && rewardAmount > 1000) ||
-        (type === 'project' && rewardAmount > 1500))
-    )
+    if (rewardAmount && type === 'bounty' && rewardAmount > 1000)
       return `🤑 Mo' Money, Fewer Problems: Higher than average total ${type} reward`;
-    if (
-      (type === 'bounty' && submissionCount <= 1) ||
-      (type === 'project' && submissionCount < 10)
-    ) {
+    if (type === 'bounty' && submissionCount <= 1) {
       if (submissionCount === 0) {
         return type === 'bounty'
           ? '🔥 High chance of winning: No submissions have been made for this bounty yet!'

@@ -1,4 +1,3 @@
-import { TriangleAlert } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
@@ -78,13 +77,10 @@ export function RightSideBar({
 }) {
   const {
     token,
-    type,
     deadline,
     rewards,
     rewardAmount,
     compensationType,
-    maxRewardAsk,
-    minRewardAsk,
     Hackathon,
     maxBonusSpots,
     isWinnersAnnounced,
@@ -95,19 +91,6 @@ export function RightSideBar({
   const hasHackathonStarted = Hackathon?.startDate
     ? dayjs().isAfter(Hackathon.startDate)
     : true;
-
-  const submissionRange = useMemo(() => {
-    if (submissionNumber === undefined) return '';
-    if (submissionNumber <= 10) return '0-10';
-    if (submissionNumber <= 25) return '10-25';
-    if (submissionNumber <= 50) return '25-50';
-    if (submissionNumber <= 100) return '50-100';
-    if (submissionNumber <= 200) return '100-200';
-    if (submissionNumber <= 300) return '200-300';
-    return '300+';
-  }, [submissionNumber]);
-
-  const isProject = type === 'project';
 
   const router = useRouter();
 
@@ -132,9 +115,6 @@ export function RightSideBar({
       calculateWidthOfPrize = largestDigits + 0.5;
     }
     calculateWidthOfPrize = calculateWidthOfPrize + 'rem';
-    if (compensationType === 'range') {
-      calculateWidthOfPrize = '90%';
-    }
     return calculateWidthOfPrize;
   }, [largestDigits, rewards]);
 
@@ -173,10 +153,7 @@ export function RightSideBar({
                         <CompensationAmount
                           compensationType={compensationType}
                           rewardAmount={rewardAmount}
-                          maxRewardAsk={maxRewardAsk}
-                          minRewardAsk={minRewardAsk}
                           token={!showUsdSymbolOnly ? token : 'USD'}
-                          isWinnersAnnounced={isWinnersAnnounced}
                           className={cn(
                             'text-lg font-semibold text-slate-700 md:text-xl',
                           )}
@@ -186,13 +163,13 @@ export function RightSideBar({
                           showUsdSymbol={showUsdSymbolOnly}
                         />
                         <p className="text-lg font-normal text-slate-500">
-                          {isProject ? 'Payment' : 'Total Prizes'}
+                          Total Prizes
                         </p>
                       </div>
                     </td>
                   </tr>
 
-                  {!isProject && rewards && (
+                  {rewards && (
                     <tr>
                       <td className="p-0" colSpan={3}>
                         <PrizesList
@@ -227,17 +204,11 @@ export function RightSideBar({
                     <p className="text-lg font-medium text-black md:text-xl">
                       {isSubmissionNumberLoading
                         ? '...'
-                        : !isProject
-                          ? submissionNumber?.toLocaleString('en-us')
-                          : submissionRange}
+                        : submissionNumber?.toLocaleString('en-us')}
                     </p>
                   </div>
                   <p className="text-xs text-slate-500 sm:text-sm">
-                    {isProject
-                      ? 'Applications'
-                      : submissionNumber === 1
-                        ? 'SUBMISSION'
-                        : 'SUBMISSIONS'}
+                    {submissionNumber === 1 ? 'SUBMISSION' : 'SUBMISSIONS'}
                   </p>
                 </div>
 
@@ -325,15 +296,6 @@ export function RightSideBar({
                 dayjs.utc('2025-08-06'),
               ) && <ApprovalStages listing={listing} />}
           </div>
-          {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
-            <div className="mb-4 flex w-full gap-2 bg-[#62F6FF10] p-3">
-              <TriangleAlert color="#1A7F86" />
-              <p className="text-xs font-medium text-[#1A7F86]" color="#1A7F86">
-                Don&apos;t start working just yet! Apply first, and then begin
-                working only once you&apos;ve been hired for the project.
-              </p>
-            </div>
-          )}
           <div className="mt-4 w-full">
             <ExtraInfoSection
               skills={skills}

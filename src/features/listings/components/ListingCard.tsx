@@ -51,8 +51,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
     isWinnersAnnounced,
     isFeatured,
     compensationType,
-    minRewardAsk,
-    maxRewardAsk,
     winnersAnnouncedAt,
     _count,
   } = bounty;
@@ -78,9 +76,6 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
   const sponsorLogo = sponsor?.logo
     ? sponsor.logo.replace('/upload/', '/upload/c_scale,w_128,h_128,f_auto/')
     : `${ASSET_URL}/logo/sponsor-logo.png`;
-
-  const isVariable = compensationType === 'variable';
-  const showToken = !isVariable || (isVariable && isWinnersAnnounced);
 
   return (
     <Link
@@ -114,26 +109,21 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
             </Link>
             <div className="mt-px flex items-center gap-1 sm:gap-2">
               <div className="flex items-center justify-start sm:hidden">
-                {!!showToken && (
+                {
                   <TokenIcon
                     className="mr-0.5 h-3.5 w-3.5 rounded-full"
                     alt={token ?? 'token'}
                     symbol={token}
                   />
-                )}
+                }
                 <div className="flex items-baseline">
                   <CompensationAmount
                     compensationType={compensationType}
-                    maxRewardAsk={maxRewardAsk}
-                    minRewardAsk={minRewardAsk}
                     rewardAmount={rewardAmount}
-                    isWinnersAnnounced={isWinnersAnnounced}
                     className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
                   />
 
-                  {!!showToken && (
-                    <p className="text-xs font-medium text-gray-400">{token}</p>
-                  )}
+                  {<p className="text-xs font-medium text-gray-400">{token}</p>}
                 </div>
                 <p className="ml-1 text-[10px] text-slate-300">|</p>
               </div>
@@ -194,33 +184,27 @@ export const ListingCard = ({ bounty }: { bounty: Listing }) => {
           </div>
         </div>
         <div
-          className={cn(
-            'hidden items-center justify-start sm:flex',
-            showToken ? 'mr-3' : 'mr-0',
-          )}
+          className={cn('hidden items-center justify-start sm:flex', 'mr-3')}
         >
-          {!!showToken && (
+          {
             <TokenIcon
               className="mt-1 mr-1 h-4 w-4 rounded-full sm:mt-0.5"
               alt={token ?? 'token'}
               symbol={token}
             />
-          )}
+          }
           <div className="flex items-baseline gap-1">
             <CompensationAmount
               compensationType={compensationType}
-              maxRewardAsk={maxRewardAsk}
-              minRewardAsk={minRewardAsk}
               rewardAmount={rewardAmount}
-              isWinnersAnnounced={isWinnersAnnounced}
               className="text-xs font-semibold whitespace-nowrap text-slate-600 sm:text-base"
             />
 
-            {!!showToken && (
+            {
               <p className="text-xs font-medium text-gray-400 sm:text-base">
                 {token}
               </p>
-            )}
+            }
           </div>
         </div>
       </div>

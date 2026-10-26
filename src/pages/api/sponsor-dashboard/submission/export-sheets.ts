@@ -140,11 +140,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         'Anything Else': plainTextFromHtmlTurndown.turndown(
           submission.otherInfo || '',
         ),
-        Ask: submission.ask || '',
         'Tweet Link': submission.tweet || '',
         'Email ID': user.email,
         'User Twitter': user.twitter || '',
-        'User Telegram': submission.telegram || user.telegram || '',
+        'User Telegram': user.telegram || '',
         'User Wallet': user.walletAddress,
         'User Location': user.location || '',
         Label: submission.label,

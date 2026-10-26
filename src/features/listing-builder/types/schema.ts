@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
-import { BountyType, CompensationType, status } from '@/prisma/enums';
+import { CompensationType, status } from '@/prisma/enums';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { dayjs } from '@/utils/dayjs';
@@ -166,7 +166,7 @@ export const createListingFormSchema = ({
         ),
       description: z.string().trim().min(1, 'Required'),
       type: z
-        .nativeEnum(BountyType)
+        .enum(['bounty', 'hackathon'])
         .default('bounty')
         .refine((data) => {
           if (data === 'hackathon') {
@@ -314,18 +314,6 @@ export const createListingRefinements = async (
   hackathons?: HackathonModel[],
   pick?: ValidationFields,
 ) => {
-  if (data.type === 'project') {
-    if (!data.eligibility || data.eligibility.length === 0) {
-      if ((!!pick && pick.eligibility) || !pick) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Please add some questions',
-          path: ['eligibility'],
-        });
-      }
-    }
-  }
-
   if (data.compensationType === 'fixed') {
     if (!data.rewardAmount) {
       if ((!!pick && pick.rewards) || !pick) {
@@ -343,15 +331,13 @@ export const createListingRefinements = async (
         });
       }
     }
-    if (data.type !== 'project') {
-      if (!data.rewards || Object.keys(data.rewards).length === 0) {
-        if ((!!pick && pick.rewards) || !pick) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Please fill in the rewards',
-            path: ['rewards'],
-          });
-        }
+    if (!data.rewards || Object.keys(data.rewards).length === 0) {
+      if ((!!pick && pick.rewards) || !pick) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Please fill in the rewards',
+          path: ['rewards'],
+        });
       }
     }
 
@@ -372,7 +358,7 @@ export const createListingRefinements = async (
       const rewardsDifference = Math.abs(
         totalRewards - (data.rewardAmount || 0),
       );
-      if (data.type !== 'project' && rewardsDifference > epsilon) {
+      if (rewardsDifference > epsilon) {
         if ((!!pick && pick.rewards) || !pick) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -393,40 +379,6 @@ export const createListingRefinements = async (
             type: 'number',
           });
         }
-      }
-    }
-  }
-
-  if (data.compensationType === 'range') {
-    if (data.minRewardAsk === null || data.minRewardAsk === undefined) {
-      if ((!!pick && pick.minRewardAsk) || !pick) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Required',
-          path: ['minRewardAsk'],
-        });
-      }
-    }
-    if (!data.maxRewardAsk) {
-      if ((!!pick && pick.maxRewardAsk) || !pick) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Required',
-          path: ['maxRewardAsk'],
-        });
-      }
-    }
-    if (
-      data.minRewardAsk &&
-      data.maxRewardAsk &&
-      data.maxRewardAsk < data.minRewardAsk
-    ) {
-      if ((!!pick && pick.maxRewardAsk) || !pick) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Maximum reward must be greater than minimum reward',
-          path: ['maxRewardAsk'],
-        });
       }
     }
   }
@@ -500,11 +452,10 @@ export const backendListingRefinements = async (
       });
     }
   }
-  if (data.type !== 'project' && data.compensationType !== 'fixed') {
+  if (data.compensationType !== 'fixed') {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message:
-        'Selected Type is not allowed to have compensation type other than fixed',
+      message: 'Compensation type must be fixed',
       path: ['compensationType'],
     });
   }

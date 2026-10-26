@@ -84,11 +84,9 @@ export const transformToPrismaData = async ({
   const calculateRewardAmount = (
     data: ListingFormData,
   ): number | undefined | null => {
-    const { compensationType, rewardAmount, minRewardAsk, maxRewardAsk } = data;
+    const { compensationType, rewardAmount } = data;
 
     if (compensationType === 'fixed') return rewardAmount;
-    if (compensationType === 'range')
-      return ((minRewardAsk || 0) + (maxRewardAsk || 0)) / 2;
     return undefined;
   };
 

@@ -47,7 +47,7 @@ import { sponsorStatsQuery } from '@/features/sponsor-dashboard/queries/sponsor-
 
 const MemoizedListingTable = React.memo(ListingTable);
 
-type DashboardTab = 'all' | 'bounty' | 'project' | 'grant' | 'hackathon';
+type DashboardTab = 'all' | 'bounty' | 'grant' | 'hackathon';
 type DashboardStatus =
   | 'Draft'
   | 'In Progress'
@@ -85,7 +85,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
     const tabParam = searchParams.get('tab');
     if (
       tabParam &&
-      ['all', 'bounty', 'project', 'grant', 'hackathon'].includes(tabParam)
+      ['all', 'bounty', 'grant', 'hackathon'].includes(tabParam)
     ) {
       return tabParam as DashboardTab;
     }
@@ -253,7 +253,6 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
       const valueToType = {
         all: 'all' as const,
         bounties: 'bounty' as const,
-        projects: 'project' as const,
         grants: 'grant' as const,
         hackathons: 'hackathon' as const,
       };
@@ -367,18 +366,15 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
                 ? 'all'
                 : activeTab === 'bounty'
                   ? 'bounties'
-                  : activeTab === 'project'
-                    ? 'projects'
-                    : activeTab === 'grant'
-                      ? 'grants'
-                      : 'hackathons'
+                  : activeTab === 'grant'
+                    ? 'grants'
+                    : 'hackathons'
             }
             onValueChange={handleTabChange}
           >
             <TabsList>
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="bounties">Bounties</TabsTrigger>
-              <TabsTrigger value="projects">Projects</TabsTrigger>
               {hasGrants && <TabsTrigger value="grants">Grants</TabsTrigger>}
               {hasHackathons && (
                 <TabsTrigger value="hackathons">Hackathons</TabsTrigger>
@@ -395,15 +391,6 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
               />
             </TabsContent>
             <TabsContent value="bounties" className="px-0">
-              <MemoizedListingTable
-                listings={paginatedListings}
-                currentSort={currentSort}
-                onSort={(column, direction) =>
-                  setCurrentSort({ column, direction })
-                }
-              />
-            </TabsContent>
-            <TabsContent value="projects" className="px-0">
               <MemoizedListingTable
                 listings={paginatedListings}
                 currentSort={currentSort}

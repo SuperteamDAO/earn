@@ -102,7 +102,7 @@ export default function BountySubmissions({ slug }: Props) {
 
   const [isToggledAll, setIsToggledAll] = useState(false);
   const [currentAction, setCurrentAction] = useState<
-    'reject' | 'bonus' | 'spam' | 'shortlist' | null
+    'bonus' | 'spam' | 'shortlist' | null
   >(null);
   const {
     isOpen: isTogglerOpen,
@@ -144,8 +144,6 @@ export default function BountySubmissions({ slug }: Props) {
       }
     }
   }, [bountyError, router, user?.role, isSwitchingSponsor]);
-
-  const isProject = useMemo(() => bounty?.type === 'project', [bounty]);
 
   useEffect(() => {
     if (selectedSubmissionIds.size > 0) {
@@ -199,20 +197,15 @@ export default function BountySubmissions({ slug }: Props) {
     [selectedSubmissionIds, submissions],
   );
 
-  const handleModalAction = (
-    action: 'reject' | 'bonus' | 'spam' | 'shortlist',
-  ) => {
+  const handleModalAction = (action: 'bonus' | 'spam' | 'shortlist') => {
     setCurrentAction(action);
     multiActionConfirmOnOpen();
   };
 
   const isMultiSelectDisabled = useMemo(() => {
     if (bounty?.isWinnersAnnounced) return true;
-    if (bounty?.type === 'project') return false;
-    else {
-      if (!bounty?.rewards?.[BONUS_REWARD_POSITION] || !bounty?.maxBonusSpots)
-        return true;
-    }
+    if (!bounty?.rewards?.[BONUS_REWARD_POSITION] || !bounty?.maxBonusSpots)
+      return true;
     if (remainings?.bonus === 0) return true;
     return false;
   }, [bounty, selectedSubmissionIds, remainings]);
@@ -220,7 +213,6 @@ export default function BountySubmissions({ slug }: Props) {
   const multiBonusPodiumsOverSelected = useMemo(
     () =>
       Boolean(
-        bounty?.type !== 'project' &&
         bounty?.rewards?.[BONUS_REWARD_POSITION] &&
         bounty?.maxBonusSpots &&
         remainings &&
@@ -440,7 +432,6 @@ export default function BountySubmissions({ slug }: Props) {
                   onFilterChange={setSelectedFilters}
                   submissions={filteredSubmissions}
                   setSearchText={setSearchText}
-                  type={bounty?.type}
                   isToggled={isToggled}
                   toggleSubmission={toggleSubmission}
                   isAllToggled={isToggledAll}
@@ -475,7 +466,6 @@ export default function BountySubmissions({ slug }: Props) {
                       bounty={bounty}
                       submissions={filteredSubmissions}
                       usedPositions={usedPositions || []}
-                      onWinnersAnnounceOpen={onOpen}
                     />
                   )}
                 </div>
@@ -548,28 +538,6 @@ export default function BountySubmissions({ slug }: Props) {
                     Mark as Spam
                   </Button>
 
-                  {isProject && (
-                    <Button
-                      className="rounded-lg border border-red-300 bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
-                      disabled={selectedSubmissionIds.size === 0}
-                      onClick={() => handleModalAction('reject')}
-                    >
-                      <svg
-                        width="13"
-                        height="13"
-                        viewBox="0 0 13 13"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M6.11111 0.777832C9.49056 0.777832 12.2222 3.5095 12.2222 6.88894C12.2222 10.2684 9.49056 13.0001 6.11111 13.0001C2.73167 13.0001 0 10.2684 0 6.88894C0 3.5095 2.73167 0.777832 6.11111 0.777832ZM8.305 3.83339L6.11111 6.02728L3.91722 3.83339L3.05556 4.69505L5.24944 6.88894L3.05556 9.08283L3.91722 9.9445L6.11111 7.75061L8.305 9.9445L9.16667 9.08283L6.97278 6.88894L9.16667 4.69505L8.305 3.83339Z"
-                          fill="#E11D48"
-                        />
-                      </svg>
-                      Reject All
-                    </Button>
-                  )}
-
                   <Button
                     className="rounded-lg border border-purple-300 bg-purple-50 text-purple-600 hover:bg-purple-100 disabled:opacity-50"
                     disabled={selectedSubmissionIds.size === 0}
@@ -578,7 +546,7 @@ export default function BountySubmissions({ slug }: Props) {
                     Shortlist All
                   </Button>
 
-                  {!isProject && (
+                  {
                     <Button
                       className="rounded-lg border border-blue-300 bg-blue-50 text-blue-600 hover:bg-blue-100 disabled:opacity-50"
                       disabled={
@@ -590,7 +558,7 @@ export default function BountySubmissions({ slug }: Props) {
                       Assign {selectedSubmissionIds.size} Bonus
                       {selectedSubmissionIds.size > 1 ? 'es' : ''}
                     </Button>
-                  )}
+                  }
                 </div>
               </div>
             </DialogContent>
@@ -600,7 +568,6 @@ export default function BountySubmissions({ slug }: Props) {
               isOpen={multiActionConfrimIsOpen}
               onClose={multiActionConfirmOnClose}
               submissionIds={Array.from(selectedSubmissionIds)}
-              allSubmissionsLength={submissions?.length || 0}
               actionType={currentAction}
               listing={bounty}
               setSelectedSubmissionIds={setSelectedSubmissionIds}

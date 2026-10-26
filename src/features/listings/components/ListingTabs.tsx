@@ -8,7 +8,6 @@ import { type ListingContext, type ListingTab } from '../hooks/useListings';
 const TABS = [
   { id: 'all', title: 'All', posthog: 'all_listings' },
   { id: 'bounties', title: 'Bounties', posthog: 'bounties_listings' },
-  { id: 'projects', title: 'Projects', posthog: 'projects_listings' },
 ] as const;
 
 interface ListingTabTriggerProps {

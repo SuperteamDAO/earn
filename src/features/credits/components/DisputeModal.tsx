@@ -61,12 +61,7 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
   const maxCharacters = 1000;
   const queryClient = useQueryClient();
 
-  const listingType =
-    entry?.type === 'SPAM_PENALTY'
-      ? entry.submission.listing.type === 'project'
-        ? 'PROJECT'
-        : 'BOUNTY'
-      : 'GRANT';
+  const listingType = entry?.type === 'SPAM_PENALTY' ? 'BOUNTY' : 'GRANT';
 
   const form = useForm<DisputeFormData>({
     resolver: zodResolver(disputeFormSchema),
@@ -159,11 +154,7 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
   };
 
   const headerText =
-    entry?.type === 'SPAM_PENALTY'
-      ? entry.submission.listing.type === 'project'
-        ? 'Project Application'
-        : 'Bounty Submission'
-      : 'Grant Application';
+    entry?.type === 'SPAM_PENALTY' ? 'Bounty Submission' : 'Grant Application';
 
   if (!entry) return null;
 

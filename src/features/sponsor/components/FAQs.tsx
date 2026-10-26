@@ -20,7 +20,7 @@ const faqs = [
     answer: `There is no upper or lower limit of the amount of money you need to put up per listing. However, the compensation offered per listing will affect the distribution (via emails, discord, platform discovery, etc.) that the listing will get.`,
   },
   {
-    question: 'Who judges the bounties & projects?',
+    question: 'Who judges the bounties?',
     answer: `The sponsors are supposed to review, announce, and pay out the winners on Superteam Earn. It's super simple to manage your submissions, all within Earn.`,
   },
   {
@@ -29,7 +29,7 @@ const faqs = [
   },
   {
     question: 'What can I use Superteam Earn for?',
-    answer: `Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of bounties (get the same work done by many people) or hiring freelancers in the form of Project listings.
+    answer: `Superteam Earn is a platform to get work done from crypto-native talent. This can be in the form of bounties (get the same work done by many people).
 <br />
 Earn can be used to get any small to medium scale task done, including but not limited to development, writing, design, research, and product feedback.
 <br />

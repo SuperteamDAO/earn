@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type BountyType, type CompensationType } from '@/prisma/enums';
+import { type CompensationType } from '@/prisma/enums';
 import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
 
@@ -16,7 +16,7 @@ interface ListingDefaults {
   isGod: boolean;
   isEditing: boolean;
   isST: boolean;
-  type?: BountyType;
+  type?: 'bounty' | 'hackathon';
   hackathons?: HackathonModel[];
   hackathonId?: string;
   generatedListing?: GeneratedListingData;
@@ -219,7 +219,7 @@ export function transformListingToFormListing(
         .format(DEADLINE_FORMAT)
         .replace('Z', ''),
     slug: listing.slug || '',
-    type: (listing.type as BountyType) || 'bounty',
+    type: listing.type === 'hackathon' ? 'hackathon' : 'bounty',
     title: listing.title || '',
     description: listing.description || '',
     eligibility: listing.eligibility as any,
@@ -250,23 +250,9 @@ export function transformListingToFormListing(
 }
 
 export const refineReadyListing = (listing: ListingFormData) => {
-  if (listing.type !== 'project') {
-    listing.compensationType = 'fixed';
-    listing.maxRewardAsk = null;
-    listing.minRewardAsk = null;
-  } else {
-    listing.maxBonusSpots = 0;
-    if (listing.compensationType !== 'fixed') {
-      listing.rewards = null;
-      listing.rewardAmount = null;
-    } else {
-      listing.rewards = { 1: listing.rewardAmount || 0 };
-    }
-    if (listing.compensationType !== 'range') {
-      listing.minRewardAsk = null;
-      listing.maxRewardAsk = null;
-    }
-  }
+  listing.compensationType = 'fixed';
+  listing.maxRewardAsk = null;
+  listing.minRewardAsk = null;
   if (listing.deadline) {
     if (!listing.deadline.endsWith('Z'))
       listing.deadline += dayjs().format('Z');

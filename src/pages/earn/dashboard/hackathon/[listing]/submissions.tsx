@@ -219,7 +219,6 @@ export default function BountySubmissions({ listing }: Props) {
                       onFilterChange={setSelectedFilters}
                       submissions={filteredSubmissions}
                       setSearchText={setSearchText}
-                      type={bounty?.type}
                       isMultiSelectDisabled
                     />
                   </div>
@@ -250,7 +249,6 @@ export default function BountySubmissions({ listing }: Props) {
                         bounty={bounty}
                         submissions={filteredSubmissions}
                         usedPositions={usedPositions || []}
-                        onWinnersAnnounceOpen={onOpen}
                         isHackathonPage
                       />
                     )}

@@ -29,7 +29,7 @@ interface HomeProps {
   readonly st?: ChapterDisplay;
   readonly countryData?: CountryData;
   readonly categoryData?: CategoryData;
-  readonly listingType?: 'bounties' | 'projects';
+  readonly listingType?: 'bounties';
   readonly potentialSession?: boolean;
   readonly meta?: ReactNode;
 }

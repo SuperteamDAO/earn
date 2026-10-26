@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { AlertTriangle, Flag, X } from 'lucide-react';
+import { AlertTriangle, Flag } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import { selectedSubmissionAtom } from '@/features/sponsor-dashboard/atoms';
 import { useRejectSubmissions } from '@/features/sponsor-dashboard/mutations/useRejectSubmissions';
 import { useToggleWinner } from '@/features/sponsor-dashboard/mutations/useToggleWinner';
 
-type ActionType = 'reject' | 'bonus' | 'spam' | 'shortlist';
+type ActionType = 'bonus' | 'spam' | 'shortlist';
 
 interface ActionConfig {
   title: string;
@@ -32,7 +32,6 @@ interface MultiActionModalProps {
   onClose: () => void;
   submissionIds: string[];
   setSelectedSubmissionIds: (ids: Set<string>) => void;
-  allSubmissionsLength: number;
   actionType: ActionType;
   listing: Listing | undefined;
 }
@@ -42,7 +41,6 @@ export const MultiActionModal = ({
   onClose,
   submissionIds,
   setSelectedSubmissionIds,
-  allSubmissionsLength,
   actionType,
   listing,
 }: MultiActionModalProps) => {
@@ -54,31 +52,9 @@ export const MultiActionModal = ({
   const { mutateAsync: toggleWinner } = useToggleWinner(listing);
 
   const isMultiple = submissionIds.length > 1;
-  const isRejectingAll =
-    actionType === 'reject' && submissionIds.length === allSubmissionsLength;
 
   const getActionConfig = (): ActionConfig => {
     switch (actionType) {
-      case 'reject':
-        return {
-          title: isRejectingAll
-            ? 'Reject All Remaining Applications?'
-            : `Reject ${submissionIds.length} Application${isMultiple ? 's' : ''}`,
-          description: isRejectingAll
-            ? `You are about to reject all ${submissionIds.length} of the remaining applications for this Project listing. They will be notified via email.`
-            : `You are about to reject ${submissionIds.length} application${isMultiple ? 's' : ''}. They will be notified via email.`,
-          buttonText: `Reject ${submissionIds.length} Application${isMultiple ? 's' : ''}`,
-          buttonClass:
-            'rounded-lg border border-red-300 bg-red-50 text-red-600 hover:bg-red-100',
-          icon: (
-            <div className="rounded-full bg-red-600 p-0.5">
-              <X className="size-2.5 text-white" />
-            </div>
-          ),
-          loadingText: 'Rejecting',
-          hasWarning: true,
-        };
-
       case 'bonus':
         return {
           title: `Select ${submissionIds.length} submission${isMultiple ? 's' : ''} for bonus spot${isMultiple ? 's' : ''}`,
@@ -120,10 +96,6 @@ export const MultiActionModal = ({
     setLoading(true);
     try {
       switch (actionType) {
-        case 'reject':
-          rejectSubmissions.mutate(submissionIds);
-          setSelectedSubmissionIds(new Set());
-          break;
         case 'bonus':
           const bonusSubmissions = submissionIds.map((s) => ({
             id: s,

@@ -8,22 +8,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { type BountyType } from '@/generated/prisma/enums';
 
-import { BountyTemplates, ProjectTemplates } from './template-prompts';
+import { BountyTemplates } from './template-prompts';
 
 interface TemplatesProps {
-  type: BountyType;
+  type: 'bounty' | 'hackathon';
   onSelectTemplate?: (template: { name: string; prompt: string }) => void;
 }
 
 export function Templates({ type, onSelectTemplate }: TemplatesProps) {
-  const templates =
-    type === 'bounty'
-      ? BountyTemplates
-      : type === 'project'
-        ? ProjectTemplates
-        : [];
+  const templates = type === 'bounty' ? BountyTemplates : [];
   const showDropdown = templates.length > 4;
   const visibleTemplates = showDropdown ? templates.slice(0, 3) : templates;
   const hiddenTemplates = showDropdown ? templates.slice(3) : [];

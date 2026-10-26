@@ -52,8 +52,6 @@ export function ListingPageLayout({
   useEffect(() => {
     if (initialListing?.type === 'bounty') {
       posthog.capture('open_bounty');
-    } else if (initialListing?.type === 'project') {
-      posthog.capture('open_project');
     }
   }, []);
 
@@ -147,7 +145,7 @@ export function ListingPageLayout({
           <meta property="og:image:height" content="630" />
           <meta
             property="og:image:alt"
-            content={`${initialListing?.title || 'Listing'} - ${initialListing?.type === 'bounty' ? 'Bounty' : 'Project'} by ${initialListing?.sponsor?.name || 'Sponsor'} on Superteam Earn`}
+            content={`${initialListing?.title || 'Listing'} - ${initialListing?.type === 'hackathon' ? 'Hackathon Track' : 'Bounty'} by ${initialListing?.sponsor?.name || 'Sponsor'} on Superteam Earn`}
           />
           <meta property="og:type" content="website" />
           <meta charSet="UTF-8" key="charset" />

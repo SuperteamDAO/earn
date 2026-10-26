@@ -9,7 +9,6 @@ import { safeStringify } from '@/utils/safeStringify';
 import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { validateSession } from '@/features/auth/utils/getSponsorSession';
 import { refundCredits } from '@/features/credits/utils/allocateCredits';
-import { queueEmail } from '@/features/emails/utils/queueEmail';
 
 export async function POST(
   _: Request,
@@ -90,44 +89,6 @@ export async function POST(
         winnerPosition: null,
       },
     });
-
-    if (listing.type === 'project') {
-      const submissionsToReject = await prisma.submission.findMany({
-        where: {
-          listingId: id,
-          isWinner: false,
-        },
-        select: {
-          id: true,
-          userId: true,
-        },
-      });
-
-      await prisma.submission.updateMany({
-        where: {
-          listingId: id,
-          isWinner: false,
-        },
-        data: {
-          status: 'Rejected',
-        },
-      });
-
-      for (const submission of submissionsToReject) {
-        try {
-          await queueEmail({
-            type: 'submissionRejected',
-            id: submission.id,
-            userId: submission.userId,
-            triggeredBy: sessionResult.session.userId,
-          });
-        } catch (err) {
-          logger.warn(
-            `Failed to send email notification for submission rejection: ${submission.id}`,
-          );
-        }
-      }
-    }
 
     await refundCredits(id);
 

@@ -1,8 +1,6 @@
-import { type BountyType } from '@/prisma/enums';
-
 export function generateListingQuestionsPrompt(
   description: string,
-  type: BountyType,
+  type: 'bounty' | 'hackathon',
 ): string {
   let prompt = `Analyze the following listing description for a '${type}' on platform Superteam Earn. Your goal is to generate relevant custom questions for the application/submission form, following the specific rules for the listing type.
 
@@ -22,8 +20,7 @@ General Rules for Generated Questions:
 - Keeping the core of the question, keep the question to minimum characters 
 `;
 
-  if (type === 'bounty' || type === 'hackathon') {
-    prompt += `
+  prompt += `
 ${type}-Specific Rules:
 - Bounty submissions already have a required 'Submission Link' field and an optional 'Tweet Link' field.
 - Custom questions are OPTIONAL for bounties.
@@ -34,19 +31,6 @@ ${type}-Specific Rules:
 - AVOID - A QUESTION ASKING FOR DOCUMENT WITH FULL TWEET LINKS FOR TWEET OR THREAD BOUNTIES
 
 Generate the custom questions (or return empty array):`;
-  } else {
-    prompt += `
-Project-Specific Rules:
-- Project applications are used to *select* a candidate *before* work begins. 
-- There are only one default question called compensation quote, used to take compensation quote from the applicant.
-- Absolutely avoid asking compensation related questions / proposed rates since we already have a default question for it!!!!
-- Custom questions are MANDATORY for projects. You MUST generate at least one question (apart from default questions).
-- Generate relevant questions based *only* on the description to help the sponsor choose the best applicant for the job/freelance role.
-- We need to ask portfolio/proof of work in the question if the question fits the description
-- Questions should probe the applicant's suitability, relevant experience, understanding of the requirements, proposed approach, or portfolio, as applicable based on the description.
-
-Generate the mandatory custom questions:`;
-  }
 
   return prompt;
 }

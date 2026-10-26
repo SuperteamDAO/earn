@@ -1,16 +1,4 @@
-import {
-  Code,
-  CodeXml,
-  Database,
-  FileText,
-  ImagePlay,
-  Layers,
-  MonitorSmartphone,
-  Play,
-  ShieldHalf,
-  Users,
-  Video,
-} from 'lucide-react';
+import { FileText, ImagePlay, MonitorSmartphone, Play } from 'lucide-react';
 
 import FaXTwitter from '@/components/icons/FaXTwitter';
 
@@ -48,61 +36,4 @@ Threads will be judged on clarity, creativity, and shareability.
   },
 ];
 
-const ProjectTemplates = [
-  {
-    name: 'Full Stack Dev',
-    icon: Code,
-    prompt:
-      "Need a full stack developer to build a simple internal tool from scratch. It's a dashboard for tracking metrics with basic CRUD operations. Nothing fancy but needs to be reliable and well-documented. Tech stack is flexible but prefer Next.js. \nTimeline: 3 weeks. Share past work involving internal tools, admin dashboards, or metrics panels. Clean code and good docs are must-haves. \nBudget: 2000 USDC.",
-  },
-  {
-    name: 'UI/UX Designer',
-    icon: Layers,
-    prompt:
-      'Need a designer to redesign our dashboard interface. Current one is functional but ugly. We want something clean, intuitive, and modern without being overly trendy. Scope includes user research, wireframes, and final designs in Figma. \nTimeline is 3 weeks. Share a portfolio link with relevant SaaS or Web3 UI work. Include at least one Figma file or case study. \nBudget: 2000 USDC.',
-  },
-  {
-    name: 'Twitter Intern',
-    icon: FaXTwitter,
-    prompt:
-      "Need someone to manage our Twitter account for the next month. You'll post 2-3 times daily, respond to mentions, engage with our community, and help grow our following. Looking for someone who gets crypto Twitter culture and can be funny without trying too hard. \nPlease include 2-3 example tweets and any crypto accounts you've previously managed. \nFixed payment: 2000 USDC for the month.",
-  },
-  {
-    name: 'Researcher',
-    icon: FileText,
-    prompt:
-      "Looking for a researcher to write 4 in-depth articles over the next 6 weeks. Topics include market analysis, protocol deep-dives, and trend reports. You'll need to interview team members and external experts. Must be comfortable with technical topics and able to explain complex ideas simply. \nInclude writing samples, and mention any prior work involving original research or expert interviews. \nBudget: 2000 USDC total.",
-  },
-  {
-    name: 'Frontend Dev',
-    icon: CodeXml,
-    prompt:
-      "Looking for a React developer to build out new features for our web app. You'll work from Figma designs and integrate with our existing API. Must be comfortable with TypeScript and have experience with Web3 integration. About 80 hours of work over 4 weeks. \nSubmit links to your GitHub or live projects. Experience with wallet integrations or dApps is a strong plus. \nFixed budget: 2000 USDC.",
-  },
-  {
-    name: 'Backend Dev',
-    icon: Database,
-    prompt:
-      "Need a backend developer to optimize our API and add new endpoints. Current setup is Node.js with PostgreSQL. Main focus is improving query performance and adding proper caching. \nShould take about 2 weeks of focused work. Highlight similar work you've done, particularly performance improvements or schema optimizations. \nPaying 2000 USDC for the complete project.",
-  },
-  {
-    name: 'Rust Dev',
-    icon: ShieldHalf,
-    prompt:
-      'Looking for a Rust developer to audit and optimize our smart contracts on Solana. Need someone who can identify potential vulnerabilities and improve transaction efficiency. Experience with Anchor framework required. \nEstimated 60 hours of work. Link to previous audits or Solana smart contract repos using Anchor. Security-first mindset is essential. \nFixed payment: 2000 USDC.',
-  },
-  {
-    name: 'Community Manager',
-    icon: Users,
-    prompt:
-      "Looking for someone to manage our Discord and Telegram communities for 6 weeks. You'll moderate discussions, organize weekly community calls, create engagement initiatives, and compile weekly reports. \nInclude past experience running Web3 communities and a short plan for how you'd drive engagement in week 1. \nFixed payment: 2000 USDC.",
-  },
-  {
-    name: 'Video Production',
-    icon: Video,
-    prompt:
-      "Need a video editor to produce 8 short educational videos (2-3 minutes each) over the next month. We'll provide raw footage and talking points. You handle editing, graphics, music, and captions. \nMust deliver 2 videos per week. Deliver in 1080p+, with consistent visual style, lower thirds, and clear, embedded captions. \nTotal budget: 2000 USDC.",
-  },
-];
-
-export { BountyTemplates, ProjectTemplates };
+export { BountyTemplates };

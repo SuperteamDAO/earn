@@ -16,7 +16,6 @@ export const getListingDraftStatus = (
 };
 
 export const getListingTypeLabel = (type: string) => {
-  if (type === 'project') return 'Project';
   if (type === 'hackathon') return 'Hackathon';
   if (type === 'bounty') return 'Bounty';
   if (type === 'grant') return 'Grant';

@@ -13,11 +13,6 @@ export const LISTING_NAV_ITEMS: Array<NavItem> = [
     href: '/earn/all?tab=bounties',
   },
   {
-    label: 'Projects',
-    posthog: 'projects_navbar',
-    href: '/earn/all?tab=projects',
-  },
-  {
     label: 'Grants',
     posthog: 'grants_navbar',
     href: '/earn/grants',

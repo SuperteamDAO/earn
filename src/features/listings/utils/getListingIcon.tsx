@@ -1,5 +1,4 @@
 import BsFillLaptopFill from '@/components/icons/BsFillLaptopFill';
-import TbBriefcase2Filled from '@/components/icons/TbBriefcase2Filled';
 
 import { cn } from '../../../utils/cn';
 
@@ -38,8 +37,6 @@ export const getListingIcon = (type: string, className?: string) => {
   switch (type) {
     case 'bounty':
       return <BountyIcon className={iconClassName} />;
-    case 'project':
-      return <TbBriefcase2Filled className={iconClassName} />;
     case 'hackathon':
       return <BsFillLaptopFill className={iconClassName} />;
     case 'grant':

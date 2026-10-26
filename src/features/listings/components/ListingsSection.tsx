@@ -230,17 +230,7 @@ export const ListingsSection = ({
 
       return (
         <>
-          {shouldShowAddListingCard && (
-            <AddListingCard
-              listingType={
-                activeTab === 'bounties'
-                  ? 'bounty'
-                  : activeTab === 'projects'
-                    ? 'project'
-                    : 'bounty'
-              }
-            />
-          )}
+          {shouldShowAddListingCard && <AddListingCard listingType="bounty" />}
           {emptySectionContent ?? (
             <EmptySection
               title="No opportunities found"
@@ -253,17 +243,7 @@ export const ListingsSection = ({
 
     return (
       <div className="space-y-1">
-        {shouldShowAddListingCard && (
-          <AddListingCard
-            listingType={
-              activeTab === 'bounties'
-                ? 'bounty'
-                : activeTab === 'projects'
-                  ? 'project'
-                  : 'bounty'
-            }
-          />
-        )}
+        {shouldShowAddListingCard && <AddListingCard listingType="bounty" />}
         {listings.map((listing) => (
           <ListingCard key={listing.id} bounty={listing} />
         ))}

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { type BountiesSelect } from '@/prisma/models/Bounties';
 
 export const ListingTabSchema = z
-  .union([z.enum(['all', 'bounties', 'projects']), z.string().min(1)])
+  .union([z.enum(['all', 'bounties']), z.string().min(1)])
   .default('all');
 export const OrderDirectionSchema = z.enum(['asc', 'desc']).default('asc');
 export const ListingCategorySchema = z

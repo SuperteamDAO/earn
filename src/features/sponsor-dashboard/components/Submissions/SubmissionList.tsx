@@ -25,7 +25,6 @@ interface Props {
   listing?: Listing;
   submissions: SubmissionWithUser[];
   setSearchText: Dispatch<SetStateAction<string>>;
-  type?: string;
   selectedFilters: Set<SubmissionLabels | 'Winner' | 'Rejected'>;
   onFilterChange: (
     filters: Set<SubmissionLabels | 'Winner' | 'Rejected'>,
@@ -42,7 +41,6 @@ export const SubmissionList = ({
   listing,
   submissions,
   setSearchText,
-  type,
   selectedFilters,
   onFilterChange,
   toggleSubmission,
@@ -85,16 +83,7 @@ export const SubmissionList = ({
 
   const getSubmissionLabel = (submission: SubmissionWithUser) => {
     if (submission?.isWinner && submission?.winnerPosition) {
-      if (type === 'project') {
-        return 'Winner';
-      } else {
-        return getRankLabels(submission.winnerPosition);
-      }
-    } else if (
-      submission.status === 'Rejected' &&
-      listing?.type === 'project'
-    ) {
-      return 'Rejected';
+      return getRankLabels(submission.winnerPosition);
     } else if (submission?.label === 'Spam') {
       return 'Spam';
     } else if (submission?.label) {

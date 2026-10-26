@@ -15,7 +15,7 @@ interface ActivityCardProps {
   lastName: string;
   username: string;
   createdAt: string;
-  listingType: 'bounty' | 'hackathon' | 'project';
+  listingType: 'bounty' | 'hackathon';
   isWinner: boolean;
   isWinnersAnnounced: boolean;
   type: FeedPostType;
@@ -126,7 +126,7 @@ export const RecentActivity = () => {
             lastName={act.user.lastName}
             username={act.user.username}
             createdAt={act.createdAt}
-            listingType={act.listing.type as 'bounty' | 'hackathon' | 'project'}
+            listingType={act.listing.type as 'bounty' | 'hackathon'}
             isWinner={act.isWinner}
             isWinnersAnnounced={act.listing.isWinnersAnnounced}
             type={'submission'}

@@ -152,5 +152,5 @@ export interface ListingTabsProps {
   region?: string;
   sponsor?: string;
   category?: string;
-  defaultTab?: 'bounties' | 'projects';
+  defaultTab?: 'bounties';
 }

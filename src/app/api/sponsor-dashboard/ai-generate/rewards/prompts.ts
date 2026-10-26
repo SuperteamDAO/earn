@@ -66,9 +66,7 @@ ${description}
 `;
 
   // --- Type-Specific Rules ---
-  if (type !== 'project') {
-    // Bounty/Hackathon Rules
-    prompt += `
+  prompt += `
 **3. Compensation Type (\`compensationType: 'fixed'\`):**
    *   For '${type}' listings, this MUST ALWAYS be \`'fixed'\`.
 
@@ -93,37 +91,6 @@ ${description}
 **6. Range Fields (\`minRewardAsk\`, \`maxRewardAsk\`):**
    *   Set both \`minRewardAsk\` and \`maxRewardAsk\` to \`0\` for '${type}' listings.
 `;
-  } else {
-    // Project Rules
-    prompt += `
-**3. Compensation Type (\`compensationType: 'fixed' | 'range' | 'variable'\`):**
-   *   Determine based on the input text:
-      *   \`'fixed'\`: A single specific amount is stated (e.g., "$2000", "10 SOL").
-      *   \`'range'\`: A clear minimum and maximum are stated (e.g., "$1000-$1500", "5 to 8 SOL").
-      *   \`'variable'\`: No amount/range specified, negotiation implied, or applicant provides a quote.
-   *   Default to \`'fixed'\` if unclear but a single amount seems present. Default to \`'variable'\` if no amount/range is mentioned at all.
-
-**4. Rewards Array (\`rewards: Array<{ rank: string, amount: number }>\`):**
-   *   **If \`compensationType\` is 'fixed':**
-      *   Extract the single fixed reward amount.
-      *   Apply the **Amount Conversion Logic** (Rule 2) to get the final amount in \`${targetTokenSymbol}\`.
-      *   The array MUST contain exactly one object: \`{ "rank": "1", "amount": <final_amount_in_target_token> }\`.
-      *   If no fixed amount is found (e.g., type is variable/range), return an empty array \`[]\`.
-      *   *Example (Input: "Pay is $2000", Target: SOL, SOL USD: 150):* \`[ { "rank": "1", "amount": 13.33 } ]\`
-   *   **If \`compensationType\` is 'range' or 'variable':**
-      *   The \`rewards\` array MUST be empty: \`[]\`.
-
-**5. Range Fields (\`minRewardAsk: number\`, \`maxRewardAsk: number\`):**
-   *   **If \`compensationType\` is 'range':**
-      *   Extract *both* the minimum and maximum values of the reward range from the text.
-      *   Apply the **Amount Conversion Logic** (Rule 2) *separately* to both the minimum and maximum values to get them in \`${targetTokenSymbol}\`.
-      *   **CRITICAL:** You MUST populate BOTH \`minRewardAsk\` AND \`maxRewardAsk\` with the final numeric values in \`${targetTokenSymbol}\`. Both fields are mandatory for the 'range' type. \`maxRewardAsk\` must be greater than \`minRewardAsk\`.
-      *   *Example (Input: "Range $1000-$1500", Target: SOL, SOL USD: 150):* \`minRewardAsk: 6.67\`, \`maxRewardAsk: 10.00\`
-      *   *Example (Input: "Range 500-800 USDG", Target: USDG):* \`minRewardAsk: 500\`, \`maxRewardAsk: 800\`
-   *   **If \`compensationType\` is 'fixed' or 'variable':**
-      *   Set both \`minRewardAsk\` and \`maxRewardAsk\` to \`0\`.
-`;
-  }
 
   // --- Final Instructions & Output ---
   prompt += `
@@ -132,7 +99,7 @@ ${description}
 
 *   If the input lacks clear, parsable reward information matching the rules:
     *   Set \`token\` to \`${targetTokenSymbol}\`.
-    *   Set \`compensationType\` to '${type === 'project' ? 'variable' : 'fixed'}'.
+    *   Set \`compensationType\` to 'fixed'.
     *   Set \`rewards\` to \`[]\`.
     *   Set \`maxBonusSpots\` to 0.
     *   Set \`minRewardAsk\` and \`maxRewardAsk\` to \`0\`.

@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { CopyButton } from '@/components/ui/copy-tooltip';
 import type { SubmissionWithUser } from '@/interface/submission';
 import { SubmissionLabels } from '@/prisma/enums';
-import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
@@ -31,7 +30,6 @@ interface Props {
   submissions: SubmissionWithUser[];
   usedPositions: number[];
   isHackathonPage?: boolean;
-  onWinnersAnnounceOpen: () => void;
   isMultiSelectOn?: boolean;
 }
 
@@ -40,11 +38,8 @@ export const SubmissionPanel = ({
   submissions,
   usedPositions,
   isHackathonPage,
-  onWinnersAnnounceOpen,
   isMultiSelectOn,
 }: Props) => {
-  const isProject = bounty?.type === 'project';
-
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
   const shouldHideTxLinks = bounty?.isFndnPaying;
   const paymentTxId = selectedSubmission?.paymentDetails?.[0]?.txId;
@@ -102,7 +97,6 @@ export const SubmissionPanel = ({
                   )}
                 {!bounty?.isWinnersAnnounced && !isHackathonPage && (
                   <SelectWinner
-                    onWinnersAnnounceOpen={onWinnersAnnounceOpen}
                     isMultiSelectOn={!!isMultiSelectOn}
                     bounty={bounty}
                     usedPositions={usedPositions}
@@ -112,7 +106,6 @@ export const SubmissionPanel = ({
                 {selectedSubmission?.isWinner &&
                   selectedSubmission?.winnerPosition &&
                   selectedSubmission?.isPaid &&
-                  !isProject &&
                   !shouldHideTxLinks &&
                   paymentTxId && (
                     <Button
@@ -162,11 +155,7 @@ export const SubmissionPanel = ({
               <div className="flex gap-2">
                 <Telegram
                   className="h-[0.9rem] w-[0.9rem] text-slate-600"
-                  link={
-                    selectedSubmission?.telegram ||
-                    selectedSubmission?.user?.telegram ||
-                    ''
-                  }
+                  link={selectedSubmission?.user?.telegram || ''}
                 />
 
                 <Twitter
@@ -184,15 +173,6 @@ export const SubmissionPanel = ({
                   link={selectedSubmission?.user?.website || ''}
                 />
               </div>
-              {isProject && (
-                <p className="text-sm whitespace-nowrap text-slate-400">
-                  $
-                  {formatNumberWithSuffix(
-                    selectedSubmission?.totalEarnings || 0,
-                  )}{' '}
-                  Earned
-                </p>
-              )}
             </div>
           </div>
           <Details bounty={bounty} isHackathonPage={isHackathonPage} />

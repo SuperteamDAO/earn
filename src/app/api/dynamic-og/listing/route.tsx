@@ -191,8 +191,6 @@ export async function GET(request: Request) {
       switch (type) {
         case 'bounty':
           return 'bounty-icon.svg';
-        case 'project':
-          return 'project-icon.svg';
         case 'hackathon':
           return 'hackathon-icon.svg';
         case 'grant':

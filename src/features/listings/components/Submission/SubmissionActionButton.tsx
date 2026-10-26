@@ -47,7 +47,6 @@ const InfoWrapper = ({
   hackathonStartDate,
   pastDeadline,
   creditBalance,
-  isProject,
   isBounty,
   isEditMode,
   isAuthenticated,
@@ -61,7 +60,6 @@ const InfoWrapper = ({
   hackathonStartDate: dayjs.Dayjs | null;
   pastDeadline: boolean;
   creditBalance: number;
-  isProject: boolean;
   isBounty: boolean;
   isEditMode: boolean;
   isAuthenticated: boolean;
@@ -77,12 +75,7 @@ const InfoWrapper = ({
         (!isLocationCooldown &&
           hasHackathonStarted &&
           (isUserEligibleByRegion || pastDeadline) &&
-          !(
-            creditBalance === 0 &&
-            (isProject || isBounty) &&
-            !isEditMode &&
-            !pastDeadline
-          ))
+          !(creditBalance === 0 && isBounty && !isEditMode && !pastDeadline))
       }
       content={
         !isUserEligibleByRegion
@@ -91,9 +84,8 @@ const InfoWrapper = ({
             ? locationCooldownLabel
             : !hasHackathonStarted
               ? `This track will open for submissions on ${hackathonStartDate?.format('DD MMMM, YYYY')}`
-              : creditBalance === 0 && (isProject || isBounty)
-                ? "You don't have enough credits to" +
-                  (isProject ? ' apply' : ' submit')
+              : creditBalance === 0 && isBounty
+                ? "You don't have enough credits to submit"
                 : null
       }
       contentProps={{ className: 'rounded-md z-50' }}
@@ -195,7 +187,6 @@ export const SubmissionActionButton = ({
     ? dayjs(serverTime()).isAfter(hackathonStartDate)
     : true;
 
-  const isProject = type === 'project';
   const isBounty = type === 'bounty';
   const isHackathon = type === 'hackathon';
 
@@ -236,23 +227,19 @@ export const SubmissionActionButton = ({
 
   switch (buttonState) {
     case 'rejected':
-      buttonText = isProject
-        ? 'Application Rejected'
-        : 'Submission Marked as Spam';
+      buttonText = 'Submission Marked as Spam';
       buttonBG = 'bg-red-600';
       isBtnDisabled = true;
       btnLoadingText = null;
       break;
     case 'edit':
-      buttonText = isProject ? 'Edit Application' : 'Edit Submission';
+      buttonText = 'Edit Submission';
       isBtnDisabled = false;
       btnLoadingText = null;
       break;
 
     case 'submitted':
-      buttonText = isProject
-        ? 'Applied Successfully'
-        : 'Submitted Successfully';
+      buttonText = 'Submitted Successfully';
       buttonBG = 'bg-green-600';
       isBtnDisabled = true;
       btnLoadingText = null;
@@ -280,12 +267,7 @@ export const SubmissionActionButton = ({
       break;
 
     default:
-      buttonText = isProject ? 'Apply Now' : 'Submit Now';
-      if (
-        listing.compensationType === 'variable' ||
-        listing.compensationType === 'range'
-      )
-        buttonText = 'Send Quote';
+      buttonText = 'Submit Now';
       buttonBG = 'bg-brand-purple';
       if (isNotPublished && !isListingSponsor) {
         buttonText = 'Paused';
@@ -300,7 +282,7 @@ export const SubmissionActionButton = ({
           user?.id &&
           user?.isTalentFilled &&
           creditBalance === 0 &&
-          (isProject || isBounty)) ||
+          isBounty) ||
         (isNotPublished && !isListingSponsor),
       );
       isSubmitDisabled = Boolean(
@@ -332,7 +314,7 @@ export const SubmissionActionButton = ({
   }
 
   const requiresCredits =
-    (isProject || isBounty) &&
+    isBounty &&
     user &&
     !isEditMode &&
     !isUserSubmissionLoading &&
@@ -367,7 +349,6 @@ export const SubmissionActionButton = ({
         <EasterEgg
           isOpen={isEasterEggOpen}
           onClose={() => setEasterEggOpen(false)}
-          isProject={isProject}
         />
       )}
       {isKYCModalOpen && submission?.id && (
@@ -388,7 +369,6 @@ export const SubmissionActionButton = ({
             hackathonStartDate={hackathonStartDate}
             pastDeadline={pastDeadline!}
             creditBalance={creditBalance}
-            isProject={isProject}
             isBounty={isBounty}
             isEditMode={isEditMode}
             isAuthenticated={isAuthenticated}
@@ -441,12 +421,12 @@ export const SubmissionActionButton = ({
           <div className="mt-1 md:my-1.5 md:flex">
             {creditBalance > 0 && (
               <p className="mx-auto w-full rounded-md bg-gray-50 py-2 text-center text-xs text-slate-600 md:text-xs">
-                {`* Costs 1 credit to ${isProject ? 'apply' : 'submit'}`}
+                {`* Costs 1 credit to submit`}
               </p>
             )}
             {creditBalance <= 0 && (
               <p className="mx-auto w-full rounded-md py-0.5 text-center text-xs text-slate-600 md:text-xs">
-                {`* You don't have enough credits to ${isProject ? 'apply' : 'submit'}`}
+                {`* You don't have enough credits to submit`}
               </p>
             )}
           </div>
