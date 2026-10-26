@@ -15,7 +15,6 @@ import {
   popupsShowedAtom,
 } from '@/features/conversion-popups/atoms';
 
-import { HomeCryptoWorldFairHackathonBanner } from './CryptoWorldFairHackathonBanner';
 import { HomeSponsorBanner } from './SponsorBanner';
 import { HomeTalentBanner } from './TalentBanner';
 
@@ -69,9 +68,6 @@ export function BannerCarousel({
       setApi={setCarouselApi}
     >
       <CarouselContent>
-        <CarouselItem>
-          <HomeCryptoWorldFairHackathonBanner />
-        </CarouselItem>
         <CarouselItem>
           <HomeTalentBanner totalUsers={totalUsers} />
         </CarouselItem>
