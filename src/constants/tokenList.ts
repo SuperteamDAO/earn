@@ -1,6 +1,14 @@
 'use client';
 
-import { type ReactNode, useEffect, useSyncExternalStore } from 'react';
+import {
+  createContext,
+  createElement,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 
 export interface Token {
   tokenName: string;
@@ -19,8 +27,15 @@ type TokenListApiResponse = {
 
 const DEFAULT_TOKEN_ICON = '/assets/dollar.svg';
 
+// The tokens the root layout loaded on the server: what server rendering
+// and hydration read, before (or instead of) the browser's own list.
+const ServerTokens = createContext<Token[]>([]);
+
 const listeners = new Set<() => void>();
 
+// The browser's list: seeded from the server's, grown by tokens a sponsor
+// adds (addTokenToList). Never written on the server, where it would be
+// shared between requests.
 let tokenListState: Token[] = [];
 let tokenListPromise: Promise<Token[]> | null = null;
 
@@ -30,11 +45,8 @@ const notifyListeners = () => {
   }
 };
 
-export let tokenList: Token[] = [];
-
 const setTokenList = (tokens: Token[]) => {
   tokenListState = tokens;
-  tokenList = tokens;
   notifyListeners();
 };
 
@@ -53,8 +65,6 @@ export const addTokenToList = (token: Token) => {
   setTokenList([...tokenListState, token]);
 };
 
-const getTokenListSnapshot = () => tokenListState;
-
 const subscribeToTokenList = (listener: () => void) => {
   listeners.add(listener);
   return () => listeners.delete(listener);
@@ -69,7 +79,7 @@ export async function loadTokenList(force = false): Promise<Token[]> {
     return tokenListPromise;
   }
 
-  tokenListPromise = fetch('/api/tokens', {
+  tokenListPromise = fetch('/api/tokens/', {
     credentials: 'same-origin',
     cache: 'no-store',
   })
@@ -78,8 +88,16 @@ export async function loadTokenList(force = false): Promise<Token[]> {
         throw new Error('Failed to load token metadata');
       }
 
-      const data = (await response.json()) as TokenListApiResponse;
-      const tokens = Array.isArray(data.tokens) ? data.tokens : [];
+      const data: unknown = await response.json();
+      const tokens =
+        typeof data === 'object' &&
+        data !== null &&
+        'tokens' in data &&
+        Array.isArray(data.tokens)
+          ? // Earn's own /api/tokens/ answer.
+            // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+            (data.tokens as TokenListApiResponse['tokens'])
+          : [];
       setTokenList(tokens);
       return tokens;
     })
@@ -103,15 +121,17 @@ export async function getTokenBySymbol(symbol?: string | null) {
 }
 
 export function useTokenList(): Token[] {
+  const serverTokens = useContext(ServerTokens);
   const tokens = useSyncExternalStore(
     subscribeToTokenList,
-    getTokenListSnapshot,
-    getTokenListSnapshot,
+    () => (tokenListState.length > 0 ? tokenListState : serverTokens),
+    () => serverTokens,
   );
 
   useEffect(() => {
-    void loadTokenList();
-  }, []);
+    // Pages the server didn't hand a list to (the Pages Router) fetch it.
+    if (serverTokens.length === 0) void loadTokenList();
+  }, [serverTokens]);
 
   return tokens;
 }
@@ -119,11 +139,6 @@ export function useTokenList(): Token[] {
 export const useToken = (symbol?: string | null) => {
   const tokens = useTokenList();
   return tokens.find((token) => token.tokenSymbol === symbol);
-};
-
-export const useTokenByMintAddress = (mintAddress?: string | null) => {
-  const tokens = useTokenList();
-  return tokens.find((token) => token.mintAddress === mintAddress);
 };
 
 export function useTokenLookup() {
@@ -141,7 +156,26 @@ export function useTokenLookup() {
   };
 }
 
-export function TokenListProvider({ children }: { children: ReactNode }) {
-  useTokenList();
-  return children;
+// The root layout passes the tokens it loaded (src/server/tokens.ts);
+// without them the list is fetched in the browser.
+export function TokenListProvider({
+  tokens = [],
+  children,
+}: {
+  tokens?: readonly Token[];
+  children: ReactNode;
+}) {
+  // Seeds the browser's list once, before anything reads it.
+  const [value] = useState(() => {
+    const copy = [...tokens];
+    if (
+      typeof window !== 'undefined' &&
+      copy.length > 0 &&
+      tokenListState.length === 0
+    ) {
+      tokenListState = copy;
+    }
+    return copy;
+  });
+  return createElement(ServerTokens, { value }, children);
 }

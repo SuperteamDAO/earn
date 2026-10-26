@@ -1,32 +1,35 @@
+/* oxlint-disable no-underscore-dangle -- the editor's image cleanup hooks are window globals */
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueryClient } from '@tanstack/react-query';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
 import { useCallback, useEffect, useRef } from 'react';
 import { useForm, useFormContext, type UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
-import type { HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
 
 import {
   descriptionKeyAtom,
   draftQueueAtom,
-  hackathonsAtom,
   hideAutoSaveAtom,
   isDraftSavingAtom,
   isEditingAtom,
   isGodAtom,
   isSTAtom,
-  saveDraftMutationAtom,
   skillsKeyAtom,
-  submitListingMutationAtom,
+  submitStatusAtom,
 } from '../atoms';
+import { useBuilderData } from '../components/BuilderData';
+import {
+  saveDraftRequest,
+  submitListingRequest,
+} from '../queries/listing-requests';
 import type {
   ListingFormData,
   SubmitListingResponse,
   ValidationFields,
 } from '../types';
+import type { BuilderHackathon } from '../types/builder';
 import {
   createListingFormSchema,
   createListingRefinements,
@@ -63,7 +66,7 @@ function getDraftPayloadKey(payload: ListingFormData): string {
 
 export const useListingForm = (
   defaultValues?: ListingFormData,
-  hackathons?: HackathonModel[],
+  hackathons?: BuilderHackathon[],
 ): UseListingFormReturn => {
   let formMethods: UseFormReturn<ListingFormData> | null = null;
   let isNewFormInitialized = false;
@@ -82,14 +85,14 @@ export const useListingForm = (
   const setDescriptionKey = useSetAtom(descriptionKeyAtom);
   const setSkillsKey = useSetAtom(skillsKeyAtom);
 
-  const hackathonsAtomed = useAtomValue(hackathonsAtom);
-  hackathons = hackathons || hackathonsAtomed;
+  const builderData = useBuilderData();
+  const allHackathons = hackathons || builderData.hackathons;
   const formSchema = createListingFormSchema({
     isGod,
     isEditing,
     isST,
-    pastListing: defaultValues as any,
-    hackathons: hackathons,
+    pastListing: defaultValues,
+    hackathons: allHackathons,
   });
   if (!formMethods || !Object.keys(formMethods).length) {
     //eslint-disable-next-line
@@ -103,9 +106,7 @@ export const useListingForm = (
 
   const { getValues, reset } = formMethods;
 
-  const queryClient = useQueryClient();
-  const saveDraftMutation = useAtomValue(saveDraftMutationAtom);
-  const submitListingMutation = useAtomValue(submitListingMutationAtom);
+  const setSubmitStatus = useSetAtom(submitStatusAtom);
   const [, setDraftSaving] = useAtom(isDraftSavingAtom);
 
   const [queueRef, setQueueRef] = useAtom(draftQueueAtom);
@@ -119,17 +120,12 @@ export const useListingForm = (
     queueRefRef.current = queueRef;
   }, [queueRef]);
 
+  /* oxlint-disable react-hooks/exhaustive-deps, react/memo-dependencies -- Earn's
+     autosave and validation keep their original dependencies (setters and
+     refs are stable; widening them would re-create the debounced save). */
   // queue ensures each call for auto save is sent synchronously
   const processSaveQueue = useCallback(async () => {
-    console.log('[DRAFT_DEBUG] processSaveQueue called', {
-      isEditing,
-      isProcessing: queueRefRef.current.isProcessing,
-      shouldProcessNext: queueRefRef.current.shouldProcessNext,
-      stack: new Error().stack?.split('\n').slice(1, 5).join('\n'),
-    });
-
     if (isEditing) {
-      console.log('[DRAFT_DEBUG] Skipping - isEditing=true');
       return;
     }
 
@@ -137,7 +133,6 @@ export const useListingForm = (
     const payloadKey = getDraftPayloadKey(dataToSave);
 
     if (queueRefRef.current.isProcessing) {
-      console.log('[DRAFT_DEBUG] Already processing, queuing next');
       setQueueRef((q) => ({
         ...q,
         shouldProcessNext: true,
@@ -146,12 +141,10 @@ export const useListingForm = (
     }
 
     if (payloadKey === lastSavedPayloadKeyRef.current) {
-      console.log('[DRAFT_DEBUG] Skipping save for unchanged payload');
       setHideAutoSave(false);
       return;
     }
 
-    console.log('[DRAFT_DEBUG] Starting save...');
     setDraftSaving(true);
     setQueueRef((q) => ({
       ...q,
@@ -159,19 +152,7 @@ export const useListingForm = (
       isProcessing: true,
     }));
     try {
-      console.log(
-        '[DRAFT_DEBUG] Calling API with id:',
-        dataToSave.id,
-        'slug:',
-        dataToSave.slug,
-      );
-      const data = await saveDraftMutation.mutateAsync(dataToSave);
-      console.log(
-        '[DRAFT_DEBUG] API success, returned id:',
-        data.id,
-        'slug:',
-        data.slug,
-      );
+      const data = await saveDraftRequest(dataToSave);
       lastSavedPayloadKeyRef.current = getDraftPayloadKey({
         ...dataToSave,
         id: data.id,
@@ -193,12 +174,8 @@ export const useListingForm = (
         ...q,
       }));
     } catch (error) {
-      console.log('[DRAFT_DEBUG] Error:', error);
+      console.error('Saving the draft failed:', error);
     } finally {
-      console.log(
-        '[DRAFT_DEBUG] Finally block, shouldProcessNext:',
-        queueRefRef.current.shouldProcessNext,
-      );
       setDraftSaving(false);
       setQueueRef((q) => ({
         ...q,
@@ -206,7 +183,6 @@ export const useListingForm = (
       }));
       // Check if we need to process another save
       if (queueRefRef.current.shouldProcessNext) {
-        console.log('[DRAFT_DEBUG] Processing queued save via setTimeout');
         // Use setTimeout to break the call stack and ensure queue state is updated
         setTimeout(() => {
           void processSaveQueue();
@@ -224,10 +200,6 @@ export const useListingForm = (
   }, [processSaveQueue]);
 
   const onChange = useCallback(() => {
-    console.log('[DRAFT_DEBUG] saveDraft() called', {
-      isEditing,
-      stack: new Error().stack?.split('\n').slice(1, 4).join('\n'),
-    });
     if (isEditing || isHydratingSavedFieldsRef.current) return;
 
     const payloadKey = getDraftPayloadKey(normalizeDraftPayload(getValues()));
@@ -241,19 +213,16 @@ export const useListingForm = (
 
   const submitListing = useCallback(async () => {
     const formData = refineReadyListing(getValues());
-    const data = await submitListingMutation.mutateAsync(formData);
-
-    await Promise.all([
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-dashboard-listing', data.slug],
-      }),
-      queryClient.invalidateQueries({
-        queryKey: ['dashboard'],
-      }),
-    ]);
-
-    return data;
-  }, [getValues, queryClient, submitListingMutation]);
+    setSubmitStatus('pending');
+    try {
+      const data = await submitListingRequest(formData, isEditing);
+      setSubmitStatus('success');
+      return data;
+    } catch (error) {
+      setSubmitStatus('error');
+      throw error;
+    }
+  }, [getValues, isEditing, setSubmitStatus]);
 
   const resetForm = useCallback(() => {
     if (typeof window !== 'undefined' && window.__clearImageCleanup) {
@@ -264,17 +233,17 @@ export const useListingForm = (
       }
     }
 
-    const defaultValues = getListingDefaults({
+    const defaults = getListingDefaults({
       isGod,
       isEditing,
       isST,
-      hackathons,
+      hackathons: allHackathons,
       type: getValues().type,
       hackathonId: undefined,
     });
     reset({
       ...getValues(),
-      ...defaultValues,
+      ...defaults,
       id: getValues().id,
       slug: getValues().slug,
       eligibility: [],
@@ -309,15 +278,17 @@ export const useListingForm = (
         values.rewards = rewardsObject;
       }
 
-      const innerSchema = formSchema._def.schema;
+      const innerSchema = formSchema.innerType();
       const partialSchema = innerSchema
         .pick(fields)
         .superRefine((data, ctx) => {
-          createListingRefinements(data as any, ctx, hackathons, fields);
+          void createListingRefinements(data, ctx, allHackathons, fields);
         });
 
       try {
         formMethods.clearErrors(
+          // ValidationFields' keys are the form's.
+          // oxlint-disable-next-line typescript/no-unsafe-type-assertion
           Object.keys(fields) as Array<keyof ListingFormData>,
         );
         await partialSchema.parseAsync(values);
@@ -325,6 +296,8 @@ export const useListingForm = (
       } catch (error) {
         if (error instanceof z.ZodError) {
           error.errors.forEach((err) => {
+            // zod's paths are the form's field names.
+            // oxlint-disable-next-line typescript/no-unsafe-type-assertion
             const fieldName = err.path.join('.') as keyof ListingFormData;
             formMethods.setError(fieldName, {
               type: err.code,
@@ -337,6 +310,8 @@ export const useListingForm = (
     },
     [formMethods, formSchema, isGod, isEditing, isST],
   );
+
+  /* oxlint-enable react-hooks/exhaustive-deps, react/memo-dependencies */
 
   const validateEligibilityQuestions = () =>
     validateFields({

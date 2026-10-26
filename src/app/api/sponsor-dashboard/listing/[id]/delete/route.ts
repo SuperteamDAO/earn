@@ -1,63 +1,32 @@
-import { headers } from 'next/headers';
-import { NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { guardSponsor, json } from '@/lib/route-guard';
+import * as ListingBuilder from '@/server/listing-builder';
+import { runtime } from '@/server/runtime';
 
-import { validateListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
-import { validateSession } from '@/features/auth/utils/getSponsorSession';
+import { refused } from '../../respond';
 
-export async function DELETE(
-  _: Request,
-  props: { params: Promise<{ id: string }> },
+// Deletes a draft (the dashboard's listing menu).
+export function DELETE(
+  request: NextRequest,
+  { params }: RouteContext<'/api/sponsor-dashboard/listing/[id]/delete'>,
 ) {
-  const { id } = await props.params;
-
-  logger.debug(`Delete request for bounty ID: ${id}`);
-
-  try {
-    const sessionResult = await validateSession(await headers());
-    if ('error' in sessionResult) {
-      return sessionResult.error;
-    }
-
-    const listingAuthResult = await validateListingSponsorAuth(
-      sessionResult.session.userSponsorId,
-      id,
-    );
-    if ('error' in listingAuthResult) {
-      return listingAuthResult.error;
-    }
-
-    const { listing } = listingAuthResult;
-
-    if (listing.status !== 'OPEN' || listing.isPublished) {
-      logger.warn(`Bounty ${id} is not in a deletable state`);
-      return NextResponse.json(
-        { message: 'Only draft bounties can be deleted' },
-        { status: 400 },
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const sponsor = yield* guardSponsor(request);
+      if (sponsor instanceof NextResponse) return sponsor;
+      const { id } = yield* Effect.promise(() => params);
+      return yield* ListingBuilder.ListingBuilder.use((builder) =>
+        builder.remove(sponsor, id),
+      ).pipe(
+        Effect.map(() =>
+          json(200, {
+            message: `Draft Bounty with id=${id} deleted successfully.`,
+          }),
+        ),
+        Effect.catchTags(refused(id)),
       );
-    }
-
-    await prisma.bounties.update({
-      where: { id },
-      data: { isActive: false },
-    });
-
-    logger.info(`Draft bounty ${id} deleted successfully`);
-    return NextResponse.json(
-      { message: `Draft Bounty with id=${id} deleted successfully.` },
-      { status: 200 },
-    );
-  } catch (error: any) {
-    logger.error(`Error deleting bounty ${id}: ${safeStringify(error)}`);
-    return NextResponse.json(
-      {
-        error: 'Internal Server Error',
-        message: `Error occurred while deleting bounty with id=${id}.`,
-      },
-      { status: 400 },
-    );
-  }
+    }),
+  );
 }

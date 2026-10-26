@@ -1,7 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
 import { useAtomValue } from 'jotai';
 import { Link } from 'lucide-react';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import slugify from 'slugify';
@@ -33,15 +32,16 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { getVisibleHackathons } from '@/features/hackathon/utils/getVisibleHackathons';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
-import { hackathonsAtom, isEditingAtom, isSTAtom } from '../../atoms';
+import { isEditingAtom, isSTAtom } from '../../atoms';
 import { getDefaultListingToken } from '../../constants';
 import { useListingForm } from '../../hooks';
-import { slugCheckQuery } from '../../queries/slug-check';
+import { useSlugCheck } from '../../queries/slug-check';
 import { calculateTotalRewardsForPodium } from '../../utils/rewards';
 import { getSuggestions } from '../../utils/suggestions';
+import { getVisibleHackathons } from '../../utils/visibleHackathons';
+import { useBuilderData } from '../BuilderData';
 
 const typeOptions = [{ value: 'bounty', label: 'Bounty' }] as const;
 
@@ -83,30 +83,14 @@ export function TitleAndType() {
     return !!(!!slugifiedTitle && !isEditing && isTitleDirty);
   }, [slugifiedTitle, isEditing, isTitleDirty]);
 
-  const slugCheckQueryResult = useMemo(() => {
-    return slugCheckQuery({
-      slug: slugifiedTitle,
-      check: false,
-      id: listingId || undefined,
-    });
-  }, [slugifiedTitle, listingId]);
-  const { data: generatedSlugValidated } = useQuery({
-    ...slugCheckQueryResult,
-    enabled: queryEnabled,
-    retry: false,
-    retryOnMount: false,
-    refetchOnWindowFocus: false,
-  });
+  const { data: generatedSlugValidated } = useSlugCheck(
+    { slug: slugifiedTitle, check: false, id: listingId || undefined },
+    queryEnabled,
+  );
 
   useEffect(() => {
-    const newSlug = generatedSlugValidated?.data.slug;
+    const newSlug = generatedSlugValidated?.slug;
     const currentSlug = form.getValues('slug');
-    console.log('[DRAFT_DEBUG] TitleAndType slug useEffect', {
-      newSlug,
-      currentSlug,
-      isTitleDirty,
-      willSave: !!(newSlug && isTitleDirty && newSlug !== currentSlug),
-    });
     if (newSlug && isTitleDirty && newSlug !== currentSlug) {
       form.setValue('slug', newSlug, {
         shouldValidate: true,
@@ -114,6 +98,7 @@ export function TitleAndType() {
       });
       form.saveDraft();
     }
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
   }, [generatedSlugValidated, isTitleDirty]);
 
   return (
@@ -191,7 +176,7 @@ function Type() {
   const form = useListingForm();
   const isEditing = useAtomValue(isEditingAtom);
   const isST = useAtomValue(isSTAtom);
-  const hackathons = useAtomValue(hackathonsAtom);
+  const { hackathons } = useBuilderData();
   const visibleHackathons = useMemo(
     () => getVisibleHackathons(hackathons),
     [hackathons],
@@ -218,7 +203,7 @@ function Type() {
       const hackathon = hackathons?.find((s) => s.slug === newType);
       if (hackathon) {
         form.setValue('hackathonId', hackathon.id);
-        form.setValue('eligibility', hackathon?.eligibility as any);
+        form.setValue('eligibility', hackathon.eligibility);
         form.setValue('token', getDefaultListingToken(isST, hackathon.slug));
       }
     } else {

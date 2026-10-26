@@ -1,5 +1,3 @@
-import { useIsFetching, useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { useAtomValue } from 'jotai';
 import { CheckIcon, Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useRef } from 'react';
@@ -17,9 +15,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/components/ui/multi-select';
 
-import { slugCheckQuery } from '@/features/listing-builder/queries/slug-check';
+import { useSlugCheck } from '@/features/listing-builder/queries/slug-check';
 
-import { isEditingAtom } from '../../../atoms';
+import { isEditingAtom, slugCheckingAtom } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
 
 export function Slug() {
@@ -27,7 +25,7 @@ export function Slug() {
   const isEditing = useAtomValue(isEditingAtom);
 
   // const [isValidated, setIsValidated] = useState(false);
-  const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
+  const isSlugLoading = useAtomValue(slugCheckingAtom) > 0;
 
   const slug = useWatch({
     control: form.control,
@@ -54,32 +52,18 @@ export function Slug() {
     [form.formState.errors.slug, isEditing, debouncedSlug, listingId],
   );
 
-  const slugCheckQueryResult = useMemo(() => {
-    return slugCheckQuery({ slug: debouncedSlug, check: true, id: listingId });
-  }, [debouncedSlug, listingId]);
   const {
     data: slugCheckData,
-    error: slugCheckError,
     isError: isSlugCheckError,
     isFetching: slugCheckFetching,
-  } = useQuery({
-    ...slugCheckQueryResult,
-    enabled: queryEnabled,
-    retry: false,
-    retryOnMount: false,
-    refetchOnWindowFocus: false,
-  });
+  } = useSlugCheck(
+    { slug: debouncedSlug, check: true, id: listingId },
+    queryEnabled,
+  );
 
-  const isSlugTaken = useMemo(() => {
-    if (slugCheckData?.data.slugExists) return true;
-    if (!axios.isAxiosError(slugCheckError)) return false;
-
-    return (
-      slugCheckError.response?.status === 400 &&
-      slugCheckError.response?.data?.slugExists === true
-    );
-  }, [slugCheckData, slugCheckError]);
-  const isSlugAvailable = slugCheckData?.data.slugExists === false;
+  // A taken slug answers 400 with slugExists (fetchSlugCheck reads it).
+  const isSlugTaken = slugCheckData?.slugExists === true;
+  const isSlugAvailable = slugCheckData?.slugExists === false;
 
   useEffect(() => {
     if (isSlugTaken) {
@@ -90,6 +74,7 @@ export function Slug() {
       });
       form.setFocus('slug');
     }
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
   }, [isSlugTaken]);
 
   const prevDebouncedSlugRef = useRef<string | undefined>(undefined);
@@ -98,17 +83,13 @@ export function Slug() {
       await form.trigger('slug');
       form.setFocus('slug');
       // Only save if slug actually changed
-      console.log('[DRAFT_DEBUG] Slug.tsx useEffect', {
-        prevSlug: prevDebouncedSlugRef.current,
-        debouncedSlug,
-        willSave: prevDebouncedSlugRef.current !== debouncedSlug,
-      });
       if (prevDebouncedSlugRef.current !== debouncedSlug) {
         prevDebouncedSlugRef.current = debouncedSlug;
         form.saveDraft();
       }
     }
-    validateSlug();
+    void validateSlug();
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
   }, [debouncedSlug]);
 
   return (

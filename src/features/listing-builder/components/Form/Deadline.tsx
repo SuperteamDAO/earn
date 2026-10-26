@@ -13,11 +13,12 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 
-import { hackathonsAtom, isEditingAtom } from '../../atoms';
+import { isEditingAtom } from '../../atoms';
 import { DEADLINE_FORMAT } from '../../constants';
 import { useListingForm } from '../../hooks';
+import { useBuilderData } from '../BuilderData';
 
 const deadlineOptions = [
   { label: '1 Week', value: 7 },
@@ -25,9 +26,17 @@ const deadlineOptions = [
   { label: '3 Weeks', value: 21 },
 ];
 
+const handleDeadlineSelection = (days: number) => {
+  return dayjs()
+    .add(days, 'day')
+    .endOf('day')
+    .format(DEADLINE_FORMAT)
+    .replace('Z', '');
+};
+
 export function Deadline() {
   const form = useListingForm();
-  const { user } = useUser();
+  const user = useViewer();
   const isGodMode = user?.role === 'GOD';
 
   const deadline = useWatch({
@@ -38,7 +47,7 @@ export function Deadline() {
     name: 'hackathonId',
     control: form.control,
   });
-  const hackathons = useAtomValue(hackathonsAtom);
+  const { hackathons } = useBuilderData();
   const currentHackathon = useMemo(
     () => hackathons?.find((hackathon) => hackathon.id === hackathonId),
     [hackathonId, hackathons],
@@ -68,14 +77,6 @@ export function Deadline() {
         currentHackathon.deadline,
       ).format('MMMM DD, YYYY')} and cannot be changed.`
     : undefined;
-
-  const handleDeadlineSelection = (days: number) => {
-    return dayjs()
-      .add(days, 'day')
-      .endOf('day')
-      .format(DEADLINE_FORMAT)
-      .replace('Z', '');
-  };
 
   // TODO: Debug why zod default for deadline specifically is not working
   useEffect(() => {

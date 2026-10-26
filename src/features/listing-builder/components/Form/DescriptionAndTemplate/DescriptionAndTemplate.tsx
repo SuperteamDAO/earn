@@ -1,5 +1,5 @@
+/* oxlint-disable no-underscore-dangle -- the editor's image cleanup hooks are window globals */
 import { useAtom, useAtomValue } from 'jotai';
-import { useRouter } from 'next/router';
 import { useEffect, useRef } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -15,7 +15,7 @@ import {
 import {
   descriptionKeyAtom,
   isEditingAtom,
-  submitListingMutationAtom,
+  submitStatusAtom,
 } from '@/features/listing-builder/atoms';
 
 import { useListingForm } from '../../../hooks';
@@ -25,9 +25,8 @@ import styles from '@/styles/listing-description.module.css';
 
 export function DescriptionAndTemplate() {
   const form = useListingForm();
-  const router = useRouter();
   const isEditing = useAtomValue(isEditingAtom);
-  const submitMutation = useAtomValue(submitListingMutationAtom);
+  const submitStatus = useAtomValue(submitStatusAtom);
   const templateId = useWatch({
     control: form.control,
     name: 'templateId',
@@ -40,7 +39,6 @@ export function DescriptionAndTemplate() {
     const currentDescription = form.getValues('description');
     if (originalDescriptionRef.current === null) {
       originalDescriptionRef.current = currentDescription || '';
-      console.log('Saved original description for image cleanup');
     }
   }, [form]);
 
@@ -50,29 +48,22 @@ export function DescriptionAndTemplate() {
 
   useEffect(() => {
     const processCleanup = () => {
-      if (
-        submitMutation.isPending ||
-        submitMutation.isSuccess ||
-        submitMutation.isError
-      ) {
-        console.log('Skipping cleanup - submit mutation is active/completed');
+      if (submitStatus !== 'idle') {
         return;
       }
 
       if (typeof window !== 'undefined') {
         if (isEditing && window.__processOrphanedImageCleanup) {
-          console.log('Processing orphaned image cleanup (edit mode)');
           try {
-            window.__processOrphanedImageCleanup(
+            void window.__processOrphanedImageCleanup(
               originalDescriptionRef.current || '',
             );
           } catch (error) {
             console.error('Failed to process orphaned image cleanup:', error);
           }
         } else if (!isEditing && window.__processImageCleanup) {
-          console.log('Processing image cleanup (draft mode)');
           try {
-            window.__processImageCleanup();
+            void window.__processImageCleanup();
           } catch (error) {
             console.error('Failed to process image cleanup:', error);
           }
@@ -80,28 +71,44 @@ export function DescriptionAndTemplate() {
       }
     };
 
-    const handleRouteStart = () => {
-      processCleanup();
-    };
-
     const handleBeforeUnload = () => {
       processCleanup();
     };
 
-    router.events.on('routeChangeStart', handleRouteStart);
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      router.events.off('routeChangeStart', handleRouteStart);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [
-    router.events,
-    isEditing,
-    submitMutation.isPending,
-    submitMutation.isSuccess,
-    submitMutation.isError,
-  ]);
+  }, [isEditing, submitStatus]);
+
+  // Leaving the builder within Earn (the App Router has no route events):
+  // the same cleanup, once, as the editor unmounts.
+  const submitStatusRef = useRef(submitStatus);
+  useEffect(() => {
+    submitStatusRef.current = submitStatus;
+  }, [submitStatus]);
+  useEffect(
+    () => () => {
+      if (submitStatusRef.current !== 'idle') return;
+      if (isEditing && window.__processOrphanedImageCleanup) {
+        try {
+          void window.__processOrphanedImageCleanup(
+            originalDescriptionRef.current || '',
+          );
+        } catch (error) {
+          console.error('Failed to process orphaned image cleanup:', error);
+        }
+      } else if (!isEditing && window.__processImageCleanup) {
+        try {
+          void window.__processImageCleanup();
+        } catch (error) {
+          console.error('Failed to process image cleanup:', error);
+        }
+      }
+    },
+    [isEditing],
+  );
 
   return (
     <FormField

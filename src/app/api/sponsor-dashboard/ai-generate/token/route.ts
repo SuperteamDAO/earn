@@ -1,143 +1,16 @@
-import { openrouter } from '@openrouter/ai-sdk-provider';
-import { generateObject } from 'ai';
-import { headers } from 'next/headers';
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
+import * as Schema from 'effect/Schema';
+import type { NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { aiGenerateRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
-import { getTokenList } from '@/server/tokenList';
-import { safeStringify } from '@/utils/safeStringify';
+import { runtime } from '@/server/runtime';
 
-import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
+import { aiRoute, Description } from '../respond';
 
-import { generateListingTokenPrompt } from './prompt';
+const Body = Schema.Struct({ description: Description });
 
-const requestBodySchema = z.object({
-  description: z.string().min(1, 'Description cannot be empty'),
-});
-const responseSchema = z.object({
-  token: z.string().optional().nullable(),
-});
+const handle = aiRoute(Body, 'Failed to generate token', (ai, sponsor, body) =>
+  ai.token(sponsor.userId, body.description),
+);
 
-export type TTokenGenerateResponse = z.infer<typeof responseSchema>;
-const AI_GENERATION_TIMEOUT_MS = 15000;
-
-export async function POST(request: Request) {
-  try {
-    const session = await getSponsorSession(await headers());
-
-    if (session.error || !session.data) {
-      return NextResponse.json(
-        { error: session.error },
-        { status: session.status },
-      );
-    }
-
-    const userId = session.data.userId;
-
-    const rateLimitResponse = await checkAndApplyRateLimitApp({
-      limiter: aiGenerateRateLimiter,
-      identifier: userId,
-      routeName: 'aiGenerateToken',
-    });
-
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    let description: string;
-    try {
-      const body = await request.json();
-      logger.debug(`Request body: ${safeStringify(body)}`);
-      const parsedBody = requestBodySchema.safeParse(body);
-
-      if (!parsedBody.success) {
-        logger.error(
-          'Invalid request body',
-          safeStringify(parsedBody.error.errors),
-        );
-        return NextResponse.json(
-          { error: 'Invalid request body', details: parsedBody.error.errors },
-          { status: 400 },
-        );
-      }
-      description = parsedBody.data.description;
-    } catch (e) {
-      if (e instanceof SyntaxError) {
-        logger.error('Invalid JSON in request body');
-        return NextResponse.json(
-          { error: 'Invalid JSON in request body' },
-          { status: 400 },
-        );
-      }
-      throw e;
-    }
-
-    const tokens = await getTokenList();
-    const prompt = generateListingTokenPrompt(
-      description,
-      tokens.map((token) => token.tokenSymbol),
-    );
-
-    let object: TTokenGenerateResponse;
-
-    try {
-      const result = await generateObject({
-        model: openrouter('openai/gpt-oss-120b', {
-          provider: {
-            only: ['baseten'],
-            allow_fallbacks: true,
-          },
-        }),
-        prompt,
-        schema: responseSchema as any,
-        system: 'Your role is to extract the token mentioned in the listings.',
-        abortSignal: AbortSignal.timeout(AI_GENERATION_TIMEOUT_MS),
-      });
-      object = result.object;
-      logger.info(
-        'Generated eligibility token object with primary model: ',
-        safeStringify(object),
-      );
-    } catch (primaryModelError) {
-      logger.warn(
-        'Primary model failed, attempting fallback model:',
-        safeStringify(primaryModelError),
-      );
-
-      try {
-        const result = await generateObject({
-          model: openrouter('google/gemini-2.0-flash-lite-001'),
-          prompt,
-          schema: responseSchema as any,
-          system:
-            'Your role is to extract the token mentioned in the listings.',
-          abortSignal: AbortSignal.timeout(AI_GENERATION_TIMEOUT_MS),
-        });
-        object = result.object;
-        logger.info(
-          'Generated eligibility token object with fallback model: ',
-          safeStringify(object),
-        );
-      } catch (fallbackModelError) {
-        logger.error(
-          'Both primary and fallback models failed. Primary error:',
-          safeStringify(primaryModelError),
-          'Fallback error:',
-          safeStringify(fallbackModelError),
-        );
-        object = { token: null };
-      }
-    }
-
-    return NextResponse.json(object, { status: 200 });
-  } catch (error) {
-    logger.error('Error generating token:', safeStringify(error));
-    return NextResponse.json(
-      { error: 'Failed to generate token' },
-      { status: 500 },
-    );
-  }
+export function POST(request: NextRequest) {
+  return runtime.runPromise(handle(request));
 }

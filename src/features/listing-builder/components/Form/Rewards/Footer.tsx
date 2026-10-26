@@ -1,11 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 
-import { tokenUsdValueQuery } from '@/features/listing-builder/queries/token-usd-value';
+import { useTokenUsdValue } from '@/features/listing-builder/queries/token-usd-value';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
 import { useListingForm } from '../../../hooks';
@@ -35,9 +34,7 @@ function RewardsFooter({ setOpen }: { setOpen: (open: boolean) => void }) {
     [maxBonusSpots, rewards],
   );
 
-  const { data: tokenUsdValueData } = useQuery(
-    tokenUsdValueQuery(token as string | undefined),
-  );
+  const tokenUsdValueData = useTokenUsdValue(token);
   const tokenUsdValue =
     typeof tokenUsdValueData === 'number' ? tokenUsdValueData : 1;
 
@@ -64,12 +61,14 @@ function RewardsFooter({ setOpen }: { setOpen: (open: boolean) => void }) {
       <Button
         type="button"
         className="w-full"
-        onClick={async () => {
-          if (await form.validateRewards()) {
-            setOpen(false);
-          } else {
-            toast.warning('Please resolve all errors in Rewards to Continue');
-          }
+        onClick={() => {
+          void (async () => {
+            if (await form.validateRewards()) {
+              setOpen(false);
+            } else {
+              toast.warning('Please resolve all errors in Rewards to Continue');
+            }
+          })();
         }}
       >
         Continue

@@ -1,6 +1,6 @@
 import { useAtom } from 'jotai';
 import { ExternalLink, Info, Loader2 } from 'lucide-react';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import { useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -23,17 +23,13 @@ export const PreviewListingModal = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const form = useListingForm();
-  const type = useWatch({
-    control: form.control,
-    name: 'type',
-  });
   const slug = useWatch({
     control: form.control,
     name: 'slug',
   });
   const previewUrl = useMemo(() => {
     return `/earn/listing/${slug}?preview=1`;
-  }, [type, slug]);
+  }, [slug]);
 
   return (
     <Dialog open={showPreview} onOpenChange={setShowPreview}>
@@ -109,6 +105,7 @@ export const PreviewListingModal = () => {
                 <Loader2 className="text-primary h-8 w-8 animate-spin" />
               </div>
             )}
+            {/* oxlint-disable-next-line react/iframe-missing-sandbox -- Earn's own listing page, previewed as it runs */}
             <iframe
               src={`${previewUrl}&nsb=1`}
               className="h-full w-full"

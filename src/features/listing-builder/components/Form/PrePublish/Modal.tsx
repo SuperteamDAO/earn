@@ -1,8 +1,7 @@
-import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ExternalLink, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+import { usePathname, useRouter } from 'next/navigation';
+import { posthog } from 'posthog-js';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -16,9 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useUser } from '@/store/user';
-
-import { isCreateListingAllowedQuery } from '@/features/listing-builder/queries/is-create-allowed';
+import { useViewer } from '@/lib/viewer';
 
 import {
   confirmModalAtom,
@@ -27,9 +24,11 @@ import {
   isSTAtom,
   listingStatusAtom,
   previewAtom,
-  submitListingMutationAtom,
+  slugCheckingAtom,
+  submitStatusAtom,
 } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
+import { useBuilderData } from '../../BuilderData';
 import { Foundation } from './Foundation';
 import { GeoLock } from './GeoLock';
 import { ReferredBy } from './ReferredBy';
@@ -42,7 +41,7 @@ export function PrePublish() {
   const [open, isOpen] = useState(false);
   const status = useAtomValue(listingStatusAtom);
 
-  const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
+  const isSlugLoading = useAtomValue(slugCheckingAtom) > 0;
 
   const isDraftSaving = useAtomValue(isDraftSavingAtom);
   const setConfirmModal = useSetAtom(confirmModalAtom);
@@ -50,43 +49,40 @@ export function PrePublish() {
 
   const isEditing = useAtomValue(isEditingAtom);
 
-  const submitListingMutation = useAtomValue(submitListingMutationAtom);
+  const submitStatus = useAtomValue(submitStatusAtom);
+  const submitListingMutation = {
+    isPending: submitStatus === 'pending',
+    isSuccess: submitStatus === 'success',
+  };
 
   const router = useRouter();
+  const pathname = usePathname();
 
-  const { user } = useUser();
+  const user = useViewer();
 
-  const {
-    data: isCreateListingAllowed,
-    refetch: isCreateListingAllowedRefetch,
-  } = useQuery(isCreateListingAllowedQuery);
-
-  useEffect(() => {
-    isCreateListingAllowedRefetch();
-  }, [user]);
+  const { createAllowed: isCreateListingAllowed } = useBuilderData();
 
   const isDisabledHard = useMemo(
     () =>
-      (isCreateListingAllowed !== undefined &&
-        isCreateListingAllowed === false &&
-        user?.role !== 'GOD' &&
-        !isEditing) ||
+      (!isCreateListingAllowed && user?.role !== 'GOD' && !isEditing) ||
       status === 'verification failed' ||
       status === 'blocked',
+    // oxlint-disable-next-line react/memo-dependencies, react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
     [isCreateListingAllowed, isEditing, status],
   );
 
   const [isDisabledSoft, setIsDisabledSoft] = useState(true);
 
   useEffect(() => {
-    if (router.pathname.includes('/earn/dashboard/new')) {
+    if (pathname?.includes('/earn/dashboard/new')) {
       if (isST) {
         form.setValue('isFndnPaying', true);
       } else {
         form.setValue('isFndnPaying', false);
       }
     }
-  }, [isST, router.pathname]);
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
+  }, [isST, pathname]);
 
   useEffect(() => {
     const shouldBeDisabled =
@@ -97,6 +93,7 @@ export function PrePublish() {
       isSlugLoading;
 
     if (shouldBeDisabled) {
+      // oxlint-disable-next-line react/set-state-in-effect -- Earn's effect, unchanged
       setIsDisabledSoft(true);
     } else {
       const timer = setTimeout(() => {
@@ -119,7 +116,7 @@ export function PrePublish() {
   );
 
   const isUpdate = useMemo(
-    () => !!isEditing || status === 'verifying',
+    () => isEditing || status === 'verifying',
     [isEditing, status],
   );
 
@@ -148,12 +145,14 @@ export function PrePublish() {
         <Button
           className="ph-no-capture"
           disabled={isDraftSaving || isDisabledHard}
-          onClick={async () => {
-            posthog.capture('basics_sponsor');
-            if (await form.validateBasics()) isOpen(true);
-            else {
-              toast.warning('Please resolve all errors to continue');
-            }
+          onClick={() => {
+            void (async () => {
+              posthog.capture('basics_sponsor');
+              if (await form.validateBasics()) isOpen(true);
+              else {
+                toast.warning('Please resolve all errors to continue');
+              }
+            })();
           }}
         >
           Continue
@@ -203,34 +202,36 @@ export function PrePublish() {
           )}
           <Button
             className="ml-auto px-12"
-            onClick={async () => {
-              if (await form.trigger()) {
-                try {
-                  const data = await form.submitListing();
-                  if (isEditing) {
-                    posthog.capture('update listing_sponsor');
-                    router.push('/earn/dashboard/listings');
-                    toast.success('Listing Updated Successfully', {
-                      description: 'Redirecting to dashboard',
-                    });
-                  } else {
-                    isOpen(false);
-                    if (isUpdate) posthog.capture('update listing_sponsor');
-                    else posthog.capture('publish listing_sponsor');
-                    if (data.status === 'VERIFYING') {
-                      setConfirmModal('VERIFICATION_SHOW_FORM');
+            onClick={() => {
+              void (async () => {
+                if (await form.trigger()) {
+                  try {
+                    const data = await form.submitListing();
+                    if (isEditing) {
+                      posthog.capture('update listing_sponsor');
+                      router.push('/earn/dashboard/listings/');
+                      toast.success('Listing Updated Successfully', {
+                        description: 'Redirecting to dashboard',
+                      });
                     } else {
-                      setConfirmModal('SUCCESS');
+                      isOpen(false);
+                      if (isUpdate) posthog.capture('update listing_sponsor');
+                      else posthog.capture('publish listing_sponsor');
+                      if (data.status === 'VERIFYING') {
+                        setConfirmModal('VERIFICATION_SHOW_FORM');
+                      } else {
+                        setConfirmModal('SUCCESS');
+                      }
                     }
+                  } catch (error) {
+                    console.error(error);
+                    toast.error(
+                      'Failed to create listing, please try again later',
+                      {},
+                    );
                   }
-                } catch (error) {
-                  console.log(error);
-                  toast.error(
-                    'Failed to create listing, please try again later',
-                    {},
-                  );
                 }
-              }
+              })();
             }}
             disabled={isDisabledSoftForButtons}
           >

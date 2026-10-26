@@ -54,8 +54,10 @@ export function EligibilityQuestionsSheet() {
   return (
     <Sheet
       open={open}
-      onOpenChange={async (e) => {
-        setOpen(e);
+      onOpenChange={(e) => {
+        void (async () => {
+          setOpen(e);
+        })();
       }}
     >
       <SheetTrigger className="w-full">
@@ -132,14 +134,16 @@ export function EligibilityQuestionsSheet() {
             <Button
               type="submit"
               className="w-full"
-              onClick={async () => {
-                if (await form.validateEligibilityQuestions()) {
-                  setOpen(false);
-                } else {
-                  toast.warning(
-                    'Please resolve all errors in Custom Questions to Continue',
-                  );
-                }
+              onClick={() => {
+                void (async () => {
+                  if (await form.validateEligibilityQuestions()) {
+                    setOpen(false);
+                  } else {
+                    toast.warning(
+                      'Please resolve all errors in Custom Questions to Continue',
+                    );
+                  }
+                })();
               }}
             >
               Continue

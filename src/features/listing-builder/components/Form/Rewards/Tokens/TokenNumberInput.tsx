@@ -53,6 +53,7 @@ function TokenNumberInput({
 
   useEffect(() => {
     if (!isFocused) {
+      // oxlint-disable-next-line react/set-state-in-effect -- Earn's effect, unchanged
       setInputValue(formatNumber(value));
     }
   }, [value, isFocused, formatNumber]);
@@ -65,14 +66,14 @@ function TokenNumberInput({
   }, []);
 
   const limitDecimals = useCallback(
-    (value: string): string => {
-      if (!value.includes('.')) return value;
-      if (value.endsWith('.')) return value;
-      const [integer, fraction] = value.split('.');
+    (raw: string): string => {
+      if (!raw.includes('.')) return raw;
+      if (raw.endsWith('.')) return raw;
+      const [integer, fraction] = raw.split('.');
       if (fraction && fraction.length > maxDecimals) {
         return `${integer}.${fraction.substring(0, maxDecimals)}`;
       }
-      return value;
+      return raw;
     },
     [maxDecimals],
   );

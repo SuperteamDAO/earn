@@ -50,7 +50,7 @@ export function RewardsSheet() {
         <FormField
           control={form.control}
           name="rewards"
-          render={({}) => {
+          render={() => {
             return (
               <FormItem className="group items-start gap-1.5">
                 <FormLabel isRequired className="">
@@ -139,7 +139,7 @@ export const RewardsLabel = memo(
           classNames={{
             amount: 'font-medium text-sm',
           }}
-          formatter={(n) => formatNumberWithSuffix(n) + '' || '0'}
+          formatter={(n) => formatNumberWithSuffix(n) || '0'}
         />
         {!hideCompensationType && (
           <TypeLabelText>

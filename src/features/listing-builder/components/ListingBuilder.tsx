@@ -1,179 +1,56 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/router';
+'use client';
+
 import { useEffect } from 'react';
-import { toast } from 'sonner';
-
-import { ErrorSection } from '@/components/shared/ErrorSection';
-import { Default } from '@/layouts/Default';
-import { Meta } from '@/layouts/Meta';
-import { useUser } from '@/store/user';
-
-import { Login } from '@/features/auth/components/Login';
-import { Header } from '@/features/navbar/components/Header';
-import { useAutoSwitchSponsor } from '@/features/sponsor-dashboard/hooks/use-auto-switch-sponsor';
-import { activeHackathonsQuery } from '@/features/sponsor-dashboard/queries/active-hackathons';
-import { sponsorDashboardListingQuery } from '@/features/sponsor-dashboard/queries/listing';
 
 import { AUTO_GENERATE_STORAGE_KEY } from '../constants';
+import type {
+  BuilderHackathon,
+  BuilderListing,
+  BuilderTemplate,
+} from '../types/builder';
+import { BuilderDataProvider } from './BuilderData';
 import { ListingBuilderProvider } from './ListingBuilderProvider';
-import { ListingBuilderSkeleton } from './ListingBuilderSkeleton';
 
 interface ListingBuilderLayout {
   route: 'new' | 'edit' | 'duplicate';
-  slug?: string;
+  // The saved listing (edit, duplicate); null for a new one.
+  listing: BuilderListing | null;
+  hackathons: BuilderHackathon[];
+  createAllowed: boolean;
+  templates: BuilderTemplate[];
 }
 
-export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
-  const { user, isLoading: isUserLoading } = useUser();
-  const { authenticated, ready } = usePrivy();
-  const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const { data: hackathons, isLoading: isHackathonLoading } = useQuery({
-    ...activeHackathonsQuery(),
-    enabled: !!user,
-  });
-
-  const {
-    data: listing,
-    isLoading: isListingLoading,
-    error: listingError,
-    refetch: refetchListing,
-  } = useQuery({
-    ...sponsorDashboardListingQuery(slug || ''),
-    // Always refresh the edit form from the server so deadline edits do not
-    // reopen from stale React Query cache.
-    refetchOnMount: 'always',
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-
-  const { isSwitching: isSwitchingSponsor } = useAutoSwitchSponsor({
-    error: listingError,
-    refetch: refetchListing,
-    queryKey: ['sponsor-dashboard-listing', slug || ''],
-  });
-
-  useEffect(() => {
-    // Handle 403 errors for non-GOD users (must run before error page check)
-    if (listingError && !isSwitchingSponsor && user?.role !== 'GOD') {
-      const error = listingError as any;
-      if (error?.response?.status === 403) {
-        toast.error('This listing does not belong to you');
-        router.push('/earn/dashboard/listings');
-        return;
-      }
-    }
-  }, [listingError, router, user?.role, isSwitchingSponsor]);
-
-  useEffect(() => {
-    if (isListingLoading || isUserLoading || !ready) return;
-    if (listing) {
-      // Only redirect non-GOD users on sponsor mismatch
-      if (
-        listing.sponsorId !== user?.currentSponsorId &&
-        user?.role !== 'GOD'
-      ) {
-        router.push('/earn/dashboard/listings');
-        return;
-      }
-    }
-  }, [
-    listing,
-    user?.currentSponsorId,
-    user?.role,
-    router,
-    isListingLoading,
-    isUserLoading,
-    ready,
-  ]);
-
-  useEffect(() => {
-    const handleRouteComplete = () => {
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-dashboard-listing', slug],
-      });
-    };
-
-    router.events.on('routeChangeComplete', handleRouteComplete);
-
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteComplete);
-    };
-  }, [router.events, queryClient, slug]);
-
+export function ListingBuilder({
+  route,
+  listing,
+  hackathons,
+  createAllowed,
+  templates,
+}: ListingBuilderLayout) {
   useEffect(() => {
     localStorage.removeItem(AUTO_GENERATE_STORAGE_KEY);
   }, []);
 
-  if (ready && !authenticated) {
-    return <Login isOpen={true} onClose={() => {}} />;
-  }
-
-  const showContent = user?.currentSponsor?.id || user?.role === 'GOD';
-
-  const is403Error =
-    listingError &&
-    (listingError as any)?.response?.status === 403 &&
-    user?.role !== 'GOD';
-  if (
-    !user ||
-    !authenticated ||
-    !showContent ||
-    !ready ||
-    isListingLoading ||
-    isHackathonLoading ||
-    isSwitchingSponsor ||
-    is403Error
-  ) {
-    return <ListingBuilderSkeleton />;
-  }
-
-  if (route !== 'new' && (!slug || !listing)) {
-    return (
-      <Default
-        meta={
-          <Meta
-            title="Superteam Earn | Work to Earn in Crypto"
-            description="Explore the latest bounties on Superteam Earn, offering opportunities in the crypto space across Design, Development, and Content."
-            noIndex
-          />
-        }
-      >
-        <Header />
-        <ErrorSection message="Sorry! The bounty you are looking for is not available." />
-      </Default>
-    );
-  }
-
   return (
-    <ListingBuilderProvider
-      listing={
-        route === 'duplicate'
-          ? {
-              ...listing,
-              title: listing?.title + ' (copy)',
-              slug: '',
-              isPublished: false,
-              publishedAt: undefined,
-              id: undefined,
-              deadline: undefined,
-              status: 'OPEN',
-            }
-          : listing
-      }
-      isEditing={!!listing?.publishedAt}
-      hackathons={
-        listing?.type === 'hackathon'
-          ? ([
-              listing?.Hackathon,
-              ...(hackathons
-                ? hackathons.filter((s) => s.slug !== listing?.Hackathon?.slug)
-                : []),
-            ] as any)
-          : hackathons
-      }
-    />
+    <BuilderDataProvider value={{ hackathons, createAllowed, templates }}>
+      <ListingBuilderProvider
+        listing={
+          listing && route === 'duplicate'
+            ? {
+                ...listing,
+                title: listing.title + ' (copy)',
+                slug: '',
+                isPublished: false,
+                publishedAt: null,
+                id: undefined,
+                deadline: null,
+                status: 'OPEN',
+              }
+            : (listing ?? undefined)
+        }
+        isEditing={!!listing?.publishedAt}
+        hackathons={hackathons}
+      />
+    </BuilderDataProvider>
   );
 }

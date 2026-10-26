@@ -3,6 +3,7 @@ import '@/styles/st-globals.css';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
 import * as Clock from 'effect/Clock';
+import * as Effect from 'effect/Effect';
 import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
 
@@ -14,6 +15,7 @@ import { confirmDelay } from '@/lib/renewal';
 import { getSession, getViewer, hasPrivySession } from '@/lib/session';
 import { ViewerProvider } from '@/lib/viewer';
 import { runtime } from '@/server/runtime';
+import * as Tokens from '@/server/tokens';
 import { fontVariables } from '@/theme/fonts';
 
 export const metadata: Metadata = {
@@ -32,17 +34,23 @@ export const viewport: Viewport = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [session, viewer, privySession, now] = await Promise.all([
+  const [session, viewer, privySession, now, tokens] = await Promise.all([
     getSession(),
     getViewer(),
     hasPrivySession(),
     runtime.runPromise(Clock.currentTimeMillis),
+    // Without them the browser fetches the list itself.
+    runtime.runPromise(
+      Tokens.Tokens.use((service) => service.list).pipe(
+        Effect.orElseSucceed(() => []),
+      ),
+    ),
   ]);
   return (
     <html lang="en" data-theme="light" className={fontVariables}>
       <body>
         <ViewerProvider viewer={viewer}>
-          <TokenListProvider>
+          <TokenListProvider tokens={tokens}>
             <ExternalLinkDialogProvider>{children}</ExternalLinkDialogProvider>
           </TokenListProvider>
         </ViewerProvider>

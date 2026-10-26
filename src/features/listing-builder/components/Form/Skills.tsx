@@ -24,7 +24,7 @@ export function Skills() {
   const [skillsKey, setSkillsKey] = useAtom(skillsKeyAtom);
   useEffect(() => {
     setSkillsKey(`editor-${templateId || 'default'}`);
-  }, [templateId]);
+  }, [templateId, setSkillsKey]);
 
   return (
     <FormField
@@ -41,7 +41,7 @@ export function Skills() {
                 onChange={(e) => {
                   field.onChange(e);
                   form.saveDraft();
-                  form.trigger('skills');
+                  void form.trigger('skills');
                 }}
               />
             </FormControl>

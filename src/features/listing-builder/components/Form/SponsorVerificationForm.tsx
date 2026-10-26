@@ -1,6 +1,8 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -28,10 +30,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { SideDrawer, SideDrawerContent } from '@/components/ui/side-drawer';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import type { ChapterRegionData } from '@/interface/chapter';
+import { errorMessage, getJson, postJson } from '@/lib/fetch-json';
 
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { SocialInput } from '@/features/social/components/SocialInput';
 import { sponsorVerificationSchema } from '@/features/sponsor/utils/sponsorVerificationSchema';
 
@@ -43,7 +44,7 @@ type CoreMember = {
 };
 
 export const SponsorVerificationForm = () => {
-  const { refetchUser } = useUser();
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const isSubmittingRef = useRef(false);
@@ -66,31 +67,51 @@ export const SponsorVerificationForm = () => {
     },
   });
 
+  // oxlint-disable-next-line react/incompatible-library -- react-hook-form's watch, as Earn used it
   const commitToDeadline = form.watch('commitToDeadline');
   const superteamName = useWatch({
     control: form.control,
     name: 'superteamName',
   });
 
-  const { data: chapters = [] } = useQuery(chaptersQuery);
+  const [chapters, setChapters] = useState<ChapterRegionData[]>([]);
+  useEffect(() => {
+    getJson<{ chapters: ChapterRegionData[] }>('/api/chapters/')
+      .then((data) => setChapters(data.chapters))
+      .catch(() => setChapters([]));
+  }, []);
   const selectedChapter = useMemo(
     () => chapters.find((chapter) => chapter.name === superteamName),
     [chapters, superteamName],
   );
   const hasNoAssociation = superteamName === 'No association';
 
-  const { data: coreMembers = [], isLoading: isLoadingCoreMembers } = useQuery({
-    queryKey: ['chapter-core-members', selectedChapter?.id],
-    queryFn: async () => {
-      const response = await api.get<{ coreMembers: CoreMember[] }>(
-        `/api/chapters/${selectedChapter?.id}/core-members`,
-      );
-      return response.data.coreMembers;
-    },
-    enabled: Boolean(selectedChapter?.id) && !hasNoAssociation,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 5 * 60 * 1000,
-  });
+  const [coreMembers, setCoreMembers] = useState<CoreMember[]>([]);
+  const [isLoadingCoreMembers, setIsLoadingCoreMembers] = useState(false);
+  const chapterId = selectedChapter?.id;
+  useEffect(() => {
+    if (!chapterId || hasNoAssociation) {
+      setCoreMembers([]);
+      return undefined;
+    }
+    let current = true;
+    setIsLoadingCoreMembers(true);
+    getJson<{ coreMembers: CoreMember[] }>(
+      `/api/chapters/${chapterId}/core-members/`,
+    )
+      .then((data) => {
+        if (current) setCoreMembers(data.coreMembers);
+      })
+      .catch(() => {
+        if (current) setCoreMembers([]);
+      })
+      .finally(() => {
+        if (current) setIsLoadingCoreMembers(false);
+      });
+    return () => {
+      current = false;
+    };
+  }, [chapterId, hasNoAssociation]);
 
   useEffect(() => {
     form.setValue('superteamLead', '');
@@ -113,16 +134,15 @@ export const SponsorVerificationForm = () => {
             : values.superteamName,
       };
 
-      await api.post('/api/sponsor/verification', payload);
+      await postJson('/api/sponsor/verification/', payload);
       setHasSubmitted(true);
-      await refetchUser();
+      router.refresh();
 
       toast.success('Verification information updated successfully');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error submitting verification:', error);
       toast.error(
-        error.response?.data?.message ||
-          'Failed to update verification information',
+        errorMessage(error, 'Failed to update verification information'),
       );
     } finally {
       isSubmittingRef.current = false;
@@ -154,7 +174,7 @@ export const SponsorVerificationForm = () => {
 
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}
                 className="mt-6 space-y-4"
               >
                 <FormField

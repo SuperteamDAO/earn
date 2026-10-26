@@ -54,7 +54,7 @@ const questionTypes = [
 ];
 
 interface EligibilityQuestionItemProps {
-  field: FieldArrayWithId<ListingFormData, 'eligibility', 'id'>;
+  field: FieldArrayWithId<ListingFormData, 'eligibility'>;
   index: number;
   form: UseListingFormReturn;
   handleRemoveQuestion: (index: number) => void;
@@ -285,7 +285,7 @@ export function EligibilityQuestionsForm() {
       );
       scrollToBottom();
     },
-    [append, scrollToBottom, type, fields.length],
+    [append, scrollToBottom, fields.length],
   );
 
   const handleRemoveQuestion = useCallback(

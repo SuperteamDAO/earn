@@ -1,16 +1,14 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useIsFetching, useQueryClient } from '@tanstack/react-query';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { ChevronLeft, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+import { useRouter } from 'next/navigation';
+import { posthog } from 'posthog-js';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { LocalImage } from '@/components/ui/local-image';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { UserMenu } from '@/features/navbar/components/UserMenu';
@@ -20,13 +18,14 @@ import {
   isDraftSavingAtom,
   isEditingAtom,
   previewAtom,
+  slugCheckingAtom,
 } from '../../atoms';
 import { useListingForm } from '../../hooks';
 import { PrePublish } from '../Form/PrePublish/Modal';
 import { StatusBadge } from './StatusBadge';
 
 export function Header() {
-  const { authenticated, ready } = usePrivy();
+  const authenticated = useViewer() !== null;
   const router = useRouter();
 
   const isDraftSaving = useAtomValue(isDraftSavingAtom);
@@ -36,14 +35,9 @@ export function Header() {
     control: form.control,
     name: 'id',
   });
-  const slug = useWatch({
-    control: form.control,
-    name: 'slug',
-  });
   const isEditing = useAtomValue(isEditingAtom);
   const hideAutoSave = useAtomValue(hideAutoSaveAtom);
-  const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
-  const queryClient = useQueryClient();
+  const isSlugLoading = useAtomValue(slugCheckingAtom) > 0;
 
   return (
     <div className="bg-background sticky top-0 z-50 hidden border-b md:block">
@@ -66,10 +60,7 @@ export function Header() {
           <Button
             variant="outline"
             onClick={() => {
-              queryClient.invalidateQueries({
-                queryKey: ['sponsor-dashboard-listing', slug],
-              });
-              router.push('/earn/dashboard/listings');
+              router.push('/earn/dashboard/listings/');
             }}
           >
             <ChevronLeft /> Go Back
@@ -77,13 +68,7 @@ export function Header() {
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-4 py-2">
-          {!ready && (
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-4 w-20" />
-            </div>
-          )}
-          {ready && authenticated && (
+          {authenticated && (
             <>
               {!isEditing && (
                 <p className="w-20 text-sm font-medium text-slate-400">

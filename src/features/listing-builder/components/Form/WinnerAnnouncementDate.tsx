@@ -47,6 +47,7 @@ export function WinnerAnnouncementDate() {
     if (!deadline) return;
     if (form.getValues('commitmentDate')) return;
     handleQuickSelect(14, false);
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
   }, [deadline, form]);
 
   return (

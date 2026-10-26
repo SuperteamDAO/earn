@@ -1,14 +1,16 @@
+/* oxlint-disable no-underscore-dangle -- zod's schema internals (_def) */
 import { z } from 'zod';
 
-import type { CompensationType } from '@/prisma/enums';
-import type { HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
-
-import type { Listing } from '@/features/listings/types';
 
 import type { GeneratedListingData } from '../atoms';
 import { DEADLINE_FORMAT, getDefaultListingToken } from '../constants';
 import type { ListingFormData } from '../types';
+import type {
+  BuilderHackathon,
+  BuilderListing,
+  BuilderTemplate,
+} from '../types/builder';
 import { createListingFormSchema } from '../types/schema';
 import { calculateTotalRewardsForPodium } from './rewards';
 
@@ -17,10 +19,18 @@ interface ListingDefaults {
   isEditing: boolean;
   isST: boolean;
   type?: 'bounty' | 'hackathon';
-  hackathons?: HackathonModel[];
+  hackathons?: BuilderHackathon[];
   hackathonId?: string;
   generatedListing?: GeneratedListingData;
 }
+
+// The object schema inside the ZodEffects refinements wrap it in.
+const innerObject = (
+  schema: z.ZodTypeAny,
+): z.ZodObject<z.ZodRawShape> | null => {
+  if (schema instanceof z.ZodEffects) return innerObject(schema.innerType());
+  return schema instanceof z.ZodObject ? schema : null;
+};
 
 export const getListingDefaults = ({
   isGod,
@@ -38,22 +48,11 @@ export const getListingDefaults = ({
     hackathons,
   });
 
-  // Get the inner schema by unwrapping the ZodEffects
-  const getInnerSchema = (schema: z.ZodTypeAny): z.ZodObject<any> => {
-    if (schema instanceof z.ZodEffects) {
-      return getInnerSchema(schema.innerType());
-    }
-    return schema as z.ZodObject<any>;
-  };
+  const shape = innerObject(schema)?.shape ?? {};
 
-  const innerSchema = getInnerSchema(schema);
-  const shape = innerSchema.shape;
+  const defaults: Record<string, unknown> = {};
 
-  const defaults: Record<string, any> = {};
-
-  for (const [key, value] of Object.entries(shape)) {
-    const zodValue = value as z.ZodTypeAny;
-
+  for (const [key, zodValue] of Object.entries(shape)) {
     if (zodValue instanceof z.ZodDefault) {
       defaults[key] = zodValue._def.defaultValue();
     } else if (zodValue instanceof z.ZodOptional) {
@@ -144,55 +143,44 @@ export const getListingDefaults = ({
     }
   }
 
+  // Built from the form schema's own defaults.
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   return defaults as ListingFormData;
 };
 
+// A template's content over the form: its title, description, skills and
+// type; everything else stays as the sponsor set it.
 export const cleanTemplate = (
-  template: Listing,
+  template: BuilderTemplate,
   prevValues: ListingFormData,
-) => {
-  const reTemplate: Partial<
-    Listing & { color: string; emoji: string; Bounties: string }
-  > = { ...template } as any;
-
-  reTemplate.templateId = reTemplate.id;
-  reTemplate.id = prevValues.id || undefined;
-  reTemplate.slug = prevValues.slug;
-  reTemplate.compensationType = prevValues.compensationType;
-  reTemplate.rewards = prevValues.rewards || undefined;
-  reTemplate.deadline = prevValues.deadline;
-  reTemplate.commitmentDate = prevValues.commitmentDate;
-  reTemplate.maxBonusSpots = prevValues.maxBonusSpots || undefined;
-  reTemplate.minRewardAsk = prevValues.minRewardAsk || undefined;
-  reTemplate.maxRewardAsk = prevValues.maxRewardAsk || undefined;
-  reTemplate.pocSocials = prevValues.pocSocials;
-  reTemplate.rewardAmount = prevValues.rewardAmount || undefined;
-  reTemplate.rewards = prevValues.rewards || undefined;
-  reTemplate.region = prevValues.region;
-  reTemplate.isPrivate = prevValues.isPrivate;
-  reTemplate.isFndnPaying = prevValues.isFndnPaying;
-  reTemplate.hackathonId = prevValues.hackathonId || undefined;
-  reTemplate.eligibility = (prevValues.eligibility as any) || undefined;
-  reTemplate.token = prevValues.token || reTemplate.token;
-
-  delete reTemplate.isFeatured;
-  delete reTemplate.isActive;
-  delete reTemplate.isArchived;
-  delete reTemplate.applicationType;
-  delete reTemplate.isPublished;
-  delete reTemplate.pocId;
-  delete reTemplate.publishedAt;
-  delete reTemplate.requirements;
-  delete reTemplate.sponsorId;
-  delete reTemplate.color;
-  delete reTemplate.emoji;
-  delete reTemplate.Bounties;
-
-  return reTemplate;
-};
+): ListingFormData => ({
+  templateId: template.id,
+  id: prevValues.id || undefined,
+  title: template.title ?? '',
+  description: template.description ?? '',
+  skills: template.skills ?? [],
+  type: template.type === 'hackathon' ? 'hackathon' : 'bounty',
+  slug: prevValues.slug,
+  compensationType: prevValues.compensationType,
+  rewards: prevValues.rewards || undefined,
+  deadline: prevValues.deadline,
+  commitmentDate: prevValues.commitmentDate,
+  maxBonusSpots: prevValues.maxBonusSpots || undefined,
+  minRewardAsk: prevValues.minRewardAsk || undefined,
+  maxRewardAsk: prevValues.maxRewardAsk || undefined,
+  pocSocials: prevValues.pocSocials,
+  rewardAmount: prevValues.rewardAmount || undefined,
+  region: prevValues.region,
+  isPrivate: prevValues.isPrivate,
+  isFndnPaying: prevValues.isFndnPaying,
+  hackathonId: prevValues.hackathonId || undefined,
+  eligibility: prevValues.eligibility || undefined,
+  token: prevValues.token || template.token || '',
+});
 
 export function transformListingToFormListing(
-  listing: Listing,
+  // A duplicate has no id yet.
+  listing: Omit<BuilderListing, 'id'> & { id?: string },
   isST = false,
 ): ListingFormData {
   return {
@@ -222,10 +210,11 @@ export function transformListingToFormListing(
     type: listing.type === 'hackathon' ? 'hackathon' : 'bounty',
     title: listing.title || '',
     description: listing.description || '',
-    eligibility: listing.eligibility as any,
+    eligibility: listing.eligibility,
     region: listing.region || 'Global',
-    rewards: listing.rewards as any,
-    compensationType: listing.compensationType as CompensationType,
+    rewards:
+      listing.rewards && Object.fromEntries(Object.entries(listing.rewards)),
+    compensationType: listing.compensationType,
     rewardAmount: listing.rewardAmount,
     maxBonusSpots: listing.maxBonusSpots,
     maxRewardAsk: listing.maxRewardAsk,
@@ -244,7 +233,6 @@ export function transformListingToFormListing(
     publishedAt: listing.publishedAt,
     totalPaymentsMade: listing.totalPaymentsMade,
     isWinnersAnnounced: listing.isWinnersAnnounced,
-    totalWinnersSelected: listing.totalWinnersSelected,
     referredBy: listing.referredBy,
   };
 }

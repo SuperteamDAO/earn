@@ -1,111 +1,33 @@
-import { openrouter } from '@openrouter/ai-sdk-provider';
-import { convertToModelMessages, streamText } from 'ai';
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
-import { ZodError } from 'zod';
+import type { UIMessage } from 'ai';
+import * as Schema from 'effect/Schema';
+import type { NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { aiGenerateRateLimiter } from '@/lib/ratelimit';
-import { checkAndApplyRateLimitApp } from '@/lib/rateLimiterService';
-import { getTokenBySymbol } from '@/server/tokenList';
-import { safeStringify } from '@/utils/safeStringify';
+import { runtime } from '@/server/runtime';
 
-import { getSponsorSession } from '@/features/auth/utils/getSponsorSession';
-import { autoGenerateChatSchema } from '@/features/listing-builder/components/AutoGenerate/schema';
+import { aiRoute, ListingType } from '../respond';
 
-import { getDescriptionPrompt } from './prompts';
+const Body = Schema.Struct({
+  messages: Schema.Array(Schema.Unknown),
+  listingType: ListingType,
+  token: Schema.optional(Schema.String),
+  tokenUsdAmount: Schema.optional(Schema.Finite),
+  hackathonName: Schema.optional(Schema.String),
+});
 
-export async function POST(req: NextRequest) {
-  try {
-    const session = await getSponsorSession(await headers());
+// Streams the description; the sponsor's details come from Earn, not the
+// body.
+const handle = aiRoute(
+  Body,
+  'Failed to generate description',
+  (ai, sponsor, body) =>
+    ai.description(sponsor.userId, sponsor.sponsorId, {
+      ...body,
+      // The AI SDK's chat messages, as useChat sent them.
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+      messages: body.messages as ReadonlyArray<UIMessage>,
+    }),
+);
 
-    if (session.error || !session.data) {
-      return NextResponse.json(
-        { error: session.error },
-        { status: session.status },
-      );
-    }
-
-    const userId = session.data.userId;
-
-    const rateLimitResponse = await checkAndApplyRateLimitApp({
-      limiter: aiGenerateRateLimiter,
-      identifier: userId,
-      routeName: 'aiGenerateDescription',
-    });
-
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-
-    const parsed = await autoGenerateChatSchema.parseAsync(await req.json());
-    const {
-      messages,
-      listingType,
-      company,
-      token,
-      tokenUsdAmount,
-      hackathonName,
-    } = parsed;
-    logger.debug('Request body: ', safeStringify(parsed));
-
-    const tokenMetadata = await getTokenBySymbol(token, {
-      includeInactive: true,
-    });
-
-    const systemPrompt = getDescriptionPrompt(listingType, {
-      company,
-      token,
-      tokenName: tokenMetadata?.tokenName,
-      tokenUsdAmount,
-      hackathonName,
-    });
-
-    const result = streamText({
-      model: openrouter('google/gemini-2.5-flash', {
-        extraBody: {
-          plugins: [
-            {
-              id: 'web',
-              max_results: 3,
-            },
-          ],
-        },
-      }),
-      system: systemPrompt,
-      messages: convertToModelMessages(messages),
-      headers: {
-        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL,
-        'X-Title': 'Superteam Earn - AI Listing Builder',
-      },
-    });
-
-    return result.toUIMessageStreamResponse();
-  } catch (error) {
-    if (error instanceof ZodError) {
-      logger.error('Validation error:', safeStringify(error.errors));
-      return new Response(
-        JSON.stringify({
-          error: 'Invalid input data',
-          details: error.flatten(),
-        }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      );
-    }
-
-    logger.error('Error generating description:', safeStringify(error));
-    return new Response(
-      JSON.stringify({
-        error: 'Failed to generate description',
-        details: 'Internal Server Error',
-      }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      },
-    );
-  }
+export function POST(request: NextRequest) {
+  return runtime.runPromise(handle(request));
 }

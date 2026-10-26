@@ -30,7 +30,7 @@ export function ProgressiveBlurOut({
   };
 
   useEffect(() => {
-    if (!scrollEl) return;
+    if (!scrollEl) return () => {};
     let rafId: number | null = null;
 
     const handleScroll = () => {
@@ -46,6 +46,7 @@ export function ProgressiveBlurOut({
     const resizeObserver = new ResizeObserver(() => updateFade());
     resizeObserver.observe(scrollEl);
 
+    // oxlint-disable-next-line react/set-state-in-effect -- measures the element as it mounts, as Earn did
     updateFade();
 
     return () => {
@@ -55,6 +56,7 @@ export function ProgressiveBlurOut({
         cancelAnimationFrame(rafId);
       }
     };
+    // oxlint-disable-next-line react-hooks/exhaustive-deps, react/exhaustive-effect-dependencies -- re-subscribes only when the element changes, as Earn did
   }, [scrollEl]);
 
   return (

@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 
-import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
 
 import { Header } from './Header';
@@ -23,10 +22,6 @@ export function ListingBuilderFormLayout({
       )}
       {...props}
     >
-      <Meta
-        title="Create a Listing | Superteam Earn"
-        description="Create a listing on Superteam Earn and gain access to thousands of high quality talent"
-      />
       <Header />
       <div className="flex flex-1 flex-col">{children}</div>
     </div>

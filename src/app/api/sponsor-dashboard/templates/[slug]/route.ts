@@ -1,102 +1,35 @@
-import { NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import type { NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import type { BountiesTemplatesSelect } from '@/prisma/models/BountiesTemplates';
-import { dayjs } from '@/utils/dayjs';
-import { safeStringify } from '@/utils/safeStringify';
+import { json } from '@/lib/route-guard';
+import * as ListingTemplates from '@/server/listing-templates';
+import { runtime } from '@/server/runtime';
 
-const publicTemplateDetailsSelect = {
-  id: true,
-  title: true,
-  deadline: true,
-  slug: true,
-  description: true,
-  skills: true,
-  type: true,
-  requirements: true,
-  region: true,
-  status: true,
-  token: true,
-  references: true,
-  referredBy: true,
-  publishedAt: true,
-  compensationType: true,
-  maxRewardAsk: true,
-  minRewardAsk: true,
-  language: true,
-  rewardAmount: true,
-  rewards: true,
-  maxBonusSpots: true,
-  usdValue: true,
-  sponsorId: true,
-  pocId: true,
-  pocSocials: true,
-  source: true,
-  isPublished: true,
-  sponsor: {
-    select: {
-      name: true,
-      logo: true,
-      slug: true,
-      url: true,
-      entityName: true,
-      isVerified: true,
-      isCaution: true,
-    },
-  },
-  poc: {
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      username: true,
-      photo: true,
-    },
-  },
-} satisfies BountiesTemplatesSelect;
-
-export async function GET(
-  _: Request,
-  props: { params: Promise<{ slug: string }> },
+export function GET(
+  _: NextRequest,
+  { params }: RouteContext<'/api/sponsor-dashboard/templates/[slug]'>,
 ) {
-  const { slug } = await props.params;
-
-  logger.debug(`Request for bounty template with slug: ${slug}`);
-
-  try {
-    logger.debug(`Fetching bounty template with slug: ${slug}`);
-    const result = await prisma.bountiesTemplates.findFirst({
-      where: {
-        slug,
-        isActive: true,
-      },
-      select: publicTemplateDetailsSelect,
-    });
-
-    if (!result) {
-      logger.warn(`No bounty template found with slug: ${slug}`);
-      return NextResponse.json(
-        {
-          message: `No bounty template found with slug=${slug}.`,
-        },
-        { status: 404 },
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const { slug } = yield* Effect.promise(() => params);
+      return yield* ListingTemplates.ListingTemplates.use((templates) =>
+        templates.details(slug),
+      ).pipe(
+        Effect.map((template) =>
+          template
+            ? json(200, template)
+            : json(404, {
+                message: `No bounty template found with slug=${slug}.`,
+              }),
+        ),
+        Effect.catchTag('DatabaseError', () =>
+          Effect.succeed(
+            json(500, {
+              message: 'Error occurred while fetching bounty template.',
+            }),
+          ),
+        ),
       );
-    }
-
-    result.deadline = dayjs(new Date()).add(6, 'days').toDate();
-
-    logger.info(`Successfully fetched bounty template for slug: ${slug}`);
-    return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
-    logger.error(
-      `Error occurred while fetching bounty template with slug=${slug}: ${safeStringify(error)}`,
-    );
-    return NextResponse.json(
-      {
-        message: 'Error occurred while fetching bounty template.',
-      },
-      { status: 500 },
-    );
-  }
+    }),
+  );
 }

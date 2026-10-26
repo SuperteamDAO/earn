@@ -2,11 +2,9 @@ import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
 import { CompensationType, status } from '@/prisma/enums';
-import type { HackathonModel } from '@/prisma/models/Hackathon';
 import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { dayjs } from '@/utils/dayjs';
 
-import type { Listing } from '@/features/listings/types';
 import {
   emailRegex,
   telegramRegex,
@@ -21,6 +19,7 @@ import {
   MAX_PODIUMS,
   MAX_REWARD,
 } from '../constants';
+import type { BuilderHackathon } from './builder';
 
 const noHtmlDelimiters = (value: string) => !/[<>]/.test(value);
 const noHtmlMessage = 'HTML characters are not allowed';
@@ -41,8 +40,8 @@ interface ListingFormSchemaOptions {
   isGod: boolean;
   isEditing: boolean;
   isST: boolean;
-  pastListing?: Listing;
-  hackathons?: HackathonModel[];
+  pastListing?: { deadline?: string | Date | null };
+  hackathons?: BuilderHackathon[];
 }
 export const createListingFormSchema = ({
   isGod,
@@ -82,7 +81,7 @@ export const createListingFormSchema = ({
         const regularPositions = positions.filter(
           (pos) => pos !== BONUS_REWARD_POSITION,
         );
-        const sortedPositions = regularPositions.sort((a, b) => a - b);
+        const sortedPositions = regularPositions.toSorted((a, b) => a - b);
         return sortedPositions.every((pos, idx) => pos === idx + 1);
       },
       {
@@ -119,10 +118,7 @@ export const createListingFormSchema = ({
     )
     .transform((rewards) => {
       return Object.fromEntries(
-        Object.entries(rewards).map(([key, value]) => [
-          String(key),
-          Number(value),
-        ]),
+        Object.entries(rewards).map(([key, value]) => [key, value]),
       );
     });
 
@@ -277,7 +273,7 @@ export const createListingFormSchema = ({
         .default(false)
         .refine(
           (value) => {
-            if (value === true && !isST) {
+            if (value && !isST) {
               return false;
             }
             return true;
@@ -304,14 +300,14 @@ export const createListingFormSchema = ({
       sponsorId: z.string().optional().nullable(),
     })
     .superRefine((data, ctx) => {
-      createListingRefinements(data, ctx, hackathons);
+      void createListingRefinements(data, ctx, hackathons);
     });
 };
 
 export const createListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
-  hackathons?: HackathonModel[],
+  hackathons?: BuilderHackathon[],
   pick?: ValidationFields,
 ) => {
   if (data.compensationType === 'fixed') {
@@ -418,86 +414,6 @@ export const createListingRefinements = async (
         message:
           'Winner announcement date must be no more than 30 days after the deadline',
         path: ['commitmentDate'],
-      });
-    }
-  }
-};
-
-// used in backend APIs only, not on frontend,
-// meant to not hinder UX (like cache rewards while switching between listing type or compensation type)
-export const backendListingRefinements = async (
-  data: ListingFormData,
-  ctx: z.RefinementCtx,
-  checkSlugFn: (slug: string, id?: string) => Promise<boolean>,
-  isTokenAllowed?: (tokenSymbol: string) => Promise<boolean>,
-) => {
-  if (data.slug) {
-    const slugExists = await checkSlugFn(data.slug, data.id || undefined);
-    if (slugExists) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Slug already exists. Please try another.',
-        path: ['slug'],
-      });
-    }
-  }
-
-  if (data.token && isTokenAllowed) {
-    const tokenAllowed = await isTokenAllowed(data.token);
-    if (!tokenAllowed) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Token Not Allowed',
-        path: ['token'],
-      });
-    }
-  }
-  if (data.compensationType !== 'fixed') {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'Compensation type must be fixed',
-      path: ['compensationType'],
-    });
-  }
-  // consdiers VARIABLE Compensation too
-  if (data.compensationType !== 'range') {
-    if (data.minRewardAsk) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Should be empty',
-        path: ['minRewardAsk'],
-      });
-    }
-    if (data.maxRewardAsk) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Should be empty',
-        path: ['maxRewardAsk'],
-      });
-    }
-  }
-
-  // consdiers VARIABLE Compensation too
-  if (data.compensationType !== 'fixed') {
-    if (data.rewards) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Should be empty',
-        path: ['rewards'],
-      });
-    }
-    if (data.rewardAmount) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Should be empty',
-        path: ['rewardAmount'],
-      });
-    }
-    if (data.maxBonusSpots) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Should be empty',
-        path: ['maxBonusSpots'],
       });
     }
   }

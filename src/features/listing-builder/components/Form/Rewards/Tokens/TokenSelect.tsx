@@ -37,6 +37,7 @@ import {
   type Token,
   useTokenList,
 } from '@/constants/tokenList';
+import { getJson, postJson, RequestError } from '@/lib/fetch-json';
 import { cn } from '@/utils/cn';
 import {
   getTokenSearchRank,
@@ -281,7 +282,7 @@ export function TokenSelect() {
       }),
     );
 
-    return [...dbResults, ...jupiterResults].sort(
+    return [...dbResults, ...jupiterResults].toSorted(
       (firstResult, secondResult) => {
         const rankDelta = firstResult.rank - secondResult.rank;
         if (rankDelta !== 0) return rankDelta;
@@ -302,42 +303,35 @@ export function TokenSelect() {
 
   useEffect(() => {
     if (!shouldSearchJupiter) {
+      // oxlint-disable-next-line react/set-state-in-effect -- Earn's effect, unchanged
       setJupiterTokens([]);
       setIsSearchingJupiter(false);
-      return;
+      return undefined;
     }
 
     const abortController = new AbortController();
-    const timeoutId = window.setTimeout(async () => {
-      setIsSearchingJupiter(true);
+    const timeoutId = window.setTimeout(() => {
+      void (async () => {
+        setIsSearchingJupiter(true);
 
-      try {
-        const response = await fetch(
-          `/api/tokens?query=${encodeURIComponent(trimmedSearchValue)}`,
-          {
-            credentials: 'same-origin',
-            cache: 'no-store',
-            signal: abortController.signal,
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to search Jupiter tokens');
+        try {
+          const data = await getJson<TokenSearchResponse>(
+            `/api/tokens/?query=${encodeURIComponent(trimmedSearchValue)}`,
+            abortController.signal,
+          );
+          setJupiterTokens(
+            Array.isArray(data.jupiterTokens) ? data.jupiterTokens : [],
+          );
+        } catch (error) {
+          if (abortController.signal.aborted) return;
+          console.error('Failed to search Jupiter tokens', error);
+          setJupiterTokens([]);
+        } finally {
+          if (!abortController.signal.aborted) {
+            setIsSearchingJupiter(false);
+          }
         }
-
-        const data = (await response.json()) as TokenSearchResponse;
-        setJupiterTokens(
-          Array.isArray(data.jupiterTokens) ? data.jupiterTokens : [],
-        );
-      } catch (error) {
-        if (abortController.signal.aborted) return;
-        console.error('Failed to search Jupiter tokens', error);
-        setJupiterTokens([]);
-      } finally {
-        if (!abortController.signal.aborted) {
-          setIsSearchingJupiter(false);
-        }
-      }
+      })();
     }, 350);
 
     return () => {
@@ -353,17 +347,21 @@ export function TokenSelect() {
     setAddingMintAddress(mintAddress);
 
     try {
-      const response = await fetch('/api/tokens', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ mintAddress }),
+      const data = await postJson<AddTokenResponse>('/api/tokens/', {
+        mintAddress,
+      }).catch((error: unknown) => {
+        const body = error instanceof RequestError ? error.body : null;
+        throw new Error(
+          typeof body === 'object' &&
+            body !== null &&
+            'error' in body &&
+            typeof body.error === 'string'
+            ? body.error
+            : 'Failed to add token',
+        );
       });
-      const data = (await response.json()) as AddTokenResponse;
 
-      if (!response.ok || !data.token) {
+      if (!data.token) {
         throw new Error(data.error || 'Failed to add token');
       }
 
@@ -476,7 +474,7 @@ export function TokenSelect() {
                                 className="ml-auto flex h-7 items-center gap-1 px-0 text-[0.9rem]"
                                 disabled={!!addingMintAddress}
                                 onClick={() =>
-                                  addJupiterToken(
+                                  void addJupiterToken(
                                     result.token.id,
                                     field.onChange,
                                   )

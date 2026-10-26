@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { isEditingAtom } from '../../../atoms';
@@ -21,7 +21,7 @@ import { getOfficialSuperteamRegion } from '../../../utils/getOfficialSuperteamR
 
 export function GeoLock() {
   const form = useListingForm();
-  const { user } = useUser();
+  const user = useViewer();
   const isEditing = useAtomValue(isEditingAtom);
   const region = useWatch({
     control: form.control,

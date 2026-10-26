@@ -18,7 +18,7 @@ export const listingToStatus = (listing: ListingFormData): ListingStatus => {
       }
       return 'published';
     } else {
-      if (!!listing.publishedAt) {
+      if (listing.publishedAt) {
         return 'unpublished';
       } else {
         return 'draft';

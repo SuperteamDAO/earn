@@ -9,13 +9,13 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 
 import { useListingForm } from '../../hooks';
 
 export function POC() {
   const form = useListingForm();
-  const { user } = useUser();
+  const user = useViewer();
   const pocSocial = useWatch({
     control: form.control,
     name: 'pocSocials',
@@ -33,6 +33,7 @@ export function POC() {
         form.setValue('pocSocials', user.email);
       }
     }
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
   }, [user, pocSocial, wasTouched]);
   return (
     <FormField

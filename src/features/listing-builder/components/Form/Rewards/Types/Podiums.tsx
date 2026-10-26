@@ -74,6 +74,7 @@ export const Podiums = () => {
       }, {});
       form.setValue('rewards', rewardsObject);
     }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
   }, [rewards, form]);
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export const Podiums = () => {
       const positions = Object.keys(rewards)
         .map(Number)
         .filter((pos) => pos !== BONUS_REWARD_POSITION)
-        .sort((a, b) => a - b);
+        .toSorted((a, b) => a - b);
 
       const needsReindex = positions.some((pos, index) => pos !== index + 1);
 
@@ -100,6 +101,7 @@ export const Podiums = () => {
         updateTotalReward(reindexedRewards);
       }
     }
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
   }, [rewards, form, updateTotalReward]);
 
   const rewardPositions = useMemo(
@@ -107,7 +109,8 @@ export const Podiums = () => {
       Object.keys(rewards)
         .map(Number)
         .filter((pos) => pos !== BONUS_REWARD_POSITION)
-        .sort((a, b) => a - b),
+        .toSorted((a, b) => a - b),
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
     [rewards],
   );
 
@@ -123,6 +126,7 @@ export const Podiums = () => {
     form.setValue('rewards', updatedRewards);
     updateTotalReward(updatedRewards);
     scrollToBottom();
+    // oxlint-disable-next-line react-hooks/exhaustive-deps, react/memo-dependencies -- Earn's dependencies, kept so it runs when it did
   }, [form, rewards, rewardPositions, updateTotalReward]);
 
   const removeReward = useCallback(
@@ -142,6 +146,7 @@ export const Podiums = () => {
       form?.setValue('rewards', reindexedRewards);
       updateTotalReward(reindexedRewards);
     },
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
     [form, rewards, updateTotalReward],
   );
 
@@ -154,6 +159,7 @@ export const Podiums = () => {
     form?.setValue('maxBonusSpots', null);
     updateTotalReward(updatedRewards);
     scrollToBottom();
+    // oxlint-disable-next-line react-hooks/exhaustive-deps, react/memo-dependencies -- Earn's dependencies, kept so it runs when it did
   }, [form, rewards, updateTotalReward]);
 
   const removeBonusReward = useCallback(() => {
@@ -163,6 +169,7 @@ export const Podiums = () => {
     form?.setValue('maxBonusSpots', undefined);
     form?.clearErrors(['maxBonusSpots', `rewards.${BONUS_REWARD_POSITION}`]);
     updateTotalReward(rest);
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- Earn's dependencies, kept so it runs when it did
   }, [form, rewards, updateTotalReward]);
 
   return (

@@ -177,7 +177,7 @@ export function AutoGenerateChat({
         {input.length === 0 && (
           <Button
             className="w-36 px-0"
-            onClick={handleProceed}
+            onClick={() => void handleProceed()}
             disabled={isLoading || isDisabled}
           >
             {isLoading ? (
