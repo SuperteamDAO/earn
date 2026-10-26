@@ -20,7 +20,7 @@ export function GET(request: NextRequest) {
         });
       }
       return yield* TweetStats.TweetStatsReader.use((stats) =>
-        stats.forSubmission(submissionId),
+        stats.forSubmission(submissionId, sponsor),
       ).pipe(
         Effect.map((stats) => json(200, stats)),
         Effect.catchTags({

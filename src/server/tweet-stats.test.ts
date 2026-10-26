@@ -13,6 +13,9 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+// What the last submission lookup asked for.
+let lastWhere: unknown = null;
+
 const layerFor = (
   submission: { link: string | null; tweet: string | null } | null,
   token = true,
@@ -30,7 +33,12 @@ const layerFor = (
             query: (_operation, run) =>
               Effect.promise(() =>
                 run({
-                  submission: { findFirst: async () => submission },
+                  submission: {
+                    findFirst: async (args: { where: unknown }) => {
+                      lastWhere = args.where;
+                      return submission;
+                    },
+                  },
                 } as never),
               ),
           }),
@@ -39,10 +47,12 @@ const layerFor = (
     ),
   );
 
+const SPONSOR = { sponsorId: 'sp1', god: false };
+
 const statsFor = (...args: Parameters<typeof layerFor>) =>
-  TweetStats.TweetStatsReader.use((stats) => stats.forSubmission('s1')).pipe(
-    Effect.provide(layerFor(...args)),
-  );
+  TweetStats.TweetStatsReader.use((stats) =>
+    stats.forSubmission('s1', SPONSOR),
+  ).pipe(Effect.provide(layerFor(...args)));
 
 describe('extractTweetId', () => {
   it('reads the status id from X and Twitter links only', () => {
@@ -61,6 +71,28 @@ describe('extractTweetId', () => {
 });
 
 describe('TweetStats.forSubmission', () => {
+  it.effect('looks only at submissions to the sponsor’s own listings', () =>
+    Effect.gen(function* () {
+      yield* TweetStats.TweetStatsReader.use((stats) =>
+        stats.forSubmission('s1', SPONSOR),
+      ).pipe(
+        Effect.provide(layerFor({ link: null, tweet: null }, false)),
+        Effect.ignore,
+      );
+      assert.deepStrictEqual(lastWhere, {
+        id: 's1',
+        listing: { sponsorId: 'sp1' },
+      });
+      yield* TweetStats.TweetStatsReader.use((stats) =>
+        stats.forSubmission('s1', { sponsorId: 'sp1', god: true }),
+      ).pipe(
+        Effect.provide(layerFor({ link: null, tweet: null }, false)),
+        Effect.ignore,
+      );
+      assert.deepStrictEqual(lastWhere, { id: 's1' });
+    }),
+  );
+
   it.effect('maps X’s metrics, counting quotes as reposts', () =>
     Effect.gen(function* () {
       vi.stubGlobal(

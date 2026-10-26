@@ -95,8 +95,11 @@ const OK = 'Operation successful';
 export class TweetStatsReader extends Context.Service<
   TweetStatsReader,
   {
+    // Only for a submission to one of the sponsor's own listings, unless
+    // they're in God mode.
     readonly forSubmission: (
       submissionId: string,
+      viewer: { readonly sponsorId: string; readonly god: boolean },
     ) => Effect.Effect<TweetStats, SubmissionNotFound | Database.DatabaseError>;
   }
 >()('earn/TweetStats') {}
@@ -143,10 +146,13 @@ const make = Effect.gen(function* () {
 
   const forSubmission = Effect.fn('TweetStats.forSubmission')(function* (
     submissionId: string,
+    viewer: { readonly sponsorId: string; readonly god: boolean },
   ) {
     const submission = yield* database.query('tweetStatsSubmission', (client) =>
       client.submission.findFirst({
-        where: { id: submissionId },
+        where: viewer.god
+          ? { id: submissionId }
+          : { id: submissionId, listing: { sponsorId: viewer.sponsorId } },
         select: { link: true, tweet: true },
       }),
     );
