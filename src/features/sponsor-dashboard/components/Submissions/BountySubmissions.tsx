@@ -68,7 +68,16 @@ export function BountySubmissions() {
     onOpen: multiActionConfirmOnOpen,
     onClose: multiActionConfirmOnClose,
   } = useDisclosure();
-  const isTogglerOpen = selectedSubmissionIds.size > 0;
+  const {
+    isOpen: isTogglerOpen,
+    onOpen: onTogglerOpen,
+    onClose: onTogglerClose,
+  } = useDisclosure();
+
+  useEffect(() => {
+    if (selectedSubmissionIds.size > 0) onTogglerOpen();
+    else onTogglerClose();
+  }, [selectedSubmissionIds, onTogglerOpen, onTogglerClose]);
 
   // Decided submissions drop out of the selection.
   useEffect(() => {
@@ -296,7 +305,7 @@ export function BountySubmissions() {
         </TabsContent>
       </Tabs>
 
-      <Dialog modal={false} open={isTogglerOpen}>
+      <Dialog modal={false} onOpenChange={onTogglerClose} open={isTogglerOpen}>
         <DialogContent
           onEscapeKeyDown={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
