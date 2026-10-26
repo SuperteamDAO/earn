@@ -42,10 +42,7 @@ const EMPTY: ListingPageData = {
 
 // Everything around the page itself, for this listing and whoever's looking.
 // A part that fails to load shows empty, as Earn's client queries did.
-async function pageData(
-  listing: PublicListing,
-  isTemplate: boolean,
-): Promise<ListingPageData> {
+async function pageData(listing: PublicListing): Promise<ListingPageData> {
   const [viewer, session] = await Promise.all([getViewer(), getSession()]);
   const listingId = listing.id;
   const now = await runtime.runPromise(Clock.currentTimeMillis);
@@ -80,20 +77,19 @@ async function pageData(
                 Effect.orElseSucceed(() => 0),
               )
             : Effect.succeed(0),
-          related:
-            isTemplate || viewer?.isBlocked
-              ? Effect.succeed([])
-              : ListingDetails.ListingDetails.use((details) =>
-                  details.sidebar(
-                    {
-                      id: listingId,
-                      sponsorId: listing.sponsorId,
-                      hackathonId: listing.hackathonId,
-                      sponsor: listing.sponsor,
-                    },
-                    viewer?.location ?? null,
-                  ),
-                ).pipe(Effect.orElseSucceed(() => [])),
+          related: viewer?.isBlocked
+            ? Effect.succeed([])
+            : ListingDetails.ListingDetails.use((details) =>
+                details.sidebar(
+                  {
+                    id: listingId,
+                    sponsorId: listing.sponsorId,
+                    hackathonId: listing.hackathonId,
+                    sponsor: listing.sponsor,
+                  },
+                  viewer?.location ?? null,
+                ),
+              ).pipe(Effect.orElseSucceed(() => [])),
         },
         { concurrency: 'unbounded' },
       ),
@@ -117,7 +113,7 @@ export async function ListingPageLayout({
   maxW = '7xl',
   isTemplate = false,
 }: ListingPageProps) {
-  const data = listing ? await pageData(listing, isTemplate) : EMPTY;
+  const data = listing ? await pageData(listing) : EMPTY;
   return (
     <Default>
       <ListingPageFrame
