@@ -33,6 +33,9 @@ const RPC_ORIGINS =
 // KYC runs Sumsub's verification in a frame; like the Privy pages, those
 // pages are documents with their own policy.
 const KYC_PAGE = /^\/earn\/(kyc|grants\/[^/]+\/kyc)(\/|$)/;
+// Pages that open a KYC page in Earn's modal (a frame of it), so they must
+// pass the camera and microphone on to it.
+const KYC_HOST = /^\/earn\/(grants|listing)\/[^/]+(\/submission)?\/?$/;
 const SUMSUB_ORIGINS = 'https://*.sumsub.com';
 const SUMSUB_FRAME = '"https://in.sumsub.com" "https://api.sumsub.com"';
 
@@ -136,7 +139,10 @@ export function proxy(request: NextRequest) {
 
   const response = NextResponse.next({ request: { headers } });
   response.headers.set('content-security-policy', csp);
-  response.headers.set('permissions-policy', permissionsPolicy(kyc));
+  response.headers.set(
+    'permissions-policy',
+    permissionsPolicy(kyc || KYC_HOST.test(pathname)),
+  );
   if (isPreview) response.headers.set('x-robots-tag', 'noindex');
   return response;
 }
