@@ -26,7 +26,7 @@ cross-repo contracts.
   the root. Write links and fetch URLs with the trailing slash.
 - A page is a server component that loads its data through services and
   hands it to client components as props. `generateMetadata`/`metadata`
-  replace `next/head`; `notFound()`/`redirect()` replace
+  (built with `pageMetadata`, `src/lib/metadata.ts`) replace `next/head`; `notFound()`/`redirect()` replace
   `getServerSideProps` returns.
 - Client components use `next/navigation`, never `next/router`.
 

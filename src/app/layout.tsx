@@ -18,11 +18,16 @@ import { fontVariables } from '@/theme/fonts';
 
 export const metadata: Metadata = {
   metadataBase: new URL(publicEnv.siteUrl),
-  title: { default: 'Superteam Earn', template: '%s | Superteam Earn' },
+  title: 'Superteam Earn',
   manifest: '/site.webmanifest',
 };
 
-export const viewport: Viewport = { themeColor: '#ffffff' };
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: '#5522e0',
+};
 
 export default async function RootLayout({
   children,
