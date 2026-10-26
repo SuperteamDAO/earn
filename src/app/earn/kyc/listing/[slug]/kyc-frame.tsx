@@ -12,6 +12,11 @@ import { toast } from 'sonner';
 
 import { postJson } from '@/lib/fetch-json';
 
+import {
+  LISTING_KYC_MESSAGE,
+  type ListingKycMessage,
+} from '@/features/listings/utils/kycMessages';
+
 type MessageType = Parameters<MessageHandler>[0];
 
 const VERIFICATION_PENDING_ERROR = 'VERIFICATION_PENDING';
@@ -21,20 +26,53 @@ const fetchToken = async () =>
 
 const config = { lang: 'en', theme: 'light' };
 
-const errorHandler: ErrorHandler = (error) => {
-  toast.error(`KYC failed: ${error.error}`);
+// Framed in the listing page's KYC modal, toasts and the verdict go to the
+// page (Earn showed them over the listing); otherwise they show here.
+const embedded = () =>
+  typeof window !== 'undefined' && window.parent !== window;
+
+const tell = (message: ListingKycMessage) =>
+  window.parent.postMessage(message, window.location.origin);
+
+const showError = (message: string) => {
+  if (embedded()) tell({ type: LISTING_KYC_MESSAGE, kind: 'error', message });
+  else toast.error(message);
 };
 
-// Earn's KYC modal, as a page: Sumsub's web SDK, then the server asks Sumsub
-// for the verdict and, once verified, sends the winnings for payment.
+const errorHandler: ErrorHandler = (error) => {
+  showError(`KYC failed: ${error.error}`);
+};
+
+// Earn's KYC modal's content: Sumsub's web SDK, then the server asks Sumsub
+// for the verdict and, once verified, sends the winnings for payment. The
+// listing page's modal frames this page (`embed`); on its own it is a page
+// with a close link back to the listing.
 export function KycFrame({
   slug,
   listingHref,
+  embed,
 }: {
   slug: string;
   listingHref: string;
+  embed: boolean;
 }) {
   const verificationProcessedRef = useRef(false);
+  const root = useRef<HTMLDivElement>(null);
+
+  // The modal sizes its frame to this.
+  useEffect(() => {
+    const element = root.current;
+    if (!embed || !element) return undefined;
+    const observer = new ResizeObserver(() =>
+      tell({
+        type: LISTING_KYC_MESSAGE,
+        kind: 'height',
+        height: element.scrollHeight,
+      }),
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [embed]);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isTokenLoading, setIsTokenLoading] = useState(true);
 
@@ -45,7 +83,7 @@ export function KycFrame({
         if (live) setAccessToken(token);
       })
       .catch(() => {
-        if (live) toast.error('KYC failed: unable to start verification');
+        if (live) showError('KYC failed: unable to start verification');
       })
       .finally(() => {
         if (live) setIsTokenLoading(false);
@@ -66,6 +104,23 @@ export function KycFrame({
       !('reviewStatus' in payload) ||
       verificationProcessedRef.current
     ) {
+      return;
+    }
+
+    if (embedded()) {
+      // The listing page shows Earn's toasts, refreshes and closes.
+      tell({ type: LISTING_KYC_MESSAGE, kind: 'checking' });
+      checkVerification().then(
+        (data) => {
+          if (data === 'verified') {
+            verificationProcessedRef.current = true;
+            tell({ type: LISTING_KYC_MESSAGE, kind: 'verified' });
+          } else {
+            tell({ type: LISTING_KYC_MESSAGE, kind: 'pending' });
+          }
+        },
+        () => showError('KYC verification check failed. Please try again.'),
+      );
       return;
     }
 
@@ -105,11 +160,13 @@ export function KycFrame({
   }
 
   return (
-    <>
-      {/* Plain <a>: the listing is another document, with its own CSP. */}
-      <a href={listingHref} aria-label="Close">
-        <X className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6" />
-      </a>
+    <div ref={root}>
+      {!embed && (
+        // Plain <a>: the listing is another document, with its own CSP.
+        <a href={listingHref} aria-label="Close">
+          <X className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6" />
+        </a>
+      )}
       {isTokenLoading && (
         <div className="flex min-h-[400px] items-center justify-center p-8">
           <div className="flex items-center gap-2">
@@ -130,6 +187,6 @@ export function KycFrame({
           testEnv={process.env.NODE_ENV === 'development'}
         />
       )}
-    </>
+    </div>
   );
 }

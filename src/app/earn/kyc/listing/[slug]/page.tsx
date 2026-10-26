@@ -22,8 +22,11 @@ export const metadata = pageMetadata({
 // proxy lets Sumsub's frame in under /earn/kyc/ only.
 export default async function ListingKycPage({
   params,
+  searchParams,
 }: PageProps<'/earn/kyc/listing/[slug]'>) {
-  const { slug } = await params;
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
+  // Framed by the listing page's KYC modal: the content alone.
+  const embed = query.embed === '1';
   const here = `/earn/kyc/listing/${slug}/`;
   const listing = `/earn/listing/${slug}/`;
   const viewer = await getViewer();
@@ -48,11 +51,13 @@ export default async function ListingKycPage({
   // Only while their winning submission waits for KYC.
   if (!pending) redirect(listing);
 
+  if (embed) return <KycFrame slug={slug} listingHref={listing} embed />;
+
   return (
     <Default>
       <div className="flex w-full justify-center bg-white px-2 py-6 md:py-10">
         <div className="relative w-full max-w-xl overflow-hidden rounded-lg border border-slate-200 pb-6">
-          <KycFrame slug={slug} listingHref={listing} />
+          <KycFrame slug={slug} listingHref={listing} embed={false} />
         </div>
       </div>
     </Default>

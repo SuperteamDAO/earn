@@ -30,6 +30,7 @@ import {
 } from '../../utils/region';
 import { getListingDraftStatus } from '../../utils/status';
 import { EasterEgg } from './EasterEgg';
+import { KYCModal } from './KYCModal';
 import { SubmissionDrawer } from './SubmissionDrawer';
 
 interface Props {
@@ -116,6 +117,7 @@ export const SubmissionActionButton = ({
   } = listing;
 
   const [isEasterEggOpen, setEasterEggOpen] = useState(false);
+  const [isKYCModalOpen, setIsKYCModalOpen] = useState(false);
 
   const user = useViewer();
   const chapters = useChapters();
@@ -163,8 +165,7 @@ export const SubmissionActionButton = ({
   const handleSubmit = () => {
     void manualSync();
     if (buttonState === 'kyc') {
-      // Sumsub runs on a page of its own (its own CSP): a full page load.
-      window.location.assign(`/earn/kyc/listing/${listing.slug}/`);
+      setIsKYCModalOpen(true);
     } else {
       onOpen();
       if (buttonState === 'submit') {
@@ -346,6 +347,13 @@ export const SubmissionActionButton = ({
         <EasterEgg
           isOpen={isEasterEggOpen}
           onClose={() => setEasterEggOpen(false)}
+        />
+      )}
+      {isKYCModalOpen && submission?.id && (
+        <KYCModal
+          isOpen={isKYCModalOpen}
+          slug={listing.slug ?? ''}
+          onClose={() => setIsKYCModalOpen(false)}
         />
       )}
 
