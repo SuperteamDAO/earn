@@ -156,7 +156,10 @@ export const BookmarkListing = ({
         </motion.p>
       </AnimatePresence>
       <div className="flex -space-x-3">
-        <AnimatePresence>
+        {/* Rendered with the page now (Earn showed them once its query
+            came back), so they start in place rather than fading in from
+            a server-rendered blank. */}
+        <AnimatePresence initial={false}>
           {avatars.slice(0, avatarCount).map((avatar) => (
             <motion.div
               key={avatar.name}

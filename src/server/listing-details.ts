@@ -186,6 +186,25 @@ const sortSubmissions = (
   return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
 };
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
+
+// A raw related row as the cards read it: MySQL hands back JSON_OBJECT as
+// text and booleans as 0/1 (a bare 0 would render on the card).
+const relatedCard = (row: unknown): unknown => {
+  if (!isRecord(row)) return row;
+  const sponsor: unknown =
+    typeof row.sponsor === 'string' ? JSON.parse(row.sponsor) : row.sponsor;
+  return {
+    ...row,
+    isWinnersAnnounced: Boolean(row.isWinnersAnnounced),
+    isFeatured: Boolean(row.isFeatured),
+    sponsor: isRecord(sponsor)
+      ? { ...sponsor, isVerified: Boolean(sponsor.isVerified) }
+      : sponsor,
+  };
+};
+
 const TOKEN_ICON_PROXY_PATH = '/api/token-icon';
 
 const make = Effect.gen(function* () {
@@ -462,17 +481,7 @@ const make = Effect.gen(function* () {
       listing.type,
       userRegion,
     );
-    // MySQL's JSON_OBJECT may come back as text.
-    return toJson<Array<ListingCardData>>(
-      rows.map((row) =>
-        typeof row === 'object' &&
-        row !== null &&
-        'sponsor' in row &&
-        typeof row.sponsor === 'string'
-          ? { ...row, sponsor: JSON.parse(row.sponsor) as unknown }
-          : row,
-      ),
-    );
+    return toJson<Array<ListingCardData>>(rows.map(relatedCard));
   });
 
   // Earn's /api/listings/live, as the related list tops itself up.

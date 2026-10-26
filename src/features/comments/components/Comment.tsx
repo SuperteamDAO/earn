@@ -271,14 +271,16 @@ export const Comment = ({
               </p>
             </span>
           </div>
-          <p className="mt-0 max-w-[15rem] overflow-clip pb-2 text-sm text-slate-500 sm:max-w-[20rem] md:max-w-[17rem] md:text-base lg:max-w-[29rem] xl:max-w-[46rem]">
+          {/* A div, not Earn's <p>: a long comment renders blocks, and the
+              server-rendered thread must nest validly to hydrate. */}
+          <div className="mt-0 max-w-[15rem] overflow-clip pb-2 text-sm text-slate-500 sm:max-w-[20rem] md:max-w-[17rem] md:text-base lg:max-w-[29rem] xl:max-w-[46rem]">
             <CommentParser
               isAnnounced={isAnnounced}
               type={comment.type}
               submissionId={comment.submissionId}
               value={comment?.message}
             />
-          </p>
+          </div>
           <div className="flex gap-2 overflow-visible">
             {replies?.length > 0 && (
               <button
