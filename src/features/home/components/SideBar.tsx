@@ -136,6 +136,7 @@ const NonSponsorSidebarContent = ({
         TVE={totals?.totalInUSD}
       />
     </div>
+    {/* <SidebarBanner /> */}
     <HowItWorks />
     {currentPath !== '/earn/bookmarks' && !!bookmarks?.length && (
       <YourBookmarks>
