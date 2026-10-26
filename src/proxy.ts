@@ -4,7 +4,7 @@ const isDev = process.env.NODE_ENV === 'development';
 const isPreview = process.env.VERCEL_ENV === 'preview';
 
 // Only these pages load Privy's SDK; every other page ships none of it.
-const PRIVY_PAGES = ['/earn/signin', '/earn/signup', '/earn/wallet'];
+const PRIVY_PAGES = ['/earn/signin', '/earn/wallet'];
 
 // Pasted into the policy verbatim, so anything but a bare https origin (say
 // 'unsafe-inline') would quietly widen it. Refuse to serve instead.

@@ -17,10 +17,9 @@ export class LockBusy extends Schema.TaggedError<LockBusy>()('LockBusy', {
   }
 }
 
-// Earn's withRedisLock, on the same Upstash Redis and keys, so a tranche
-// is never created or decided twice when Skyhook and Earn act at once.
-// Without Upstash the effect runs unlocked (database row locks still hold
-// within Skyhook).
+// Earn's withRedisLock on Upstash Redis, so the same record (a tranche, a
+// payout) is never acted on twice when two requests race. Without Upstash
+// the effect runs unlocked (database row locks still hold).
 export class Locks extends Context.Service<
   Locks,
   {
@@ -33,6 +32,8 @@ export class Locks extends Context.Service<
 
 // Earn holds them for five minutes at most.
 const TTL_SECONDS = 300;
+
+const RELEASE = `if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end`;
 
 const make = Effect.gen(function* () {
   const config = yield* AppConfig.AppConfig;
@@ -68,13 +69,9 @@ const make = Effect.gen(function* () {
         ),
       ),
       () => effect,
-      () =>
-        command(['GET', key]).pipe(
-          Effect.flatMap((current) =>
-            current === token ? command(['DEL', key]) : Effect.void,
-          ),
-          Effect.ignore,
-        ),
+      // Deleted only while still ours, in one step: a lock that expired
+      // and was taken by someone else meanwhile stays theirs.
+      () => command(['EVAL', RELEASE, '1', key, token]).pipe(Effect.ignore),
     );
   };
 

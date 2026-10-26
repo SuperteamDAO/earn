@@ -17,6 +17,7 @@ import * as Wallet from '@/server/areas/wallet';
 import * as Credits from '@/server/credits';
 import * as Database from '@/server/database';
 import * as Earncognito from '@/server/earncognito';
+import * as EmailCheck from '@/server/email-check';
 import * as Locks from '@/server/locks';
 import * as Queues from '@/server/queues';
 import * as RateLimits from '@/server/rate-limits';
@@ -32,6 +33,8 @@ const shared = Layer.mergeAll(
   Locks.layer,
   RateLimits.layer,
   Earncognito.layer,
+  // Sign-in's address check, before Privy sends a code.
+  EmailCheck.layer.pipe(Layer.provide(RateLimits.layer)),
 ).pipe(Layer.provideMerge(Database.layer), Layer.provideMerge(AppConfig.layer));
 
 const appLayer = Layer.mergeAll(

@@ -9,7 +9,7 @@ import { renewSession } from './session-renewal';
 
 // Privy's own pages load the SDK, which renews Privy's session by itself.
 const onPrivyPage = () =>
-  /^\/earn\/(signin|signup|wallet)(\/|$)/.test(window.location.pathname);
+  /^\/earn\/(signin|wallet)(\/|$)/.test(window.location.pathname);
 
 // When Privy should next vouch, on this browser's clock. It's only compared
 // with that same clock and set from fixed intervals, so a clock that's wrong

@@ -37,8 +37,8 @@ cross-repo contracts.
   `privy-token` (verified locally with the public verification key), or that
   token until one is issued. Never trust client-sent user ids, emails or
   `privy-session`, which is only a hint.
-- Privy's SDK loads only under `src/app/(privy)/` (`/earn/signin/`,
-  `/earn/signup/`, `/earn/wallet/`); a lint rule enforces it. Links between
+- Privy's SDK loads only under `src/app/(privy)/` (`/earn/signin/` and
+  `/earn/wallet/`); a lint rule enforces it. Links between
   public and Privy pages are plain `<a>` (full page loads), never
   `next/link`: each side has its own CSP (`src/proxy.ts`), and a CSP belongs
   to a document. Signed-out visitors go to `signInHref(next)`
