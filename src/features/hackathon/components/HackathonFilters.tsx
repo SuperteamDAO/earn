@@ -1,3 +1,5 @@
+'use client';
+
 import { LucideListFilter } from 'lucide-react';
 
 import {
@@ -36,9 +38,10 @@ export const HackathonFilters = ({
   onStatusChange,
   onSortChange,
 }: HackathonFiltersProps) => {
-  const hackathonFilterOptions = LISTING_FILTER_OPTIONS.filter(
-    (option) => option.params.status !== 'all',
-  );
+  const hackathonFilterOptions = LISTING_FILTER_OPTIONS.flatMap((option) => {
+    const status = option.params.status;
+    return status === 'all' ? [] : [{ ...option, status }];
+  });
 
   return (
     <DropdownMenu>
@@ -54,13 +57,10 @@ export const HackathonFilters = ({
         {hackathonFilterOptions.map((option) => (
           <DropdownMenuItem
             key={option.label}
-            onSelect={() =>
-              onStatusChange(option.params.status as HackathonStatus)
-            }
+            onSelect={() => onStatusChange(option.status)}
             className={cn(
               'flex items-center gap-2 text-slate-600',
-              activeStatus === option.params.status &&
-                'bg-slate-100 font-medium',
+              activeStatus === option.status && 'bg-slate-100 font-medium',
             )}
           >
             <div

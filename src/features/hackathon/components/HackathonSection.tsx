@@ -1,24 +1,33 @@
+'use client';
+
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
+import type { ListingCardData } from '@/features/home/types/cards';
 import { ViewAllButton } from '@/features/listings/components/ViewAllButton';
 
 import { CategoryPill } from '../../listings/components/CategoryPill';
-import {
-  ListingCard,
-  ListingCardSkeleton,
-} from '../../listings/components/ListingCard';
+import { ListingCard } from '../../listings/components/ListingCard';
 import { HACKATHONS } from '../constants/hackathons';
-import { type HackathonContext, useHackathons } from '../hooks/useHackathons';
+import type { HackathonContext } from '../hooks/useHackathons';
 import { useHackathonState } from '../hooks/useHackathonState';
 import { HackathonFilters } from './HackathonFilters';
 
 interface HackathonSectionProps {
   type: HackathonContext;
+  // The list for the page's search params, loaded on the server; null when
+  // it couldn't be.
+  listings: ReadonlyArray<ListingCardData> | null;
+  // The server's clock when it loaded them.
+  now: number;
 }
 
-export const HackathonSection = ({ type }: HackathonSectionProps) => {
+export const HackathonSection = ({
+  type,
+  listings,
+  now,
+}: HackathonSectionProps) => {
   const {
     activeName,
     activeStatus,
@@ -29,30 +38,22 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
     handleSortChange,
   } = useHackathonState();
 
-  const {
-    data: listings,
-    isLoading,
-    error,
-  } = useHackathons({
-    name: activeName,
-    status: activeStatus,
-    sortBy: activeSortBy,
-    order: activeOrder,
-    context: type,
-  });
+  const viewAllHackathonLink = () => {
+    const basePath = '/hackathon/all';
+    const params = new URLSearchParams();
+    params.set('name', activeName);
+    if (activeStatus) params.set('status', activeStatus);
+    if (activeSortBy) params.set('sortBy', activeSortBy);
+    if (activeOrder) params.set('order', activeOrder);
+    return `${basePath}?${params.toString()}`;
+  };
 
   const renderContent = () => {
-    if (isLoading) {
-      return Array.from({ length: 5 }).map((_, index) => (
-        <ListingCardSkeleton key={index} />
-      ));
-    }
-
-    if (error) {
+    if (!listings) {
       return <EmptySection title="Error loading listings" />;
     }
 
-    if (!listings?.length) {
+    if (!listings.length) {
       return (
         <EmptySection
           title="No opportunities found"
@@ -64,7 +65,7 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
     return (
       <>
         {listings.map((listing) => (
-          <ListingCard key={listing.id} bounty={listing} />
+          <ListingCard key={listing.id} bounty={listing} now={now} />
         ))}
         {type === 'home' && (
           <ViewAllButton
@@ -74,16 +75,6 @@ export const HackathonSection = ({ type }: HackathonSectionProps) => {
         )}
       </>
     );
-  };
-
-  const viewAllHackathonLink = () => {
-    const basePath = '/hackathon/all';
-    const params = new URLSearchParams();
-    params.set('name', activeName);
-    if (activeStatus) params.set('status', activeStatus);
-    if (activeSortBy) params.set('sortBy', activeSortBy);
-    if (activeOrder) params.set('order', activeOrder);
-    return `${basePath}?${params.toString()}`;
   };
 
   return (

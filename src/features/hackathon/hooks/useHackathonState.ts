@@ -1,11 +1,13 @@
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
-import { useCallback, useMemo } from 'react';
+'use client';
+
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { posthog } from 'posthog-js';
+import { useCallback, useMemo, useTransition } from 'react';
+
+import { startTopLoader } from '@/components/ui/toploader';
 
 import {
   HackathonOrderDirectionSchema,
-  HackathonSchema,
   HackathonSortOptionSchema,
   HackathonStatusSchema,
 } from '../constants/schema';
@@ -15,13 +17,11 @@ import type {
   HackathonStatus,
 } from './useHackathons';
 
-const DEFAULT_STATUS_VALUE: HackathonStatus =
-  HackathonStatusSchema._def.defaultValue();
-const DEFAULT_ORDER_VALUE: HackathonOrderDirection =
-  HackathonOrderDirectionSchema._def.defaultValue();
-const DEFAULT_SORT_BY_VALUE: HackathonSortOption =
-  HackathonSortOptionSchema._def.defaultValue();
-const defaultName = HackathonSchema._def.defaultValue();
+// The schemas' defaults.
+const DEFAULT_STATUS_VALUE: HackathonStatus = 'open';
+const DEFAULT_ORDER_VALUE: HackathonOrderDirection = 'desc';
+const DEFAULT_SORT_BY_VALUE: HackathonSortOption = 'Prize';
+const defaultName = 'All';
 
 type QueryParamUpdates = Partial<
   Record<
@@ -30,9 +30,20 @@ type QueryParamUpdates = Partial<
   >
 >;
 
+const PARAM_KEYS = [
+  'hackathon',
+  'hackathonStatus',
+  'hackathonSortBy',
+  'hackathonOrder',
+] as const;
+
 export const useHackathonState = () => {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParamsFromHook = useSearchParams();
+  // The list is rendered on the server: a filter change loads the page
+  // again for the new search params, showing the old list meanwhile.
+  const [isPending, startTransition] = useTransition();
 
   const searchParams = useMemo(
     () => searchParamsFromHook ?? new URLSearchParams(),
@@ -50,8 +61,8 @@ export const useHackathonState = () => {
         hackathonOrder: DEFAULT_ORDER_VALUE,
       };
 
-      for (const key in updates) {
-        const typedKey = key as keyof QueryParamUpdates;
+      for (const typedKey of PARAM_KEYS) {
+        if (!(typedKey in updates)) continue;
         const value = updates[typedKey];
         const defaultValueForKey = paramDefaults[typedKey];
 
@@ -62,20 +73,23 @@ export const useHackathonState = () => {
         ) {
           newParams.delete(typedKey);
         } else {
-          newParams.set(typedKey, String(value));
+          newParams.set(typedKey, value);
         }
       }
 
       const queryString = newParams.toString();
-      const newPath = `${window.location.pathname}${queryString ? `?${queryString}` : ''}`;
-      void router.replace(newPath, undefined, { shallow: true, scroll: false });
+      const newPath = `${pathname}${queryString ? `?${queryString}` : ''}`;
+      startTopLoader();
+      startTransition(() => {
+        router.replace(newPath, { scroll: false });
+      });
     },
-    [searchParams, router, defaultName],
+    [searchParams, router, pathname],
   );
 
   const activeName = useMemo(
     (): string => searchParams.get('hackathon') ?? defaultName,
-    [searchParams, defaultName],
+    [searchParams],
   );
 
   const activeStatus = useMemo((): HackathonStatus => {
@@ -140,5 +154,6 @@ export const useHackathonState = () => {
     handleNameChange,
     handleStatusChange,
     handleSortChange,
+    isPending,
   };
 };

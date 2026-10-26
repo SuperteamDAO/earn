@@ -1,69 +1,36 @@
-import { type NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
+import * as Effect from 'effect/Effect';
+import * as Option from 'effect/Option';
+import * as Schema from 'effect/Schema';
+import type { NextRequest } from 'next/server';
 
-import { prisma } from '@/prisma';
-import type { JsonValue } from '@/prisma/internal/prismaNamespace';
+import { json, sessionOf } from '@/lib/route-guard';
+import * as Hackathons from '@/server/hackathons';
+import { runtime } from '@/server/runtime';
 
-import { HackathonQueryParamsSchema } from '@/features/hackathon/constants/schema';
-import { buildHackathonQuery } from '@/features/hackathon/utils/query-builder';
-import { listingSelect } from '@/features/listings/constants/schema';
+// Missing parameters take Earn's defaults; a wrong one is refused.
+const decodeQuery = Schema.decodeUnknownOption(Hackathons.HackathonListQuery);
 
-export async function GET(request: NextRequest) {
-  try {
-    const userIdFromCookie = request.cookies.get('user-id-hint')?.value;
-
-    const { searchParams } = new URL(request.url);
-    const queryParams = Object.fromEntries(searchParams.entries());
-
-    const validationResult = HackathonQueryParamsSchema.safeParse(queryParams);
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { errors: validationResult.error.flatten() },
-        { status: 400 },
-      );
-    }
-    const queryData = validationResult.data;
-
-    let user: {
-      id: string;
-      isTalentFilled: boolean;
-      location: string | null;
-      skills: JsonValue;
-    } | null = null;
-
-    if (userIdFromCookie) {
-      user = await prisma.user.findUnique({
-        where: { id: userIdFromCookie },
-        select: {
-          id: true,
-          isTalentFilled: true,
-          location: true,
-          skills: true,
-        },
-      });
-    }
-
-    const { where, orderBy, take } = await buildHackathonQuery(queryData, user);
-
-    const listings = await prisma.bounties.findMany({
-      where,
-      orderBy,
-      take,
-      select: listingSelect,
-    });
-
-    return NextResponse.json(listings);
-  } catch (error) {
-    console.error('Error in API handler:', error);
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { message: 'Invalid query parameters', errors: error.flatten() },
-        { status: 400 },
-      );
-    }
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 },
-    );
+// Hackathon tracks for the hackathon list: by hackathon name, status and
+// sort, in the viewer's regions when they have a profile.
+export function GET(request: NextRequest) {
+  const params = Object.fromEntries(request.nextUrl.searchParams.entries());
+  const query = decodeQuery({ ...Hackathons.DEFAULT_LIST_QUERY, ...params });
+  if (Option.isNone(query)) {
+    return json(400, { message: 'Invalid query parameters' });
   }
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const hackathons = yield* Hackathons.Hackathons;
+      const privyDid = yield* sessionOf(request);
+      const viewer = Option.isSome(privyDid)
+        ? Option.getOrNull(yield* hackathons.regionViewer(privyDid.value))
+        : null;
+      const listings = yield* hackathons.list(query.value, viewer);
+      return json(200, listings);
+    }).pipe(
+      Effect.catchTag('DatabaseError', () =>
+        Effect.succeed(json(500, { message: 'Internal Server Error' })),
+      ),
+    ),
+  );
 }

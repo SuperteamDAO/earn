@@ -14,7 +14,7 @@ export function getVisibleHackathons(hackathons?: HackathonModel[]) {
 
       return now.isBetween(startsShowingAt, stopsShowingAt, null, '[]');
     })
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       return (
         dayjs.utc(a.startDate).valueOf() - dayjs.utc(b.startDate).valueOf()
       );
