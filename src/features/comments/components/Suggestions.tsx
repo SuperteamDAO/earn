@@ -1,15 +1,18 @@
+'use client';
+
 import debounce from 'lodash.debounce';
-import { type KeyboardEvent, useEffect, useState } from 'react';
+import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import type { User } from '@/interface/user';
-import { api } from '@/lib/api';
+import { getJson } from '@/lib/fetch-json';
 import { cn } from '@/utils/cn';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import type { MentionUser } from '../types';
+
 interface Props {
-  defaultSuggestions: Map<string, User>;
+  defaultSuggestions: Map<string, MentionUser>;
   input: string;
   onSelect: (tag: string) => void;
 }
@@ -18,51 +21,60 @@ const MAX_COMMENT_SUGGESTIONS = 5;
 
 export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
   const [suggestions, setSuggestions] =
-    useState<Map<string, User>>(defaultSuggestions);
-  const [searchSuggestions, setSearchSuggestions] =
-    useState<Map<string, User>>(defaultSuggestions);
+    useState<Map<string, MentionUser>>(defaultSuggestions);
+  // Everyone seen so far, the defaults and search results alike.
+  const [searchSuggestions] = useState(
+    () => new Map<string, MentionUser>(defaultSuggestions),
+  );
+  const shown = useRef(defaultSuggestions.size);
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
-  async function filterSuggestions(text: string) {
-    if (text === '') {
-      setSuggestions(searchSuggestions);
-    } else {
-      if (suggestions.size < MAX_COMMENT_SUGGESTIONS) {
-        const searchResp = await api.get('/api/user/search', {
-          params: {
-            query: text,
-            take: MAX_COMMENT_SUGGESTIONS - suggestions.size,
-          },
+  useEffect(() => {
+    let live = true;
+    const show = (next: Map<string, MentionUser>) => {
+      if (!live) return;
+      shown.current = next.size;
+      setSuggestions(next);
+    };
+    const filterSuggestions = async (text: string) => {
+      if (text === '') {
+        show(new Map(searchSuggestions));
+        return;
+      }
+      if (shown.current < MAX_COMMENT_SUGGESTIONS) {
+        const params = new URLSearchParams({
+          query: text,
+          take: String(MAX_COMMENT_SUGGESTIONS - shown.current),
         });
-        const users = searchResp.data.users as User[];
+        const { users = [] } = await getJson<{ users?: MentionUser[] }>(
+          `/api/user/search/?${params.toString()}`,
+        ).catch(() => ({ users: [] }));
         users.forEach((user) => {
           if (user.id) searchSuggestions.set(user.id, user);
         });
-        setSearchSuggestions(searchSuggestions);
       }
-      const filteredSuggestions = new Map<string, User>();
+      const filteredSuggestions = new Map<string, MentionUser>();
+      const lower = text.toLowerCase();
       searchSuggestions.forEach((value, key) => {
         if (
-          value.username?.toLowerCase().includes(text.toLowerCase()) ||
-          value.firstName?.toLowerCase().includes(text.toLowerCase()) ||
-          value.lastName?.toLowerCase().includes(text.toLowerCase())
+          value.username?.toLowerCase().includes(lower) ||
+          value.firstName?.toLowerCase().includes(lower) ||
+          value.lastName?.toLowerCase().includes(lower)
         ) {
           filteredSuggestions.set(key, value);
         }
       });
-      setSuggestions(filteredSuggestions);
-    }
-  }
-
-  useEffect(() => {
+      show(filteredSuggestions);
+    };
     const debouncedFilterSuggestions = debounce(() => {
-      filterSuggestions(getLastWord(input));
+      void filterSuggestions(getLastWord(input));
     }, 300);
     debouncedFilterSuggestions();
     return () => {
+      live = false;
       debouncedFilterSuggestions.cancel();
     };
-  }, [input]);
+  }, [input, searchSuggestions]);
 
   useEffect(() => {
     const handleKeyPress = (event: globalThis.KeyboardEvent) => {
@@ -94,7 +106,7 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
-  }, [activeIndex, suggestions]);
+  }, [activeIndex, suggestions, onSelect]);
 
   if (suggestions.size === 0) return null;
 
@@ -116,7 +128,7 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
             <EarnAvatar
               className="h-7 w-7"
               id={suggestion?.id}
-              avatar={suggestion?.photo}
+              avatar={suggestion?.photo ?? undefined}
             />
             <div className="flex flex-col items-start">
               <p className="text-sm font-medium text-slate-900">

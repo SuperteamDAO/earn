@@ -1,10 +1,11 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useSetAtom } from 'jotai';
+'use client';
+
 import { ArrowRight, Loader2 } from 'lucide-react';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import {
   type Dispatch,
   type SetStateAction,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -13,14 +14,12 @@ import {
 import { ErrorInfo } from '@/components/shared/ErrorInfo';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import type { Comment } from '@/interface/comments';
-import type { User } from '@/interface/user';
-import { api } from '@/lib/api';
+import { deleteJson, getJson, postJson } from '@/lib/fetch-json';
 import type { CommentRefType } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 
-import { validUsernamesAtom } from '../atoms';
-import { commentsQuery } from '../queries/comments';
+import { useValidUsernames, ValidUsernamesProvider } from '../context';
+import type { Comment, CommentsPage, MentionUser } from '../types';
 import { sortComments } from '../utils';
 import { Comment as CommentUI } from './Comment';
 import { CommentForm } from './CommentForm';
@@ -29,7 +28,7 @@ interface Props {
   refId: string;
   refType: CommentRefType;
   sponsorId: string | undefined;
-  poc: User | undefined;
+  poc: MentionUser | undefined;
   listingType: string;
   listingSlug: string;
   isAnnounced: boolean;
@@ -40,8 +39,21 @@ interface Props {
   isTemplate?: boolean;
   onSuccess?: (newComment: Comment) => void;
   isDisabled?: boolean;
+  // The first page, loaded with the page on the server. Without it (the
+  // feed), the comments load when this mounts.
+  initialData?: CommentsPage;
 }
-export const Comments = ({
+
+const pageUrl = (refId: string, skip: number, take: number) =>
+  `/api/comment/${encodeURIComponent(refId)}/?skip=${skip}&take=${take}`;
+
+export const Comments = (props: Props) => (
+  <ValidUsernamesProvider initial={props.initialData?.validUsernames ?? []}>
+    <CommentsThread {...props} />
+  </ValidUsernamesProvider>
+);
+
+const CommentsThread = ({
   refId,
   refType,
   sponsorId,
@@ -56,72 +68,98 @@ export const Comments = ({
   take = 10,
   setCount,
   onSuccess,
+  initialData,
 }: Props) => {
-  const queryClient = useQueryClient();
-  const setValidUsernames = useSetAtom(validUsernamesAtom);
+  const { addValidUsernames } = useValidUsernames();
+  const [firstPage, setFirstPage] = useState<CommentsPage | null>(
+    initialData ?? null,
+  );
+  const [isError, setIsError] = useState(false);
   const [localComments, setLocalComments] = useState<Comment[]>([]);
   const [loadedPages, setLoadedPages] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const {
-    data: commentsData,
-    isLoading,
-    isError,
-  } = useQuery(commentsQuery({ refId, skip: 0, take }));
+  const refetch = useCallback(async () => {
+    try {
+      setFirstPage(await getJson<CommentsPage>(pageUrl(refId, 0, take)));
+      setIsError(false);
+    } catch {
+      setIsError(true);
+    }
+  }, [refId, take]);
+
+  // The feed has no first page yet: load it.
+  useEffect(() => {
+    const controller = new AbortController();
+    if (!initialData) {
+      getJson<CommentsPage>(pageUrl(refId, 0, take), controller.signal).then(
+        (page) => {
+          setFirstPage(page);
+          setIsError(false);
+        },
+        () => {
+          if (!controller.signal.aborted) setIsError(true);
+        },
+      );
+    }
+    return () => controller.abort();
+  }, [initialData, refId, take]);
 
   useEffect(() => {
-    if (commentsData) {
-      setCount(commentsData.count);
-      setValidUsernames(commentsData.validUsernames);
+    if (firstPage) {
+      setCount(firstPage.count);
+      addValidUsernames(firstPage.validUsernames);
     }
-  }, [commentsData, setCount, setValidUsernames]);
+  }, [firstPage, setCount, addValidUsernames]);
 
   const comments = useMemo(() => {
-    const serverComments = commentsData?.result ?? [];
-    const combined = [...localComments, ...serverComments];
+    const combined = [...localComments, ...(firstPage?.result ?? [])];
     const deduped = Array.from(
       new Map(combined.map((c) => [c.id, c])).values(),
     );
     return sortComments(deduped);
-  }, [commentsData?.result, localComments]);
+  }, [firstPage?.result, localComments]);
 
   const defaultSuggestions = useMemo(() => {
-    const suggestions = new Map<string, User>();
+    const suggestions = new Map<string, MentionUser>();
     if (poc?.id) {
       suggestions.set(poc.id, poc);
     }
     comments.forEach((comment) => {
-      suggestions.set(comment.authorId, comment.author);
+      suggestions.set(comment.authorId, {
+        ...comment.author,
+        id: comment.authorId,
+      });
     });
     return suggestions;
   }, [comments, poc]);
 
   const deleteComment = async (commentId: string) => {
     posthog.capture('delete_comment');
-    await api.delete(`/api/comment/${commentId}/delete`);
+    await deleteJson(`/api/comment/${commentId}/delete/`);
     setLocalComments((prev) => prev.filter((c) => c.id !== commentId));
-    queryClient.invalidateQueries({ queryKey: ['comments', refId] });
+    void refetch();
   };
 
   const pinComment = async (commentId: string, isPinned: boolean) => {
     posthog.capture('pin_comment');
-    await api.post(`/api/comment/${commentId}/pin`, { isPinned });
+    await postJson(`/api/comment/${commentId}/pin/`, { isPinned });
     setLocalComments((prev) =>
       sortComments(
         prev.map((c) => (c.id === commentId ? { ...c, isPinned } : c)),
       ),
     );
-    queryClient.invalidateQueries({ queryKey: ['comments', refId] });
+    void refetch();
   };
 
   const loadMoreComments = async () => {
     setIsLoadingMore(true);
     try {
-      const response = await api.get(`/api/comment/${refId}`, {
-        params: { skip: loadedPages * take, take },
-      });
-      const newComments = response.data.result as Comment[];
-      setLocalComments((prev) => [...prev, ...newComments]);
+      const page = await getJson<CommentsPage>(
+        pageUrl(refId, loadedPages * take, take),
+      );
+      addValidUsernames(page.validUsernames);
+      setLocalComments((prev) => [...prev, ...page.result]);
       setLoadedPages((p) => p + 1);
     } catch (e) {
       console.error('Failed to load more comments:', e);
@@ -131,13 +169,15 @@ export const Comments = ({
 
   useEffect(() => {
     const handleUpdate = () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', refId] });
+      void refetch();
     };
     window.addEventListener('update-comments', handleUpdate);
     return () => window.removeEventListener('update-comments', handleUpdate);
-  }, [queryClient, refId]);
+  }, [refetch]);
 
-  if (isLoading) {
+  if (isError && !firstPage) return <ErrorInfo />;
+
+  if (!firstPage) {
     return (
       <div className="flex w-full flex-col items-start gap-4 rounded-xl bg-white">
         <div className="flex w-full gap-2 pt-4">
@@ -163,8 +203,6 @@ export const Comments = ({
       </div>
     );
   }
-
-  if (isError) return <ErrorInfo />;
 
   return (
     <div
@@ -233,7 +271,7 @@ export const Comments = ({
               'disabled:hover:bg-transparent disabled:hover:text-slate-400',
             )}
             disabled={isLoadingMore}
-            onClick={loadMoreComments}
+            onClick={() => void loadMoreComments()}
             variant="ghost"
           >
             {isLoadingMore ? (

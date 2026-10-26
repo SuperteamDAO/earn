@@ -1,4 +1,5 @@
-import { useSetAtom } from 'jotai';
+'use client';
+
 import React, {
   type ChangeEvent,
   type Dispatch,
@@ -12,10 +13,10 @@ import TextareaAutosize, {
 } from 'react-textarea-autosize';
 import getCaretCoordinates from 'textarea-caret';
 
-import type { User } from '@/interface/user';
 import { cn } from '@/utils/cn';
 
-import { validUsernamesAtom } from '../atoms';
+import { useValidUsernames } from '../context';
+import type { MentionUser } from '../types';
 import {
   addMention,
   Suggestions,
@@ -27,7 +28,7 @@ const MAX_LENGTH = 280;
 interface Props extends TextareaAutosizeProps {
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
-  defaultSuggestions: Map<string, User>;
+  defaultSuggestions: Map<string, MentionUser>;
   autoFocusOn?: boolean;
   variant?: 'default' | 'flushed';
   onKeyDown?: (e: React.KeyboardEvent) => void;
@@ -44,7 +45,7 @@ export const UserSuggestionTextarea = ({
   ...props
 }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const setValidUsernames = useSetAtom(validUsernamesAtom);
+  const { addValidUsernames } = useValidUsernames();
 
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestionPosition, setSuggestionPosition] = useState({
@@ -53,8 +54,8 @@ export const UserSuggestionTextarea = ({
   });
 
   const selectSuggestion = (tag: string) => {
-    setValidUsernames((s) => Array.from(new Set([...s, tag])));
-    setValue((value) => addMention(value, tag));
+    addValidUsernames([tag]);
+    setValue((current) => addMention(current, tag));
     setShowSuggestions(false);
   };
 

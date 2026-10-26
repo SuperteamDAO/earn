@@ -1,4 +1,4 @@
-import type { Comment } from '@/interface/comments';
+import type { Comment } from '../types';
 
 export function formatFromNow(now: string) {
   return now
@@ -15,11 +15,11 @@ export function formatFromNow(now: string) {
     .replace(' years', 'y');
 }
 
-export function sortComments(comments: Comment[]): Comment[] {
-  const timeSorted = [...comments].sort(
+export function sortComments(comments: ReadonlyArray<Comment>): Comment[] {
+  const timeSorted = comments.toSorted(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
-  const sortedComments = timeSorted.sort((a, b) => {
+  const sortedComments = timeSorted.toSorted((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
     return 0;

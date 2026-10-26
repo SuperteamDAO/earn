@@ -1,27 +1,28 @@
-import posthog from 'posthog-js';
-import React, { useCallback, useEffect, useState } from 'react';
+'use client';
+
+import { posthog } from 'posthog-js';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { URL_REGEX } from '@/constants/URL_REGEX';
-import type { Comment } from '@/interface/comments';
-import type { User } from '@/interface/user';
-import { api } from '@/lib/api';
+import { postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 import { CommentRefType } from '@/prisma/enums';
-import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import type { Comment, MentionUser } from '../types';
 import { UserSuggestionTextarea } from './UserSuggestionTextarea';
 
 interface Props {
-  defaultSuggestions: Map<string, User>;
+  defaultSuggestions: Map<string, MentionUser>;
   refId: string;
   refType: CommentRefType;
   isTemplate?: boolean;
-  poc?: User | undefined;
+  poc?: MentionUser | undefined;
   onSuccess?: (newComment: Comment) => void;
   isDisabled?: boolean;
 }
@@ -35,12 +36,11 @@ export const CommentForm = ({
   isDisabled = false,
   onSuccess,
 }: Props) => {
-  const { user } = useUser();
+  const user = useViewer();
 
   const [newComment, setNewComment] = useState('');
   const [newCommentLoading, setNewCommentLoading] = useState(false);
   const [newCommentError, setNewCommentError] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isPinned, setIsPinned] = useState(false);
 
   const containsLink = newComment
@@ -52,56 +52,46 @@ export const CommentForm = ({
     setNewCommentLoading(true);
     setNewCommentError(false);
     try {
-      const newCommentData = await api.post(`/api/comment/create`, {
+      const created = await postJson<Comment>(`/api/comment/create/`, {
         message: newComment,
         refType: refType,
         refId: refId,
-        pocId: poc?.id,
         isPinned,
       });
-      onSuccess?.(newCommentData.data);
+      onSuccess?.(created);
       setNewComment('');
       setIsPinned(false);
       setNewCommentLoading(false);
-    } catch (e) {
+    } catch {
       setNewCommentError(true);
       setNewCommentLoading(false);
     }
   };
 
   const handleSubmit = () => {
-    addNewComment();
+    void addNewComment();
   };
 
-  const canComment = useCallback(() => {
-    if (!user) {
-      return false;
-    }
+  const canComment = () =>
+    !!user && (user.isTalentFilled || !!user.currentSponsorId);
 
-    const isSponsor = !!user.currentSponsorId;
-    const isTalentFilled = !!user.isTalentFilled;
-    return isTalentFilled || isSponsor;
-  }, [user]);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (newComment && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (newComment && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-
-        if (canComment() && !isTemplate && !isDisabled) {
-          handleSubmit();
-        }
+      if (canComment() && !isTemplate && !isDisabled) {
+        handleSubmit();
       }
-    },
-    [newComment, canComment, isTemplate, isDisabled, handleSubmit],
-  );
+    }
+  };
 
+  // A draft left in this tab comes back after the page renders (the server
+  // can't see sessionStorage).
   useEffect(() => {
     const saved = sessionStorage.getItem(`comment-${refId}`);
-    if (saved) {
-      setNewComment(saved);
-    }
-  }, []);
+    // oxlint-disable-next-line react/set-state-in-effect
+    if (saved) setNewComment(saved);
+  }, [refId]);
 
   useEffect(() => {
     if (newComment) {
@@ -109,18 +99,20 @@ export const CommentForm = ({
     } else {
       sessionStorage.removeItem(`comment-${refId}`);
     }
-  }, [newComment]);
+  }, [newComment, refId]);
 
-  useEffect(() => {
-    setIsCollapsed(!newComment);
-  }, [newComment]);
+  const isCollapsed = !newComment;
 
-  const isPoc = poc?.id === user?.id;
+  const isPoc = !!poc?.id && poc.id === user?.id;
 
   return (
     <div className="mb-4 flex w-full flex-col gap-4">
       <div className="flex w-full gap-3">
-        <EarnAvatar className="h-9 w-9" id={user?.id} avatar={user?.photo} />
+        <EarnAvatar
+          className="h-9 w-9"
+          id={user?.id}
+          avatar={user?.photo ?? undefined}
+        />
         <div className="relative mt-0.5 w-full">
           <UserSuggestionTextarea
             defaultSuggestions={defaultSuggestions}
@@ -139,7 +131,7 @@ export const CommentForm = ({
           submission form above to be considered.
         </p>
       )}
-      {!!newCommentError && (
+      {newCommentError && (
         <p className="mt-4 text-red-500">
           Error in adding your comment! Please try again!
         </p>
@@ -156,7 +148,7 @@ export const CommentForm = ({
               <Checkbox
                 id="pin-comment"
                 checked={isPinned}
-                onCheckedChange={(checked) => setIsPinned(checked as boolean)}
+                onCheckedChange={(checked) => setIsPinned(checked === true)}
                 disabled={newCommentLoading || !newComment}
                 className="mb-0.5"
               />

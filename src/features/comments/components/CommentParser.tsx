@@ -1,21 +1,22 @@
-import { useAtomValue } from 'jotai';
+'use client';
+
 import Link from 'next/link';
 import { useState } from 'react';
 
 import { useExternalLinkDialog } from '@/components/shared/ExternalLinkDialogProvider';
 import { Button } from '@/components/ui/button';
-import type { CommentType } from '@/interface/comments';
+import type { CommentType } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { isLink } from '@/utils/isLink';
 import { truncateString } from '@/utils/truncateString';
 
-import { validUsernamesAtom } from '../atoms';
+import { useValidUsernames } from '../context';
 
 interface Props {
   value: string;
   type: CommentType;
   isAnnounced: boolean;
-  submissionId?: string;
+  submissionId?: string | null;
 }
 
 export const CommentParser = ({
@@ -25,7 +26,7 @@ export const CommentParser = ({
   isAnnounced,
 }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const validUsernames = useAtomValue(validUsernamesAtom);
+  const { validUsernames } = useValidUsernames();
   const { handleExternalLinkClick } = useExternalLinkDialog();
   const CHARACTER_LIMIT = 200;
 

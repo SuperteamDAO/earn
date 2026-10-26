@@ -1,7 +1,9 @@
+'use client';
+
 import { AlertCircle, ChevronDown, Loader2, Pin, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import posthog from 'posthog-js';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { posthog } from 'posthog-js';
+import { useEffect, useRef, useState } from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -24,11 +26,9 @@ import {
 import { URL_REGEX } from '@/constants/URL_REGEX';
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import type { Comment as IComment } from '@/interface/comments';
-import type { User } from '@/interface/user';
-import { api } from '@/lib/api';
+import { deleteJson, postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 import { CommentRefType } from '@/prisma/enums';
-import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
@@ -36,21 +36,23 @@ import { getURL } from '@/utils/validUrl';
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import type { Comment as IComment, MentionUser } from '../types';
 import { formatFromNow } from '../utils';
 import { CommentParser } from './CommentParser';
 import { UserSuggestionTextarea } from './UserSuggestionTextarea';
 
 interface Props {
   comment: IComment;
-  poc: User | undefined;
+  poc: MentionUser | undefined;
   refId: string;
   refType: CommentRefType;
   sponsorId: string | undefined;
-  defaultSuggestions: Map<string, User>;
+  defaultSuggestions: Map<string, MentionUser>;
   deleteComment: (commentId: string) => Promise<void>;
   pinComment?: (commentId: string, isPinned: boolean) => Promise<void>;
-  listingSlug: string;
-  listingType: string;
+  // Unused here; kept so Comments can pass its props through.
+  listingSlug?: string;
+  listingType?: string;
   isAnnounced: boolean;
   isReply?: boolean;
   addNewReply?: (msg: string) => Promise<void>;
@@ -69,15 +71,13 @@ export const Comment = ({
   pinComment,
   defaultSuggestions,
   addNewReply,
-  listingType,
-  listingSlug,
   isReply = false,
   isAnnounced,
   isVerified = false,
   isTemplate = false,
   isDisabled = false,
 }: Props) => {
-  const { user } = useUser();
+  const user = useViewer();
 
   const {
     isOpen: deleteIsOpen,
@@ -91,7 +91,9 @@ export const Comment = ({
   } = useDisclosure();
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [showReplies, setShowReplies] = useState(false);
-  const [replies, setReplies] = useState(comment?.replies ?? []);
+  const [replies, setReplies] = useState<ReadonlyArray<IComment>>(
+    comment?.replies ?? [],
+  );
   const [newReply, setNewReply] = useState('');
   const [newReplyLoading, setNewReplyLoading] = useState(false);
   const [newReplyError, setNewReplyError] = useState(false);
@@ -100,26 +102,28 @@ export const Comment = ({
   const [pinLoading, setPinLoading] = useState(false);
   const [pinError, setPinError] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const cancelRef = useRef<any>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
   const containsLink = newReply
     .split(/\s+/)
     .some((part) => URL_REGEX.test(part));
 
+  // A draft reply left in this tab comes back after the page renders.
   useEffect(() => {
     const saved = sessionStorage.getItem(`comment-${refId}-${comment.id}`);
     if (saved) {
+      // oxlint-disable-next-line react/set-state-in-effect
       setNewReply(saved);
       setShowReplies(true);
       setShowReplyInput(true);
     }
-  }, []);
+  }, [refId, comment.id]);
 
   const deleteReplyLvl1 = async (replyId: string) => {
     posthog.capture('delete_comment');
     const replyIndex = replies.findIndex((reply) => reply.id === replyId);
     if (replyIndex > -1) {
-      await api.delete(`/api/comment/${replyId}/delete`);
+      await deleteJson(`/api/comment/${replyId}/delete/`);
       setReplies((prevReplies) => {
         const newReplies = [...prevReplies];
         newReplies.splice(replyIndex, 1);
@@ -137,8 +141,7 @@ export const Comment = ({
       await deleteComment(comment.id);
       setDeleteLoading(false);
       deleteOnClose();
-    } catch (e) {
-      console.log('error - ', e);
+    } catch {
       setDeleteError(true);
       setDeleteLoading(false);
     }
@@ -151,8 +154,7 @@ export const Comment = ({
       await pinComment?.(comment.id, !comment.isPinned);
       setPinLoading(false);
       pinOnClose();
-    } catch (e) {
-      console.log('error - ', e);
+    } catch {
       setPinError(true);
       setPinLoading(false);
     }
@@ -161,15 +163,13 @@ export const Comment = ({
   const addNewReplyLvl1 = async (msg: string) => {
     posthog.capture('publish_comment');
     setNewReplyError(false);
-    const newReplyData = await api.post(`/api/comment/create`, {
+    const created = await postJson<IComment>(`/api/comment/create/`, {
       message: msg,
       refType: refType,
       refId: refId,
       replyToId: comment?.id ?? null,
-      replyToUserId: comment?.authorId ?? null,
-      pocId: poc?.id,
     });
-    setReplies((prevReplies) => [...prevReplies, newReplyData.data]);
+    setReplies((prevReplies) => [...prevReplies, created]);
     setShowReplies(true);
   };
 
@@ -189,21 +189,17 @@ export const Comment = ({
       setNewReply('');
       setNewReplyLoading(false);
       setShowReplyInput(false);
-    } catch (e) {
-      console.log('error - ', e);
+    } catch {
       setNewReplyError(true);
       setNewReplyLoading(false);
     }
   };
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (newReply && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        handleSubmit();
-      }
-    },
-    [newReply, handleSubmit],
-  );
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (newReply && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      void handleSubmit();
+    }
+  };
 
   useEffect(() => {
     if (newReply) {
@@ -211,10 +207,10 @@ export const Comment = ({
     } else {
       sessionStorage.removeItem(`comment-${refId}-${comment.id}`);
     }
-  }, [newReply]);
+  }, [newReply, refId, comment.id]);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const isPoc = poc?.id === user?.id;
+  const isPoc = !!poc?.id && poc.id === user?.id;
   const showDropdown = showOptions || isMobile;
 
   return (
@@ -238,7 +234,7 @@ export const Comment = ({
           <EarnAvatar
             className={cn(isReply ? 'h-7 w-7' : 'h-9 w-9')}
             id={comment?.author?.id}
-            avatar={comment?.author?.photo}
+            avatar={comment?.author?.photo ?? undefined}
           />
         </Link>
 
@@ -322,7 +318,7 @@ export const Comment = ({
                 <EarnAvatar
                   className="h-7 w-7"
                   id={user?.id}
-                  avatar={user?.photo}
+                  avatar={user?.photo ?? undefined}
                 />
                 <UserSuggestionTextarea
                   autoFocusOn={showReplyInput}
@@ -341,7 +337,7 @@ export const Comment = ({
                   added to the submission form above to be considered.
                 </p>
               )}
-              {!!newReplyError && (
+              {newReplyError && (
                 <p className="my-0 mt-4 text-xs text-red-500">
                   Error in adding your comment! Please try again!
                 </p>
@@ -364,7 +360,7 @@ export const Comment = ({
                     disabled={
                       newReplyLoading || !newReply || isTemplate || isDisabled
                     }
-                    onClick={handleSubmit}
+                    onClick={() => void handleSubmit()}
                   >
                     {newReplyLoading ? (
                       <span className="flex items-center">
@@ -390,8 +386,6 @@ export const Comment = ({
                 <Comment
                   poc={poc}
                   isAnnounced={isAnnounced}
-                  listingSlug={listingSlug}
-                  listingType={listingType}
                   defaultSuggestions={defaultSuggestions}
                   deleteComment={deleteReplyLvl1}
                   addNewReply={addNewReplyLvl1}
@@ -490,7 +484,7 @@ export const Comment = ({
             <Button
               className={cn('ph-no-capture', 'ml-0 md:ml-3')}
               disabled={deleteLoading}
-              onClick={handleDelete}
+              onClick={() => void handleDelete()}
             >
               {deleteLoading ? (
                 <>
@@ -533,7 +527,11 @@ export const Comment = ({
                 Cancel
               </Button>
             </AlertDialogCancel>
-            <Button variant="default" onClick={handlePin} disabled={pinLoading}>
+            <Button
+              variant="default"
+              onClick={() => void handlePin()}
+              disabled={pinLoading}
+            >
               {pinLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
