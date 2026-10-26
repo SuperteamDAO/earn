@@ -288,9 +288,6 @@ export const createListingFormSchema = ({
           },
         ),
       isPrivate: z.boolean().default(false),
-      agentAccess: z
-        .enum(['HUMAN_ONLY', 'AGENT_ALLOWED', 'AGENT_ONLY'])
-        .default('HUMAN_ONLY'),
       hackathonId: z.string().optional().nullable(),
 
       // values that will not be set on any API, but useful for response

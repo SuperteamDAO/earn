@@ -67,7 +67,6 @@ export const ListingsSection = ({
   const isLg = useBreakpoint('lg');
   const isSponsorContext = type === 'sponsor';
   const isBookmarksContext = type === 'bookmarks';
-  const isAgentContext = type === 'agents';
 
   const { authenticated, ready } = usePrivy();
   const supportsForYou = FOR_YOU_SUPPORTED_TYPES.includes(type);
@@ -298,9 +297,6 @@ export const ListingsSection = ({
   const getTitle = () => {
     if (isSponsorContext) {
       return 'All Listings';
-    }
-    if (isAgentContext) {
-      return 'Agent-eligible listings';
     }
     return 'Browse Opportunities';
   };

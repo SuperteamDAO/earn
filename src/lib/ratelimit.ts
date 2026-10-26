@@ -15,39 +15,11 @@ export const aiGenerateRateLimiter = new Ratelimit({
   prefix: 'ratelimit:ai_generate',
 });
 
-export const agentRegisterRateLimiter = new Ratelimit({
-  redis: redis,
-  limiter: Ratelimit.fixedWindow(60, '1 h'),
-  analytics: true,
-  prefix: 'ratelimit:agent_register',
-});
-
 export const userCreateRateLimiter = new Ratelimit({
   redis: redis,
   limiter: Ratelimit.fixedWindow(60, '1 h'),
   analytics: true,
   prefix: 'ratelimit:user_create',
-});
-
-export const agentSubmitRateLimiter = new Ratelimit({
-  redis: redis,
-  limiter: Ratelimit.fixedWindow(60, '1 h'),
-  analytics: true,
-  prefix: 'ratelimit:agent_submit',
-});
-
-export const agentCommentRateLimiter = new Ratelimit({
-  redis: redis,
-  limiter: Ratelimit.fixedWindow(120, '1 h'),
-  analytics: true,
-  prefix: 'ratelimit:agent_comment',
-});
-
-export const agentClaimRateLimiter = new Ratelimit({
-  redis: redis,
-  limiter: Ratelimit.fixedWindow(20, '10 m'),
-  analytics: true,
-  prefix: 'ratelimit:agent_claim',
 });
 
 export const ogMetadataRateLimiter = new Ratelimit({

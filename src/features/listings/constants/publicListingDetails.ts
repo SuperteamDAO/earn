@@ -23,7 +23,6 @@ export const publicListingDetailsSelect = {
   pocSocials: true,
   publishedAt: true,
   isPrivate: true,
-  agentAccess: true,
   hackathonId: true,
   compensationType: true,
   maxRewardAsk: true,

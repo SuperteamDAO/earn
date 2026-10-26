@@ -34,7 +34,6 @@ export async function fetchComments({
           photo: true,
           username: true,
           currentSponsorId: true,
-          isAgent: true,
         },
       },
       replies: {
@@ -46,7 +45,6 @@ export async function fetchComments({
               photo: true,
               username: true,
               currentSponsorId: true,
-              isAgent: true,
             },
           },
         },

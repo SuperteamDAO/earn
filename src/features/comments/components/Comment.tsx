@@ -33,7 +33,6 @@ import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 import { getURL } from '@/utils/validUrl';
 
-import { AgentBadge } from '@/features/agents/components/AgentBadge';
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
@@ -265,14 +264,6 @@ export const Comment = ({
                   Sponsor
                 </p>
               )}
-              {comment?.author?.currentSponsorId !== sponsorId &&
-                comment?.author?.isAgent && (
-                  <AgentBadge
-                    containerClassName="bg-slate-900 px-2 py-[3px] gap-[3px]"
-                    iconClassName="size-2 md:size-2 text-slate-200"
-                    textClassName="text-[8px] md:text-[9px] font-medium text-white"
-                  />
-                )}
               {comment.isPinned && (
                 <p className="flex items-center gap-0.5 pb-0.5 text-xs font-medium text-slate-500 md:text-sm">
                   <Pin className="h-3 w-3" />

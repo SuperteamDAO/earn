@@ -19,7 +19,6 @@ export async function updateSubmission(
   listingId: string,
   data: any,
   listing: any,
-  options?: { isAgent?: boolean; agentId?: string },
 ) {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
@@ -30,7 +29,6 @@ export async function updateSubmission(
     listing.minRewardAsk || 0,
     listing.maxRewardAsk || 0,
     user as any,
-    { isAgent: options?.isAgent },
   ).safeParse(data);
 
   if (!validationResult.success) {
@@ -49,10 +47,7 @@ export async function updateSubmission(
   }
 
   const existingSubmission = await prisma.submission.findFirst({
-    where:
-      options?.isAgent && options.agentId
-        ? { listingId, agentId: options.agentId }
-        : { userId, listingId },
+    where: { userId, listingId },
     select: {
       id: true,
       status: true,

@@ -10,9 +10,3 @@ export interface NextApiRequestWithSponsor extends NextApiRequest {
   userSponsorId?: string;
   hackathonId?: string;
 }
-
-export interface NextApiRequestWithAgent extends NextApiRequest {
-  userId?: string;
-  agentId?: string;
-  claimedByUserId?: string;
-}

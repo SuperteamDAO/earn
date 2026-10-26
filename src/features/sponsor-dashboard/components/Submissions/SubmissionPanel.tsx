@@ -11,7 +11,6 @@ import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
-import { AgentBadge } from '@/features/agents/components/AgentBadge';
 import type { Listing } from '@/features/listings/types';
 import {
   GitHub,
@@ -68,13 +67,6 @@ export const SubmissionPanel = ({
                     <p className="w-full font-medium whitespace-nowrap text-slate-900">
                       {`${selectedSubmission?.user?.firstName}'s Submission`}
                     </p>
-                    {!!selectedSubmission?.agentId && (
-                      <AgentBadge
-                        containerClassName="bg-slate-900 px-2 py-[3px] gap-[3px]"
-                        iconClassName="size-2 text-slate-200"
-                        textClassName="text-[8px] font-medium text-white"
-                      />
-                    )}
                   </div>
                   <Link
                     className="text-brand-purple flex w-full items-center text-xs font-medium whitespace-nowrap"

@@ -83,7 +83,6 @@ interface User {
   linkedTwitter?: string[];
   referralCode?: string;
   referredById?: string | null;
-  isAgent?: boolean;
 }
 
 type PrismaUserWithoutKYC = UserGetPayload<{

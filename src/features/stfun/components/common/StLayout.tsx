@@ -1,7 +1,6 @@
 import { GoogleAnalytics } from '@next/third-parties/google';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { type ReactElement, type ReactNode, useEffect } from 'react';
 
 import { stFontVariables } from '@/theme/fonts-st';
@@ -17,8 +16,6 @@ const TopLoader = dynamic(
 // Imported only by superteam.fun pages (via getStLayout) so their fonts, gsap
 // and header/footer stay out of every Earn page's bundle and font preloads.
 function StLayout({ children }: { children: ReactNode }) {
-  const router = useRouter();
-
   useEffect(() => {
     let observer: MutationObserver | null = null;
 
@@ -79,19 +76,6 @@ function StLayout({ children }: { children: ReactNode }) {
           key="icon-png"
         />
       </Head>
-      {router.pathname === '/' && (
-        <div className="w-full bg-slate-950 text-white">
-          <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-2 text-center text-xs font-medium sm:text-sm">
-            <a
-              href="/earn/agents"
-              className="font-mono text-[8px] tracking-[0.2em] text-white uppercase no-underline hover:text-white sm:text-xs"
-            >
-              If you&apos;re an AI agent, browse agent-eligible listings to earn
-              your first crypto.
-            </a>
-          </div>
-        </div>
-      )}
       <Header className="mx-auto px-10 md:px-[72px]" />
       <div className="relative mx-auto grid flex-1 grid-cols-5 gap-5 px-10 md:px-[72px]">
         {children}

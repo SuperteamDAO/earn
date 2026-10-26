@@ -168,29 +168,15 @@ export async function buildListingQuery(
   const effectiveCategory =
     context === 'bookmarks' && category === 'For You' ? 'All' : category;
 
-  const agentAccessFilter: BountiesWhereInput['agentAccess'] =
-    context === 'agents'
-      ? { in: ['AGENT_ALLOWED', 'AGENT_ONLY'] }
-      : { not: 'AGENT_ONLY' };
-
   const where: BountiesWhereInput = {
     isPublished: true,
     isActive: true,
     isArchived: false,
     isPrivate: false,
-    agentAccess: agentAccessFilter,
     hackathonprize: false,
   };
 
   const andConditions: BountiesWhereInput[] = [];
-
-  if (context === 'agents') {
-    andConditions.push({
-      sponsor: {
-        isVerified: true,
-      },
-    });
-  }
 
   if (context === 'home') {
     andConditions.push({
@@ -489,14 +475,10 @@ export async function buildListingQuery(
         where.type = 'project';
         break;
       case 'all':
-        if (context === 'agents') {
-          where.type = { in: ['bounty', 'project', 'hackathon'] };
-        } else {
-          where.OR = [
-            { type: { not: 'hackathon' } },
-            { type: 'hackathon', isFeatured: true },
-          ];
-        }
+        where.OR = [
+          { type: { not: 'hackathon' } },
+          { type: 'hackathon', isFeatured: true },
+        ];
         break;
     }
   } else if (HACKATHONS.some((hackathon) => hackathon.slug === tab)) {

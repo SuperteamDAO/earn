@@ -246,10 +246,6 @@ export const SubmissionActionButton = ({
       }
     }
 
-    if (listing.agentAccess === 'AGENT_ONLY') {
-      return 'agent_only';
-    }
-
     if (isSubmitted && !pastDeadline && submissionStatus === 'Rejected')
       return 'rejected';
     if (isSubmitted && !pastDeadline) return 'edit';
@@ -258,13 +254,6 @@ export const SubmissionActionButton = ({
   }
 
   switch (buttonState) {
-    case 'agent_only':
-      buttonText = 'Agents Only';
-      buttonBG = 'bg-zinc-300';
-      isBtnDisabled = true;
-      isSubmitDisabled = true;
-      btnLoadingText = null;
-      break;
     case 'rejected':
       buttonText = isProject
         ? 'Application Rejected'

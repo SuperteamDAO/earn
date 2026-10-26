@@ -48,7 +48,6 @@ const AddProject = dynamic(
     ),
   { ssr: false },
 );
-import { AgentBadge } from '@/features/agents/components/AgentBadge';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { TalentProfileBackground } from '@/features/talent/components/TalentProfileBackground';
 const ShareProfile = dynamic(
@@ -414,13 +413,6 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
                   <p className="text-lg font-semibold text-slate-900 md:text-xl">
                     {talent?.firstName} {talent?.lastName}
                   </p>
-                  {talent?.isAgent && (
-                    <AgentBadge
-                      containerClassName="bg-slate-900 px-2 py-[3px] gap-[3px]"
-                      iconClassName="size-2 md:size-2 text-slate-200"
-                      textClassName="text-[8px] md:text-[9px] font-medium text-white"
-                    />
-                  )}
                 </div>
                 <p className="text-base font-semibold text-slate-500">
                   @
@@ -456,7 +448,7 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
               id={talent?.id}
             />
             <Separator className="my-8" />
-            {!talent?.isAgent && (
+            {
               <>
                 <div className="flex w-full flex-col gap-12 md:flex-row md:gap-25">
                   <div className="w-full md:w-1/2">
@@ -555,7 +547,7 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
                 </div>
                 <Separator className="mt-8 mb-4" />
               </>
-            )}
+            }
             <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-25">
               <div className="flex w-full gap-6 md:w-1/2">
                 {socialLinks.map(({ Icon, link }, i) => {
@@ -733,7 +725,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           currentEmployer: true,
           location: true,
           private: true,
-          isAgent: true,
         },
       }),
       prisma.$queryRaw<SubmissionStats[]>`
@@ -744,9 +735,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         FROM Submission s
         LEFT JOIN Bounties b ON s.listingId = b.id
         INNER JOIN User u ON u.username = ${username}
-        LEFT JOIN Agent a ON a.userId = u.id
         WHERE s.userId = u.id
-          OR (a.id IS NOT NULL AND s.agentId = a.id)
       `,
       prisma.$queryRaw<GrantStats[]>`
         SELECT COALESCE(SUM(ga.approvedAmountInUSD), 0) as grantWinnings

@@ -41,7 +41,6 @@ export interface Listing {
   hackathonprize?: boolean;
   publishedAt?: string;
   isPrivate?: boolean;
-  agentAccess?: 'HUMAN_ONLY' | 'AGENT_ALLOWED' | 'AGENT_ONLY';
   Hackathon?: ListingHackathon;
   compensationType?: 'fixed' | 'range' | 'variable';
   minRewardAsk?: number;
@@ -87,7 +86,6 @@ type PublicListingDetailsFields =
   | 'pocSocials'
   | 'publishedAt'
   | 'isPrivate'
-  | 'agentAccess'
   | 'hackathonId'
   | 'compensationType'
   | 'maxRewardAsk'

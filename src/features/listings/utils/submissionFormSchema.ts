@@ -26,7 +26,6 @@ const submissionSchema = (
   minRewardAsk: number,
   maxRewardAsk: number,
   user: User | null,
-  options?: { isAgent?: boolean },
 ) =>
   z
     .object({
@@ -76,8 +75,6 @@ const submissionSchema = (
           : z.string().nullable().optional(),
     })
     .superRefine((data, ctx) => {
-      const isAgent = options?.isAgent === true;
-
       if (listing.type !== 'project' && !data.link) {
         ctx.addIssue({
           code: 'custom',
@@ -107,7 +104,6 @@ const submissionSchema = (
       }
 
       if (
-        !isAgent &&
         data.tweet &&
         isXUrl(data.tweet) &&
         !isXInternalStatusUrl(data.tweet)
@@ -125,12 +121,7 @@ const submissionSchema = (
         }
       }
 
-      if (
-        !isAgent &&
-        data.link &&
-        isXUrl(data.link) &&
-        !isXInternalStatusUrl(data.link)
-      ) {
+      if (data.link && isXUrl(data.link) && !isXInternalStatusUrl(data.link)) {
         const handle = extractXHandle(data.link);
         if (handle) {
           const verifiedHandles = user?.linkedTwitter || [];

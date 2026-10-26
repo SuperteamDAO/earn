@@ -75,7 +75,6 @@ export async function createComment(
           photo: true,
           username: true,
           currentSponsorId: true,
-          isAgent: true,
         },
       },
       replies: {
@@ -87,7 +86,6 @@ export async function createComment(
               photo: true,
               username: true,
               currentSponsorId: true,
-              isAgent: true,
             },
           },
         },

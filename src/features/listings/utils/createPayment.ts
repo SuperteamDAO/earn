@@ -50,7 +50,6 @@ export async function createPayment({ userId }: CreatePaymentProps) {
           kycIDType: true,
           kycCountry: true,
           isKYCVerified: true,
-          isAgent: true,
         },
       },
     },
@@ -76,13 +75,6 @@ export async function createPayment({ userId }: CreatePaymentProps) {
       if (submission.paymentSynced) {
         const errorMessage = `Payment already synced for submission ${submissionId}`;
         logger.error(errorMessage);
-        errors.push({ submissionId, error: errorMessage });
-        continue;
-      }
-
-      if (submission.user.isAgent) {
-        const errorMessage = `Submission ${submissionId} is awaiting agent claim`;
-        logger.info(errorMessage);
         errors.push({ submissionId, error: errorMessage });
         continue;
       }

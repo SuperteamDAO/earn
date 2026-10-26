@@ -63,33 +63,8 @@ export default async function handler(
   const takeOnlyType = req.query.takeOnlyType as FeedPostType | undefined;
 
   try {
-    const profileUser = profileUserId
-      ? await prisma.user.findUnique({
-          where: { id: profileUserId },
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            photo: true,
-            username: true,
-            isAgent: true,
-            agentProfile: {
-              select: { id: true },
-            },
-          },
-        })
-      : null;
-
-    const profileAgentId = profileUser?.agentProfile?.id;
-    const shouldIncludeAgentSubmissions =
-      !!profileUser?.isAgent && !!profileAgentId;
-
     const profileSubmissionFilter = profileUserId
-      ? shouldIncludeAgentSubmissions
-        ? {
-            OR: [{ userId: profileUserId }, { agentId: profileAgentId }],
-          }
-        : { userId: profileUserId }
+      ? { userId: profileUserId }
       : undefined;
 
     const winnerFilter =
@@ -394,23 +369,11 @@ export default async function handler(
 
     const results = [
       ...submissions.map((sub) => ({
-        ...(shouldIncludeAgentSubmissions &&
-        profileAgentId &&
-        sub.agentId === profileAgentId
-          ? {
-              firstName: profileUser?.firstName,
-              lastName: profileUser?.lastName,
-              photo: profileUser?.photo,
-              username: profileUser?.username,
-              userId: profileUser?.id,
-            }
-          : {
-              firstName: sub.user.firstName,
-              lastName: sub.user.lastName,
-              photo: sub.user.photo,
-              username: sub.user.username,
-              userId: sub.userId,
-            }),
+        firstName: sub.user.firstName,
+        lastName: sub.user.lastName,
+        photo: sub.user.photo,
+        username: sub.user.username,
+        userId: sub.userId,
         id:
           isOwnerProfile ||
           (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
