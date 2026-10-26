@@ -91,13 +91,12 @@ export function ExtraInfoSection({
         </p>
         <div className="flex flex-wrap gap-3">
           {skills?.map((skill) => (
-            <Link
+            <span
               key={skill}
-              href={`/earn/skill/${skill.toLowerCase().replace(/\s+/g, '-')}`}
-              className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-slate-700"
+              className="m-0 rounded-sm bg-slate-100 px-4 py-1 text-xs font-medium text-slate-600"
             >
               {skill}
-            </Link>
+            </span>
           ))}
         </div>
       </div>

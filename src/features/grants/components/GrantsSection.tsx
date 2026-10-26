@@ -20,7 +20,6 @@ interface GrantSectionProps {
   type: GrantContext;
   region?: string;
   sponsor?: string;
-  skill?: string;
   category?: string;
   hideWhenEmpty?: boolean;
   hideCategoryPills?: boolean;
@@ -30,7 +29,6 @@ export const GrantsSection = ({
   type,
   region,
   sponsor,
-  skill,
   category: categoryProp,
   hideWhenEmpty,
   hideCategoryPills,
@@ -40,9 +38,7 @@ export const GrantsSection = ({
   // For category contexts, use the category prop (route category)
   // For other contexts, use activeCategory (filter selection)
   const effectiveCategory =
-    type === 'category' || type === 'category-all'
-      ? categoryProp || activeCategory
-      : activeCategory;
+    type === 'category' ? categoryProp || activeCategory : activeCategory;
   const isMd = useBreakpoint('md');
 
   const {
@@ -54,7 +50,6 @@ export const GrantsSection = ({
     category: effectiveCategory,
     region,
     sponsor,
-    skill,
   });
 
   const handleAllCategoryClick = useCallback(() => {
@@ -99,7 +94,7 @@ export const GrantsSection = ({
 
       <div className="mb-3 h-px w-full bg-slate-200" />
 
-      {!hideCategoryPills && type !== 'category' && type !== 'category-all' && (
+      {!hideCategoryPills && type !== 'category' && (
         <div className="mb-2 flex gap-1 overflow-x-auto pb-1">
           <CategoryPill
             key="all"

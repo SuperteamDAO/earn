@@ -21,9 +21,6 @@ import {
   type QueryParamsSchema,
 } from '@/features/listings/constants/schema';
 
-import { getCountryNameFromSlug } from './parse-opportunity-tags';
-import { findSkillBySlug } from './skill';
-
 type BuildListingQueryArgs = z.infer<typeof QueryParamsSchema>;
 
 interface ListingQueryResult {
@@ -164,7 +161,7 @@ export async function buildListingQuery(
     skills: JsonValue;
   } | null,
 ): Promise<ListingQueryResult> {
-  const { tab, category, status, context, region, sponsor, skill } = args;
+  const { tab, category, status, context, region, sponsor } = args;
   const effectiveCategory =
     context === 'bookmarks' && category === 'For You' ? 'All' : category;
 
@@ -228,7 +225,7 @@ export async function buildListingQuery(
     }
   }
 
-  if ((context === 'region' || context === 'region-all') && region) {
+  if (context === 'region' && region) {
     const chapter = await findChapterByRegionInput(region);
 
     if (chapter) {
@@ -334,136 +331,6 @@ export async function buildListingQuery(
     });
   }
 
-  if ((context === 'skill' || context === 'skill-all') && skill) {
-    const skillInfo = findSkillBySlug(skill);
-
-    if (skillInfo) {
-      if (skillInfo.type === 'parent') {
-        // Filter by parent skill
-        andConditions.push({
-          skills: {
-            path: '$[*].skills',
-            array_contains: [skillInfo.name],
-          },
-        });
-      } else {
-        // Filter by subskill
-        andConditions.push({
-          skills: {
-            path: '$[*].subskills',
-            array_contains: [skillInfo.name],
-          },
-        });
-      }
-    }
-  }
-
-  // Handle opportunity context - supports region, skill, category, and type filters
-  if (context === 'opportunity') {
-    // Region filter (same logic as region context)
-    if (region) {
-      // Convert slug to proper name for lookup (e.g., 'european-union' -> 'European Union')
-      const regionName = getCountryNameFromSlug(region);
-
-      const chapter = await findChapterByRegionInput(region);
-
-      if (chapter) {
-        const regionList = await getRegionsForChapterPage(chapter.region);
-        andConditions.push({
-          OR: [
-            {
-              region: {
-                in: regionList,
-              },
-            },
-            {
-              sponsor: {
-                name: chapter.name,
-              },
-            },
-          ],
-        });
-      } else {
-        const country = countries.find(
-          (c) => c.name.toLowerCase() === regionName.toLowerCase(),
-        );
-
-        if (country) {
-          if (
-            country.region &&
-            country.regions &&
-            Array.isArray(country.regions)
-          ) {
-            // Multi-country region page (EU, GCC, etc.)
-            const regionList =
-              await getRegionsForMultiCountryRegionPageUsingChapters(
-                country.name,
-              );
-            andConditions.push({
-              OR: [
-                {
-                  region: {
-                    in: regionList,
-                  },
-                },
-              ],
-            });
-          } else {
-            // Regular country page
-            const regionList = await getRegionsForCountryPageUsingChapters(
-              country.name,
-            );
-            andConditions.push({
-              OR: [
-                {
-                  region: {
-                    in: regionList,
-                  },
-                },
-              ],
-            });
-          }
-        } else {
-          // Fallback for unknown region - use the converted name
-          andConditions.push({
-            OR: [
-              {
-                region: {
-                  in: [regionName, 'Global'],
-                },
-              },
-            ],
-          });
-        }
-      }
-    }
-
-    // Skill filter (same logic as skill context)
-    if (skill) {
-      const skillInfo = findSkillBySlug(skill);
-
-      if (skillInfo) {
-        if (skillInfo.type === 'parent') {
-          // Filter by parent skill
-          andConditions.push({
-            skills: {
-              path: '$[*].skills',
-              array_contains: [skillInfo.name],
-            },
-          });
-        } else {
-          // Filter by subskill
-          andConditions.push({
-            skills: {
-              path: '$[*].subskills',
-              array_contains: [skillInfo.name],
-            },
-          });
-        }
-      }
-    }
-  }
-
   const standardTabs = ['all', 'bounties', 'projects'];
 
   if (standardTabs.includes(tab)) {
@@ -494,11 +361,7 @@ export async function buildListingQuery(
   }
 
   const categoryToFilter =
-    context === 'category' ||
-    context === 'category-all' ||
-    context === 'opportunity'
-      ? category
-      : effectiveCategory;
+    context === 'category' ? category : effectiveCategory;
 
   const skillFilter = getSkillFilter(categoryToFilter);
   if (skillFilter) {
@@ -510,7 +373,7 @@ export async function buildListingQuery(
   }
 
   const orderBy = getOrderBy(args, status);
-  const takeValue = context === 'home' || context === 'region' ? 10 : undefined;
+  const takeValue = context === 'home' ? 10 : undefined;
 
   return {
     where,

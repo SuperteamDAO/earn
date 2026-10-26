@@ -19,7 +19,6 @@ interface ListingsFilterCountParams {
   status?: ListingStatus;
   region?: string;
   sponsor?: string;
-  skill?: string;
   authenticated?: boolean;
   enabled?: boolean;
 }
@@ -32,7 +31,6 @@ const fetchListingsFilterCount = async ({
   status = 'open',
   region = '',
   sponsor = '',
-  skill = '',
 }: ListingsFilterCountParams): Promise<CategoryCounts> => {
   const queryParams = new URLSearchParams({
     context,
@@ -41,10 +39,6 @@ const fetchListingsFilterCount = async ({
     region,
     sponsor,
   });
-
-  if (skill) {
-    queryParams.set('skill', skill);
-  }
 
   const { data } = await api.get(
     `/api/listings/count?${queryParams.toString()}`,
@@ -59,7 +53,6 @@ export function useListingsFilterCount({
   status,
   region,
   sponsor,
-  skill,
   authenticated,
   enabled = true,
 }: ListingsFilterCountParams) {
@@ -75,7 +68,6 @@ export function useListingsFilterCount({
       status,
       region,
       sponsor,
-      skill,
       authenticated,
     ],
     queryFn: () =>
@@ -85,7 +77,6 @@ export function useListingsFilterCount({
         status,
         region,
         sponsor,
-        skill,
       }),
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,

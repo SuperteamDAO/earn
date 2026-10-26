@@ -7,16 +7,7 @@ export const GrantCategorySchema = z
   .default('All');
 
 export const GrantContextSchema = z
-  .enum([
-    'home',
-    'all',
-    'region',
-    'sponsor',
-    'skill',
-    'category',
-    'category-all',
-    'opportunity',
-  ])
+  .enum(['home', 'all', 'region', 'sponsor', 'category'])
   .default('all');
 
 export const GrantQueryParamsSchema = z.object({
@@ -24,7 +15,6 @@ export const GrantQueryParamsSchema = z.object({
   context: GrantContextSchema,
   region: z.string().optional(),
   sponsor: z.string().optional(),
-  skill: z.string().optional(),
 });
 
 export const grantsSelect = {

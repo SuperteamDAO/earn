@@ -30,17 +30,7 @@ import { TotalStats } from './TotalStats';
 import { YourBookmarks } from './YourBookmarks';
 
 interface SideBarProps {
-  type:
-    | 'landing'
-    | 'listing'
-    | 'category'
-    | 'category-all'
-    | 'region'
-    | 'feed'
-    | 'region-all'
-    | 'skill'
-    | 'skill-all'
-    | 'opportunity';
+  type: 'landing' | 'listing' | 'category' | 'region' | 'feed';
   /** SSR-provided role hint (homepage) for picking the loading skeleton. */
   roleHint?: UserRoleHint | null;
 }

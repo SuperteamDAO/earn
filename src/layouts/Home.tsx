@@ -10,20 +10,12 @@ import { Meta } from '@/layouts/Meta';
 import { cn } from '@/utils/cn';
 
 import { BannerCarousel } from '@/features/home/components/Banner';
-import { OpportunityBanner } from '@/features/home/components/OpportunityBanner';
 import { UserStatsBanner } from '@/features/home/components/UserStatsBanner';
 import { userCountQuery } from '@/features/home/queries/user-count';
-import type { ParsedOpportunityTags } from '@/features/listings/utils/parse-opportunity-tags';
 
 interface CountryData {
   readonly name: string;
   readonly code: string;
-}
-
-interface SkillData {
-  readonly name: string;
-  readonly type: 'parent' | 'subskill';
-  readonly parent?: string;
 }
 
 interface CategoryData {
@@ -33,21 +25,10 @@ interface CategoryData {
 
 interface HomeProps {
   readonly children: ReactNode;
-  readonly type:
-    | 'listing'
-    | 'region'
-    | 'feed'
-    | 'region-all'
-    | 'skill'
-    | 'skill-all'
-    | 'category'
-    | 'category-all'
-    | 'opportunity';
+  readonly type: 'listing' | 'region' | 'feed' | 'category';
   readonly st?: ChapterDisplay;
   readonly countryData?: CountryData;
-  readonly skillData?: SkillData;
   readonly categoryData?: CategoryData;
-  readonly opportunityTags?: ParsedOpportunityTags;
   readonly listingType?: 'bounties' | 'projects';
   readonly potentialSession?: boolean;
   readonly meta?: ReactNode;
@@ -73,12 +54,6 @@ const CountryBanner = dynamic(() =>
   ),
 );
 
-const SkillBanner = dynamic(() =>
-  import('@/features/home/components/SkillBanner').then(
-    (mod) => mod.SkillBanner,
-  ),
-);
-
 const TypeBanner = dynamic(() =>
   import('@/features/home/components/TypeBanner').then((mod) => mod.TypeBanner),
 );
@@ -92,9 +67,7 @@ export function Home({
   type,
   st,
   countryData,
-  skillData,
   categoryData,
-  opportunityTags,
   listingType,
   potentialSession = false,
   meta,
@@ -149,27 +122,15 @@ export function Home({
           countryCode={countryData.code}
         />
       )}
-      {(type === 'skill' || type === 'skill-all') && skillData && (
-        <SkillBanner skillName={skillData.name} skillType={skillData.type} />
-      )}
-      {(type === 'category' || type === 'category-all') && categoryData && (
+      {type === 'category' && categoryData && (
         <CategoryBanner
           category={categoryData.name.toLowerCase() as CategoryTypes}
         />
       )}
-      {type === 'opportunity' && opportunityTags && (
-        <OpportunityBanner tags={opportunityTags} />
-      )}
       {type === 'listing' && listingType && <TypeBanner type={listingType} />}
-      {!!currentCategory &&
-        type !== 'region' &&
-        type !== 'region-all' &&
-        type !== 'skill' &&
-        type !== 'skill-all' &&
-        type !== 'category' &&
-        type !== 'category-all' && (
-          <CategoryBanner category={currentCategory} />
-        )}
+      {!!currentCategory && type !== 'region' && type !== 'category' && (
+        <CategoryBanner category={currentCategory} />
+      )}
       <div className={cn('mx-auto w-full px-2 lg:px-6')}>
         <div className="mx-auto w-full max-w-7xl p-0">
           <div className="flex items-start justify-between">

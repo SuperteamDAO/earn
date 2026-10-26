@@ -8,11 +8,9 @@ import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useScrollShadow } from '@/hooks/use-scroll-shadow';
 import { cn } from '@/utils/cn';
 
-import { chaptersQuery } from '@/features/chapters/queries/chapters';
 import { HACKATHONS } from '@/features/hackathon/constants/hackathons';
 import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
 import { SponsorStage } from '@/features/home/types/sponsor-stage';
-import { getRegionSlug } from '@/features/listings/utils/region';
 import { CATEGORY_NAV_ITEMS } from '@/features/navbar/constants';
 
 const SKELETON_COUNT = 5;
@@ -58,7 +56,6 @@ export const ListingsSection = ({
   potentialSession,
   region,
   sponsor,
-  skill,
   category,
   defaultTab,
   customEmptySection,
@@ -78,7 +75,6 @@ export const ListingsSection = ({
     ...sponsorStageQuery,
     enabled: false,
   });
-  const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const shouldShowAddListingCard = useMemo(() => {
     if (type !== 'home') return false;
@@ -103,7 +99,6 @@ export const ListingsSection = ({
       status: 'open',
       region,
       sponsor,
-      skill,
       authenticated,
       enabled: canFetch,
     });
@@ -156,7 +151,7 @@ export const ListingsSection = ({
   // For category contexts, use the category prop (route category)
   // For other contexts, use activeCategory (filter selection)
   const effectiveCategory =
-    type === 'category' || type === 'category-all'
+    type === 'category'
       ? (category as ListingCategory)
       : type === 'bookmarks' && activeCategory === 'For You'
         ? ('All' as ListingCategory)
@@ -175,7 +170,6 @@ export const ListingsSection = ({
     order: activeOrder,
     region,
     sponsor,
-    skill,
     authenticated,
     enabled: canFetch,
   });
@@ -195,17 +189,6 @@ export const ListingsSection = ({
     if (HACKATHONS.some((hackathon) => hackathon.slug === activeTab)) {
       return `/earn/hackathon/${activeTab}`;
     }
-    let basePath: string;
-    if (type === 'home') {
-      basePath = '/earn/all';
-    } else if (type === 'region') {
-      basePath = `/earn/regions/${getRegionSlug(region || '', chapters)}/all`;
-    } else if (type === 'skill' && skill) {
-      basePath = `/earn/skill/${skill}/all`;
-    } else {
-      basePath = '/earn/all';
-    }
-
     const params = new URLSearchParams();
     params.set('category', activeCategory);
     if (activeStatus) params.set('status', activeStatus);
@@ -214,7 +197,7 @@ export const ListingsSection = ({
     if (activeTab) params.set('tab', activeTab);
     if (activeCategory) params.set('category', activeCategory);
 
-    return `${basePath}?${params.toString()}`;
+    return `/earn/all?${params.toString()}`;
   };
 
   const handleForYouClick = useCallback(() => {
@@ -284,7 +267,7 @@ export const ListingsSection = ({
         {listings.map((listing) => (
           <ListingCard key={listing.id} bounty={listing} />
         ))}
-        {(type === 'home' || type === 'region' || type === 'skill') && (
+        {type === 'home' && (
           <ViewAllButton
             posthogEvent="viewall bottom_listings"
             href={viewAllLink()}
@@ -340,7 +323,7 @@ export const ListingsSection = ({
       </div>
 
       <div className="mb-2 h-px w-full bg-slate-200" />
-      {type !== 'category' && type !== 'category-all' && (
+      {type !== 'category' && (
         <div className="relative -mx-2 mb-1">
           <div
             className={cn(

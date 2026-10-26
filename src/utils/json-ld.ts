@@ -444,36 +444,6 @@ export function generateBreadcrumbListSchema(
   };
 }
 
-/**
- * Generate CollectionPage schema for a skill page
- */
-export function generateSkillCollectionSchema(
-  skillName: string,
-  skillSlug: string,
-  description: string,
-): CollectionPageSchema {
-  const baseUrl = getURL();
-  const skillUrl = `${baseUrl}skill/${skillSlug}/`;
-
-  const schema: CollectionPageSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: `${skillName} Opportunities`,
-    description,
-    url: skillUrl,
-    about: {
-      '@type': 'Thing',
-      name: skillName,
-    },
-    mainEntity: {
-      '@type': 'ItemList',
-      name: `${skillName} Bounties and Projects`,
-    },
-  };
-
-  return schema;
-}
-
 export function generateCategoryCollectionSchema(
   categoryName: string,
   categorySlug: string,

@@ -1,25 +1,15 @@
 import type { MetadataRoute } from 'next';
 
-import { countries } from '@/constants/country';
 import { getSiteUrl, isProductionEnv } from '@/lib/site-url';
 import { prisma } from '@/prisma';
 import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { getAllCategorySlugs } from '@/features/listings/utils/category';
-import {
-  generateCanonicalSlug,
-  type ParsedOpportunityTags,
-} from '@/features/listings/utils/parse-opportunity-tags';
 import { getAllRegionSlugs } from '@/features/listings/utils/region';
-import {
-  getAllSkillSlugs,
-  getParentSkillSlugs,
-} from '@/features/listings/utils/skill';
 
 const baseUrl = getSiteUrl();
 const MAX_URLS_PER_SITEMAP = 50000;
 
-let cachedOpportunityCombinations: readonly string[] | null = null;
 let cachedRegionSlugs: readonly string[] | null = null;
 
 export const revalidate = 86400; // 1 day
@@ -135,27 +125,6 @@ async function getRegionsCount(): Promise<number> {
   return regionSlugs.length;
 }
 
-/**
- * Get short aliases for multi-country regions (where region: true)
- * Uses the code field as the alias slug
- */
-function getMultiCountryRegionAliases(): string[] {
-  return countries
-    .filter((c) => 'region' in c && c.region === true)
-    .map((c) => c.code.toLowerCase());
-}
-
-/**
- * Generate opportunity tag combinations for sitemap
- * Only includes type + (region | skill | category) combinations to avoid
- * overly large, thin, or low-value sitemap sets.
- *
- * Single tags have dedicated pages:
- * - Types: /bounties/, /projects/, /grants/
- * - Categories: /category/{slug}/
- * - Regions: /regions/{slug}/
- * - Skills: /skill/{slug}/
- */
 async function getRegionSlugsForSitemap(): Promise<readonly string[]> {
   if (cachedRegionSlugs) {
     return cachedRegionSlugs;
@@ -164,59 +133,6 @@ async function getRegionSlugsForSitemap(): Promise<readonly string[]> {
   const chapterRegions = await getChapterRegions();
   cachedRegionSlugs = getAllRegionSlugs(chapterRegions);
   return cachedRegionSlugs;
-}
-
-async function generateOpportunityCombinations(): Promise<readonly string[]> {
-  if (cachedOpportunityCombinations) {
-    return cachedOpportunityCombinations;
-  }
-
-  const types = ['bounties', 'projects', 'grants'] as const;
-  const baseRegions = await getRegionSlugsForSitemap();
-  // Include both full slugs and short aliases for multi-country regions
-  const multiCountryAliases = getMultiCountryRegionAliases();
-  const regions = [...baseRegions, ...multiCountryAliases];
-  const skills = getParentSkillSlugs();
-  const categories = getAllCategorySlugs();
-
-  const combinations: string[] = [];
-
-  // Two-tag combinations: type + region
-  for (const type of types) {
-    for (const region of regions) {
-      const tags: ParsedOpportunityTags = { type, region };
-      combinations.push(generateCanonicalSlug(tags));
-    }
-  }
-
-  // Two-tag combinations: type + skill
-  for (const type of types) {
-    for (const skill of skills) {
-      const tags: ParsedOpportunityTags = { type, skill };
-      combinations.push(generateCanonicalSlug(tags));
-    }
-  }
-
-  // Two-tag combinations: type + category
-  for (const type of types) {
-    for (const category of categories) {
-      const tags: ParsedOpportunityTags = { type, category };
-      combinations.push(generateCanonicalSlug(tags));
-    }
-  }
-
-  // Remove duplicates and return
-  cachedOpportunityCombinations = Array.from(new Set(combinations));
-  return cachedOpportunityCombinations;
-}
-
-async function getOpportunitiesCount(): Promise<number> {
-  const combinations = await generateOpportunityCombinations();
-  return combinations.length;
-}
-
-async function getSkillsCount(): Promise<number> {
-  return getAllSkillSlugs().length;
 }
 
 async function getCategoriesCount(): Promise<number> {
@@ -259,20 +175,16 @@ export async function generateSitemaps(): Promise<Array<{ id: number }>> {
       sponsorsCount,
       grantsCount,
       regionsCount,
-      skillsCount,
       categoriesCount,
       talentCount,
-      opportunitiesCount,
     ] = await Promise.all([
       getStaticRoutesCount(),
       getListingsCount(),
       getSponsorsCount(),
       getGrantsCount(),
       getRegionsCount(),
-      getSkillsCount(),
       getCategoriesCount(),
       getTalentProfilesCount(),
-      getOpportunitiesCount(),
     ]);
 
     const sitemaps: Array<{ id: number }> = [];
@@ -303,11 +215,6 @@ export async function generateSitemaps(): Promise<Array<{ id: number }>> {
       sitemaps.push({ id: currentId++ });
     }
 
-    const skillsSitemapCount = calculateSitemapCount(skillsCount);
-    for (let i = 0; i < skillsSitemapCount; i++) {
-      sitemaps.push({ id: currentId++ });
-    }
-
     const categoriesSitemapCount = calculateSitemapCount(categoriesCount);
     for (let i = 0; i < categoriesSitemapCount; i++) {
       sitemaps.push({ id: currentId++ });
@@ -315,11 +222,6 @@ export async function generateSitemaps(): Promise<Array<{ id: number }>> {
 
     const regionsSitemapCount = calculateSitemapCount(regionsCount);
     for (let i = 0; i < regionsSitemapCount; i++) {
-      sitemaps.push({ id: currentId++ });
-    }
-
-    const opportunitiesSitemapCount = calculateSitemapCount(opportunitiesCount);
-    for (let i = 0; i < opportunitiesSitemapCount; i++) {
       sitemaps.push({ id: currentId++ });
     }
 
@@ -341,14 +243,10 @@ interface SitemapBoundaries {
   grantsEnd: number;
   talentStart: number;
   talentEnd: number;
-  skillsStart: number;
-  skillsEnd: number;
   categoriesStart: number;
   categoriesEnd: number;
   regionsStart: number;
   regionsEnd: number;
-  opportunitiesStart: number;
-  opportunitiesEnd: number;
 }
 
 async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
@@ -357,32 +255,26 @@ async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
     listingsCount,
     sponsorsCount,
     grantsCount,
-    skillsCount,
     categoriesCount,
     regionsCount,
     talentCount,
-    opportunitiesCount,
   ] = await Promise.all([
     getStaticRoutesCount(),
     getListingsCount(),
     getSponsorsCount(),
     getGrantsCount(),
-    getSkillsCount(),
     getCategoriesCount(),
     getRegionsCount(),
     getTalentProfilesCount(),
-    getOpportunitiesCount(),
   ]);
 
   const staticSitemapCount = calculateSitemapCount(staticRoutesCount);
   const listingsSitemapCount = calculateSitemapCount(listingsCount);
   const sponsorsSitemapCount = calculateSitemapCount(sponsorsCount);
   const grantsSitemapCount = calculateSitemapCount(grantsCount);
-  const skillsSitemapCount = calculateSitemapCount(skillsCount);
   const categoriesSitemapCount = calculateSitemapCount(categoriesCount);
   const regionsSitemapCount = calculateSitemapCount(regionsCount);
   const talentSitemapCount = calculateSitemapCount(talentCount);
-  const opportunitiesSitemapCount = calculateSitemapCount(opportunitiesCount);
 
   let currentId = 0;
 
@@ -406,20 +298,12 @@ async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
   const talentEnd = currentId + talentSitemapCount;
   currentId = talentEnd;
 
-  const skillsStart = currentId;
-  const skillsEnd = currentId + skillsSitemapCount;
-  currentId = skillsEnd;
-
   const categoriesStart = currentId;
   const categoriesEnd = currentId + categoriesSitemapCount;
   currentId = categoriesEnd;
 
   const regionsStart = currentId;
   const regionsEnd = currentId + regionsSitemapCount;
-  currentId = regionsEnd;
-
-  const opportunitiesStart = currentId;
-  const opportunitiesEnd = currentId + opportunitiesSitemapCount;
 
   return {
     staticStart,
@@ -432,14 +316,10 @@ async function getSitemapBoundaries(): Promise<SitemapBoundaries> {
     grantsEnd,
     talentStart,
     talentEnd,
-    skillsStart,
-    skillsEnd,
     categoriesStart,
     categoriesEnd,
     regionsStart,
     regionsEnd,
-    opportunitiesStart,
-    opportunitiesEnd,
   };
 }
 
@@ -616,31 +496,6 @@ export default async function sitemap(props: {
     }
 
     if (
-      sitemapId >= boundaries.skillsStart &&
-      sitemapId < boundaries.skillsEnd
-    ) {
-      const sitemapIndex = sitemapId - boundaries.skillsStart;
-      const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
-      const allSkillSlugs = getAllSkillSlugs();
-
-      if (allSkillSlugs.length === 0) {
-        return [];
-      }
-
-      const skillSlugs = allSkillSlugs.slice(
-        offset,
-        offset + MAX_URLS_PER_SITEMAP,
-      );
-
-      return skillSlugs.map((slug): MetadataRoute.Sitemap[number] => ({
-        url: `${baseUrl}/earn/skill/${slug}/`,
-        lastModified: now,
-        changeFrequency: 'weekly',
-        priority: 0.7,
-      }));
-    }
-
-    if (
       sitemapId >= boundaries.categoriesStart &&
       sitemapId < boundaries.categoriesEnd
     ) {
@@ -687,31 +542,6 @@ export default async function sitemap(props: {
         lastModified: now,
         changeFrequency: 'weekly',
         priority: 0.8,
-      }));
-    }
-
-    if (
-      sitemapId >= boundaries.opportunitiesStart &&
-      sitemapId < boundaries.opportunitiesEnd
-    ) {
-      const sitemapIndex = sitemapId - boundaries.opportunitiesStart;
-      const offset = sitemapIndex * MAX_URLS_PER_SITEMAP;
-      const allCombinations = await generateOpportunityCombinations();
-
-      if (allCombinations.length === 0) {
-        return [];
-      }
-
-      const combinations = allCombinations.slice(
-        offset,
-        offset + MAX_URLS_PER_SITEMAP,
-      );
-
-      return combinations.map((slug): MetadataRoute.Sitemap[number] => ({
-        url: `${baseUrl}/earn/opportunities/${slug}/`,
-        lastModified: now,
-        changeFrequency: 'daily',
-        priority: 0.7,
       }));
     }
 

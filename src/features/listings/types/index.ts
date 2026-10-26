@@ -151,7 +151,6 @@ export interface ListingTabsProps {
   potentialSession?: boolean;
   region?: string;
   sponsor?: string;
-  skill?: string;
   category?: string;
   defaultTab?: 'bounties' | 'projects';
 }

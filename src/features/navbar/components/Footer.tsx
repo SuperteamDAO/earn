@@ -5,10 +5,8 @@ import { useEffect, useState } from 'react';
 
 import MdOutlineMail from '@/components/icons/MdOutlineMail';
 import { RegionCombobox } from '@/components/shared/RegionCombobox';
-import { SkillsCombobox } from '@/components/shared/SkillsCombobox';
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { LocalImage } from '@/components/ui/local-image';
-import { skillSubSkillMap } from '@/interface/skills';
 import { cn } from '@/utils/cn';
 
 import { chaptersQuery } from '@/features/chapters/queries/chapters';
@@ -60,7 +58,6 @@ export const Footer = () => {
   const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const [selectedRegion, setSelectedRegion] = useState<string>('Global');
-  const [selectedSkill, setSelectedSkill] = useState<string>('All');
 
   useEffect((): void => {
     const path = router.asPath.toLowerCase();
@@ -87,42 +84,6 @@ export const Footer = () => {
     } else {
       setSelectedRegion('Global');
     }
-
-    // Check if it's a skill page
-    if (path.includes('/skill/')) {
-      const skillMatch = path.match(/\/skill\/([^/?]+)/);
-      if (skillMatch && skillMatch[1]) {
-        const slug = skillMatch[1].replace(/-/g, ' ');
-
-        // Check if it matches a parent skill first
-        const parentSkill = Object.keys(skillSubSkillMap).find(
-          (skill) => skill.toLowerCase() === slug.toLowerCase(),
-        );
-
-        if (parentSkill) {
-          setSelectedSkill(parentSkill);
-        } else {
-          // Check if it matches any subskill
-          let foundSkill = false;
-          for (const subskills of Object.values(skillSubSkillMap)) {
-            const subskill = subskills.find(
-              (s) => s.value.toLowerCase() === slug.toLowerCase(),
-            );
-            if (subskill) {
-              setSelectedSkill(subskill.value);
-              foundSkill = true;
-              break;
-            }
-          }
-
-          if (!foundSkill) {
-            setSelectedSkill('All');
-          }
-        }
-      }
-    } else {
-      setSelectedSkill('All');
-    }
   }, [router.asPath, chapters]);
 
   const handleRegionChange = (value: string): void => {
@@ -135,20 +96,6 @@ export const Footer = () => {
     setSelectedRegion(value);
 
     router.push(`/earn/regions/${getRegionSlug(value, chapters)}`);
-  };
-
-  const handleSkillChange = (value: string): void => {
-    if (value === 'All') {
-      setSelectedSkill('All');
-      router.push('/earn');
-      return;
-    }
-
-    setSelectedSkill(value);
-
-    // Generate slug from skill name (e.g., 'Frontend' -> 'frontend')
-    const slug = value.toLowerCase().replace(/\s+/g, '-');
-    router.push(`/earn/skill/${slug}`);
   };
 
   const opportunities = [
@@ -235,16 +182,6 @@ export const Footer = () => {
               © {currentYear} Superteam. All rights reserved.
             </p>
             <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-6">
-              <div className="flex items-center">
-                <p className="mr-2 text-sm font-medium text-slate-500">SKILL</p>
-                <SkillsCombobox
-                  placeholder="Skill"
-                  value={selectedSkill}
-                  onChange={handleSkillChange}
-                  all
-                  className={cn(selectedSkill !== 'All' && 'w-fit')}
-                />
-              </div>
               <div className="flex items-center">
                 <p className="mr-2 text-sm font-medium text-slate-500">
                   REGION
