@@ -7,10 +7,15 @@ import type {
   MessageHandler,
 } from '@sumsub/websdk/types/types';
 import { X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { postJson, RequestError } from '@/lib/fetch-json';
+
+import {
+  GRANT_KYC_MESSAGE,
+  type GrantKycMessage,
+} from '@/features/grants/utils/kycMessages';
 
 type MessageType = Parameters<MessageHandler>[0];
 
@@ -19,8 +24,21 @@ const fetchToken = async () =>
 
 const config = { lang: 'en', theme: 'light' };
 
+// Framed in the grant page's KYC modal, toasts and the verdict go to the
+// page (Earn showed them over the grant page); otherwise they show here.
+const embedded = () =>
+  typeof window !== 'undefined' && window.parent !== window;
+
+const tell = (message: GrantKycMessage) =>
+  window.parent.postMessage(message, window.location.origin);
+
+const showError = (message: string) => {
+  if (embedded()) tell({ type: GRANT_KYC_MESSAGE, kind: 'error', message });
+  else toast.error(message);
+};
+
 const errorHandler: ErrorHandler = (error) => {
-  toast.error(`KYC failed: ${error.error}`);
+  showError(`KYC failed: ${error.error}`);
 };
 
 const kycRejectionReason = (error: unknown): string | null => {
@@ -39,18 +57,38 @@ const kycRejectionReason = (error: unknown): string | null => {
   return null;
 };
 
-// Earn's grant KYC modal, as a page: Sumsub's web SDK; once Sumsub has a
-// verdict the server records the KYC and the first tranche.
+// Earn's grant KYC modal's content: Sumsub's web SDK; once Sumsub has a
+// verdict the server records the KYC and the first tranche. The grant
+// page's modal frames this page (`embed`); on its own it is a page with a
+// close link back to the grant.
 export function KycFrame({
   slug,
   applicationId,
   grantHref,
+  embed,
 }: {
   slug: string;
   applicationId: string;
   grantHref: string;
+  embed: boolean;
 }) {
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const root = useRef<HTMLDivElement>(null);
+
+  // The modal sizes its frame to this.
+  useEffect(() => {
+    const element = root.current;
+    if (!embed || !element) return undefined;
+    const observer = new ResizeObserver(() =>
+      tell({
+        type: GRANT_KYC_MESSAGE,
+        kind: 'height',
+        height: element.scrollHeight,
+      }),
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [embed]);
 
   useEffect(() => {
     let live = true;
@@ -77,13 +115,17 @@ export function KycFrame({
         applicationId,
       });
     } catch (error) {
-      toast.error(
+      showError(
         kycRejectionReason(error) ??
           'KYC verification check failed. Please try again.',
       );
       return;
     }
     if (result === 'verified') {
+      if (embedded()) {
+        tell({ type: GRANT_KYC_MESSAGE, kind: 'verified' });
+        return;
+      }
       toast.success(
         'Your KYC is verified! You will receive your first tranche in around a week.',
       );
@@ -93,11 +135,13 @@ export function KycFrame({
   }
 
   return (
-    <div className="pb-12">
-      {/* Plain <a>: the grant page is another document. */}
-      <a href={grantHref} aria-label="Close">
-        <X className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6" />
-      </a>
+    <div ref={root} className={embed ? undefined : 'pb-12'}>
+      {!embed && (
+        // Plain <a>: the grant page is another document.
+        <a href={grantHref} aria-label="Close">
+          <X className="absolute top-7 right-4 z-10 h-4 w-4 cursor-pointer text-slate-400 sm:top-6" />
+        </a>
+      )}
       {accessToken && (
         <SumsubWebSdk
           accessToken={accessToken}

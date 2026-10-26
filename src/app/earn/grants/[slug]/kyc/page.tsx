@@ -21,8 +21,11 @@ export const metadata = pageMetadata({
 // page). Its own document: the proxy lets Sumsub's frame in only here.
 export default async function GrantKycPage({
   params,
+  searchParams,
 }: PageProps<'/earn/grants/[slug]/kyc'>) {
-  const { slug } = await params;
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
+  // Framed by the grant page's KYC modal: the content alone.
+  const embed = query.embed === '1';
   const here = `/earn/grants/${slug}/kyc/`;
   const grantHref = `/earn/grants/${slug}/`;
   const viewer = await getViewer();
@@ -47,6 +50,17 @@ export default async function GrantKycPage({
     redirect(grantHref);
   }
 
+  if (embed) {
+    return (
+      <KycFrame
+        slug={slug}
+        applicationId={application.id}
+        grantHref={grantHref}
+        embed
+      />
+    );
+  }
+
   return (
     <Default>
       <div className="flex w-full justify-center bg-white px-2 py-6 md:py-10">
@@ -55,6 +69,7 @@ export default async function GrantKycPage({
             slug={slug}
             applicationId={application.id}
             grantHref={grantHref}
+            embed={false}
           />
         </div>
       </div>

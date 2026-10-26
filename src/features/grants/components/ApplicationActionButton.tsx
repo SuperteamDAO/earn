@@ -135,9 +135,6 @@ export const ApplicationActionButton = ({
   const handleSubmit = () => {
     if (link && !isNative) {
       window.open(link, '_blank', 'noopener,noreferrer');
-    } else if (applicationState === 'KYC PENDING') {
-      // Sumsub runs on a page of its own (its own CSP), a full page load.
-      window.location.assign(`/earn/grants/${grant.slug}/kyc/`);
     } else {
       if (applicationState === 'ALLOW EDIT') {
         posthog.capture('edit_grant application');

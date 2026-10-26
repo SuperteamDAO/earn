@@ -12,7 +12,7 @@ export const InfoWrapper = ({
   children: React.ReactNode;
   isUserEligibleByRegion: boolean;
   regionTooltipLabel: string;
-  user: any;
+  user: { id?: string; isTalentFilled?: boolean | null } | null;
   cooldownTooltipContent?: string;
 }) => {
   const tooltipContent =

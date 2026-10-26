@@ -8,6 +8,7 @@ import type { UserApplicationResponse } from '../constants/userApplication';
 import type { ApplicationState } from '../hooks/useApplicationState';
 import type { Grant } from '../types';
 import { ApplicationModal } from './Modals/ApplicationModal';
+import { KYCModal } from './Modals/KYCModal';
 import { TrancheFormModal } from './Modals/TrancheFormModal';
 
 interface Props {
@@ -61,6 +62,9 @@ export const GrantModal = ({
               modalRef={modalRef}
               onClose={onClose}
             />
+          )}
+          {applicationState === 'KYC PENDING' && (
+            <KYCModal slug={grant.slug} onClose={onClose} />
           )}
           {newTrancheFormStates.includes(applicationState) && application && (
             <TrancheFormModal

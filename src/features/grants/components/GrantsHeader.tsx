@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import BsFillCircleFill from '@/components/icons/BsFillCircleFill';
 import { SuperteamBadge } from '@/components/shared/SuperteamBadge';
@@ -27,7 +27,7 @@ interface Props {
   status: string;
   region: string;
   slug: string;
-  references: any;
+  references: ReadonlyArray<unknown> | null | undefined;
   isPublished: boolean;
   isApproved: boolean;
   isST?: boolean;

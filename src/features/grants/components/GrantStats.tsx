@@ -28,8 +28,8 @@ export const GrantStats = ({ grant }: GrantStatsProps) => {
           />
           <p className="text-lg font-semibold text-slate-700 md:text-xl">
             {grantAmount({
-              maxReward: grant.maxReward!,
-              minReward: grant.minReward!,
+              maxReward: grant.maxReward ?? 0,
+              minReward: grant.minReward ?? 0,
             })}{' '}
             <span className="text-slate-500">{grant.token}</span>
           </p>
