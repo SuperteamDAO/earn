@@ -265,10 +265,6 @@ export const MobileDrawer = ({
               label="Activity Feed"
               onClick={() => router.push(`/earn/feed`)}
             />
-            <NavItem
-              label="Leaderboard"
-              onClick={() => router.push(`/earn/leaderboard`)}
-            />
             <SupportFormDialog>
               <NavItem
                 label="Get Help"

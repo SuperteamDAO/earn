@@ -322,7 +322,6 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
   const breadcrumbSchema = isPublicProfile
     ? generateBreadcrumbListSchema([
         { name: 'Home', url: '/' },
-        { name: 'Talent', url: '/leaderboard/' },
         {
           name:
             `${talent?.firstName || ''} ${talent?.lastName || ''}`.trim() ||
@@ -765,8 +764,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     const stats = { participations, wins, totalWinnings };
 
-    const isOnLeaderboard = totalWinnings > 0;
-    const hasRecentActivity = isOnLeaderboard
+    const hasWinnings = totalWinnings > 0;
+    const hasRecentActivity = hasWinnings
       ? false
       : await Promise.all([
           prisma.submission.findFirst({
@@ -784,7 +783,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             select: { id: true },
           }),
         ]).then(([submission, grantApp]) => !!submission || !!grantApp);
-    const shouldNoIndex = !isOnLeaderboard && !hasRecentActivity;
+    const shouldNoIndex = !hasWinnings && !hasRecentActivity;
 
     const bgIndex = talent?.id ? hashStringToInt(talent.id) % 5 : 0;
     const bgNum = bgIndex + 1;

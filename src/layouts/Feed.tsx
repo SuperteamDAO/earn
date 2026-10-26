@@ -6,7 +6,6 @@ import { Home } from '@/layouts/Home';
 import {
   AllPostsIcon,
   HomeIcon,
-  LeaderboardIcon,
   WinnersIcon,
 } from '@/features/feed/components/icons';
 
@@ -44,11 +43,6 @@ export const FeedPageLayout = ({
         <div className="flex">
           <div className="sticky top-14 hidden h-screen w-48 shrink-0 flex-col gap-3 border-r pt-5 pr-5 lg:flex">
             <NavItem name="Homepage" icon={HomeIcon} href="/earn" />
-            <NavItem
-              name="Leaderboard"
-              icon={LeaderboardIcon}
-              href="/earn/leaderboard"
-            />
             <NavItem
               name="Winners"
               icon={WinnersIcon}

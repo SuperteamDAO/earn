@@ -1,8 +1,6 @@
 import Link from 'next/link';
-import posthog from 'posthog-js';
 import { useEffect, useRef, useState } from 'react';
 
-import MdArrowForward from '@/components/icons/MdArrowForward';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { type User } from '@/interface/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -98,16 +96,6 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
         <span className="text-sm font-medium text-gray-400">
           RECENT EARNERS
         </span>
-        <Link
-          href="/earn/leaderboard"
-          className="ph-no-capture text-brand-purple flex items-center text-xs font-medium"
-          onClick={() => {
-            posthog.capture('view leaderboard_homepage');
-          }}
-        >
-          Leaderboard
-          <MdArrowForward className="ml-1" />
-        </Link>
       </div>
       <div className="relative flex flex-col">
         <div
