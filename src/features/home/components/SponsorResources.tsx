@@ -1,6 +1,8 @@
+'use client';
+
 import { HandCoins, Megaphone, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 export function SponsorResources() {
   return (

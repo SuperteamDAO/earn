@@ -1,14 +1,13 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useQuery } from '@tanstack/react-query';
-import { Check } from 'lucide-react';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+'use client';
 
-import { useUser } from '@/store/user';
+import { Check } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { posthog } from 'posthog-js';
+
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
-import { userStatsQuery } from '@/features/home/queries/user-stats';
 
 const StepIcon = ({ step }: { step: number }) => {
   if (step === 1) {
@@ -119,54 +118,48 @@ const Step = ({
   );
 };
 
-export const HowItWorks = () => {
+// `stats`: the viewer's participations and wins, loaded with the sidebar
+// (null signed out).
+export const HowItWorks = ({
+  stats,
+}: {
+  stats: { participations: number; wins: number } | null;
+}) => {
   const router = useRouter();
-  const { user, isLoading: isUserLoading } = useUser();
-  const { ready } = usePrivy();
-  const { data: stats, isLoading: isStatsLoading } = useQuery({
-    ...userStatsQuery,
-    enabled: !!user,
-  });
+  const user = useViewer();
 
   const hasSubmissions = (stats?.participations ?? 0) > 0;
   const hasWins = (stats?.wins ?? 0) > 0;
-
-  const isLoading = isStatsLoading || isUserLoading || !ready;
 
   if (hasWins) return null;
 
   return (
     <AuthWrapper
-      className={cn(isLoading ? 'pointer-events-none' : 'pointer-events-auto')}
+      className={cn('pointer-events-auto')}
       onClick={() => {
         posthog.capture('create account_getting started');
       }}
     >
-      <div className={cn('opacity-100', isLoading && 'opacity-20')}>
+      <div className={cn('opacity-100')}>
         <p className="mb-3 text-sm font-medium text-gray-400">HOW IT WORKS</p>
         <div className="flex h-[12.5rem]">
           <div className="relative flex h-full flex-col justify-between">
-            <Step
-              number={1}
-              isComplete={!isLoading && !!user?.isTalentFilled}
-            />
-            <Step number={2} isComplete={!isLoading && hasSubmissions} />
-            <Step number={3} isComplete={!isLoading && hasWins} />
+            <Step number={1} isComplete={!!user?.isTalentFilled} />
+            <Step number={2} isComplete={hasSubmissions} />
+            <Step number={3} isComplete={hasWins} />
           </div>
           <div className="relative flex h-full flex-col items-start justify-between">
             <div className="ml-[0.8125rem]">
               <button
                 className={cn(
                   'hover:text-brand-purple text-base font-medium',
-                  !isLoading && !!user?.isTalentFilled
-                    ? 'text-slate-500'
-                    : 'text-brand-purple',
+                  user?.isTalentFilled ? 'text-slate-500' : 'text-brand-purple',
                 )}
                 onClick={() => {
-                  if (!isLoading && !!user?.isTalentFilled) return;
+                  if (user?.isTalentFilled) return;
                   if (user?.id) {
                     posthog.capture('create account_getting started');
-                    router.push(`/earn/new/talent`);
+                    router.push(`/earn/new/talent/`);
                   }
                 }}
               >
@@ -180,15 +173,13 @@ export const HowItWorks = () => {
               <button
                 className={cn(
                   'hover:text-brand-purple text-base font-medium',
-                  !isLoading && hasSubmissions
-                    ? 'text-slate-500'
-                    : 'text-brand-purple',
+                  hasSubmissions ? 'text-slate-500' : 'text-brand-purple',
                 )}
                 onClick={() => {
-                  if (!isLoading && hasSubmissions) return;
+                  if (hasSubmissions) return;
                   if (user?.id) {
                     posthog.capture('complete profile_getting started');
-                    router.push(`/earn/all`);
+                    router.push(`/earn/all/`);
                   }
                 }}
               >
@@ -200,15 +191,13 @@ export const HowItWorks = () => {
               <button
                 className={cn(
                   'hover:text-brand-purple text-base font-medium',
-                  !isLoading && hasWins
-                    ? 'text-slate-500'
-                    : 'text-brand-purple',
+                  hasWins ? 'text-slate-500' : 'text-brand-purple',
                 )}
                 onClick={() => {
-                  if (!isLoading && hasWins) return;
+                  if (hasWins) return;
                   if (user?.id) {
                     posthog.capture('win_getting started');
-                    router.push('/earn/feed');
+                    router.push('/earn/feed/');
                   }
                 }}
               >

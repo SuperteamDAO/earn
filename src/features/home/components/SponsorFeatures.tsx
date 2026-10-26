@@ -1,7 +1,9 @@
+'use client';
+
 import Autoplay from 'embla-carousel-autoplay';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -30,7 +32,9 @@ const features: Feature[] = [
 ];
 
 export function SponsorFeatures() {
-  const plugin = useRef(
+  // Made once, on the first render.
+  const [plugin] = useState(() =>
+    // oxlint-disable-next-line react/capitalized-calls -- Embla's plugin factory
     Autoplay({
       delay: 5000,
       stopOnInteraction: false,
@@ -40,7 +44,7 @@ export function SponsorFeatures() {
 
   return (
     <div className="w-full">
-      <Carousel opts={{ loop: true }} plugins={[plugin.current]}>
+      <Carousel opts={{ loop: true }} plugins={[plugin]}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-slate-400">NEW FEATURES</h2>
           <CarouselDots

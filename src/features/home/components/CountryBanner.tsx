@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 
 import { UserFlag } from '@/components/shared/UserFlag';

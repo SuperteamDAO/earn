@@ -1,31 +1,31 @@
+'use client';
+
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { useQuery } from '@tanstack/react-query';
 import { Play } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 
-import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
 import { SponsorStage } from '@/features/home/types/sponsor-stage';
 
-export const SponsorWelcomeVideo = () => {
-  const { user } = useUser();
-  const { data, isLoading } = useQuery({
-    ...sponsorStageQuery,
-    enabled: false,
-  });
+export const SponsorWelcomeVideo = ({
+  stage,
+}: {
+  stage: SponsorStage | null;
+}) => {
+  const user = useViewer();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
 
-  useEffect(() => {
-    if (!isModalOpen) {
-      setShowVideo(false);
-      return;
-    }
-
+  const onOpenChange = (open: boolean) => {
+    setIsModalOpen(open);
     setShowVideo(false);
+  };
+
+  useEffect(() => {
+    if (!isModalOpen) return () => {};
     const timer = setTimeout(() => {
       setShowVideo(true);
     }, 250);
@@ -34,11 +34,8 @@ export const SponsorWelcomeVideo = () => {
   }, [isModalOpen]);
 
   if (
-    isLoading ||
-    !data ||
-    !data.stage ||
-    (data.stage !== SponsorStage.NEW_SPONSOR &&
-      data.stage !== SponsorStage.NEXT_LISTING)
+    !stage ||
+    (stage !== SponsorStage.NEW_SPONSOR && stage !== SponsorStage.NEXT_LISTING)
   ) {
     return null;
   }
@@ -52,7 +49,7 @@ export const SponsorWelcomeVideo = () => {
   const layoutId = 'sponsor-welcome-video';
 
   return (
-    <DialogPrimitive.Root open={isModalOpen} onOpenChange={setIsModalOpen}>
+    <DialogPrimitive.Root open={isModalOpen} onOpenChange={onOpenChange}>
       <div className="flex w-full flex-col gap-4 rounded-lg bg-white">
         <div className="flex flex-col">
           <h2 className="text-lg font-semibold text-slate-900">
@@ -159,6 +156,7 @@ export const SponsorWelcomeVideo = () => {
                     transition={{ duration: 0.3 }}
                     className="absolute inset-0 overflow-hidden rounded-lg"
                   >
+                    {/* oxlint-disable-next-line react/iframe-missing-sandbox -- YouTube's player, as Earn embedded it */}
                     <iframe
                       width="100%"
                       height="100%"

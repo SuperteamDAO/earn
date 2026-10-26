@@ -1,17 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import type { TConductorInstance } from 'react-canvas-confetti/dist/types';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useUser } from '@/store/user';
+import { postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
-
-import { pfpsQuery } from '../queries/vibe-pfps';
 
 const dummyUsers = [
   { id: '1', photo: ASSET_URL + '/pfps/t1.webp' },
@@ -29,21 +29,51 @@ const dummyUsers = [
   { id: '13', photo: '' },
 ];
 
+interface Viber {
+  readonly id: string;
+  readonly photo?: string;
+}
+
+// The latest six vibers' photos (Earn's /api/user/pfps, one call each).
+function useVibers(userIds: ReadonlyArray<string>): ReadonlyArray<Viber> {
+  const [answer, setAnswer] = useState<{
+    readonly key: string;
+    readonly users: ReadonlyArray<Viber>;
+  } | null>(null);
+  const latest = userIds.slice(-6);
+  const key = latest.join(',');
+  useEffect(() => {
+    if (!key) return () => {};
+    let live = true;
+    void Promise.all(
+      key.split(',').map((id) => postJson<Viber>('/api/user/pfps', { id })),
+    )
+      .then((users) => {
+        if (live) setAnswer({ key, users });
+      })
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [key]);
+  return answer?.key === key ? answer.users : [];
+}
+
 export const VibeCard = () => {
   const [vibeCount, setVibeCount] = useState(13);
-  const [ws, setWs] = useState<WebSocket | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
   const [userIds, setUserIds] = useState<string[]>([]);
   const [conductor, setConductor] = useState<TConductorInstance>();
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const { user } = useUser();
+  const user = useViewer();
 
-  const { data: fetchedUsers = [] } = useQuery(pfpsQuery(userIds));
+  const fetchedUsers = useVibers(userIds);
 
   useEffect(() => {
     audioRef.current = new Audio('/assets/chipichapa.mp3');
-    audioRef.current.onended = () => setIsAudioPlaying(false);
+    audioRef.current.addEventListener('ended', () => setIsAudioPlaying(false));
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -62,26 +92,27 @@ export const VibeCard = () => {
     }
   };
 
-  const onInit = ({ conductor }: { conductor: TConductorInstance }) => {
-    setConductor(conductor);
+  const onInit = ({ conductor: made }: { conductor: TConductorInstance }) => {
+    setConductor(made);
   };
 
   useEffect(() => {
     const newWs = new WebSocket('wss://earn-vibe-production.up.railway.app');
-    newWs.onmessage = (event) => {
+    newWs.addEventListener('message', (event) => {
       const { vibeCount: newVibeCount, userIds: newUserIds } = JSON.parse(
         event.data,
       );
       setVibeCount(newVibeCount + 13);
       setUserIds(newUserIds);
-    };
-    setWs(newWs);
+    });
+    wsRef.current = newWs;
     return () => {
       newWs.close();
     };
   }, []);
 
   const handleVibeClick = () => {
+    const ws = wsRef.current;
     if (ws && !!user?.id) {
       ws.send(JSON.stringify({ userId: user.id, action: 'vibe' }));
       shootConfetti();
@@ -101,11 +132,11 @@ export const VibeCard = () => {
           people vibing rn
         </p>
         <div className="flex items-center">
-          {displayUsers.map((user, i) => (
-            <div className={cn(i > 0 ? '-ml-10px' : '')} key={user.id}>
+          {displayUsers.map((viber, i) => (
+            <div className={cn(i > 0 ? '-ml-10px' : '')} key={viber.id}>
               <EarnAvatar
-                id={user.id}
-                avatar={user.photo}
+                id={viber.id}
+                avatar={viber.photo}
                 className="h-6 w-6"
               />
             </div>

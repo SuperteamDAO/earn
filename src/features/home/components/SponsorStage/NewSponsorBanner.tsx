@@ -1,26 +1,30 @@
+'use client';
+
 import { PenLine } from 'lucide-react';
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { JTTG } from '@/constants/Telegram';
 
+import { InnerLink } from '@/features/home/components/InnerLink';
+
+const handleCreateBountyClick = () => {
+  posthog.capture('create bounty_sponsor stage banner', {
+    stage: 'NEW_SPONSOR',
+  });
+  posthog.capture('click_sponsor stage banner', {
+    stage: 'NEW_SPONSOR',
+  });
+};
+
+const handleGetHelpClick = () => {
+  posthog.capture('get help_sponsor stage banner', {
+    stage: 'NEW_SPONSOR',
+  });
+};
+
 export function NewSponsorBanner() {
-  const handleCreateBountyClick = () => {
-    posthog.capture('create bounty_sponsor stage banner', {
-      stage: 'NEW_SPONSOR',
-    });
-    posthog.capture('click_sponsor stage banner', {
-      stage: 'NEW_SPONSOR',
-    });
-  };
-
-  const handleGetHelpClick = () => {
-    posthog.capture('get help_sponsor stage banner', {
-      stage: 'NEW_SPONSOR',
-    });
-  };
-
   return (
     <Link
       href="/earn/dashboard/listings?open=1"
@@ -52,13 +56,7 @@ export function NewSponsorBanner() {
             asChild
             className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
           >
-            <Link
-              href={JTTG}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleGetHelpClick();
-              }}
-            >
+            <InnerLink href={JTTG} onClick={handleGetHelpClick}>
               <img
                 src="/assets/sponsor/jill.png"
                 alt="Get Help"
@@ -66,7 +64,7 @@ export function NewSponsorBanner() {
                 height={28}
               />
               <span>Get Help</span>
-            </Link>
+            </InnerLink>
           </Button>
         </div>
       </div>

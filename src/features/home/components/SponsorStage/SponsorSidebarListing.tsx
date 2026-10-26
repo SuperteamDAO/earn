@@ -1,21 +1,19 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { dayjs } from '@/utils/dayjs';
 
 import { grantAmount } from '@/features/grants/utils/grantAmount';
-import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
+import { InnerLink } from '@/features/home/components/InnerLink';
 import { SponsorStage } from '@/features/home/types/sponsor-stage';
-import { submissionCountQuery } from '@/features/listings/queries/submission-count';
+import type { Listing } from '@/features/listings/types';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 import { getListingStatus } from '@/features/listings/utils/status';
@@ -26,23 +24,20 @@ function formatDeadlineDate(deadline: string | undefined): string {
   return dayjs(deadline).format('Do MMM');
 }
 
-export function SponsorListing() {
-  const isLg = useBreakpoint('lg');
-
-  const { data, isLoading } = useQuery({
-    ...sponsorStageQuery,
-    enabled: false,
-  });
-
-  const listingId = data?.listing?.id;
-  const { data: submissionCount } = useQuery({
-    ...submissionCountQuery(listingId ?? ''),
-    enabled: !!listingId,
-  });
-
-  if (isLoading || !data || !data.stage || !data.listing || !isLg) {
+// The sponsor sidebar's card for the listing their stage is about.
+export function SponsorListing({
+  data,
+}: {
+  data: {
+    stage: SponsorStage | null;
+    listing: Listing | null;
+    submissionCount: number | null;
+  } | null;
+}) {
+  if (!data || !data.stage || !data.listing) {
     return null;
   }
+  const submissionCount = data.submissionCount;
 
   const { listing } = data;
 
@@ -118,8 +113,8 @@ export function SponsorListing() {
                 {listing?.type === 'grant' && (
                   <span className="text-base font-semibold whitespace-nowrap text-slate-900">
                     {grantAmount({
-                      maxReward: listing?.maxRewardAsk!,
-                      minReward: listing?.minRewardAsk!,
+                      maxReward: listing?.maxRewardAsk ?? 0,
+                      minReward: listing?.minRewardAsk ?? 0,
                     })}
                   </span>
                 )}
@@ -175,7 +170,7 @@ export function SponsorListing() {
                 className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
                 asChild
               >
-                <Link
+                <InnerLink
                   href="/earn/dashboard/listings"
                   onClick={() => {
                     posthog.capture('view dashboard_sponsor sidebar listing', {
@@ -191,7 +186,7 @@ export function SponsorListing() {
                   }}
                 >
                   View Dashboard
-                </Link>
+                </InnerLink>
               </Button>
             )}
 
@@ -201,7 +196,7 @@ export function SponsorListing() {
                 className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
                 asChild
               >
-                <Link
+                <InnerLink
                   href={`/earn/dashboard/listings/${listing.slug}/submissions`}
                   onClick={() => {
                     posthog.capture(
@@ -221,7 +216,7 @@ export function SponsorListing() {
                 >
                   Announce Winners
                   <ArrowRight className="ml-1 h-4 w-4" />
-                </Link>
+                </InnerLink>
               </Button>
             )}
 
@@ -231,7 +226,7 @@ export function SponsorListing() {
                 className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
                 asChild
               >
-                <Link
+                <InnerLink
                   href={`/earn/dashboard/listings/${listing.slug}/submissions`}
                   onClick={() => {
                     posthog.capture(
@@ -251,7 +246,7 @@ export function SponsorListing() {
                 >
                   Announce Winners
                   <ArrowRight className="ml-1 h-4 w-4" />
-                </Link>
+                </InnerLink>
               </Button>
             )}
 
@@ -261,7 +256,7 @@ export function SponsorListing() {
                 className="flex-1 border-gray-200 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700"
                 asChild
               >
-                <Link
+                <InnerLink
                   href={`/earn/dashboard/listings/${listing.slug}/submissions?tab=payments`}
                   onClick={() => {
                     posthog.capture('clear payments_sponsor sidebar listing', {
@@ -277,7 +272,7 @@ export function SponsorListing() {
                   }}
                 >
                   Clear Payments
-                </Link>
+                </InnerLink>
               </Button>
             )}
           </div>

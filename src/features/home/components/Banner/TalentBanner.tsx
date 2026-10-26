@@ -1,4 +1,6 @@
-import posthog from 'posthog-js';
+'use client';
+
+import { posthog } from 'posthog-js';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 

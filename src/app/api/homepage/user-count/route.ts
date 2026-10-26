@@ -1,38 +1,28 @@
-import { type NextRequest, NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
 
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { json } from '@/lib/route-guard';
+import * as HomeStats from '@/server/home-stats';
+import { runtime } from '@/server/runtime';
 
-export async function GET(_request: NextRequest) {
-  try {
-    const userCount = await prisma.user.count();
-
-    const errorCount = 289;
-
-    const roundedUserCount = Math.ceil((userCount - errorCount) / 10) * 10;
-
-    logger.info('Successfully fetched user count', {
-      totalUsers: roundedUserCount,
-    });
-
-    return NextResponse.json(
-      { totalUsers: roundedUserCount },
-      {
-        headers: {
-          'Cache-Control':
-            'public, max-age=86400, s-maxage=86400, stale-while-revalidate=3600',
-        },
-      },
-    );
-  } catch (error: any) {
-    logger.error('Error occurred while fetching user count', {
-      error: safeStringify(error),
-    });
-
-    return NextResponse.json(
-      { error: 'An error occurred while fetching the total user count' },
-      { status: 500 },
-    );
-  }
+// How many people have joined Earn, rounded up to ten.
+export function GET() {
+  return runtime.runPromise(
+    HomeStats.HomeStats.use((stats) => stats.userCount).pipe(
+      Effect.map((count) =>
+        Response.json(count, {
+          headers: {
+            'Cache-Control':
+              'public, max-age=86400, s-maxage=86400, stale-while-revalidate=3600',
+          },
+        }),
+      ),
+      Effect.catchTag('DatabaseError', () =>
+        Effect.succeed(
+          json(500, {
+            error: 'An error occurred while fetching the total user count',
+          }),
+        ),
+      ),
+    ),
+  );
 }

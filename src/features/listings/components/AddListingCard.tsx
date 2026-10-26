@@ -1,9 +1,13 @@
+'use client';
+
 import { PenLine } from 'lucide-react';
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
+
+import { InnerLink } from '@/features/home/components/InnerLink';
 
 import { getListingIcon } from '../utils/getListingIcon';
 
@@ -14,7 +18,7 @@ interface AddListingCardProps {
 export const AddListingCard = ({
   listingType = 'bounty',
 }: AddListingCardProps) => {
-  const { user } = useUser();
+  const user = useViewer();
   const displayType =
     listingType.charAt(0).toUpperCase() + listingType.slice(1);
   const createUrl = '/earn/dashboard/listings?open=1';
@@ -46,15 +50,14 @@ export const AddListingCard = ({
               Your {displayType} Here
             </p>
             {sponsorSlug ? (
-              <Link
-                href={`/earn/s/${sponsorSlug}`}
-                onClick={(e) => e.stopPropagation()}
+              <InnerLink
+                href={`/earn/s/${sponsorSlug}/`}
                 className="flex w-min items-center gap-1 hover:underline"
               >
                 <p className="text-xs whitespace-nowrap text-slate-500 md:text-sm">
                   {sponsorName}
                 </p>
-              </Link>
+              </InnerLink>
             ) : (
               <p className="text-xs whitespace-nowrap text-slate-500 md:text-sm">
                 {sponsorName}

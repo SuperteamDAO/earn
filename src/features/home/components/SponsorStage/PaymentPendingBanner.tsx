@@ -1,10 +1,13 @@
+'use client';
+
 import { TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { JTTG } from '@/constants/Telegram';
 
+import { InnerLink } from '@/features/home/components/InnerLink';
 import type { Listing } from '@/features/listings/types';
 
 interface PaymentPendingBannerProps {
@@ -64,13 +67,7 @@ export function PaymentPendingBanner({ listing }: PaymentPendingBannerProps) {
             asChild
             className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
           >
-            <Link
-              href={JTTG}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleGetHelpClick();
-              }}
-            >
+            <InnerLink href={JTTG} onClick={handleGetHelpClick}>
               <img
                 src="/assets/sponsor/jill.png"
                 alt="Get Help"
@@ -78,7 +75,7 @@ export function PaymentPendingBanner({ listing }: PaymentPendingBannerProps) {
                 height={28}
               />
               <span>Get Help</span>
-            </Link>
+            </InnerLink>
           </Button>
         </div>
       </div>

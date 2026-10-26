@@ -1,5 +1,7 @@
+'use client';
+
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 

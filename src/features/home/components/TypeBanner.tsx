@@ -1,9 +1,11 @@
+'use client';
+
 import Image from 'next/image';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
@@ -26,7 +28,7 @@ const banners: Record<TypeTypes, TypeBanner> = {
 
 export function TypeBanner({ type }: { type: TypeTypes }) {
   const banner = banners[type];
-  const { user } = useUser();
+  const user = useViewer();
 
   return (
     <div className="relative flex h-52 w-full flex-col items-center md:h-72">

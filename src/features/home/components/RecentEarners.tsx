@@ -1,8 +1,10 @@
+'use client';
+
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import { TokenIcon } from '@/components/ui/token-icon';
-import type { User } from '@/interface/user';
+import type { Earner as EarnerData } from '@/server/home-stats';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';
 
@@ -62,26 +64,29 @@ const Earner = ({
   );
 };
 
-export const RecentEarners = ({ earners }: { earners?: User[] }) => {
+export const RecentEarners = ({
+  earners,
+}: {
+  earners?: ReadonlyArray<EarnerData>;
+}) => {
   const marqueeRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
 
   const multipliedEarners = earners ? [...earners, ...earners, ...earners] : [];
 
-  const animate = () => {
-    const marquee = marqueeRef.current;
-    if (marquee && !isPaused) {
-      if (marquee.scrollHeight - marquee.scrollTop <= marquee.clientHeight) {
-        marquee.scrollTop -= marquee.scrollHeight / 3;
-      } else {
-        marquee.scrollTop += 1;
-      }
-    }
-    animationFrameRef.current = requestAnimationFrame(animate);
-  };
-
   useEffect(() => {
+    const animate = () => {
+      const marquee = marqueeRef.current;
+      if (marquee && !isPaused) {
+        if (marquee.scrollHeight - marquee.scrollTop <= marquee.clientHeight) {
+          marquee.scrollTop -= marquee.scrollHeight / 3;
+        } else {
+          marquee.scrollTop += 1;
+        }
+      }
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
     animationFrameRef.current = requestAnimationFrame(animate);
     return () => {
       if (animationFrameRef.current) {
@@ -104,15 +109,15 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          {multipliedEarners.map((t: any, index: number) => (
+          {multipliedEarners.map((t, index) => (
             <Earner
               key={`${t.id}-${index}`}
               amount={t.reward ?? 0}
-              token={t.rewardToken}
+              token={t.rewardToken ?? undefined}
               name={`${t.firstName} ${t.lastName}`}
-              username={t.username}
-              avatar={t.photo}
-              bounty={t.title ?? ''}
+              username={t.username ?? ''}
+              avatar={t.photo ?? undefined}
+              bounty={t.title}
               id={t.id}
             />
           ))}

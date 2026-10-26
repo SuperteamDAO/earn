@@ -1,10 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
+'use client';
+
 import { type ReactNode, useMemo } from 'react';
 
+import { dayjs } from '@/utils/dayjs';
+
+import type { ListingCardData } from '@/features/home/types/cards';
 import { ListingCardMini } from '@/features/listings/components/ListingCardMini';
-import { liveListingsQuery } from '@/features/listings/queries/live-listings';
-import { relatedlistingsQuery } from '@/features/listings/queries/related-listing';
+
+import { queryString, useJson } from '../hooks/use-json';
 
 interface LiveListingProps {
   children: ReactNode;
@@ -25,22 +28,22 @@ export const RelatedListings = ({
 }: LiveListingProps) => {
   const deadline = useMemo(() => dayjs().add(1, 'day').toISOString(), []);
 
-  const { data: relatedListings } = useQuery(
-    relatedlistingsQuery({
+  const { data: relatedListings, at: relatedAt } = useJson<ListingCardData[]>(
+    `/api/listings/${listingId}/related/?${queryString({
       take: SHOW_LIMIT,
       listingId,
-    }),
+    })}`,
   );
 
-  const { data: liveListings } = useQuery(
-    liveListingsQuery({
+  const { data: liveListings, at: liveAt } = useJson<ListingCardData[]>(
+    `/api/listings/live/?${queryString({
       take: SHOW_LIMIT,
       deadline,
       order: 'asc',
       type: isHackathon ? 'hackathon' : undefined,
-      excludeIds: ids ? ids : undefined,
+      excludeIds: ids,
       exclusiveSponsorId,
-    }),
+    })}`,
   );
 
   const combinedListings = useMemo(() => {
@@ -60,7 +63,11 @@ export const RelatedListings = ({
       {children}
       <div className="mt-1 flex w-full flex-col">
         {combinedListings.map((listing) => (
-          <ListingCardMini bounty={listing} key={listing?.id} />
+          <ListingCardMini
+            bounty={listing}
+            now={Math.max(relatedAt, liveAt)}
+            key={listing?.id}
+          />
         ))}
       </div>
     </div>

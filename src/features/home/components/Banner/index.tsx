@@ -1,6 +1,8 @@
+'use client';
+
 import Autoplay from 'embla-carousel-autoplay';
 import { useAtomValue } from 'jotai';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Carousel,
@@ -32,7 +34,9 @@ export function BannerCarousel({
   totalUsers,
   totalSponsors,
 }: BannerCarouselProps) {
-  const plugin = useRef(
+  // Made once, on the first render.
+  const [plugin] = useState(() =>
+    // oxlint-disable-next-line react/capitalized-calls -- Embla's plugin factory
     Autoplay({
       delay: 4000,
       stopOnInteraction: false,
@@ -53,17 +57,17 @@ export function BannerCarousel({
       if (popupsShowed > 0) {
         const resumeTimer: ReturnType<typeof setTimeout> = setTimeout(() => {
           carouselApi.scrollNext();
-          plugin.current.options.delay = 5000;
+          plugin.options.delay = 5000;
           autoplay.play();
         }, 2000);
         return () => clearTimeout(resumeTimer);
       }
     }
-  }, [isPopupOpen, carouselApi, popupsShowed]);
+  }, [isPopupOpen, carouselApi, popupsShowed, plugin]);
 
   return (
     <Carousel
-      plugins={[plugin.current]}
+      plugins={[plugin]}
       className="w-full"
       opts={{ loop: true }}
       setApi={setCarouselApi}

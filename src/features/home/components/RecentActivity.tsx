@@ -1,36 +1,29 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import Link from 'next/link';
-import posthog from 'posthog-js';
-import { useMemo } from 'react';
+import { posthog } from 'posthog-js';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { LocalImage } from '@/components/ui/local-image';
+import type { Activity } from '@/server/home-stats';
 import { timeAgoShort } from '@/utils/timeAgo';
 
-import { homeFeedQuery } from '@/features/feed/queries/home-feed';
 import type { FeedPostType } from '@/features/feed/types';
+
+import { randomFallbackImage } from '../utils/fallback-image';
 
 interface ActivityCardProps {
   firstName: string;
   lastName: string;
   username: string;
-  createdAt: string;
-  listingType: 'bounty' | 'hackathon';
+  createdAt: Date;
+  now: number;
+  ogImage: string;
+  listingType: string;
   isWinner: boolean;
   isWinnersAnnounced: boolean;
   type: FeedPostType;
 }
-
-const getRandomFallbackImage = (): string => {
-  const basePath = '/assets/fallback/resized-og';
-  const fallbackImages = Array.from(
-    { length: 11 },
-    (_, i) => `${basePath}/${i + 1}.webp`,
-  );
-
-  const randomIndex = Math.floor(Math.random() * fallbackImages.length);
-  return fallbackImages[randomIndex]!;
-};
 
 const ActivityCard = ({
   firstName,
@@ -41,15 +34,17 @@ const ActivityCard = ({
   isWinner,
   isWinnersAnnounced,
   type,
+  now,
+  ogImage,
 }: ActivityCardProps) => {
   const getActionText = () => {
-    const defaultActionText = {
+    const defaultActionText: Record<string, string> = {
       bounty: 'just submitted a bounty',
       hackathon: 'just submitted to a hackathon',
       project: 'just applied to a project',
     };
 
-    const winnerActionText = {
+    const winnerActionText: Record<string, string> = {
       bounty: 'just won a bounty',
       hackathon: 'just won a hackathon track',
       project: 'just got selected for a project',
@@ -67,7 +62,6 @@ const ActivityCard = ({
   };
 
   const actionText = getActionText();
-  const ogImage = useMemo(() => getRandomFallbackImage(), []);
 
   return (
     <Link href={'/earn/feed/?filter=new'} className="flex">
@@ -87,7 +81,7 @@ const ActivityCard = ({
           </span>
           <span className="mx-1 text-xs text-slate-400">•</span>
           <span className="text-xs text-slate-400">
-            {timeAgoShort(createdAt)}
+            {timeAgoShort(createdAt, now)}
           </span>
         </div>
         <p className="text-sm font-medium text-slate-600">{actionText}</p>
@@ -96,11 +90,17 @@ const ActivityCard = ({
   );
 };
 
-export const RecentActivity = () => {
-  const { data, isLoading } = useQuery(homeFeedQuery);
-
-  if (isLoading) return null;
-
+// The sidebar's latest submissions. `images`: a fallback picture per row.
+export const RecentActivity = ({
+  activity,
+  now,
+  images,
+}: {
+  activity: ReadonlyArray<Activity>;
+  now: number;
+  images: ReadonlyArray<string>;
+}) => {
+  const data = activity;
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -122,14 +122,16 @@ export const RecentActivity = () => {
         {data?.map((act, i) => (
           <ActivityCard
             key={i}
-            firstName={act.user.firstName}
-            lastName={act.user.lastName}
-            username={act.user.username}
+            firstName={act.user.firstName ?? ''}
+            lastName={act.user.lastName ?? ''}
+            username={act.user.username ?? ''}
             createdAt={act.createdAt}
-            listingType={act.listing.type as 'bounty' | 'hackathon'}
+            listingType={act.listing.type}
             isWinner={act.isWinner}
             isWinnersAnnounced={act.listing.isWinnersAnnounced}
             type={'submission'}
+            now={now}
+            ogImage={images[i] ?? randomFallbackImage(0)}
           />
         ))}
       </div>

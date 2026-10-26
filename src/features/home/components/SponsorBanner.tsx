@@ -1,15 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 
-import { userCountQuery } from '../queries/user-count';
-
-export const SponsorBanner = () => {
-  const { data } = useQuery(userCountQuery);
-
+export const SponsorBanner = ({ totalUsers }: { totalUsers: number }) => {
   return (
     <Link
       href="/earn/sponsor"
@@ -24,7 +21,7 @@ export const SponsorBanner = () => {
         </p>
         <p className="mt-1 text-sm leading-[1.1rem] font-medium text-slate-500">
           Reach{' '}
-          {(Math.floor((data?.totalUsers || 0) / 10000) * 10000).toLocaleString(
+          {(Math.floor((totalUsers || 0) / 10000) * 10000).toLocaleString(
             'en-us',
           )}
           + crypto talent from one single dashboard

@@ -1,77 +1,29 @@
-import { type NextRequest, NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
 
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
+import { json } from '@/lib/route-guard';
+import * as HomeStats from '@/server/home-stats';
+import { runtime } from '@/server/runtime';
 
-import type { Rewards } from '@/features/listings/types';
-
-export async function GET(_request: NextRequest) {
-  try {
-    const winningSubmissions = await prisma.submission.findMany({
-      where: {
-        isWinner: true,
-        listing: { isWinnersAnnounced: true, isPrivate: false },
-        rewardInUSD: { gte: 200 },
-      },
-      select: {
-        winnerPosition: true,
-        user: {
-          select: {
-            id: true,
-            username: true,
-            photo: true,
-            firstName: true,
-            lastName: true,
+// The latest winners of $200 or more, for the sidebar.
+export function GET() {
+  return runtime.runPromise(
+    HomeStats.HomeStats.use((stats) => stats.recentEarners).pipe(
+      Effect.map((earners) =>
+        Response.json(earners, {
+          headers: {
+            'Cache-Control':
+              'public, max-age=86400, s-maxage=86400, stale-while-revalidate=3600',
           },
-        },
-        listing: {
-          select: {
-            slug: true,
-            title: true,
-            rewards: true,
-            token: true,
-            winnersAnnouncedAt: true,
-          },
-        },
-      },
-      take: 30,
-      orderBy: { listing: { winnersAnnouncedAt: 'desc' } },
-    });
-
-    const earners = winningSubmissions.map((submission) => {
-      const rewards = submission.listing.rewards as Rewards;
-      return {
-        id: submission.user.id,
-        username: submission.user.username,
-        firstName: submission.user.firstName,
-        lastName: submission.user.lastName,
-        slug: submission.listing.slug,
-        title: submission.listing.title,
-        reward: rewards[Number(submission.winnerPosition) as keyof Rewards],
-        rewardToken: submission.listing.token,
-        photo: submission.user.photo,
-        winnersAnnouncedAt: submission.listing.winnersAnnouncedAt,
-      };
-    });
-
-    logger.info('Successfully fetched winning submissions');
-
-    return NextResponse.json(earners, {
-      headers: {
-        'Cache-Control':
-          'public, max-age=86400, s-maxage=86400, stale-while-revalidate=3600',
-      },
-    });
-  } catch (error: any) {
-    logger.error('Error occurred while fetching winning submissions', {
-      error: error.message,
-    });
-    return NextResponse.json(
-      {
-        error: 'Internal Server Error',
-        message: 'Error occurred while fetching totals',
-      },
-      { status: 400 },
-    );
-  }
+        }),
+      ),
+      Effect.catchTag('DatabaseError', () =>
+        Effect.succeed(
+          json(400, {
+            error: 'Internal Server Error',
+            message: 'Error occurred while fetching totals',
+          }),
+        ),
+      ),
+    ),
+  );
 }

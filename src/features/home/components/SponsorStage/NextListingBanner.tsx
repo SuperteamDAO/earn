@@ -1,26 +1,30 @@
+'use client';
+
 import { PenLine } from 'lucide-react';
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { Button } from '@/components/ui/button';
 import { JTTG } from '@/constants/Telegram';
 
+import { InnerLink } from '@/features/home/components/InnerLink';
+
+const handleCreateListingClick = () => {
+  posthog.capture('create listing_sponsor stage banner', {
+    stage: 'NEXT_LISTING',
+  });
+  posthog.capture('click_sponsor stage banner', {
+    stage: 'NEXT_LISTING',
+  });
+};
+
+const handleGetHelpClick = () => {
+  posthog.capture('get help_sponsor stage banner', {
+    stage: 'NEXT_LISTING',
+  });
+};
+
 export function NextListingBanner() {
-  const handleCreateListingClick = () => {
-    posthog.capture('create listing_sponsor stage banner', {
-      stage: 'NEXT_LISTING',
-    });
-    posthog.capture('click_sponsor stage banner', {
-      stage: 'NEXT_LISTING',
-    });
-  };
-
-  const handleGetHelpClick = () => {
-    posthog.capture('get help_sponsor stage banner', {
-      stage: 'NEXT_LISTING',
-    });
-  };
-
   return (
     <Link
       href="/earn/dashboard/listings?open=1"
@@ -52,13 +56,7 @@ export function NextListingBanner() {
             asChild
             className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
           >
-            <Link
-              href={JTTG}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleGetHelpClick();
-              }}
-            >
+            <InnerLink href={JTTG} onClick={handleGetHelpClick}>
               <img
                 src="/assets/sponsor/jill.png"
                 alt="Get Help"
@@ -66,7 +64,7 @@ export function NextListingBanner() {
                 height={28}
               />
               <span>Get Help</span>
-            </Link>
+            </InnerLink>
           </Button>
         </div>
       </div>

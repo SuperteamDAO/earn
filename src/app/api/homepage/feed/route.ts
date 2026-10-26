@@ -1,33 +1,25 @@
-import { type NextRequest, NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
 
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { json } from '@/lib/route-guard';
+import * as HomeStats from '@/server/home-stats';
+import { runtime } from '@/server/runtime';
 
-export async function GET(_request: NextRequest) {
-  try {
-    const submissions = await prisma.submission.findMany({
-      where: { isArchived: false, isActive: true },
-      take: 5,
-      select: {
-        createdAt: true,
-        isWinner: true,
-        listing: { select: { type: true, isWinnersAnnounced: true } },
-        user: { select: { firstName: true, lastName: true, username: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    return NextResponse.json(submissions, {
-      headers: {
-        'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
-      },
-    });
-  } catch (error: any) {
-    logger.warn(`Error`, safeStringify(error));
-    return NextResponse.json(
-      { error: 'Error occurred while fetching feed data.' },
-      { status: 500 },
-    );
-  }
+// The five latest submissions, for the sidebar's recent activity.
+export function GET() {
+  return runtime.runPromise(
+    HomeStats.HomeStats.use((stats) => stats.recentActivity).pipe(
+      Effect.map((activity) =>
+        Response.json(activity, {
+          headers: {
+            'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
+          },
+        }),
+      ),
+      Effect.catchTag('DatabaseError', () =>
+        Effect.succeed(
+          json(500, { error: 'Error occurred while fetching feed data.' }),
+        ),
+      ),
+    ),
+  );
 }

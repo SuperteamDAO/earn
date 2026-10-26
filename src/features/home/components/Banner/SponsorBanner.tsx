@@ -1,11 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import Link from 'next/link';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 
 import { cn } from '@/utils/cn';
 import { roundToNearestTenth, roundToNearestTenThousand } from '@/utils/number';
-
-import { sponsorCountQuery } from '../../queries/sponsor-count';
 
 interface HomeSponsorBannerProps {
   readonly totalUsers?: number | null;
@@ -16,7 +15,6 @@ export function HomeSponsorBanner({
   totalUsers,
   totalSponsors,
 }: HomeSponsorBannerProps) {
-  const { data } = useQuery(sponsorCountQuery);
   return (
     <Link
       href="/earn/sponsor"
@@ -128,12 +126,9 @@ export function HomeSponsorBanner({
           Get Started
         </button>
         <div className="flex w-fit items-center">
-          {(totalSponsors ?? data?.totalSponsors) != null && (
+          {totalSponsors != null && (
             <p className="relative ml-[0.6875rem] text-[0.8rem] text-black md:text-[0.875rem]">
-              Join{' '}
-              {roundToNearestTenth(
-                totalSponsors ?? data!.totalSponsors!,
-              )?.toLocaleString('en-us')}
+              Join {roundToNearestTenth(totalSponsors)?.toLocaleString('en-us')}
               + others
             </p>
           )}

@@ -1,8 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
+'use client';
+
 import type { ReactNode } from 'react';
 
 import { GrantsCardMini } from '@/features/grants/components/GrantsCardMini';
-import { liveGrantsQuery } from '@/features/grants/queries/live-grants';
+import type { GrantCardData } from '@/features/home/types/cards';
+
+import { queryString, useJson } from '../hooks/use-json';
 
 export const LiveGrants = ({
   children,
@@ -11,11 +14,8 @@ export const LiveGrants = ({
   children: ReactNode;
   excludeIds?: string[];
 }) => {
-  const { data: grants } = useQuery(
-    liveGrantsQuery({
-      take: 5,
-      excludeIds: ids ? ids : undefined,
-    }),
+  const { data: grants } = useJson<Array<GrantCardData & { id: string }>>(
+    `/api/grants/live/?${queryString({ take: 5, excludeIds: ids })}`,
   );
   return (
     <div>

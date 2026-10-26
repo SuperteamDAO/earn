@@ -1,8 +1,8 @@
-import { usePrivy } from '@privy-io/react-auth';
+'use client';
+
 import { DialogTitle } from '@radix-ui/react-dialog';
-import { useQuery } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import {
@@ -31,13 +31,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useTimeout } from '@/hooks/use-timeout';
+import { publicEnv } from '@/lib/public-env';
+import { useViewer } from '@/lib/viewer';
 import { PulseIcon } from '@/svg/pulse-icon';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { roundToNearestThousand } from '@/utils/number';
 
-import { userCountQuery } from '@/features/home/queries/user-count';
-import { liveOpportunitiesQuery } from '@/features/listings/queries/live-opportunities';
+import { useJson } from '@/features/home/hooks/use-json';
 
 import { popupOpenAtom, popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
@@ -57,19 +58,28 @@ const avatars = [
   },
 ];
 
-export const HomepagePop = () => {
+// The sign-up prompt, seven seconds in, once, for a signed-out visitor.
+// Pages that loaded the numbers pass them; otherwise they're fetched once
+// it's due.
+export const HomepagePop = ({
+  totalUsers,
+  liveOpportunityWorth,
+}: {
+  totalUsers?: number;
+  liveOpportunityWorth?: number;
+} = {}) => {
   const [popupsShowed, setPopupsShowed] = useAtom(popupsShowedAtom);
   const setPopupTimeout = useSetAtom(popupTimeoutAtom);
 
   const [variant, setVariant] = useState<number>(1);
   const [open, setOpen] = useAtom(popupOpenAtom);
-  const { authenticated, ready } = usePrivy();
+  const authenticated = !!useViewer();
 
   const timeoutHandle = useTimeout(() => {
-    const variant =
+    const next =
       Number(localStorage.getItem('homepage-desktop-pop-variant')) || 1;
-    setVariant(variant || 1);
-    localStorage.setItem('homepage-desktop-pop-variant', String(variant + 1));
+    setVariant(next || 1);
+    localStorage.setItem('homepage-desktop-pop-variant', String(next + 1));
     setOpen(true);
     setPopupsShowed((s) => s + 1);
     posthog.capture('conversion pop up_initiated', {
@@ -78,18 +88,20 @@ export const HomepagePop = () => {
   }, 7_000);
 
   const activateQuery = useMemo(
-    () => ready && !authenticated && popupsShowed < 1,
-    [ready, authenticated, popupsShowed],
+    () => !authenticated && popupsShowed < 1,
+    [authenticated, popupsShowed],
   );
 
-  const { data: stat } = useQuery({
-    ...userCountQuery,
-    enabled: activateQuery,
-  });
-  const { data: liveOpportunities } = useQuery({
-    ...liveOpportunitiesQuery,
-    enabled: activateQuery,
-  });
+  const { data: stat } = useJson<{ totalUsers: number }>(
+    activateQuery && totalUsers === undefined
+      ? '/api/homepage/user-count/'
+      : null,
+  );
+  const { data: liveOpportunities } = useJson<{ totalUsdValue: number }>(
+    activateQuery && liveOpportunityWorth === undefined
+      ? '/api/listings/live-opportunities/'
+      : null,
+  );
 
   const isMD = useBreakpoint('md');
 
@@ -97,11 +109,10 @@ export const HomepagePop = () => {
   useEffect(() => {
     if (
       !initated.current &&
-      ready &&
       !authenticated &&
       popupsShowed < 1 &&
       !open &&
-      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
+      publicEnv.vercelEnv === 'production'
     ) {
       initated.current = true;
       setTimeout(() => {
@@ -109,10 +120,12 @@ export const HomepagePop = () => {
         setPopupTimeout(timeoutHandle);
       }, 0);
     }
-  }, [ready, authenticated]);
+    // Once, when they're known to be signed out (`initated`).
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies, react-hooks/exhaustive-deps
+  }, [authenticated]);
 
   const setPopupOpen = (e: boolean) => {
-    if (e === false) {
+    if (!e) {
       posthog.capture('conversion pop up_closed', {
         'Popup Source': 'Homepage Pop-up',
       });
@@ -125,7 +138,7 @@ export const HomepagePop = () => {
       <Mobile
         open={open}
         setOpen={setPopupOpen}
-        totalUsers={stat?.totalUsers}
+        totalUsers={totalUsers ?? stat?.totalUsers}
       />
     );
   }
@@ -134,8 +147,10 @@ export const HomepagePop = () => {
     <Desktop
       open={open}
       setOpen={setPopupOpen}
-      totalUsers={stat?.totalUsers}
-      liveOpportunityWorth={liveOpportunities?.totalUsdValue}
+      totalUsers={totalUsers ?? stat?.totalUsers}
+      liveOpportunityWorth={
+        liveOpportunityWorth ?? liveOpportunities?.totalUsdValue
+      }
       variant={variant}
     />
   );
@@ -150,12 +165,11 @@ const Mobile = ({
   setOpen: (e: boolean) => void;
   totalUsers: number | undefined;
 }) => {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerContent
         classNames={{
-          overlay: isLoginOpen ? 'z-200' : '',
+          overlay: '',
         }}
         className="focus:ring-0 focus:ring-transparent focus:ring-offset-0"
       >
@@ -186,7 +200,7 @@ const Mobile = ({
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="pt-0">
-          <GetStarted setIsLoginOpen={setIsLoginOpen} />
+          <GetStarted />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
@@ -206,14 +220,10 @@ const Desktop = ({
   liveOpportunityWorth: number | undefined;
   variant: number;
 }) => {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
-        className={cn(
-          'max-w-[22.5rem] overflow-hidden bg-white p-0',
-          isLoginOpen && 'invisible',
-        )}
+        className={cn('max-w-[22.5rem] overflow-hidden bg-white p-0')}
         hideCloseIcon
       >
         {variant % 2 === 0 ? (
@@ -222,7 +232,7 @@ const Desktop = ({
           <DesktopVariantTwo liveOpportunityWorth={liveOpportunityWorth} />
         )}
         <DialogFooter className="p-5 pt-0">
-          <GetStarted setIsLoginOpen={setIsLoginOpen} />
+          <GetStarted />
         </DialogFooter>
       </DialogContent>
     </Dialog>

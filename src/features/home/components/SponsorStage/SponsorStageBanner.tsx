@@ -1,12 +1,11 @@
-'use client';
+import 'server-only';
 
-import { useQuery } from '@tanstack/react-query';
+import * as Effect from 'effect/Effect';
 
-import { Skeleton } from '@/components/ui/skeleton';
-import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { useUser } from '@/store/user';
+import { getViewer } from '@/lib/session';
+import { runtime } from '@/server/runtime';
+import * as SponsorStages from '@/server/sponsor-stage';
 
-import { sponsorStageQuery } from '@/features/home/queries/sponsor-stage';
 import { SponsorStage } from '@/features/home/types/sponsor-stage';
 
 import { NewSponsorBanner } from './NewSponsorBanner';
@@ -16,20 +15,17 @@ import { ReviewBanner } from './ReviewBanner';
 import { ReviewUrgentBanner } from './ReviewUrgentBanner';
 import { UnderVerificationBanner } from './UnderVerificationBanner';
 
-// Rendered inside a `hidden lg:block` wrapper, so the skeleton holds the
-// banner's space from SSR until the sponsor stage arrives.
-export function SponsorStageBanner() {
-  const isLg = useBreakpoint('lg');
-  const { user } = useUser();
-
-  const { data, isPending } = useQuery({
-    ...sponsorStageQuery,
-    enabled: isLg && !!user?.currentSponsorId,
-  });
-
-  if (isPending) {
-    return <Skeleton className="h-63 w-full rounded-xl" />;
-  }
+// The homepage's banner for a sponsor: what to do next (Earn rendered it
+// inside a `hidden lg:block` wrapper, as the page still does).
+export async function SponsorStageBanner() {
+  const viewer = await getViewer();
+  const sponsorId = viewer?.currentSponsorId;
+  if (!sponsorId) return null;
+  const data = await runtime.runPromise(
+    SponsorStages.SponsorStages.use((stages) => stages.stage(sponsorId)).pipe(
+      Effect.orElseSucceed(() => null),
+    ),
+  );
 
   if (!data || !data.stage) {
     return null;

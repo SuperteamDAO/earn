@@ -1,10 +1,12 @@
+'use client';
+
 import Image from 'next/image';
-import posthog from 'posthog-js';
+import { posthog } from 'posthog-js';
 import { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
@@ -57,7 +59,7 @@ const banners: CategoryBanner[] = [
 ];
 
 export function CategoryBanner({ category }: { category: CategoryTypes }) {
-  const { user } = useUser();
+  const user = useViewer();
 
   const banner = useMemo(
     () => banners.find((b) => b.type === category) ?? null,

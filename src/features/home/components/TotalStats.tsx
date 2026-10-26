@@ -1,3 +1,5 @@
+'use client';
+
 import { CircleDollarSign } from 'lucide-react';
 
 import TbBriefcase2 from '@/components/icons/TbBriefcase2';
