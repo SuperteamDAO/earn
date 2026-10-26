@@ -31,6 +31,7 @@
   },
   "sortPackageJson": true,
   "ignorePatterns": [
+    "*.md",
     "node_modules",
     "coverage",
     ".pnp",
