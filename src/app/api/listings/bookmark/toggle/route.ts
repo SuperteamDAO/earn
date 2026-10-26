@@ -1,73 +1,38 @@
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import * as Schema from 'effect/Schema';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { decodeBody, guardUser, json } from '@/lib/route-guard';
+import * as ListingBookmarks from '@/server/listing-bookmarks';
+import { runtime } from '@/server/runtime';
 
-import { getUserSession } from '@/features/auth/utils/getUserSession';
+const Body = Schema.Struct({ listingId: Schema.NonEmptyString });
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    logger.debug(`Request body: ${safeStringify(body)}`);
-
-    const { listingId } = body ?? {};
-    if (!listingId || typeof listingId !== 'string') {
-      return NextResponse.json(
-        { message: 'Invalid listingId' },
-        { status: 400 },
+// Bookmarks a listing, or undoes the bookmark.
+export function POST(request: NextRequest) {
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const writer = yield* guardUser(request);
+      if (writer instanceof NextResponse) return writer;
+      const body = yield* decodeBody(request, Body, 1024);
+      if (body instanceof NextResponse) {
+        return body.status === 400
+          ? json(400, { message: 'Invalid listingId' })
+          : body;
+      }
+      return yield* ListingBookmarks.ListingBookmarks.use((bookmarks) =>
+        bookmarks.toggle(writer.userId, body.listingId),
+      ).pipe(
+        Effect.map((row) => json(200, row)),
+        Effect.catchTag('DatabaseError', () =>
+          Effect.succeed(
+            json(400, {
+              error: 'Internal Server Error',
+              message: 'Error occurred while toggling bookmark.',
+            }),
+          ),
+        ),
       );
-    }
-
-    const headerList = await headers();
-    const session = await getUserSession(headerList);
-    const userId = session.data?.userId;
-
-    if (!userId) {
-      logger.error('Unauthorized, userId missing while toggling bookmark');
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-    }
-
-    logger.debug(
-      `Fetching bookmark status for listing ID: ${listingId} and user ID: ${userId}`,
-    );
-    const bookmarkFound = await prisma.subscribeBounty.findFirst({
-      where: { bountyId: listingId, userId },
-    });
-
-    let result;
-    if (bookmarkFound) {
-      logger.info(
-        `Bookmark found for listing ID: ${listingId} and user ID: ${userId}, toggling isArchived status`,
-      );
-      result = await prisma.subscribeBounty.update({
-        where: { id: bookmarkFound.id },
-        data: { isArchived: !bookmarkFound.isArchived },
-      });
-    } else {
-      logger.info(
-        `No bookmark found for listing ID: ${listingId} and user ID: ${userId}, creating new bookmark`,
-      );
-      result = await prisma.subscribeBounty.create({
-        data: { bountyId: listingId, userId: userId as string },
-      });
-    }
-
-    logger.info(
-      `Bookmark toggled successfully for listing ID: ${listingId} and user ID: ${userId}`,
-    );
-    return NextResponse.json(result, { status: 200 });
-  } catch (error) {
-    logger.error(
-      `Error occurred while toggling bookmark: ${safeStringify(error)}`,
-    );
-    return NextResponse.json(
-      {
-        error: 'Internal Server Error',
-        message: 'Error occurred while toggling bookmark.',
-      },
-      { status: 400 },
-    );
-  }
+    }),
+  );
 }

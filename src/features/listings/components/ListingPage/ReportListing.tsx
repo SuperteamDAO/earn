@@ -1,4 +1,5 @@
-import { useMutation } from '@tanstack/react-query';
+'use client';
+
 import { AnimatePresence, motion } from 'motion/react';
 import * as React from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
@@ -11,8 +12,9 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson } from '@/lib/fetch-json';
+import { publicEnv } from '@/lib/public-env';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import type { Listing } from '../../types';
@@ -120,16 +122,7 @@ export function ReportListing({
     null,
   );
   const [customReason, setCustomReason] = React.useState('');
-  const { user } = useUser();
-
-  const mutation = useMutation({
-    mutationFn: async (payload: any) => {
-      return api.post('/api/report-listing', payload);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
+  const user = useViewer();
 
   React.useEffect(() => {
     if (!open) {
@@ -156,11 +149,13 @@ export function ReportListing({
       );
       reasonTitle = selectedOption?.label || '';
     }
-    mutation.mutate({
+    postJson('/api/report-listing/', {
       listingTitle: listing.title,
-      listingUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/earn/listing/${listing.slug}/`,
+      listingUrl: `${publicEnv.siteUrl}/earn/listing/${listing.slug}/`,
       reasonTitle,
       reasonSubtext,
+    }).catch((error: unknown) => {
+      console.error(error);
     });
     setSubmitted(true);
   }

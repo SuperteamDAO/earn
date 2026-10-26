@@ -1,144 +1,101 @@
-import { usePrivy } from '@privy-io/react-auth';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+'use client';
+
 import { Bookmark } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import posthog from 'posthog-js';
-import { useCallback, useEffect, useState } from 'react';
+import { posthog } from 'posthog-js';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { postJson } from '@/lib/fetch-json';
+import { useViewer } from '@/lib/viewer';
 import { cn } from '@/utils/cn';
 
 import { AuthWrapper } from '@/features/auth/components/AuthWrapper';
 
-import { listingBookmarksQuery } from '../../queries/listing-bookmark-status';
-
 interface Props {
   id: string;
   isTemplate?: boolean;
+  // From the server: how many have bookmarked it, and whether the viewer has.
+  initialCount: number;
+  initialBookmarked: boolean;
 }
 
 const toggleBookmark = async (id: string): Promise<void> => {
-  await api.post('/api/listings/bookmark/toggle', { listingId: id });
+  await postJson('/api/listings/bookmark/toggle/', { listingId: id });
 };
 
 const PENDING_BOOKMARK_INTENT_KEY = 'listing-bookmark-pending-intent';
 
-interface StoredBookmarkIntent {
-  readonly listingId: string;
-  readonly desiredState: boolean;
-}
-
-const readStoredBookmarkIntent = (listingId: string): boolean | undefined => {
-  if (typeof window === 'undefined') {
-    return undefined;
-  }
-  const rawIntent = window.sessionStorage.getItem(PENDING_BOOKMARK_INTENT_KEY);
-  if (!rawIntent) {
-    return undefined;
-  }
+// The bookmark a signed-out visitor tapped for, kept across sign-in.
+const storedIntent = (listingId: string): boolean | undefined => {
   try {
-    const parsedIntent = JSON.parse(rawIntent) as StoredBookmarkIntent;
-    return parsedIntent.listingId === listingId
-      ? parsedIntent.desiredState
-      : undefined;
-  } catch {
-    window.sessionStorage.removeItem(PENDING_BOOKMARK_INTENT_KEY);
-    return undefined;
-  }
-};
-
-const writeStoredBookmarkIntent = (intent: StoredBookmarkIntent): void => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  window.sessionStorage.setItem(
-    PENDING_BOOKMARK_INTENT_KEY,
-    JSON.stringify(intent),
-  );
-};
-
-const clearStoredBookmarkIntent = (listingId: string): void => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  const rawIntent = window.sessionStorage.getItem(PENDING_BOOKMARK_INTENT_KEY);
-  if (!rawIntent) {
-    return;
-  }
-  try {
-    const parsedIntent = JSON.parse(rawIntent) as StoredBookmarkIntent;
-    if (parsedIntent.listingId === listingId) {
-      window.sessionStorage.removeItem(PENDING_BOOKMARK_INTENT_KEY);
+    const parsed: unknown = JSON.parse(
+      window.sessionStorage.getItem(PENDING_BOOKMARK_INTENT_KEY) ?? 'null',
+    );
+    if (
+      typeof parsed === 'object' &&
+      parsed !== null &&
+      'listingId' in parsed &&
+      'desiredState' in parsed &&
+      parsed.listingId === listingId &&
+      typeof parsed.desiredState === 'boolean'
+    ) {
+      return parsed.desiredState;
     }
   } catch {
     window.sessionStorage.removeItem(PENDING_BOOKMARK_INTENT_KEY);
   }
+  return undefined;
 };
 
-export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
-  const { authenticated } = usePrivy();
-  const { user, isLoading: isUserLoading } = useUser();
-
-  const queryClient = useQueryClient();
-
-  const { data: bookmarks = [] } = useQuery(listingBookmarksQuery(id));
-
-  const actualIsBookmarked = !!bookmarks.find(
-    (entry) => entry.userId === user?.id,
+const storeIntent = (listingId: string, desiredState: boolean): void => {
+  window.sessionStorage.setItem(
+    PENDING_BOOKMARK_INTENT_KEY,
+    JSON.stringify({ listingId, desiredState }),
   );
+};
+
+const clearIntent = (listingId: string): void => {
+  if (storedIntent(listingId) !== undefined) {
+    window.sessionStorage.removeItem(PENDING_BOOKMARK_INTENT_KEY);
+  }
+};
+
+export const BookmarkListing = ({
+  id,
+  isTemplate = false,
+  initialCount,
+  initialBookmarked,
+}: Props) => {
+  const viewer = useViewer();
+
+  const [actualIsBookmarked, setActualIsBookmarked] =
+    useState(initialBookmarked);
+  const [bookmarkCount, setBookmarkCount] = useState(initialCount);
   const [optimisticIsBookmarked, setOptimisticIsBookmarked] = useState<
     boolean | undefined
   >(undefined);
-  const [pendingBookmarkIntent, setPendingBookmarkIntent] = useState<
-    boolean | undefined
-  >(() => readStoredBookmarkIntent(id));
+  const intentHandled = useRef(false);
 
-  const clearPendingBookmarkIntent = useCallback((): void => {
-    setPendingBookmarkIntent(undefined);
-    clearStoredBookmarkIntent(id);
-  }, [id]);
-
-  useEffect(() => {
-    if (
-      optimisticIsBookmarked !== undefined &&
-      actualIsBookmarked === optimisticIsBookmarked
-    ) {
-      setOptimisticIsBookmarked(undefined);
-    }
-  }, [actualIsBookmarked, optimisticIsBookmarked]);
-
-  const { mutate: mutateBookmark, isPending: isBookmarkMutating } = useMutation(
-    {
-      mutationFn: () => toggleBookmark(id),
-      onMutate: () => {
-        const newBookmarkState = !actualIsBookmarked;
-        setOptimisticIsBookmarked(newBookmarkState);
-        return { newBookmarkState };
-      },
-      onSuccess: (_data, _variables, context) => {
-        queryClient.invalidateQueries({
-          queryKey: listingBookmarksQuery(id).queryKey,
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['your-bookmarks'],
-        });
-        queryClient.invalidateQueries({
-          queryKey: ['listings', 'bookmarks'],
-        });
-        toast.success(
-          context?.newBookmarkState ? 'Bookmarked' : 'Bookmark removed',
-        );
-      },
-      onError: () => {
-        setOptimisticIsBookmarked(undefined);
+  const mutateBookmark = useCallback(
+    async (current: boolean) => {
+      const newBookmarkState = !current;
+      setOptimisticIsBookmarked(newBookmarkState);
+      try {
+        await toggleBookmark(id);
+        setActualIsBookmarked(newBookmarkState);
+        setBookmarkCount((count) => count + (newBookmarkState ? 1 : -1));
+        toast.success(newBookmarkState ? 'Bookmarked' : 'Bookmark removed');
+      } catch {
         toast.error('Error occurred while updating bookmark');
-      },
+      } finally {
+        setOptimisticIsBookmarked(undefined);
+      }
     },
+    [id],
   );
 
   const avatars = [
@@ -148,47 +105,29 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
   ];
 
   const handleToggleBookmark = (): void => {
-    clearPendingBookmarkIntent();
-    mutateBookmark();
+    clearIntent(id);
+    void mutateBookmark(actualIsBookmarked);
   };
+  // Signed out, a tap remembers the intent; back signed in (this page
+  // loads again), it's carried out once, unless already done.
   useEffect(() => {
-    if (
-      pendingBookmarkIntent === undefined ||
-      !authenticated ||
-      isUserLoading ||
-      !user?.id ||
-      isBookmarkMutating
-    ) {
-      return;
-    }
-
-    if (actualIsBookmarked === pendingBookmarkIntent) {
-      clearPendingBookmarkIntent();
-      return;
-    }
-
-    mutateBookmark(undefined, {
-      onSettled: () => {
-        clearPendingBookmarkIntent();
-      },
-    });
-  }, [
-    authenticated,
-    pendingBookmarkIntent,
-    actualIsBookmarked,
-    mutateBookmark,
-    isBookmarkMutating,
-    isUserLoading,
-    user?.id,
-    clearPendingBookmarkIntent,
-  ]);
+    if (intentHandled.current || !viewer?.id) return;
+    const intent = storedIntent(id);
+    if (intent === undefined) return;
+    intentHandled.current = true;
+    clearIntent(id);
+    // Carries out an intent kept in sessionStorage (outside React) with a
+    // request; the optimistic state it sets is the point.
+    // oxlint-disable-next-line react/set-state-in-effect
+    if (intent !== initialBookmarked) void mutateBookmark(initialBookmarked);
+  }, [id, initialBookmarked, mutateBookmark, viewer?.id]);
 
   const isBookmarked =
     optimisticIsBookmarked !== undefined
       ? optimisticIsBookmarked
       : actualIsBookmarked;
 
-  const baseDisplayCount = bookmarks.length + 1;
+  const baseDisplayCount = bookmarkCount + 1;
   const optimisticDelta =
     optimisticIsBookmarked !== undefined
       ? optimisticIsBookmarked && !actualIsBookmarked
@@ -198,11 +137,7 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
           : 0
       : 0;
 
-  let displayCount = baseDisplayCount + optimisticDelta;
-
-  if (pendingBookmarkIntent === true && actualIsBookmarked) {
-    displayCount = Math.min(displayCount, baseDisplayCount);
-  }
+  const displayCount = baseDisplayCount + optimisticDelta;
 
   const avatarCount = Math.min(displayCount, avatars.length);
 
@@ -245,14 +180,7 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
         <AuthWrapper
           showCompleteProfileModal
           completeProfileModalBodyText="Please complete your profile before bookmarking a listing."
-          onClick={() => {
-            const desiredBookmarkState = true;
-            setPendingBookmarkIntent(desiredBookmarkState);
-            writeStoredBookmarkIntent({
-              listingId: id,
-              desiredState: desiredBookmarkState,
-            });
-          }}
+          onClick={() => storeIntent(id, true)}
         >
           <motion.div
             whileHover={{ scale: 1.02 }}

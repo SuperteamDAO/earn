@@ -1,3 +1,5 @@
+'use client';
+
 import { EllipsisVertical } from 'lucide-react';
 import * as React from 'react';
 

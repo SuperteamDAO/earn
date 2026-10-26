@@ -1,66 +1,34 @@
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import * as Option from 'effect/Option';
+import type { NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
+import { json, sessionOf } from '@/lib/route-guard';
+import * as ListingBookmarks from '@/server/listing-bookmarks';
+import { runtime } from '@/server/runtime';
 
-import { getUserSession } from '@/features/auth/utils/getUserSession';
-
-export async function GET(request: NextRequest) {
-  const queryEntries = Object.fromEntries(
-    request.nextUrl.searchParams.entries(),
+// Who has bookmarked a listing; only the viewer's own id is shown.
+export function GET(request: NextRequest) {
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const listingId = request.nextUrl.searchParams.get('listingId');
+      if (!listingId) return json(400, { message: 'Invalid listingId' });
+      const privyDid = Option.getOrNull(yield* sessionOf(request));
+      return yield* ListingBookmarks.ListingBookmarks.use((bookmarks) =>
+        bookmarks.statusList(listingId, privyDid),
+      ).pipe(
+        Effect.map((list) => json(200, list)),
+        Effect.catchTags({
+          BookmarksBlocked: () =>
+            Effect.succeed(json(403, { error: 'User is blocked' })),
+          DatabaseError: () =>
+            Effect.succeed(
+              json(500, {
+                error: 'Internal Server Error',
+                message: 'Error occurred while fetching bookmark status.',
+              }),
+            ),
+        }),
+      );
+    }),
   );
-  logger.debug(`Request query: ${safeStringify(queryEntries)}`);
-
-  try {
-    const listingId = request.nextUrl.searchParams.get('listingId');
-
-    if (!listingId) {
-      return NextResponse.json(
-        { message: 'Invalid listingId' },
-        { status: 400 },
-      );
-    }
-
-    logger.debug(`Fetching bookmark status for listing ID: ${listingId}`);
-    const result = await prisma.subscribeBounty.findMany({
-      where: { bountyId: listingId, isArchived: false },
-      select: {
-        bountyId: true,
-        userId: true,
-      },
-    });
-
-    const headerList = await headers();
-    const session = await getUserSession(headerList);
-    if (session.error === 'User is blocked') {
-      return NextResponse.json(
-        { error: session.error },
-        { status: session.status },
-      );
-    }
-    const userId = session.data?.userId ?? null;
-    const response = result.map((bookmark) => ({
-      ...bookmark,
-      userId:
-        userId && bookmark.userId && bookmark.userId === userId
-          ? bookmark.userId
-          : '',
-    }));
-
-    logger.info(`Fetched bookmark status for listing ID: ${listingId}`);
-    return NextResponse.json(response, { status: 200 });
-  } catch (error) {
-    logger.error(
-      `Error occurred while fetching bookmark status for listing ID=${request.nextUrl.searchParams.get('listingId')}: ${safeStringify(error)}`,
-    );
-    return NextResponse.json(
-      {
-        error: 'Internal Server Error',
-        message: 'Error occurred while fetching bookmark status.',
-      },
-      { status: 500 },
-    );
-  }
 }
