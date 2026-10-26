@@ -300,7 +300,8 @@ const make = Effect.gen(function* () {
     }
     const rows = yield* database.query('listingSubmissions', (client) =>
       client.submission.findMany({
-        where: { listingId: bounty.id },
+        // Deleted entries stay off the public tab (Earn showed them).
+        where: { listingId: bounty.id, isActive: true, isArchived: false },
         select: {
           id: true,
           link: true,
