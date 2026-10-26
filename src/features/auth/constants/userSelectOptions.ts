@@ -36,8 +36,6 @@ export const userSelectOptions: UserSelect = {
   role: true,
   createdAt: true,
   linkedTwitter: true,
-  referralCode: true,
-  referredById: true,
 
   currentSponsor: {
     select: {

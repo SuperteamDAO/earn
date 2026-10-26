@@ -1,5 +1,4 @@
 import { usePrivy } from '@privy-io/react-auth';
-import { Gift } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
@@ -31,7 +30,6 @@ interface Props {
   onWalletOpen: () => void;
   walletBalance: number;
   onCreditOpen: () => void;
-  onReferralOpen: () => void;
 }
 
 export const DesktopNavbar = ({
@@ -39,7 +37,6 @@ export const DesktopNavbar = ({
   onSearchOpen,
   onWalletOpen,
   onCreditOpen,
-  onReferralOpen,
   walletBalance,
 }: Props) => {
   const { authenticated, ready } = usePrivy();
@@ -65,16 +62,6 @@ export const DesktopNavbar = ({
     () => router.pathname.startsWith('/earn/new/talent'),
     [router.pathname],
   );
-
-  const hideSponsorCTA = useMemo(() => {
-    if (!isNewTalentRoute) return false;
-    try {
-      const url = new URL(window.location.origin + router.asPath);
-      return url.searchParams.get('referral') === 'true';
-    } catch {
-      return router.asPath.includes('referral=true');
-    }
-  }, [isNewTalentRoute, router.asPath]);
 
   const maxWidth = useMemo(() => {
     if (isDashboardRoute) {
@@ -221,20 +208,6 @@ export const DesktopNavbar = ({
                 </Button>
               )}
 
-              {!user?.currentSponsorId && user?.isTalentFilled && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    'text-brand-purple hover:text-brand-purple bg-indigo-50 text-xs font-semibold hover:bg-indigo-100',
-                  )}
-                  onClick={onReferralOpen}
-                >
-                  <Gift />
-                  <span>Get Free Credits</span>
-                </Button>
-              )}
-
               {user?.isTalentFilled && (
                 <div className="flex items-center gap-1.5">
                   <div
@@ -275,20 +248,18 @@ export const DesktopNavbar = ({
           {authUiReady && !authenticated && (
             <div className="ph-no-capture flex items-center gap-2">
               <div className="flex items-center gap-0">
-                {!hideSponsorCTA && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-xs font-semibold"
-                    onClick={() => {
-                      posthog.capture('create a listing_navbar');
-                      router.push('/earn/sponsor');
-                    }}
-                  >
-                    <span>Become a Sponsor</span>
-                    <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
-                  </Button>
-                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs font-semibold"
+                  onClick={() => {
+                    posthog.capture('create a listing_navbar');
+                    router.push('/earn/sponsor');
+                  }}
+                >
+                  <span>Become a Sponsor</span>
+                  <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="sm"

@@ -20,13 +20,6 @@ const CreditDrawer = dynamic(
     ),
   { ssr: false },
 );
-const ReferralModal = dynamic(
-  () =>
-    import('@/features/credits/components/ReferralModal').then(
-      (mod) => mod.ReferralModal,
-    ),
-  { ssr: false },
-);
 const WalletDrawer = dynamic(
   () =>
     import('@/features/wallet/components/WalletDrawer').then(
@@ -89,12 +82,6 @@ export const Header = () => {
     onClose: onCreditClose,
   } = useDisclosure();
 
-  const {
-    isOpen: isReferralOpen,
-    onOpen: onReferralOpen,
-    onClose: onReferralClose,
-  } = useDisclosure();
-
   function searchOpenWithEvent() {
     posthog.capture('initiate_search');
     onSearchOpen();
@@ -108,11 +95,6 @@ export const Header = () => {
   const openCreditWithEvent = () => {
     posthog.capture('open_credits');
     onCreditOpen();
-  };
-
-  const openReferralWithEvent = () => {
-    posthog.capture('open_referrals');
-    onReferralOpen();
   };
 
   useEffect(() => {
@@ -180,14 +162,12 @@ export const Header = () => {
           onWalletOpen={openWalletWithEvent}
           walletBalance={walletBalance || 0}
           onCreditOpen={openCreditWithEvent}
-          onReferralOpen={openReferralWithEvent}
         />
         <SponsorStageSnackbar />
       </div>
       <MobileNavbar
         onLoginOpen={onLoginOpen}
         onCreditOpen={openCreditWithEvent}
-        onReferralOpen={openReferralWithEvent}
       />
       <SearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
       <div className="fixed bottom-0 z-60 w-full">
@@ -204,7 +184,6 @@ export const Header = () => {
         isOpen={isWalletOpen}
         onClose={onWalletClose}
       />
-      <ReferralModal isOpen={isReferralOpen} onClose={onReferralClose} />
       <CreditDrawer isOpen={isCreditOpen} onClose={onCreditClose} />
     </>
   );

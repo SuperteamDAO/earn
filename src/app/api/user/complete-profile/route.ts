@@ -8,7 +8,6 @@ import { prisma } from '@/prisma';
 import { cleanSkills } from '@/utils/cleanSkills';
 import { verifyImageExists } from '@/utils/cloudinary';
 import { filterAllowedFields } from '@/utils/filterAllowedFields';
-import { generateUniqueReferralCode } from '@/utils/referralCodeGenerator';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { userSelectOptions } from '@/features/auth/constants/userSelectOptions';
@@ -112,39 +111,6 @@ export async function POST(request: NextRequest) {
 
     const filteredData = filterAllowedFields(body, allowedFields);
 
-    const referralCodeRaw = (body?.referralCode || '')
-      .toString()
-      .trim()
-      .toUpperCase();
-
-    const referredByUpdate: { referredById?: string } = {};
-    if (referralCodeRaw && !user.referredById) {
-      try {
-        const inviter = await prisma.user.findUnique({
-          where: { referralCode: referralCodeRaw },
-          select: { id: true },
-        });
-        if (inviter && inviter.id !== user.id) {
-          const accepted = await prisma.user.count({
-            where: { referredById: inviter.id },
-          });
-          if (accepted < 10) {
-            referredByUpdate.referredById = inviter.id;
-          } else {
-            logger.info(
-              `Referral cap reached for inviter ${inviter.id}, ignoring referralCode during profile completion`,
-            );
-          }
-        } else if (!inviter) {
-          logger.info(`Invalid referralCode provided on profile completion`);
-        }
-      } catch (e) {
-        logger.error(
-          `Error validating referral code on profile completion: ${safeStringify(e)}`,
-        );
-      }
-    }
-
     if (filteredData.photo && typeof filteredData.photo === 'string') {
       try {
         const imageExists = await verifyImageExists(filteredData.photo);
@@ -247,16 +213,12 @@ export async function POST(request: NextRequest) {
       logger.info(`Using existing wallet for user ID: ${userId}`);
     }
 
-    const referralCode =
-      user.referralCode ?? (await generateUniqueReferralCode());
-
     await prisma.user.update({
       where: {
         id: userId,
       },
       data: {
         ...updatedData,
-        ...referredByUpdate,
         ...(correctedSkills
           ? {
               skills: correctedSkills,
@@ -270,7 +232,6 @@ export async function POST(request: NextRequest) {
           : undefined,
         isTalentFilled: true,
         walletAddress,
-        referralCode,
       },
     });
 

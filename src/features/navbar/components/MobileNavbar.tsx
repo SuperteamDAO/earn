@@ -1,5 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
-import { Gift, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import posthog from 'posthog-js';
@@ -16,7 +16,6 @@ import { CreditIcon } from '@/features/credits/icon/credit';
 interface Props {
   onLoginOpen: () => void;
   onCreditOpen: () => void;
-  onReferralOpen: () => void;
 }
 
 // const AnnouncementBar = dynamic(() =>
@@ -30,11 +29,7 @@ const MobileDrawer = dynamic(
   },
 );
 
-export const MobileNavbar = ({
-  onLoginOpen,
-  onCreditOpen,
-  onReferralOpen,
-}: Props) => {
+export const MobileNavbar = ({ onLoginOpen, onCreditOpen }: Props) => {
   const {
     isOpen: isDrawerOpen,
     onOpen: onDrawerOpen,
@@ -90,18 +85,6 @@ export const MobileNavbar = ({
           <div className="flex items-center gap-1">
             {ready && authenticated && user?.isTalentFilled && (
               <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    'text-brand-purple hover:text-brand-purple bg-indigo-50 text-xs font-semibold hover:bg-indigo-100',
-                    'bg-indigo-50 text-xs font-semibold hover:bg-indigo-100',
-                  )}
-                  onClick={onReferralOpen}
-                >
-                  <Gift />
-                  <span>Free Credits</span>
-                </Button>
                 <div className="relative">
                   <div
                     className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700 md:gap-2"
