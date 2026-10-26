@@ -1,12 +1,9 @@
-import { useRouter } from 'next/router';
-
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { BannerSkeleton } from '@/features/sponsor-dashboard/components/BannerSkeleton';
 import { ListingTableSkeleton } from '@/features/sponsor-dashboard/components/ListingTableSkeleton';
 import { UserTableSkeleton } from '@/features/sponsor-dashboard/components/LocalProfiles/UserTableSkeleton';
 import { MembersTableSkeleton } from '@/features/sponsor-dashboard/components/Members/MembersTableSkeleton';
-import { SubmissionsPageSkeleton } from '@/features/sponsor-dashboard/components/Submissions/SubmissionsPageSkeleton';
 
 const ListingsHeader = () => (
   <div className="mb-4 flex w-full flex-col justify-between gap-2 lg:flex-row lg:items-center">
@@ -47,59 +44,30 @@ const TeamSettingsHeader = () => (
   </div>
 );
 
-function getContentSkeleton(path: string) {
-  const cleanPath = path.split('?')[0] ?? '';
+// What a dashboard page shows inside the frame while its data loads, as
+// Earn's SponsorLayout drew it per page.
+export const ListingsSkeleton = () => (
+  <>
+    <BannerSkeleton />
+    <ListingsHeader />
+    <ListingTableSkeleton rows={10} />
+  </>
+);
 
-  if (/\/listings\/[^/]+\/submissions/.test(cleanPath)) {
-    return <SubmissionsPageSkeleton />;
-  }
+export const HackathonSkeleton = () => (
+  <>
+    <BannerSkeleton />
+    <HackathonHeader />
+    <ListingTableSkeleton rows={10} />
+  </>
+);
 
-  if (/\/hackathon\/[^/]+\/submissions/.test(cleanPath)) {
-    return <SubmissionsPageSkeleton />;
-  }
+export const TeamSettingsSkeleton = () => (
+  <>
+    <BannerSkeleton />
+    <TeamSettingsHeader />
+    <MembersTableSkeleton />
+  </>
+);
 
-  if (/\/grants\/[^/]+\/applications/.test(cleanPath)) {
-    return <SubmissionsPageSkeleton />;
-  }
-
-  if (cleanPath.includes('/team-settings')) {
-    return (
-      <>
-        <BannerSkeleton />
-        <TeamSettingsHeader />
-        <MembersTableSkeleton />
-      </>
-    );
-  }
-
-  if (cleanPath.includes('/local-profiles')) {
-    return <UserTableSkeleton />;
-  }
-
-  if (cleanPath.endsWith('/hackathon') || cleanPath.endsWith('/hackathon/')) {
-    return (
-      <>
-        <BannerSkeleton />
-        <HackathonHeader />
-        <ListingTableSkeleton rows={10} />
-      </>
-    );
-  }
-
-  if (cleanPath.endsWith('/listings') || cleanPath.endsWith('/listings/')) {
-    return (
-      <>
-        <BannerSkeleton />
-        <ListingsHeader />
-        <ListingTableSkeleton rows={10} />
-      </>
-    );
-  }
-
-  return null;
-}
-
-export const SponsorContentSkeleton = () => {
-  const router = useRouter();
-  return getContentSkeleton(router.asPath);
-};
+export const LocalProfilesSkeleton = () => <UserTableSkeleton />;

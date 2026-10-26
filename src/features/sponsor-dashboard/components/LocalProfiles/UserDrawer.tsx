@@ -1,3 +1,5 @@
+'use client';
+
 import dayjs from 'dayjs';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -6,6 +8,7 @@ import type { ReactNode } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { skillMap } from '@/constants/skillMap';
+import type { LocalProfile } from '@/server/local-profiles';
 
 import {
   Telegram,
@@ -14,7 +17,13 @@ import {
 } from '@/features/social/components/SocialIcons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import type { LocalProfile } from '../../queries/local-profiles';
+const DBadge = ({ children }: { children: ReactNode }) => {
+  return (
+    <Badge className="rounded bg-[#EFF1F5] px-3 py-1 text-xs font-medium text-[#64739C]">
+      {children}
+    </Badge>
+  );
+};
 
 export const UserDrawer = ({
   isOpen,
@@ -25,8 +34,8 @@ export const UserDrawer = ({
   onClose: () => void;
   user: LocalProfile;
 }) => {
-  const parentSkills = user.skills.map((skill: any) => skill.skills);
-  const subSkills = user.skills.flatMap((skill: any) => skill.subskills);
+  const parentSkills = user.skills.map((skill) => skill.skills);
+  const subSkills = user.skills.flatMap((skill) => skill.subskills);
   const socialLinks = [
     { Component: Telegram, link: user.telegram },
     { Component: Twitter, link: user.twitter },
@@ -34,14 +43,6 @@ export const UserDrawer = ({
   ];
 
   const formattedCreatedAt = dayjs(user.createdAt).format('DD MMM YYYY');
-
-  const DBadge = ({ children }: { children: ReactNode }) => {
-    return (
-      <Badge className="rounded bg-[#EFF1F5] px-3 py-1 text-xs font-medium text-[#64739C]">
-        {children}
-      </Badge>
-    );
-  };
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>

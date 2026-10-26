@@ -1,0 +1,359 @@
+'use client';
+
+import debounce from 'lodash.debounce';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Eye,
+  MoreVertical,
+  Plus,
+  Search,
+} from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { ExternalImage } from '@/components/ui/cloudinary-image';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { StatusPill } from '@/components/ui/status-pill';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { TokenIcon } from '@/components/ui/token-icon';
+import { Tooltip } from '@/components/ui/tooltip';
+import { useDisclosure } from '@/hooks/use-disclosure';
+import type {
+  ActiveHackathon,
+  HackathonStats,
+  HackathonTrack,
+} from '@/server/sponsor-dashboard';
+import { dayjs } from '@/utils/dayjs';
+
+import { formatDeadline } from '@/features/listings/utils/deadline';
+import { getColorStyles } from '@/features/listings/utils/getColorStyles';
+import { getListingStatus } from '@/features/listings/utils/status';
+import { Banner } from '@/features/sponsor-dashboard/components/Banner';
+import { CreateListingModal } from '@/features/sponsor-dashboard/components/CreateListingModal';
+
+// The hackathon dashboard's "All Tracks": a page of the hackathon's
+// published tracks (`?search=`, `?skip=`), loaded on the server.
+export function HackathonTracksView({
+  tracks: bounties,
+  total: totalBounties,
+  startDate,
+  stats,
+  hackathons,
+  skip,
+  length,
+}: {
+  tracks: ReadonlyArray<HackathonTrack>;
+  total: number;
+  startDate: string | undefined;
+  stats: HackathonStats | null;
+  hackathons: ReadonlyArray<ActiveHackathon>;
+  skip: number;
+  length: number;
+}) {
+  const router = useRouter();
+  const pathname = usePathname() ?? '/earn/dashboard/hackathon/';
+  const searchParams = useSearchParams();
+
+  const setQuery = (updates: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams?.toString() ?? '');
+    for (const [key, value] of Object.entries(updates)) {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    }
+    const query = params.toString();
+    router.replace(`${pathname}${query ? `?${query}` : ''}`, { scroll: false });
+  };
+  const setSkip = (value: number) =>
+    setQuery({ skip: value > 0 ? String(value) : null });
+
+  const debouncedSetSearchTextRef = useRef<ReturnType<typeof debounce> | null>(
+    null,
+  );
+
+  useEffect(() => {
+    debouncedSetSearchTextRef.current = debounce(
+      (value: string) => setQuery({ search: value || null, skip: null }),
+      300,
+    );
+    return () => {
+      debouncedSetSearchTextRef.current?.cancel();
+    };
+  });
+
+  const debouncedSetSearchText = (value: string) => {
+    debouncedSetSearchTextRef.current?.(value);
+  };
+
+  const sponsorStats = stats
+    ? { ...stats, logo: stats.logo ?? undefined }
+    : undefined;
+  const isStatsLoading = !stats;
+
+  const hasHackathonStarted = startDate ? dayjs().isAfter(startDate) : true;
+  const formattedDate = dayjs(startDate).format('MMM DD');
+
+  const handleViewSubmissions = (listing: string | undefined) => {
+    router.push(`/earn/dashboard/hackathon/${listing}/submissions/`);
+  };
+
+  const {
+    isOpen: isOpenCreateListing,
+    onOpen: onOpenCreateListing,
+    onClose: onCloseCreateListing,
+  } = useDisclosure();
+
+  return (
+    <>
+      <Banner stats={sponsorStats} isHackathon isLoading={isStatsLoading} />
+      <div className="mb-4 flex w-full justify-between">
+        <div className="flex items-center gap-3">
+          <p className="text-lg font-semibold text-slate-800">All Tracks</p>
+          <div className="mx-1 h-[60%] border-r border-slate-200" />
+          <p className="text-slate-500">
+            Review hackathon tracks and submissions here
+          </p>
+        </div>
+        <div className="relative w-64">
+          <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Input
+            className="placeholder:text-md focus-visible:ring-brand-purple border-slate-200 bg-white pl-9 placeholder:font-medium placeholder:text-slate-400"
+            onChange={(e) => debouncedSetSearchText(e.target.value)}
+            placeholder="Search listing..."
+            type="text"
+          />
+        </div>
+      </div>
+      {!bounties?.length && (
+        <>
+          {isOpenCreateListing && (
+            <CreateListingModal
+              hackathons={hackathons}
+              isOpen={isOpenCreateListing}
+              onClose={onCloseCreateListing}
+            />
+          )}
+          <ExternalImage
+            className="mx-auto mt-32 w-32"
+            alt={'talent empty'}
+            src={'/bg/talent-empty.svg'}
+          />
+          <p className="mx-auto mt-5 text-center text-lg font-semibold text-slate-600">
+            Create your first listing
+          </p>
+          <p className="mx-auto text-center font-medium text-slate-400">
+            and start getting contributions
+          </p>
+          <Button
+            className="text-md mx-auto mt-6 mb-48 flex w-[200px]"
+            onClick={() => onOpenCreateListing()}
+          >
+            <Plus className="mr-1 h-3 w-3" />
+            Create New Listing
+          </Button>
+        </>
+      )}
+      {!!bounties?.length && (
+        <>
+          <div className="overflow-x-auto rounded-md border border-slate-200 bg-white">
+            <Table>
+              <TableHeader>
+                <TableRow className="text-slate-100">
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
+                    Track
+                  </TableCell>
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
+                    Submissions
+                  </TableCell>
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
+                    Deadline
+                  </TableCell>
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
+                    Prize
+                  </TableCell>
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
+                    Status
+                  </TableCell>
+                  <TableCell className="text-sm font-medium tracking-tight text-slate-400 uppercase">
+                    Actions
+                  </TableCell>
+                  <TableCell className="pl-0" />
+                </TableRow>
+              </TableHeader>
+              <TableBody className="w-full">
+                {bounties.map((currentBounty) => {
+                  const deadline = formatDeadline(
+                    currentBounty?.deadline,
+                    currentBounty?.type,
+                  );
+
+                  const bountyStatus = getListingStatus(currentBounty);
+
+                  return (
+                    <TableRow key={currentBounty?.id}>
+                      <TableCell className="max-w-96 font-medium wrap-break-word whitespace-normal text-slate-700">
+                        <div className="flex items-center">
+                          <img
+                            className="mr-2 h-5 rounded-sm"
+                            alt={currentBounty?.sponsor?.name}
+                            src={currentBounty?.sponsor?.logo ?? undefined}
+                          />
+                          <a className="overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500">
+                            {currentBounty.title}
+                          </a>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-2">
+                        <p className="text-center text-sm font-medium text-slate-500">
+                          {currentBounty.submissionCount || 0}
+                        </p>
+                      </TableCell>
+                      <TableCell className="items-center py-2">
+                        <p className="text-sm font-medium text-slate-500">
+                          {deadline}
+                        </p>
+                      </TableCell>
+                      <TableCell className="py-2">
+                        <div className="flex items-center justify-start gap-1">
+                          <TokenIcon
+                            className="h-5 w-5 rounded-full"
+                            alt={currentBounty.token || 'token'}
+                            symbol={currentBounty.token}
+                          />
+                          <p className="text-sm font-medium text-slate-700">
+                            {(currentBounty.rewardAmount || 0).toLocaleString(
+                              'en-US',
+                            )}
+                          </p>
+                          <p className="text-sm font-medium text-slate-400">
+                            {currentBounty.token}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell className="items-center py-2">
+                        <StatusPill
+                          className="w-fit"
+                          color={getColorStyles(bountyStatus).color}
+                          backgroundColor={getColorStyles(bountyStatus).bgColor}
+                          borderColor={getColorStyles(bountyStatus).borderColor}
+                        >
+                          {bountyStatus}
+                        </StatusPill>
+                      </TableCell>
+                      <TableCell className="px-3 py-2">
+                        {currentBounty.status === 'OPEN' &&
+                          currentBounty.isPublished && (
+                            <Tooltip
+                              content={
+                                !hasHackathonStarted
+                                  ? `Submissions Open ${formattedDate}`
+                                  : null
+                              }
+                              disabled={hasHackathonStarted}
+                              contentProps={{
+                                className: 'rounded-md',
+                              }}
+                            >
+                              <Button
+                                className="text-brand-purple text-[13px] font-medium hover:bg-indigo-100"
+                                disabled={!hasHackathonStarted}
+                                onClick={() =>
+                                  handleViewSubmissions(currentBounty.slug)
+                                }
+                                size="sm"
+                                variant="ghost"
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                Submissions
+                              </Button>
+                            </Tooltip>
+                          )}
+                      </TableCell>
+                      <TableCell className="px-0 py-2">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              className="border-none hover:bg-slate-100"
+                              size="sm"
+                              variant="ghost"
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                              <span className="sr-only">Options</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              className="flex items-center gap-2 py-2 text-sm font-medium text-slate-500"
+                              onClick={() =>
+                                window.open(
+                                  `/earn/listing/${currentBounty.slug}/`,
+                                  '_blank',
+                                )
+                              }
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                              View Listing
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+          <div className="mt-6 flex items-center justify-end">
+            <p className="mr-4 text-sm text-slate-400">
+              <span className="font-bold">{skip + 1}</span> -{' '}
+              <span className="font-bold">
+                {Math.min(skip + length, totalBounties)}
+              </span>{' '}
+              of <span className="font-bold">{totalBounties}</span> Listings
+            </p>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={skip <= 0}
+                onClick={() =>
+                  skip >= length ? setSkip(skip - length) : setSkip(0)
+                }
+              >
+                <ChevronLeft className="mr-2 h-5 w-5" />
+                Previous
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={
+                  totalBounties <= skip + length ||
+                  (skip > 0 && skip % length !== 0)
+                }
+                onClick={() => skip % length === 0 && setSkip(skip + length)}
+              >
+                Next
+                <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+    </>
+  );
+}

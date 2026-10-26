@@ -1,53 +1,34 @@
-import { headers } from 'next/headers';
-import { type NextRequest, NextResponse } from 'next/server';
+import * as Effect from 'effect/Effect';
+import { NextResponse, type NextRequest } from 'next/server';
 
-import logger from '@/lib/logger';
-import { prisma } from '@/prisma';
-import { safeStringify } from '@/utils/safeStringify';
-
-import { getUserSession } from '@/features/auth/utils/getUserSession';
+import { json, readerUser } from '@/lib/route-guard';
+import { runtime } from '@/server/runtime';
+import * as TeamMembers from '@/server/team-members';
 
 export interface UserSponsorsResponse {
   hasSponsorMembership: boolean;
 }
 
-export async function GET(_request: NextRequest) {
-  let userId: string | undefined;
-
-  try {
-    const headersList = await headers();
-    const sessionResponse = await getUserSession(headersList);
-
-    if (sessionResponse.status !== 200 || !sessionResponse.data) {
-      return NextResponse.json(
-        { error: sessionResponse.error },
-        { status: sessionResponse.status },
+// Whether the signed-in account is on any sponsor's team (onboarding asks).
+export function GET(request: NextRequest) {
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const writer = yield* readerUser(request);
+      if (writer instanceof NextResponse) return writer;
+      return yield* TeamMembers.TeamMembers.use((team) =>
+        team.hasMembership(writer.userId),
+      ).pipe(
+        Effect.map((hasSponsorMembership) =>
+          json(200, {
+            hasSponsorMembership,
+          } satisfies UserSponsorsResponse),
+        ),
+        Effect.catchTag('DatabaseError', () =>
+          Effect.succeed(
+            json(500, { error: 'Unable to check sponsor membership.' }),
+          ),
+        ),
       );
-    }
-
-    userId = sessionResponse.data.userId;
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const sponsorMembership = await prisma.userSponsors.findFirst({
-      where: { userId },
-      select: { userId: true },
-    });
-
-    logger.info(`Checked sponsor membership for user ID: ${userId}`);
-    return NextResponse.json<UserSponsorsResponse>({
-      hasSponsorMembership: sponsorMembership !== null,
-    });
-  } catch (error: unknown) {
-    logger.error(
-      `Error occurred while checking sponsor membership for user ID: ${userId ?? 'unknown'} - ${safeStringify(error)}`,
-    );
-    return NextResponse.json(
-      {
-        error: 'Unable to check sponsor membership.',
-      },
-      { status: 500 },
-    );
-  }
+    }),
+  );
 }

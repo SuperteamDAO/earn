@@ -14,7 +14,7 @@ export const SponsorPrize = ({
   return (
     <p className={className}>
       {compensationType === 'fixed'
-        ? formatNumberWithSuffix(rewardAmount!, 2, true)
+        ? formatNumberWithSuffix(rewardAmount ?? 0, 2, true)
         : null}
     </p>
   );

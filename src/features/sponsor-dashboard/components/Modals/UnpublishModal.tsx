@@ -1,19 +1,19 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+'use client';
+
 import { X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
-
-import type { ListingWithSubmissions } from '@/features/listings/types';
+import { postJson } from '@/lib/fetch-json';
 
 interface UnpublishModalProps {
   unpublishIsOpen: boolean;
   unpublishOnClose: () => void;
-  listing: ListingWithSubmissions | undefined;
+  listing: { id?: string | null; type?: string | null } | undefined;
 }
 
 export const UnpublishModal = ({
@@ -21,51 +21,31 @@ export const UnpublishModal = ({
   unpublishOnClose,
   listing,
 }: UnpublishModalProps) => {
-  const queryClient = useQueryClient();
-  const { user } = useUser();
+  const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
 
-  const updateMutation = useMutation({
-    mutationFn: async (status: boolean) => {
-      let result;
-      if (listing?.type === 'grant') {
-        result = await api.post(`/api/grants/update/${listing.id}/`, {
+  const changeBountyStatus = async (status: boolean) => {
+    if (!listing) return;
+    setIsPending(true);
+    try {
+      if (listing.type === 'grant') {
+        await postJson(`/api/grants/update/${listing.id}/`, {
           isPublished: status,
         });
       } else {
-        result = await api.post(
-          `/api/sponsor-dashboard/listing/${listing?.id}/unpublish`,
+        await postJson(
+          `/api/sponsor-dashboard/listing/${listing.id}/unpublish/`,
         );
       }
-      return result.data;
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData<ListingWithSubmissions[]>(
-        ['dashboard', user?.currentSponsorId],
-        (oldData) =>
-          oldData
-            ? oldData.map((listing) =>
-                listing.id === data.id
-                  ? { ...listing, isPublished: data.isPublished }
-                  : listing,
-              )
-            : [],
-      );
-
-      queryClient.invalidateQueries({
-        queryKey: ['sponsor-submissions', listing?.slug],
-      });
-
+      router.refresh();
       toast.success('Listing unpublished successfully');
       unpublishOnClose();
-    },
-    onError: (error) => {
+    } catch (error) {
       console.error('Unpublish error:', error);
       toast.error('Failed to unpublish listing. Please try again.');
-    },
-  });
-
-  const changeBountyStatus = (status: boolean) => {
-    updateMutation.mutate(status);
+    } finally {
+      setIsPending(false);
+    }
   };
 
   const dialogContent = {
@@ -89,16 +69,16 @@ export const UnpublishModal = ({
             <Button
               variant="ghost"
               onClick={unpublishOnClose}
-              disabled={updateMutation.isPending}
+              disabled={isPending}
             >
               Close
             </Button>
             <Button
               className="flex-1 rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100"
-              disabled={updateMutation.isPending}
-              onClick={() => changeBountyStatus(false)}
+              disabled={isPending}
+              onClick={() => void changeBountyStatus(false)}
             >
-              {updateMutation.isPending ? (
+              {isPending ? (
                 <>
                   <span className="loading loading-spinner mr-2" />
                   <span>Unpublishing...</span>

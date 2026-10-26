@@ -1,7 +1,9 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, CopyIcon, ExternalLink, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -20,8 +22,8 @@ import { Separator } from '@/components/ui/separator';
 import { JTTG } from '@/constants/Telegram';
 import { type Token, useTokenList } from '@/constants/tokenList';
 import type { SubmissionWithUser } from '@/interface/submission';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
+import { getJson, postJson } from '@/lib/fetch-json';
+import { publicEnv } from '@/lib/public-env';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getRankLabels } from '@/utils/rank';
@@ -29,8 +31,7 @@ import { truncatePublicKey } from '@/utils/truncatePublicKey';
 
 import { BONUS_REWARD_POSITION } from '@/features/listing-builder/constants';
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
-import type { ListingWithSubmissions } from '@/features/listings/types';
-import { submissionsQuery } from '@/features/sponsor-dashboard/queries/submissions';
+import type { Rewards } from '@/features/listings/types';
 
 import {
   type ValidatePaymentResult,
@@ -38,12 +39,33 @@ import {
   verifyPaymentsSchema,
 } from '../../types';
 
+// What the modal reads of a listing: the dashboard's rows and the review
+// page's listing both have it.
+interface PaymentListing {
+  readonly id?: string | null;
+  readonly slug?: string | null;
+  readonly type?: string | null;
+  readonly token?: string | null;
+  readonly rewards?: Rewards | null;
+  readonly maxBonusSpots?: number | null;
+  readonly totalPaymentsMade?: number | null;
+}
+
 interface VerifyPaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  listing: ListingWithSubmissions | undefined;
+  listing: PaymentListing | undefined;
   isHackathonPage?: boolean;
 }
+
+const resetFormOptions = {
+  keepErrors: false,
+  keepDirty: false,
+  keepIsSubmitted: false,
+  keepTouched: false,
+  keepIsValid: false,
+  keepSubmitCount: false,
+} as const;
 
 export const VerifyPaymentModal = ({
   listing,
@@ -51,16 +73,11 @@ export const VerifyPaymentModal = ({
   onClose,
   isHackathonPage = false,
 }: VerifyPaymentModalProps) => {
-  const { user } = useUser();
+  const router = useRouter();
   const tokens = useTokenList();
   const [status, setStatus] = useState<
     'idle' | 'retry' | 'loading' | 'success' | 'error'
   >('idle');
-  const queryClient = useQueryClient();
-  const { data, isLoading, error, refetch } = useQuery({
-    ...submissionsQuery(listing?.slug ?? '', isHackathonPage),
-    enabled: isOpen && !!listing?.slug,
-  });
   const selectedToken: Token | undefined = tokens.find(
     (token) => token.tokenSymbol === listing?.token,
   );
@@ -74,24 +91,8 @@ export const VerifyPaymentModal = ({
   }, [listing?.slug]);
 
   const refetchQueries = async () => {
-    await queryClient.invalidateQueries({
-      queryKey: ['sponsor-submissions', listing?.slug],
-    });
-
-    await queryClient.invalidateQueries({
-      queryKey: ['sponsor-dashboard-listing', listing?.slug],
-    });
-
-    await queryClient.invalidateQueries({
-      queryKey: ['dashboard', user?.currentSponsorId],
-    });
-
-    await queryClient.invalidateQueries({
-      queryKey: [
-        'listing-submissions',
-        { slug: listing?.slug, isWinner: true },
-      ],
-    });
+    await refetch();
+    router.refresh();
   };
 
   const form = useForm<VerifyPaymentsFormData>({
@@ -103,137 +104,137 @@ export const VerifyPaymentModal = ({
     formState: { errors },
     setValue,
     reset,
-    setError,
+    setError: setFieldError,
     clearErrors,
     watch,
   } = form;
 
-  const resetFormOptions = {
-    keepErrors: false,
-    keepDirty: false,
-    keepIsSubmitted: false,
-    keepTouched: false,
-    keepIsValid: false,
-    keepSubmitCount: false,
-  } as const;
+  const syncPaymentLinks = useCallback(
+    (listingSubmissionData: SubmissionWithUser[] | undefined) => {
+      if (!listingSubmissionData) return;
+      reset(
+        {
+          paymentLinks: listingSubmissionData
+            .filter((sub) => sub.winnerPosition !== null)
+            .toSorted(
+              (a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0),
+            )
+            .map((submission) => ({
+              submissionId: submission.id,
+              link: '',
+              isVerified: submission.isPaid,
+              txId: submission.paymentDetails?.[0]?.txId || '',
+            })),
+        },
+        resetFormOptions,
+      );
+    },
+    [reset],
+  );
 
-  const syncPaymentLinks = (
-    listingSubmissionData: SubmissionWithUser[] | undefined = data,
-  ) => {
-    if (!listingSubmissionData || !listing) {
-      return;
+  // The listing's submissions, from the review area's endpoint, loaded each
+  // time the modal opens.
+  const slug = listing?.slug;
+  const [loaded, setLoaded] = useState<{
+    readonly slug: string;
+    readonly data?: SubmissionWithUser[];
+    readonly error?: unknown;
+  } | null>(null);
+  const data = loaded?.slug === slug ? loaded?.data : undefined;
+  const error = loaded?.slug === slug ? loaded?.error : undefined;
+  const isLoading = isOpen && !!slug && loaded?.slug !== slug;
+
+  const refetch = useCallback(async () => {
+    if (!slug) return;
+    try {
+      const submissions = await getJson<SubmissionWithUser[]>(
+        `/api/sponsor-dashboard/${encodeURIComponent(slug)}/submissions/?isHackathon=${isHackathonPage}`,
+      );
+      setLoaded({ slug, data: submissions });
+      syncPaymentLinks(submissions);
+    } catch (failure) {
+      setLoaded({ slug, error: failure });
     }
+  }, [slug, isHackathonPage, syncPaymentLinks]);
 
-    reset(
-      {
-        paymentLinks: listingSubmissionData
-          .filter((sub) => sub.winnerPosition !== null)
-          .sort((a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0))
-          .map((submission) => ({
-            submissionId: submission.id,
-            link: '',
-            isVerified: submission.isPaid,
-            txId: submission.paymentDetails?.[0]?.txId || '',
-          })),
-      },
-      resetFormOptions,
-    );
-  };
+  useEffect(() => {
+    if (isOpen && slug) void refetch();
+  }, [isOpen, slug, refetch]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const paymentLinks = watch('paymentLinks');
 
-  useEffect(() => {
-    if (isOpen) {
-      syncPaymentLinks();
-    }
-  }, [data, isOpen, listing]);
-
-  useEffect(() => {
-    reset({});
-  }, [listing?.slug]);
-
-  const verifyPaymentMutation = async (body: VerifyPaymentsFormData) => {
-    return await api.post<{ validationResults: ValidatePaymentResult[] }>(
-      '/api/sponsor-dashboard/listings/verify-external-payment',
-      {
-        paymentLinks: body.paymentLinks,
+  const verifyPayment = async (variables: VerifyPaymentsFormData) => {
+    setStatus('loading');
+    let response: { validationResults: ValidatePaymentResult[] };
+    try {
+      response = await postJson<{
+        validationResults: ValidatePaymentResult[];
+      }>('/api/sponsor-dashboard/listings/verify-external-payment/', {
+        paymentLinks: variables.paymentLinks,
         listingId: listing?.id,
-      },
-    );
-  };
-
-  const { mutate: verifyPayment, isPending: verifyPaymentPending } =
-    useMutation({
-      mutationFn: (body: VerifyPaymentsFormData) => verifyPaymentMutation(body),
-      onSuccess: async (data, variables) => {
-        const { validationResults } = data.data;
-        const failedResults = validationResults.filter(
-          (v) => v.status === 'FAIL',
-        );
-        if (failedResults.length > 0) {
-          clearErrors();
-          failedResults.forEach((result) => {
-            const fieldIndex = variables.paymentLinks.findIndex(
-              (link) => link.submissionId === result.submissionId,
-            );
-
-            if (fieldIndex !== -1) {
-              setError(`paymentLinks.${fieldIndex}.link`, {
-                type: 'manual',
-                message: result.message || 'Verification failed',
-              });
-            }
-          });
-          setStatus('retry');
-        } else {
-          setStatus('success');
-        }
-        const nonFailResults = validationResults.filter(
-          (v) => v.status !== 'FAIL',
-        );
-
-        nonFailResults.forEach((result) => {
+      });
+    } catch {
+      setStatus('error');
+      toast.error('Error occurred while verifying payment');
+      return;
+    }
+    {
+      const { validationResults } = response;
+      const failedResults = validationResults.filter(
+        (v) => v.status === 'FAIL',
+      );
+      if (failedResults.length > 0) {
+        clearErrors();
+        failedResults.forEach((result) => {
           const fieldIndex = variables.paymentLinks.findIndex(
             (link) => link.submissionId === result.submissionId,
           );
+
           if (fieldIndex !== -1) {
-            setValue(`paymentLinks.${fieldIndex}.isVerified`, true, {
-              shouldValidate: true,
-              shouldDirty: true,
+            setFieldError(`paymentLinks.${fieldIndex}.link`, {
+              type: 'manual',
+              message: result.message || 'Verification failed',
             });
-            setValue(`paymentLinks.${fieldIndex}.txId`, result.txId);
           }
         });
+        setStatus('retry');
+      } else {
+        setStatus('success');
+      }
+      const nonFailResults = validationResults.filter(
+        (v) => v.status !== 'FAIL',
+      );
 
-        const successfulResults = validationResults.filter(
-          (v) => v.status === 'SUCCESS',
+      nonFailResults.forEach((result) => {
+        const fieldIndex = variables.paymentLinks.findIndex(
+          (link) => link.submissionId === result.submissionId,
         );
-
-        if (successfulResults.length > 0) {
-          await refetchQueries();
+        if (fieldIndex !== -1) {
+          setValue(`paymentLinks.${fieldIndex}.isVerified`, true, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+          setValue(`paymentLinks.${fieldIndex}.txId`, result.txId);
         }
-      },
-      onError: () => {
-        setStatus('error');
-        toast.error('Error occurred while verifying payment');
-      },
-    });
+      });
 
-  useEffect(() => {
-    if (verifyPaymentPending) {
-      setStatus('loading');
+      const successfulResults = validationResults.filter(
+        (v) => v.status === 'SUCCESS',
+      );
+
+      if (successfulResults.length > 0) {
+        await refetchQueries();
+      }
     }
-  }, [verifyPaymentPending]);
+  };
 
-  const onSubmit = async (data: VerifyPaymentsFormData) => {
-    verifyPayment({ paymentLinks: data.paymentLinks });
+  const onSubmit = async (values: VerifyPaymentsFormData) => {
+    await verifyPayment({ paymentLinks: values.paymentLinks });
   };
 
   const tryAgain = async () => {
     await refetchQueries();
-    const { data: refreshedData } = await refetch();
-    syncPaymentLinks(refreshedData ?? data);
     setStatus('idle');
     clearErrors();
   };
@@ -333,7 +334,7 @@ export const VerifyPaymentModal = ({
                 </Button>
                 <Button
                   className="flex-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
-                  onClick={tryAgain}
+                  onClick={() => void tryAgain()}
                 >
                   Verify More
                 </Button>
@@ -371,7 +372,7 @@ export const VerifyPaymentModal = ({
               </Button>
               <Button
                 className="flex-1 rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600"
-                onClick={tryAgain}
+                onClick={() => void tryAgain()}
               >
                 Try Again
               </Button>
@@ -398,7 +399,10 @@ export const VerifyPaymentModal = ({
       default:
         return (
           <Form {...form}>
-            <form onSubmit={handleSubmit(onSubmit)} className="h-full">
+            <form
+              onSubmit={(event) => void handleSubmit(onSubmit)(event)}
+              className="h-full"
+            >
               <div className="flex flex-col items-start gap-2">
                 <p className="text-sm font-normal text-slate-500">
                   If you have paid the winners outside of Earn and want to
@@ -413,7 +417,7 @@ export const VerifyPaymentModal = ({
                   listing?.type === 'hackathon') &&
                   data
                     ?.filter((sub) => sub.winnerPosition !== null)
-                    .sort(
+                    .toSorted(
                       (a, b) =>
                         (a.winnerPosition || 0) - (b.winnerPosition || 0),
                     )
@@ -504,7 +508,7 @@ export const VerifyPaymentModal = ({
                                   <div className="flex w-full items-center gap-2">
                                     <a
                                       className="w-full"
-                                      href={`https://solscan.io/tx/${paymentLinks?.[index]?.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`}
+                                      href={`https://solscan.io/tx/${paymentLinks?.[index]?.txId}?cluster=${publicEnv.paymentCluster}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                     >
@@ -535,6 +539,8 @@ export const VerifyPaymentModal = ({
                                 )}
                                 <FormMessage />
                                 <FormField
+                                  // Root errors of a row, which react-hook-form names this way.
+                                  // oxlint-disable-next-line typescript/no-explicit-any, typescript/no-unsafe-type-assertion, typescript/no-unnecessary-type-assertion
                                   name={`paymentLinks.${index}.root` as any}
                                   control={control}
                                   render={() => {
@@ -553,6 +559,7 @@ export const VerifyPaymentModal = ({
                     ))}
               </div>
               <FormField
+                // oxlint-disable-next-line typescript/no-explicit-any, typescript/no-unsafe-type-assertion, typescript/no-unnecessary-type-assertion
                 name={`paymentLinks.root` as any}
                 control={control}
                 render={() => {

@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Copy,
   DollarSign,
@@ -10,8 +12,8 @@ import {
   Trash,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import posthog from 'posthog-js';
+import { useRouter } from 'next/navigation';
+import { posthog } from 'posthog-js';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -36,13 +38,13 @@ import {
 import { TokenIcon } from '@/components/ui/token-icon';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
+import type { DashboardListing } from '@/server/sponsor-dashboard';
 import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { isListingEditable } from '@/features/listing-builder/utils/isListingEditable';
-import type { ListingWithSubmissions } from '@/features/listings/types';
 import { formatDeadline } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
@@ -57,7 +59,7 @@ import { VerifyPaymentModal } from './Modals/VerifyPayment';
 import { SponsorPrize } from './SponsorPrize';
 
 interface ListingTableProps {
-  listings: ListingWithSubmissions[];
+  listings: DashboardListing[];
   currentSort: {
     column: string;
     direction: 'asc' | 'desc' | null;
@@ -80,17 +82,29 @@ const ListingTh = ({
   );
 };
 
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text).then(
+    () => {
+      toast.success('Link Copied');
+    },
+    (err) => {
+      console.error('Failed to copy text: ', err);
+    },
+  );
+};
+
 export const ListingTable = ({
   listings,
   currentSort,
   onSort,
 }: ListingTableProps) => {
-  const [selectedListing, setSelectedListing] =
-    useState<ListingWithSubmissions>({});
+  const [selectedListing, setSelectedListing] = useState<
+    DashboardListing | undefined
+  >();
 
   const router = useRouter();
 
-  const { user } = useUser();
+  const user = useViewer();
 
   const {
     isOpen: unpublishIsOpen,
@@ -108,35 +122,22 @@ export const ListingTable = ({
     onClose: verifyPaymentOnClose,
   } = useDisclosure();
 
-  const handleUnpublish = async (
-    unpublishedListing: ListingWithSubmissions,
-  ) => {
+  const handleUnpublish = (unpublishedListing: DashboardListing) => {
     setSelectedListing(unpublishedListing);
     unpublishOnOpen();
   };
 
-  const handleDeleteDraft = async (deleteListing: ListingWithSubmissions) => {
+  const handleDeleteDraft = (deleteListing: DashboardListing) => {
     setSelectedListing(deleteListing);
     deleteDraftOnOpen();
   };
 
-  const handleVerifyPayment = async (listing: ListingWithSubmissions) => {
+  const handleVerifyPayment = (listing: DashboardListing) => {
     setSelectedListing(listing);
     verifyPaymentOnOpen();
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(
-      () => {
-        toast.success('Link Copied');
-      },
-      (err) => {
-        console.error('Failed to copy text: ', err);
-      },
-    );
-  };
-
-  if (!listings.length) return;
+  if (!listings.length) return null;
 
   return (
     <>
@@ -149,8 +150,8 @@ export const ListingTable = ({
       <DeleteDraftModal
         deleteDraftIsOpen={deleteDraftIsOpen}
         deleteDraftOnClose={deleteDraftOnClose}
-        listingId={selectedListing.id}
-        listingType={selectedListing.type}
+        listingId={selectedListing?.id}
+        listingType={selectedListing?.type}
       />
 
       <VerifyPaymentModal
@@ -208,7 +209,7 @@ export const ListingTable = ({
               const listingLabel =
                 listingStatus === 'Draft'
                   ? 'Draft'
-                  : getListingTypeLabel(listing?.type!);
+                  : getListingTypeLabel(listing.type);
 
               const listingLink =
                 listing?.type === 'grant'
@@ -233,7 +234,7 @@ export const ListingTable = ({
                   <TableCell className="pr-0">
                     <Tooltip content={<p>{listingType}</p>}>
                       {getListingIcon(
-                        listing.type!,
+                        listing.type,
                         'fill-slate-400 size-3.5 mt-1',
                       )}
                     </Tooltip>
@@ -245,7 +246,7 @@ export const ListingTable = ({
                         isListingEditable({ listing, user });
                       const href = listing.isPublished
                         ? listingSubmissionLink
-                        : `/earn/dashboard/listings/${listing.slug}/edit`;
+                        : `/earn/dashboard/listings/${listing.slug}/edit/`;
                       const onClick = listing.isPublished
                         ? () => posthog.capture('submissions_sponsor')
                         : () => posthog.capture('edit listing_sponsor');
@@ -295,8 +296,8 @@ export const ListingTable = ({
                       {listing?.type === 'grant' && (
                         <p className="text-sm font-medium whitespace-nowrap text-slate-700">
                           {grantAmount({
-                            maxReward: listing?.maxRewardAsk!,
-                            minReward: listing?.minRewardAsk!,
+                            maxReward: listing.maxRewardAsk ?? 0,
+                            minReward: listing.minRewardAsk ?? 0,
                           })}
                         </p>
                       )}
@@ -329,7 +330,7 @@ export const ListingTable = ({
                     </StatusPill>
                   </TableCell>
                   <TableCell className="px-0 py-2">
-                    {listing.status === 'OPEN' && !!listing.isPublished ? (
+                    {listing.status === 'OPEN' && listing.isPublished ? (
                       <Button
                         variant="ghost"
                         size="sm"
@@ -348,7 +349,7 @@ export const ListingTable = ({
                       </Button>
                     ) : isListingEditable({ listing, user }) ? (
                       <Link
-                        href={`/earn/dashboard/listings/${listing.slug}/edit`}
+                        href={`/earn/dashboard/listings/${listing.slug}/edit/`}
                       >
                         <Button
                           variant="ghost"
@@ -386,7 +387,7 @@ export const ListingTable = ({
                           View {listingLabel}
                         </DropdownMenuItem>
 
-                        {!!listing.isPublished && (
+                        {listing.isPublished && (
                           <DropdownMenuItem
                             className="cursor-pointer text-sm font-medium text-slate-500"
                             onClick={() => copyToClipboard(listingLink)}
@@ -399,7 +400,7 @@ export const ListingTable = ({
                         {isListingEditable({ listing, user }) && (
                           <Link
                             className="block"
-                            href={`/earn/dashboard/listings/${listing.slug}/edit`}
+                            href={`/earn/dashboard/listings/${listing.slug}/edit/`}
                           >
                             <DropdownMenuItem className="cursor-pointer text-sm font-medium text-slate-500">
                               <PencilLine className="mr-2 h-4 w-4" />
@@ -414,7 +415,7 @@ export const ListingTable = ({
                             onClick={() => {
                               posthog.capture('duplicate listing_sponsor');
                               window.open(
-                                `${router.basePath}/earn/dashboard/listings/${listing.slug}/duplicate`,
+                                `/earn/dashboard/listings/${listing.slug}/duplicate/`,
                                 '_blank',
                               );
                             }}
@@ -447,7 +448,7 @@ export const ListingTable = ({
                           )}
 
                         {listing.status === 'OPEN' &&
-                          !!listing.isPublished &&
+                          listing.isPublished &&
                           !listing.isWinnersAnnounced && (
                             <DropdownMenuItem
                               className="cursor-pointer text-sm font-medium text-slate-500"

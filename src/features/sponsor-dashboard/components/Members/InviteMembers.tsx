@@ -1,4 +1,5 @@
-import { useMutation } from '@tanstack/react-query';
+'use client';
+
 import { CheckCircle2, Send } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -10,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
-import { api } from '@/lib/api';
+import { postJson } from '@/lib/fetch-json';
 
 interface Props {
   isOpen: boolean;
@@ -18,7 +19,7 @@ interface Props {
 }
 
 const validateEmail = (email: string) => {
-  return String(email)
+  return email
     .toLowerCase()
     .match(
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
@@ -29,22 +30,26 @@ export function InviteMembers({ isOpen, onClose }: Props) {
   const [email, setEmail] = useState<string>('');
   const [memberType, setMemberType] = useState<string>('MEMBER');
 
-  const inviteMutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.post('/api/member-invites/send/', {
-        email,
-        memberType,
-      });
-      return response.data;
+  const [state, setState] = useState<'idle' | 'pending' | 'success' | 'error'>(
+    'idle',
+  );
+  const inviteMutation = {
+    isPending: state === 'pending',
+    isSuccess: state === 'success',
+    isError: state === 'error',
+    mutate: async () => {
+      setState('pending');
+      try {
+        await postJson('/api/member-invites/send/', { email, memberType });
+        setState('success');
+        toast.success('Invite sent successfully');
+      } catch (error) {
+        console.error('Invite error:', error);
+        setState('error');
+        toast.error('Failed to send invite. Please try again.');
+      }
     },
-    onSuccess: () => {
-      toast.success('Invite sent successfully');
-    },
-    onError: (error) => {
-      console.error('Invite error:', error);
-      toast.error('Failed to send invite. Please try again.');
-    },
-  });
+  };
 
   const handleInput = (emailString: string) => {
     const isEmail = validateEmail(emailString);
@@ -157,7 +162,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
               </Button>
               <Button
                 disabled={!email || inviteMutation.isPending}
-                onClick={() => inviteMutation.mutate()}
+                onClick={() => void inviteMutation.mutate()}
               >
                 {inviteMutation.isPending ? (
                   <>

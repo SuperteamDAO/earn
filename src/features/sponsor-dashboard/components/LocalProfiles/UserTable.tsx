@@ -1,3 +1,5 @@
+'use client';
+
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import React, { type ReactNode } from 'react';
@@ -14,6 +16,7 @@ import {
 import { Tooltip } from '@/components/ui/tooltip';
 import { skillMap } from '@/constants/skillMap';
 import { useDisclosure } from '@/hooks/use-disclosure';
+import type { LocalProfile } from '@/server/local-profiles';
 import { cn } from '@/utils/cn';
 
 import {
@@ -23,7 +26,6 @@ import {
 } from '@/features/social/components/SocialIcons';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import type { LocalProfile } from '../../queries/local-profiles';
 import { UserDrawer } from './UserDrawer';
 
 interface SortState {
@@ -119,14 +121,14 @@ export const UserTable = ({
 const MemberRow = ({ user }: { user: LocalProfile }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const skills = user.skills.flatMap((skills: any) => skills.skills);
+  const skills = user.skills.flatMap((skill) => skill.skills);
   return (
     <TableRow
       className="hover:bg-brand-slate-50 cursor-pointer"
       onClick={(e) => {
         if (
           e.target === e.currentTarget ||
-          e.currentTarget.contains(e.target as Node)
+          (e.target instanceof Node && e.currentTarget.contains(e.target))
         ) {
           onOpen();
         }

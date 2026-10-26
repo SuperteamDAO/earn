@@ -1,14 +1,14 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+'use client';
+
 import { Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { api } from '@/lib/api';
-import { useUser } from '@/store/user';
-
-import type { ListingWithSubmissions } from '@/features/listings/types';
+import { deleteJson, postJson } from '@/lib/fetch-json';
 
 interface DeleteDraftModalProps {
   deleteDraftIsOpen: boolean;
@@ -23,33 +23,26 @@ export const DeleteDraftModal = ({
   deleteDraftOnClose,
   listingType,
 }: DeleteDraftModalProps) => {
-  const queryClient = useQueryClient();
-  const { user } = useUser();
+  const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
 
-  const deleteMutation = useMutation({
-    mutationFn: async () => {
+  const deleteSelectedDraft = async () => {
+    setIsPending(true);
+    try {
       if (listingType === 'grant') {
-        await api.post(`/api/grants/delete/${listingId}`);
+        await postJson(`/api/grants/delete/${listingId}/`);
       } else {
-        await api.delete(`/api/sponsor-dashboard/listing/${listingId}/delete`);
+        await deleteJson(`/api/sponsor-dashboard/listing/${listingId}/delete/`);
       }
-    },
-    onSuccess: () => {
-      queryClient.setQueryData<ListingWithSubmissions[]>(
-        ['dashboard', user?.currentSponsorId],
-        (oldData) => (oldData ? oldData.filter((x) => x.id !== listingId) : []),
-      );
+      router.refresh();
       toast.success('Draft deleted successfully');
       deleteDraftOnClose();
-    },
-    onError: (error) => {
+    } catch (error) {
       console.error('Delete error:', error);
       toast.error('Failed to delete draft. Please try again.');
-    },
-  });
-
-  const deleteSelectedDraft = () => {
-    deleteMutation.mutate();
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -73,16 +66,16 @@ export const DeleteDraftModal = ({
             <Button
               variant="ghost"
               onClick={deleteDraftOnClose}
-              disabled={deleteMutation.isPending}
+              disabled={isPending}
             >
               Close
             </Button>
             <Button
               className="flex-1 rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100"
-              disabled={deleteMutation.isPending}
-              onClick={deleteSelectedDraft}
+              disabled={isPending}
+              onClick={() => void deleteSelectedDraft()}
             >
-              {deleteMutation.isPending ? (
+              {isPending ? (
                 <>
                   <span className="loading loading-spinner mr-2" />
                   <span>Deleting...</span>

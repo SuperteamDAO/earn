@@ -1,6 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
+'use client';
+
 import { ChevronDown, Download, Search } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { skillSubSkillMap } from '@/interface/skills';
-import { api } from '@/lib/api';
 
 interface FilterSectionProps {
   checkedItems: Record<string, boolean>;
@@ -39,57 +39,41 @@ export const FilterSection = ({
     setCurrentPage(1);
   };
 
-  const exportMutation = useMutation({
-    mutationFn: async () => {
-      const response = await api.get(
-        `/api/sponsor-dashboard/local-talent/export/`,
+  const [isExporting, setIsExporting] = useState(false);
+  const exportCsv = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch(
+        '/api/sponsor-dashboard/local-talent/export/',
+        { headers: { Accept: 'text/csv,application/octet-stream' } },
       );
-      return response.data;
-    },
-    onSuccess: async (data) => {
-      const url = data?.url || '';
-      if (url) {
-        try {
-          const response = await fetch(url, {
-            headers: {
-              Accept: 'text/csv,application/octet-stream',
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error(`Failed to download: ${response.status}`);
-          }
-
-          const blob = await response.blob();
-
-          const blobUrl = window.URL.createObjectURL(
-            new Blob([blob], { type: 'text/csv' }),
-          );
-
-          const link = document.createElement('a');
-          link.href = blobUrl;
-          link.setAttribute('download', `${'local-profiles'}.csv`);
-
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-
-          window.URL.revokeObjectURL(blobUrl);
-
-          toast.success('CSV exported successfully');
-        } catch (error) {
-          console.error('Download error:', error);
-          toast.error('Failed to download CSV. Please try again.');
-        }
-      } else {
-        toast.error('Export URL is empty');
+      if (!response.ok) {
+        throw new Error(`Failed to export: ${response.status}`);
       }
-    },
-    onError: (error) => {
+      const blob = await response.blob();
+
+      const blobUrl = window.URL.createObjectURL(
+        new Blob([blob], { type: 'text/csv' }),
+      );
+
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.setAttribute('download', 'local-profiles.csv');
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      window.URL.revokeObjectURL(blobUrl);
+
+      toast.success('CSV exported successfully');
+    } catch (error) {
       console.error('Export error:', error);
       toast.error('Failed to export CSV. Please try again.');
-    },
-  });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="flex items-center gap-3">
@@ -145,12 +129,12 @@ export const FilterSection = ({
 
       <Button
         className="h-9 border border-slate-300 px-4 font-medium text-slate-400"
-        disabled={exportMutation.isPending}
-        onClick={() => exportMutation.mutate()}
+        disabled={isExporting}
+        onClick={() => void exportCsv()}
         size="sm"
         variant="ghost"
       >
-        {exportMutation.isPending ? (
+        {isExporting ? (
           <>
             <span className="loading loading-spinner mr-2" />
             <span>Exporting...</span>

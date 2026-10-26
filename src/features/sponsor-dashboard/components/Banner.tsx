@@ -1,10 +1,12 @@
+'use client';
+
 import { ExternalLink, Info } from 'lucide-react';
 import Link from 'next/link';
 
 import { VerifiedBadgeLarge } from '@/components/shared/VerifiedBadge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip } from '@/components/ui/tooltip';
-import { useUser } from '@/store/user';
+import { useViewer } from '@/lib/viewer';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
@@ -68,7 +70,7 @@ export function Banner({
   stats: SponsorStats | undefined;
   isLoading: boolean;
 }) {
-  const { user } = useUser();
+  const user = useViewer();
 
   const sponsorId = isHackathon ? user?.hackathonId : user?.currentSponsorId;
 
@@ -106,7 +108,7 @@ export function Banner({
                 <EarnAvatar
                   className="h-12 w-12 rounded-md object-contain"
                   id={sponsor?.name}
-                  avatar={sponsor?.logo}
+                  avatar={sponsor?.logo ?? undefined}
                 />
 
                 <div className="min-w-0">
