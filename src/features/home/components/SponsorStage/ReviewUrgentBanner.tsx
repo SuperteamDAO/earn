@@ -2,11 +2,11 @@ import { ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
 
-import { Button } from '@/components/ui/button';
-import { JTTG } from '@/constants/Telegram';
 import { dayjs } from '@/utils/dayjs';
 
 import { type Listing } from '@/features/listings/types';
+
+import { SponsorStageBannerContent } from './SponsorStageBannerContent';
 
 interface ReviewUrgentBannerProps {
   listing: Listing;
@@ -41,49 +41,19 @@ export function ReviewUrgentBanner({ listing }: ReviewUrgentBannerProps) {
       onClick={handleAnnounceWinnersClick}
       prefetch={false}
     >
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-4">
-          <div className="flex h-6 w-6 items-center justify-center rounded-lg">
-            <ShieldAlert className="h-6 w-6 text-red-600" strokeWidth={2} />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-semibold text-slate-700">
-              Announce winners of your latest listing
-            </h2>
-            <p className="max-w-sm text-base text-slate-500">
-              You are past your commitment date of{' '}
-              {dayjs(listing.commitmentDate).format('Do MMM')}. Announce winners
-              now to avoid losing credibility.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-8">
-          <Button>Announce Winners</Button>
-          <Button
-            variant="ghost"
-            asChild
-            className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
-          >
-            <Link
-              href={JTTG}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleGetHelpClick();
-              }}
-            >
-              <img
-                src="/assets/sponsor/jill.png"
-                alt="Get Help"
-                width={28}
-                height={28}
-              />
-              <span>Get Help</span>
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <SponsorStageBannerContent
+        icon={<ShieldAlert className="h-6 w-6 text-red-600" strokeWidth={2} />}
+        title="Announce winners of your latest listing"
+        description={
+          <>
+            You are past your commitment date of{' '}
+            {dayjs(listing.commitmentDate).format('Do MMM')}. Announce winners
+            now to avoid losing credibility.
+          </>
+        }
+        ctaLabel="Announce Winners"
+        onGetHelpClick={handleGetHelpClick}
+      />
 
       <div className="absolute -right-26 -bottom-32 hidden xl:block">
         <span className="block size-100 rounded-full bg-indigo-100/80" />

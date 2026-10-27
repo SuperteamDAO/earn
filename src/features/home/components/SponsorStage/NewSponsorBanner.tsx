@@ -2,8 +2,7 @@ import { PenLine } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
 
-import { Button } from '@/components/ui/button';
-import { JTTG } from '@/constants/Telegram';
+import { SponsorStageBannerContent } from './SponsorStageBannerContent';
 
 export function NewSponsorBanner() {
   const handleCreateBountyClick = () => {
@@ -28,48 +27,13 @@ export function NewSponsorBanner() {
       onClick={handleCreateBountyClick}
       prefetch={false}
     >
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-4">
-          <div className="flex h-6 w-6 items-center justify-center rounded-lg">
-            <PenLine className="h-6 w-6 text-indigo-600" strokeWidth={2} />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-semibold text-slate-700">
-              Create your first bounty (0% fees)
-            </h2>
-            <p className="max-w-sm text-base text-slate-500">
-              Organise a work contest and outsource that task you&apos;ve been
-              dreading since weeks. Zero fees!
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-8">
-          <Button>Create a Bounty</Button>
-          <Button
-            variant="ghost"
-            asChild
-            className="flex items-center gap-3 text-sm text-slate-400 underline underline-offset-4 hover:text-slate-700"
-          >
-            <Link
-              href={JTTG}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleGetHelpClick();
-              }}
-            >
-              <img
-                src="/assets/sponsor/jill.png"
-                alt="Get Help"
-                width={28}
-                height={28}
-              />
-              <span>Get Help</span>
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <SponsorStageBannerContent
+        icon={<PenLine className="h-6 w-6 text-indigo-600" strokeWidth={2} />}
+        title="Create your first bounty (0% fees)"
+        description="Organise a work contest and outsource that task you've been dreading since weeks. Zero fees!"
+        ctaLabel="Create a Bounty"
+        onGetHelpClick={handleGetHelpClick}
+      />
 
       <div className="absolute -right-30 -bottom-42 hidden xl:block">
         <span className="block size-100 rounded-full bg-indigo-100/80" />

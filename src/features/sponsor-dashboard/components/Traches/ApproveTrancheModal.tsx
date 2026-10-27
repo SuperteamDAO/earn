@@ -1,5 +1,5 @@
-import { Check, ChevronDown, ChevronUp } from 'lucide-react';
-import React, { useState } from 'react';
+import { Check, ChevronDown } from 'lucide-react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -9,102 +9,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { TokenIcon } from '@/components/ui/token-icon';
 import { cn } from '@/utils/cn';
 
 import { useCustomNoteCloseGuard } from '@/features/sponsor-dashboard/components/GrantApplications/hooks/useCustomNoteCloseGuard';
+import { ApprovedAmountRow } from '@/features/sponsor-dashboard/components/GrantApplications/Modals/ApprovedAmountRow';
 import { CustomNoteEditor } from '@/features/sponsor-dashboard/components/GrantApplications/Modals/CustomNoteEditor';
+import { RequestedAmountRow } from '@/features/sponsor-dashboard/components/GrantApplications/Modals/RequestedAmountRow';
 import {
   getCustomEmailPlainText,
   sanitizeCustomEmailBody,
   validateCustomEmailNote,
 } from '@/features/sponsor-dashboard/utils/customEmailSanitizer';
 import { getTrancheApprovedEmailBody } from '@/features/sponsor-dashboard/utils/grantEmailCopy';
-
-const CustomNumberInput = ({
-  value,
-  onChange,
-  min,
-  max,
-  step = 100,
-}: {
-  value: number;
-  onChange: (value: number) => void;
-  min: number;
-  max?: number;
-  step?: number;
-}) => {
-  const increment = () => {
-    if (max === undefined || value + step <= max) {
-      onChange(value + step);
-    }
-  };
-
-  const decrement = () => {
-    if (value - step >= min) {
-      onChange(value - step);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      increment();
-      return;
-    }
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      decrement();
-      return;
-    }
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-
-    if (newValue === '') {
-      onChange(0);
-      return;
-    }
-
-    const numericValue = parseFloat(newValue);
-    onChange(numericValue);
-  };
-
-  return (
-    <div className="relative w-[160px]">
-      <Input
-        value={value || ''}
-        onKeyDown={handleKeyDown}
-        onChange={handleInputChange}
-        className="rounded-r-none pr-8 font-semibold text-slate-600"
-        type="text"
-        inputMode="numeric"
-        pattern="[0-9]*"
-      />
-      <div className="absolute top-0 right-1 flex h-full flex-col">
-        <button
-          type="button"
-          onClick={increment}
-          className="flex-1 px-1 text-slate-400 hover:text-slate-600"
-          aria-label="Increment value"
-        >
-          <ChevronUp className="h-3 w-3" />
-        </button>
-        <button
-          type="button"
-          onClick={decrement}
-          className="flex-1 px-1 text-slate-400 hover:text-slate-600"
-          aria-label="Decrement value"
-        >
-          <ChevronDown className="h-3 w-3" />
-        </button>
-      </div>
-    </div>
-  );
-};
 
 interface ApproveModalProps {
   approveIsOpen: boolean;
@@ -242,41 +159,18 @@ export const ApproveTrancheModal = ({
               They will be notified via email.
             </p>
 
-            <div className="mb-6 flex items-center justify-between">
-              <p className="text-slate-500">Tranche Payment</p>
-              <div className="flex items-center">
-                <TokenIcon
-                  className="h-5 w-5 rounded-full"
-                  alt={`${token} icon`}
-                  symbol={token}
-                />
-                <p className="ml-1 font-semibold text-slate-600">
-                  {ask} <span className="text-slate-400">{token}</span>
-                </p>
-              </div>
-            </div>
+            <RequestedAmountRow
+              label="Tranche Payment"
+              ask={ask}
+              token={token}
+            />
 
-            <div className="mb-6 flex w-full items-center justify-between">
-              <p className="w-full whitespace-nowrap text-slate-500">
-                Approved Amount
-              </p>
-              <div className="flex">
-                <CustomNumberInput
-                  value={approvedAmount || 0}
-                  onChange={handleAmountChange}
-                  min={1}
-                  max={maxApprovalAmount}
-                />
-                <div className="flex items-center rounded-r-md border border-l-0 bg-white px-3 text-[0.95rem] text-slate-400">
-                  <TokenIcon
-                    className="mr-1 h-5 w-5 rounded-full"
-                    alt={`${token} icon`}
-                    symbol={token}
-                  />
-                  {token}
-                </div>
-              </div>
-            </div>
+            <ApprovedAmountRow
+              value={approvedAmount || 0}
+              onChange={handleAmountChange}
+              max={maxApprovalAmount}
+              token={token}
+            />
 
             {warningMessage && (
               <p className="mb-4 text-center text-sm text-red-500">

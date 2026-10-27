@@ -12,11 +12,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-import { TokenIcon } from '@/components/ui/token-icon';
 import { cn } from '@/utils/cn';
 
 import { useCustomNoteCloseGuard } from '@/features/sponsor-dashboard/components/GrantApplications/hooks/useCustomNoteCloseGuard';
 import { CustomNoteEditor } from '@/features/sponsor-dashboard/components/GrantApplications/Modals/CustomNoteEditor';
+import { RequestedAmountRow } from '@/features/sponsor-dashboard/components/GrantApplications/Modals/RequestedAmountRow';
 import {
   getCustomEmailPlainText,
   sanitizeCustomEmailBody,
@@ -142,19 +142,7 @@ export const RejectGrantApplicationModal = ({
               will be notified via email.
             </p>
 
-            <div className="mb-6 flex items-center justify-between">
-              <p className="text-slate-500">Grant Request</p>
-              <div className="flex items-center">
-                <TokenIcon
-                  className="h-5 w-5 rounded-full"
-                  alt={`${token} icon`}
-                  symbol={token}
-                />
-                <p className="ml-1 font-semibold text-slate-600">
-                  {ask} <span className="text-slate-400">{token}</span>
-                </p>
-              </div>
-            </div>
+            <RequestedAmountRow label="Grant Request" ask={ask} token={token} />
 
             <div className="mb-6 flex items-center justify-between gap-4">
               <div>

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
+import { Check, InfoIcon, Wand2 } from 'lucide-react';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -36,6 +36,7 @@ import {
   type GrantsAi,
   type GrantWithApplicationCount,
 } from '@/features/grants/types';
+import { AiReviewErrorContent } from '@/features/sponsor-dashboard/components/Modals/AiReviewErrorContent';
 import { useCommitReviewsGrantApplications } from '@/features/sponsor-dashboard/mutations/useCommitReviewsGrantApplications';
 import { unreviewedGrantApplicationsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-grant-applications';
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
@@ -385,27 +386,10 @@ export default function AiReviewModal({ applications, grant }: Props) {
             )}
             {state === 'ERROR' && (
               <>
-                <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
-                    <XCircle className="h-8 w-8 stroke-[2.5] text-red-600" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <h2 className="text-xl font-semibold">Review Failed</h2>
-                    <p className="mx-auto w-4/5 text-sm text-slate-500">
-                      Something went wrong while reviewing the applications.
-                      Please try again.
-                    </p>
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    className="w-full border-[#e2e8f0] text-[#62748e]"
-                    onClick={() => setState('INIT')}
-                  >
-                    Try Again
-                  </Button>
-                </CardContent>
+                <AiReviewErrorContent
+                  subject="applications"
+                  onRetry={() => setState('INIT')}
+                />
               </>
             )}
           </Card>

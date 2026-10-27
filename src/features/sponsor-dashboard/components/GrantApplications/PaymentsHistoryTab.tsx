@@ -24,6 +24,7 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { type GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
 import { approvedGranteesQuery } from '../../queries/approved-grantees';
 import { type GrantApplicationWithUser } from '../../types';
+import { PaymentAmountsCell } from '../PaymentAmountsCell';
 import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface GrantPaymentDetailProps {
@@ -46,25 +47,7 @@ const PaymentDetailsRow = ({
 }) => {
   return (
     <>
-      <TableCell>
-        {paymentDetails.map((payment) => (
-          <div
-            className="my-2 flex items-center justify-between"
-            key={payment.tranche}
-          >
-            <div className="flex items-center gap-1">
-              <TokenIcon
-                className="h-4 w-4 rounded-full"
-                alt={`${token}`}
-                symbol={token}
-              />
-              <p className="text-sm font-medium text-slate-700">
-                {payment.amount} <span className="text-slate-400">{token}</span>
-              </p>
-            </div>
-          </div>
-        ))}
-      </TableCell>
+      <PaymentAmountsCell payments={paymentDetails} token={token} />
       <TableCell>
         {paymentDetails.map((payment) => (
           <div

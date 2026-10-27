@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Check, InfoIcon, ScanText, Wand2, XCircle } from 'lucide-react';
+import { Check, ScanText } from 'lucide-react';
 import { AnimatePresence, m } from 'motion/react';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -29,9 +29,11 @@ import {
   type BountySubmissionAi,
   type Listing,
 } from '@/features/listings/types';
+import { AiReviewErrorContent } from '@/features/sponsor-dashboard/components/Modals/AiReviewErrorContent';
 import { useCommitReviewsSubmissions } from '@/features/sponsor-dashboard/mutations/useCommitReviewsSubmissions';
 import { unreviewedSubmissionsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-submissions';
 
+import { AiReviewInitContent } from './AiReviewInitContent';
 import { ReviewLoadingAnimation } from './ReviewLoadingAnimation';
 
 interface Props {
@@ -327,59 +329,13 @@ export default function AiReviewBountiesSubmissionsModal({
                   exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className="px-6 py-4">
-                    <div className="space-y-2 font-medium">
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-2 text-base text-slate-500">
-                          Unreviewed Submissions
-                          <Tooltip
-                            content="We will only review unreviewed submissions. If you've already reviewed some submissions, those will remain untouched."
-                            contentProps={{
-                              style: {
-                                zIndex: '100',
-                              },
-                            }}
-                          >
-                            <InfoIcon className="h-4 w-4 text-slate-400" />
-                          </Tooltip>
-                        </span>
-                        <span className="text-xl font-semibold">
-                          {totalSubmissions}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-base text-slate-500">
-                          Credits Used
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="rounded-full bg-green-100 px-2 py-0 text-sm text-green-700">
-                            Free
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between text-slate-500">
-                        <span className="text-base">Estimated Time</span>
-                        <span className="text-lg">{estimatedTime}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex flex-col px-6">
-                    <Button
-                      className="ph-no-capture mt-4 w-full"
-                      size="lg"
-                      onClick={() => {
-                        onReviewClick?.();
-                      }}
-                    >
-                      <Wand2 className="mr-2 h-5 w-5" />
-                      Proceed
-                    </Button>
-
-                    <p className="text-muted-foreground mt-2 text-center text-sm">
-                      AI can make mistakes. Check important info before choosing
-                      winners.
-                    </p>
-                  </CardFooter>
+                  <AiReviewInitContent
+                    unreviewedLabel="Unreviewed Submissions"
+                    unreviewedCount={totalSubmissions}
+                    estimatedTime={estimatedTime}
+                    disclaimer="AI can make mistakes. Check important info before choosing winners."
+                    onProceed={onReviewClick}
+                  />
                 </m.div>
               )}
               {state === 'PROCESSING' && (
@@ -494,27 +450,10 @@ export default function AiReviewBountiesSubmissionsModal({
                   exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
-                      <XCircle className="h-8 w-8 stroke-[2.5] text-red-600" />
-                    </div>
-
-                    <div className="space-y-2">
-                      <h2 className="text-xl font-semibold">Review Failed</h2>
-                      <p className="mx-auto w-4/5 text-sm text-slate-500">
-                        Something went wrong while reviewing the submissions.
-                        Please try again.
-                      </p>
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      className="w-full border-[#e2e8f0] text-[#62748e]"
-                      onClick={() => setState('INIT')}
-                    >
-                      Try Again
-                    </Button>
-                  </CardContent>
+                  <AiReviewErrorContent
+                    subject="submissions"
+                    onRetry={() => setState('INIT')}
+                  />
                 </m.div>
               )}
             </AnimatePresence>

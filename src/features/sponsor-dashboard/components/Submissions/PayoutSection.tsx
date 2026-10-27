@@ -22,6 +22,7 @@ import { type Listing, type Rewards } from '@/features/listings/types';
 import { getListingStatus } from '@/features/listings/utils/status';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import { PaymentAmountsCell } from '../PaymentAmountsCell';
 import { PayoutButton } from './PayoutButton';
 import { WalletConnectionBadge } from './WalletConnectionBadge';
 
@@ -50,25 +51,7 @@ const PaymentDetailsRow = ({
           </div>
         ))}
       </TableCell>
-      <TableCell>
-        {paymentDetails.map((payment) => (
-          <div
-            className="my-2 flex items-center justify-between"
-            key={payment.tranche}
-          >
-            <div className="flex items-center gap-1">
-              <TokenIcon
-                className="h-4 w-4 rounded-full"
-                alt={`${token}`}
-                symbol={token}
-              />
-              <p className="text-sm font-medium text-slate-700">
-                {payment.amount} <span className="text-slate-400">{token}</span>
-              </p>
-            </div>
-          </div>
-        ))}
-      </TableCell>
+      <PaymentAmountsCell payments={paymentDetails} token={token} />
       <TableCell colSpan={2}>
         {paymentDetails.map(
           (payment) =>
