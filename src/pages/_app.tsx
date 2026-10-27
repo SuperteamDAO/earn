@@ -2,6 +2,7 @@ import '../styles/globals.css';
 import '../styles/st-globals.css';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { domMax, LazyMotion } from 'motion/react';
 import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
@@ -33,25 +34,31 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
   // query/hash changes, so shallow filter updates keep page state.
   const pageKey = router.asPath.split(/[?#]/)[0];
 
+  // `m` components only animate under LazyMotion; domMax covers the layout
+  // animations (layoutId) some components use.
   if (Component.getLayout) {
     return (
-      <TokenListProvider>
-        {Component.getLayout(<Component {...pageProps} key={pageKey} />)}
-      </TokenListProvider>
+      <LazyMotion features={domMax}>
+        <TokenListProvider>
+          {Component.getLayout(<Component {...pageProps} key={pageKey} />)}
+        </TokenListProvider>
+      </LazyMotion>
     );
   }
 
   return (
-    <TokenListProvider>
-      <div className={fontVariables}>
-        <Providers>
-          <TopLoader />
-          <Component {...pageProps} key={pageKey} />
-          <Toaster position="bottom-right" richColors />
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
-        </Providers>
-      </div>
-    </TokenListProvider>
+    <LazyMotion features={domMax}>
+      <TokenListProvider>
+        <div className={fontVariables}>
+          <Providers>
+            <TopLoader />
+            <Component {...pageProps} key={pageKey} />
+            <Toaster position="bottom-right" richColors />
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_TRACKING_ID!} />
+          </Providers>
+        </div>
+      </TokenListProvider>
+    </LazyMotion>
   );
 }
 
