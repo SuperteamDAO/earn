@@ -1,7 +1,7 @@
 import { AlertCircle, ChevronDown, Loader2, Pin, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import posthog from 'posthog-js';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -117,6 +117,7 @@ export const Comment = ({
       setShowReplies(true);
       setShowReplyInput(true);
     }
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- one-time draft restore after mount (sessionStorage is client-only); parents key this component by comment.id, so refId and comment.id never change for an instance
   }, []);
 
   const deleteReplyLvl1 = async (replyId: string) => {
@@ -199,15 +200,12 @@ export const Comment = ({
       setNewReplyLoading(false);
     }
   };
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (newReply && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        handleSubmit();
-      }
-    },
-    [newReply, handleSubmit],
-  );
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (newReply && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
 
   useEffect(() => {
     if (newReply) {
@@ -215,7 +213,7 @@ export const Comment = ({
     } else {
       sessionStorage.removeItem(`comment-${refId}-${comment.id}`);
     }
-  }, [newReply]);
+  }, [newReply, refId, comment.id]);
 
   const isMobile = useMediaQuery('(max-width: 768px)');
   const isPoc = poc?.id === user?.id;
@@ -443,7 +441,7 @@ export const Comment = ({
         >
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="px-2">
+              <button className="px-2" aria-label="Comment options">
                 <svg
                   width="3"
                   height="12"

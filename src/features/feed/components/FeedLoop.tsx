@@ -32,20 +32,20 @@ export const FeedLoop = forwardRef<HTMLDivElement, Omit<Props, 'ref'>>(
               switch (item.type) {
                 case 'submission':
                   return (
-                    <div {...itemProps}>
-                      <SubmissionCard key={item.id} type={type} sub={item} />
+                    <div key={item.id} {...itemProps}>
+                      <SubmissionCard type={type} sub={item} />
                     </div>
                   );
                 case 'pow':
                   return (
-                    <div {...itemProps}>
-                      <PowCard key={item.id} type={type} pow={item} />
+                    <div key={item.id} {...itemProps}>
+                      <PowCard type={type} pow={item} />
                     </div>
                   );
                 case 'grant-application':
                   return (
-                    <div {...itemProps}>
-                      <GrantCard type={type} grant={item} key={item.id} />
+                    <div key={item.id} {...itemProps}>
+                      <GrantCard type={type} grant={item} />
                     </div>
                   );
                 default:

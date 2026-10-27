@@ -16,12 +16,15 @@ export function PillsFilter({
   onSkillsChange,
   disabled = false,
 }: PillsFilterProps) {
-  const [localActiveSkills, setLocalActiveSkills] =
-    useState<SearchSkills[]>(activeSkills);
-
-  useEffect(() => {
-    setLocalActiveSkills(activeSkills);
-  }, [activeSkills]);
+  // The draft remembers which activeSkills it was picked against, so a new
+  // value from the parent (debounced commit or the dropdown filter) replaces it
+  // without an effect.
+  const [draft, setDraft] = useState<{
+    base: SearchSkills[];
+    skills: SearchSkills[];
+  }>();
+  const localActiveSkills =
+    draft?.base === activeSkills ? draft.skills : activeSkills;
 
   const debouncedSkillsChange = useMemo(
     () =>
@@ -45,11 +48,11 @@ export function PillsFilter({
         ? localActiveSkills.filter((s) => s !== skill)
         : [...localActiveSkills, skill];
 
-      setLocalActiveSkills(newSkills);
+      setDraft({ base: activeSkills, skills: newSkills });
 
       debouncedSkillsChange(newSkills);
     },
-    [localActiveSkills, debouncedSkillsChange, disabled],
+    [localActiveSkills, activeSkills, debouncedSkillsChange, disabled],
   );
 
   return (

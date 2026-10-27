@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
@@ -39,41 +39,29 @@ export function PrizesList({
   showUsdSymbol?: boolean;
 }) {
   const iterableRewards: [string, number][] = Object.entries(rewards);
-  const [visibleRewards, setVisibleRewards] =
-    useState<[string, number][]>(iterableRewards);
-  const [seeAll, setSeeAll] = useState(true);
-  const [boxHeight, setBoxHeight] = useState('20px');
+  const [seeAll, setSeeAll] = useState(() => iterableRewards.length <= 6);
 
-  useEffect(() => {
-    if (seeAll) {
-      setVisibleRewards(iterableRewards);
-    } else if (iterableRewards.length > 6) {
-      const rippedRewards = calculateRewards(iterableRewards, totalReward);
-      setVisibleRewards([
-        ...rippedRewards.visibleRewards,
-        [BONUS_REWARD_POSITION + '', rippedRewards.remainingReward],
-      ]);
-    }
-  }, [seeAll]);
+  let visibleRewards = iterableRewards;
+  if (!seeAll && iterableRewards.length > 6) {
+    const rippedRewards = calculateRewards(iterableRewards, totalReward);
+    visibleRewards = [
+      ...rippedRewards.visibleRewards,
+      [BONUS_REWARD_POSITION + '', rippedRewards.remainingReward],
+    ];
+  }
 
-  useEffect(() => {
-    setSeeAll(iterableRewards.length <= 6);
-  }, []);
-
-  useEffect(() => {
-    const l = visibleRewards.length;
-    if (l === 1) setBoxHeight('20px');
-    else if (l === 2) setBoxHeight(`${visibleRewards.length * 31}px`);
-    else if (l === 3) setBoxHeight(`${visibleRewards.length * 35}px`);
-    else if (l === 4) setBoxHeight(`${visibleRewards.length * 37}px`);
-    else setBoxHeight(`${visibleRewards.length * 40}px`);
-  }, [visibleRewards]);
+  const l = visibleRewards.length;
+  let boxHeight = `${l * 40}px`;
+  if (l === 1) boxHeight = '20px';
+  else if (l === 2) boxHeight = `${l * 31}px`;
+  else if (l === 3) boxHeight = `${l * 35}px`;
+  else if (l === 4) boxHeight = `${l * 37}px`;
 
   return (
     <div className={cn('mt-3 flex w-full flex-col gap-3', `h-[${boxHeight}]`)}>
       {visibleRewards.map((step, index) => (
         <div
-          key={index}
+          key={step[0]}
           className="relative flex gap-3"
           style={{ overflowY: 'visible' }}
         >
@@ -168,6 +156,7 @@ function LabelOrAction({
             <button
               className="font-inherit flex items-center gap-1 bg-transparent hover:opacity-80"
               onClick={() => setSeeAll(false)}
+              aria-label="Show fewer prizes"
             >
               <ChevronUp className="relative h-4 w-4 rounded-full border" />
             </button>
@@ -182,6 +171,7 @@ function LabelOrAction({
           <button
             className="font-inherit flex items-center gap-1 bg-transparent hover:opacity-80"
             onClick={() => setSeeAll(false)}
+            aria-label="Show fewer prizes"
           >
             <ChevronUp className="relative top-0.5 h-4 w-4 rounded-full border" />
           </button>

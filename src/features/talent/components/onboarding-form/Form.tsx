@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, Loader2, XCircle } from 'lucide-react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -50,10 +50,10 @@ export const TalentForm = () => {
   } = form;
 
   const [isLoading, setisLoading] = useState<boolean>(false);
-  const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
+  const isGooglePhotoRef = useRef<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
   );
-  const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
+  const uploadedPhotoUrlRef = useRef<string | null>(null);
   const [skillsRefreshKey, setSkillsRefreshKey] = useState<number>(0);
   const [isUsernameValidating, setUsernameValidating] = useState(false);
 
@@ -160,7 +160,8 @@ export const TalentForm = () => {
       async () => {
         try {
           const photoUrl =
-            uploadedPhotoUrl || (isGooglePhoto ? user?.photo : data.photo);
+            uploadedPhotoUrlRef.current ||
+            (isGooglePhotoRef.current ? user?.photo : data.photo);
 
           await api.post('/api/user/complete-profile/', {
             ...data,
@@ -211,13 +212,13 @@ export const TalentForm = () => {
                       variant="avatar"
                       defaultValue={field.value || undefined}
                       onChange={(result) => {
-                        setIsGooglePhoto(false);
-                        setUploadedPhotoUrl(result.secureUrl);
+                        isGooglePhotoRef.current = false;
+                        uploadedPhotoUrlRef.current = result.secureUrl;
                         field.onChange(result.secureUrl);
                       }}
                       onReset={() => {
-                        setIsGooglePhoto(false);
-                        setUploadedPhotoUrl(null);
+                        isGooglePhotoRef.current = false;
+                        uploadedPhotoUrlRef.current = null;
                         field.onChange('');
                       }}
                     />

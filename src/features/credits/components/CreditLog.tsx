@@ -83,6 +83,7 @@ export function CreditHistoryCard({
       );
       if (entryToDispute && canDispute(entryToDispute, entries)) {
         setSelectedEntry(entryToDispute);
+        // react-doctor-disable-next-line react-doctor/no-adjust-state-on-prop-change -- a #dispute-submission- deep link opens the modal once; open state stays user-controlled so closing is not overridden while the prop is still set
         setIsDisputeModalOpen(true);
       }
     }
@@ -139,7 +140,7 @@ export function CreditHistoryCard({
             entry.type === 'REFERRAL_FIRST_SUBMISSION_BONUS_INVITER' ||
             entry.type === 'REFERRAL_INVITEE_WIN_BONUS_INVITER';
 
-          const EntryContent = () => (
+          const entryContent = (
             <>
               <div className="relative">
                 <div
@@ -242,7 +243,7 @@ export function CreditHistoryCard({
             <div key={entry.id}>
               {isNonLinkableEntry ? (
                 <div className="flex items-center gap-2 px-4 py-4 hover:bg-slate-100 sm:gap-4">
-                  <EntryContent />
+                  {entryContent}
                 </div>
               ) : (
                 <Link
@@ -257,7 +258,7 @@ export function CreditHistoryCard({
                   }}
                 >
                   <div className="flex cursor-pointer items-center gap-2 px-4 py-4 hover:bg-slate-100 sm:gap-4">
-                    <EntryContent />
+                    {entryContent}
                   </div>
                 </Link>
               )}

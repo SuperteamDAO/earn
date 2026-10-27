@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import { type TConductorInstance } from 'react-canvas-confetti/dist/types';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -29,12 +30,17 @@ const dummyUsers = [
   { id: '13', photo: '' },
 ];
 
+const vibeMessageSchema = z.object({
+  vibeCount: z.number(),
+  userIds: z.array(z.string()),
+});
+
 export const VibeCard = () => {
   const [vibeCount, setVibeCount] = useState(13);
-  const [ws, setWs] = useState<WebSocket | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
   const [userIds, setUserIds] = useState<string[]>([]);
-  const [conductor, setConductor] = useState<TConductorInstance>();
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const conductorRef = useRef<TConductorInstance | null>(null);
+  const isAudioPlayingRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const { user } = useUser();
@@ -43,7 +49,9 @@ export const VibeCard = () => {
 
   useEffect(() => {
     audioRef.current = new Audio('/assets/chipichapa.mp3');
-    audioRef.current.onended = () => setIsAudioPlaying(false);
+    audioRef.current.onended = () => {
+      isAudioPlayingRef.current = false;
+    };
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -53,35 +61,41 @@ export const VibeCard = () => {
   }, []);
 
   const shootConfetti = () => {
-    conductor?.shoot();
-    if (!isAudioPlaying && audioRef.current) {
+    conductorRef.current?.shoot();
+    if (!isAudioPlayingRef.current && audioRef.current) {
       audioRef.current
         .play()
         .catch((error) => console.error('Audio play failed:', error));
-      setIsAudioPlaying(true);
+      isAudioPlayingRef.current = true;
     }
   };
 
   const onInit = ({ conductor }: { conductor: TConductorInstance }) => {
-    setConductor(conductor);
+    conductorRef.current = conductor;
   };
 
   useEffect(() => {
     const newWs = new WebSocket('wss://earn-vibe-production.up.railway.app');
     newWs.onmessage = (event) => {
-      const { vibeCount: newVibeCount, userIds: newUserIds } = JSON.parse(
-        event.data,
-      );
-      setVibeCount(newVibeCount + 13);
-      setUserIds(newUserIds);
+      let payload: unknown;
+      try {
+        payload = JSON.parse(event.data);
+      } catch {
+        return;
+      }
+      const message = vibeMessageSchema.safeParse(payload);
+      if (!message.success) return;
+      setVibeCount(message.data.vibeCount + 13);
+      setUserIds(message.data.userIds);
     };
-    setWs(newWs);
+    wsRef.current = newWs;
     return () => {
       newWs.close();
     };
   }, []);
 
   const handleVibeClick = () => {
+    const ws = wsRef.current;
     if (ws && !!user?.id) {
       ws.send(JSON.stringify({ userId: user.id, action: 'vibe' }));
       shootConfetti();

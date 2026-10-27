@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 import { timeAgoShort } from '@/utils/timeAgo';
 
@@ -20,7 +20,6 @@ export const FeedCardHeader = ({
   createdAt,
   type,
 }: FeedCardHeaderProps) => {
-  const router = useRouter();
   if (type === 'profile') {
     return (
       <div className="-mt-0.5 -mb-1">
@@ -44,12 +43,12 @@ export const FeedCardHeader = ({
   return (
     <div className="flex">
       <div className="-mt-0.5 flex flex-col">
-        <p
+        <Link
+          href={`/earn/t/${username}`}
           className="cursor-pointer text-sm font-semibold text-slate-800 hover:underline md:text-base"
-          onClick={() => router.push(`/earn/t/${username}`)}
         >
           {name}
-        </p>
+        </Link>
         <div className="flex items-center gap-1">
           <p className="cursor-pointer text-xs font-medium text-slate-400 hover:underline md:-mt-1 md:text-sm">
             @{username}

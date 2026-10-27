@@ -79,6 +79,7 @@ export function CreditDrawer({
           }
         }
       } else {
+        // react-doctor-disable-next-line react-doctor/no-adjust-state-on-prop-change -- the dispute id comes from window.location.hash, which is only readable after mount; this effect also redirects away from invalid dispute hashes
         setDisputeSubmissionId(null);
       }
     };
@@ -86,7 +87,7 @@ export function CreditDrawer({
     if (isOpen) {
       checkForDisputeHash();
     }
-  }, [isOpen, creditHistory?.data, router, canDispute]);
+  }, [isOpen, creditHistory?.data, router]);
 
   const handleClose = () => {
     const currentPath = window.location.hash;
@@ -195,18 +196,7 @@ export function CreditDrawer({
                 </p>
                 <p className="mt-1.5 text-base font-medium text-slate-800 sm:text-lg">
                   <Countdown
-                    date={
-                      new Date(
-                        Date.UTC(
-                          new Date().getUTCFullYear(),
-                          new Date().getUTCMonth() + 1,
-                          0,
-                          23,
-                          59,
-                          59,
-                        ),
-                      )
-                    }
+                    date={nextMonthStart.subtract(1, 'second').toDate()}
                     renderer={CountDownRenderer}
                     zeroPadDays={1}
                   />
@@ -275,15 +265,14 @@ export function CreditDrawer({
 
           <div className="w-full border-t border-slate-50 bg-white py-1 shadow-[0_-2px_3px_rgba(0,0,0,0.05)]">
             <p className="mx-auto flex items-center justify-center text-xs text-slate-400 transition-colors sm:text-sm">
-              <span className="mr-1 cursor-pointer underline">
+              <span className="cursor-pointer underline">
                 <a
                   href="https://superteamdao.notion.site/submission-credits"
                   target="_blank"
                 >
-                  Click here
+                  Learn how submission credits work
                 </a>
               </span>
-              to learn more
             </p>
           </div>
         </div>

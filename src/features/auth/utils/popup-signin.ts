@@ -100,6 +100,7 @@ export async function signInWithPopup<
 
   const _signInUrl = `${signInUrl}?${new URLSearchParams(authorizationParams || {})}`;
 
+  // react-doctor-disable-next-line react-doctor/no-fetch-response-used-without-status-check -- NextAuth answers errors with the same { url } JSON (error in its query string), read below alongside res.status/res.ok, as next-auth's own signIn does
   const res = await fetch(_signInUrl, {
     method: 'post',
     headers: {

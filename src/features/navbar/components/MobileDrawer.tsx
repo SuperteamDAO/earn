@@ -315,7 +315,11 @@ export const MobileDrawer = ({
               <NavItem
                 onClick={() => {
                   posthog.capture('telegram notifications_user menu');
-                  window.open(generateTelegramBotUrl(user?.email), '_blank');
+                  window.open(
+                    generateTelegramBotUrl(user?.email),
+                    '_blank',
+                    'noopener,noreferrer',
+                  );
                 }}
                 label="Telegram Notifications"
               />

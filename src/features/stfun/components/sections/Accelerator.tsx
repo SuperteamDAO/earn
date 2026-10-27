@@ -172,9 +172,9 @@ export default function Accelerator() {
             acceleration program.
           </p>
           <div className="flex w-full min-w-0 flex-col items-center justify-center gap-6">
-            {displayedPartners.map((partner, index) => (
+            {displayedPartners.map((partner) => (
               <PartnerCard
-                key={index}
+                key={partner.name}
                 imageUrl={partner.imageUrl}
                 name={partner.name}
                 description={partner.description}

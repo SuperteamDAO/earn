@@ -28,6 +28,12 @@ import { ProIntro } from '@/features/pro/components/ProIntro';
 
 import styles from '@/styles/listing-description.module.css';
 
+const usdFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 0,
+});
+
 interface Props {
   description?: string | null;
   type: BountyType | 'grant';
@@ -187,11 +193,7 @@ export function DescriptionUI({
                   {stats ? (
                     <p className="text-md text-slate-500">
                       Earn{' '}
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        maximumFractionDigits: 0,
-                      }).format(1000 - (stats.totalWinnings ?? 0))}{' '}
+                      {usdFormatter.format(1000 - (stats.totalWinnings ?? 0))}{' '}
                       more, or
                     </p>
                   ) : (

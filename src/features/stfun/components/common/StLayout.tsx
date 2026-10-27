@@ -1,6 +1,7 @@
 import { GoogleAnalytics } from '@next/third-parties/google';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { type ReactElement, type ReactNode, useEffect } from 'react';
 
@@ -82,13 +83,13 @@ function StLayout({ children }: { children: ReactNode }) {
       {router.pathname === '/' && (
         <div className="w-full bg-slate-950 text-white">
           <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-2 text-center text-xs font-medium sm:text-sm">
-            <a
+            <Link
               href="/earn/agents"
               className="font-mono text-[8px] tracking-[0.2em] text-white uppercase no-underline hover:text-white sm:text-xs"
             >
               If you&apos;re an AI agent, browse agent-eligible listings to earn
               your first crypto.
-            </a>
+            </Link>
           </div>
         </div>
       )}

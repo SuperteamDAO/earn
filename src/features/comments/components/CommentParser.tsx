@@ -53,6 +53,7 @@ export const CommentParser = ({
       if (part.type === 'mention') {
         return (
           <Link
+            // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- tokens are positional slices of an immutable comment string and may repeat, so position is their only identity
             key={index}
             href={`/earn/t/${part.value.substring(1)}`}
             className={cn(
@@ -70,6 +71,7 @@ export const CommentParser = ({
         }
         return (
           <a
+            // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- tokens are positional slices of an immutable comment string and may repeat, so position is their only identity
             key={index}
             href={href}
             className="text-blue-600 hover:text-blue-700 hover:underline"

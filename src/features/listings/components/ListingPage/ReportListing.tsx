@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import * as React from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -122,6 +122,7 @@ export function ReportListing({
   const [customReason, setCustomReason] = React.useState('');
   const { user } = useUser();
 
+  // react-doctor-disable-next-line react-doctor/query-mutation-missing-invalidation -- the report endpoint only forwards a message to the moderation bot and writes nothing that a query reads
   const mutation = useMutation({
     mutationFn: async (payload: {
       listingTitle: string;
@@ -137,13 +138,14 @@ export function ReportListing({
   });
 
   React.useEffect(() => {
-    if (!open) {
-      setTimeout(() => {
-        setSubmitted(false);
-        setSelectedReason(null);
-        setCustomReason('');
-      }, 500);
-    }
+    if (open) return;
+    // Reset after the close animation; reopening first cancels the reset.
+    const timer = setTimeout(() => {
+      setSubmitted(false);
+      setSelectedReason(null);
+      setCustomReason('');
+    }, 500);
+    return () => clearTimeout(timer);
   }, [open]);
 
   function handleSubmit(e: React.FormEvent) {
@@ -224,7 +226,7 @@ function MainContent({
     <AnimateChangeInHeight>
       <AnimatePresence mode="popLayout">
         {submitted ? (
-          <motion.div
+          <m.div
             key="thankyou"
             initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -266,9 +268,9 @@ function MainContent({
                 </Button>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         ) : (
-          <motion.div
+          <m.div
             key="form"
             initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -355,7 +357,7 @@ function MainContent({
                 </Button>
               </form>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </AnimateChangeInHeight>

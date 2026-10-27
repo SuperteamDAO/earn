@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import dynamic from 'next/dynamic';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
@@ -49,8 +49,6 @@ export function AuthWrapper({
   const isSponsor = !!user?.currentSponsorId || false;
   const isTalentFilled = !!user?.isTalentFilled || false;
 
-  const [triggerLogin, setTriggerLogin] = useState(false);
-
   const {
     isOpen: loginIsOpen,
     onOpen: loginOnOpen,
@@ -88,14 +86,6 @@ export function AuthWrapper({
       profileModalOnOpen();
     }
   };
-
-  useEffect(() => {
-    if (triggerLogin && !isAuthenticated) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTriggerLogin(false);
-      loginOnOpen();
-    }
-  }, [triggerLogin, isAuthenticated, loginOnOpen]);
 
   const shouldAllowInteraction =
     isAuthenticated &&

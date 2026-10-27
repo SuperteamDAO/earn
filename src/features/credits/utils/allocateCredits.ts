@@ -235,6 +235,7 @@ export async function awardReferralFirstSubmissionBonusesForListing(
       const inviterUserId = submission.user?.referredById || undefined;
       if (!inviterUserId) continue;
 
+      // react-doctor-disable-next-line react-doctor/async-await-in-loop -- sequential on purpose: two invitees can share an inviter, and the inviter bonus is check-then-create, so overlapping iterations would double-award it
       const earliest = await prisma.submission.findFirst({
         where: {
           userId,

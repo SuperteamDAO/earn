@@ -2,7 +2,7 @@
 
 import lookup from 'country-code-lookup';
 import * as d3 from 'd3';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useEffectEvent, useMemo, useRef } from 'react';
 
 import type { ChapterRegionData } from '@/interface/chapter';
 
@@ -106,33 +106,27 @@ export default function SuperteamMap({
     [chapters],
   );
 
-  const handleCountryHover = useCallback(
-    (iso3Code: string | null) => {
-      if (!iso3Code) {
-        onHoverChange(null);
-        return;
-      }
+  const handleCountryHover = useEffectEvent((iso3Code: string | null) => {
+    if (!iso3Code) {
+      onHoverChange(null);
+      return;
+    }
 
-      const superteamCode = iso3ToSuperteamMap.get(iso3Code);
-      if (superteamCode) {
-        onHoverChange(superteamCode);
-      }
-    },
-    [iso3ToSuperteamMap, onHoverChange],
-  );
+    const superteamCode = iso3ToSuperteamMap.get(iso3Code);
+    if (superteamCode) {
+      onHoverChange(superteamCode);
+    }
+  });
 
-  const handleCountryClick = useCallback(
-    (iso3Code: string) => {
-      const superteamCode = iso3ToSuperteamMap.get(iso3Code);
-      if (!superteamCode) return;
+  const handleCountryClick = useEffectEvent((iso3Code: string) => {
+    const superteamCode = iso3ToSuperteamMap.get(iso3Code);
+    if (!superteamCode) return;
 
-      const superteam = chapters.find((st) => st.code === superteamCode);
-      if (superteam?.link) {
-        window.open(superteam.link, '_blank', 'noopener,noreferrer');
-      }
-    },
-    [chapters, iso3ToSuperteamMap],
-  );
+    const superteam = chapters.find((st) => st.code === superteamCode);
+    if (superteam?.link) {
+      window.open(superteam.link, '_blank', 'noopener,noreferrer');
+    }
+  });
 
   // Effect to update map colors when hoveredSuperteam changes
   useEffect(() => {
@@ -215,6 +209,8 @@ export default function SuperteamMap({
       });
   }, [chapters, hoveredSuperteam, superteamCodeMap]);
 
+  // react-doctor-disable-next-line react-doctor/effect-needs-cleanup -- the d3 `.on` listeners live on nodes the cleanup removes with the svg
+  // react-doctor-disable-next-line react-doctor/no-fetch-in-effect -- the geojson only feeds the imperative d3 render built in this effect, and the cancelled flag drops a response that lands after cleanup
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -312,10 +308,14 @@ export default function SuperteamMap({
       undefined
     > | null = null;
     let normalizedMarkers: PositionedMarker[] = [];
+    let cancelled = false;
 
     const initMap = async () => {
       const response = await fetch('/api/geo/world.geojson');
+      if (!response.ok) return;
       const rawWorldData: WorldData = await response.json();
+      // The effect may have been cleaned up while the fetch was in flight.
+      if (cancelled) return;
 
       // Filter out Antarctica
       const world: WorldData = {
@@ -458,6 +458,7 @@ export default function SuperteamMap({
     initMap();
 
     return () => {
+      cancelled = true;
       if (svgRef.current) {
         svgRef.current.remove();
       }
@@ -465,7 +466,7 @@ export default function SuperteamMap({
         window.removeEventListener('resize', resizeHandler);
       }
     };
-  }, [chapters, handleCountryHover, handleCountryClick]);
+  }, [chapters]);
 
   return (
     <div
