@@ -121,15 +121,7 @@ export const useListingForm = (
 
   // queue ensures each call for auto save is sent synchronously
   const processSaveQueue = useCallback(async () => {
-    console.log('[DRAFT_DEBUG] processSaveQueue called', {
-      isEditing,
-      isProcessing: queueRefRef.current.isProcessing,
-      shouldProcessNext: queueRefRef.current.shouldProcessNext,
-      stack: new Error().stack?.split('\n').slice(1, 5).join('\n'),
-    });
-
     if (isEditing) {
-      console.log('[DRAFT_DEBUG] Skipping - isEditing=true');
       return;
     }
 
@@ -137,7 +129,6 @@ export const useListingForm = (
     const payloadKey = getDraftPayloadKey(dataToSave);
 
     if (queueRefRef.current.isProcessing) {
-      console.log('[DRAFT_DEBUG] Already processing, queuing next');
       setQueueRef((q) => ({
         ...q,
         shouldProcessNext: true,
@@ -146,12 +137,10 @@ export const useListingForm = (
     }
 
     if (payloadKey === lastSavedPayloadKeyRef.current) {
-      console.log('[DRAFT_DEBUG] Skipping save for unchanged payload');
       setHideAutoSave(false);
       return;
     }
 
-    console.log('[DRAFT_DEBUG] Starting save...');
     setDraftSaving(true);
     setQueueRef((q) => ({
       ...q,
@@ -159,19 +148,7 @@ export const useListingForm = (
       isProcessing: true,
     }));
     try {
-      console.log(
-        '[DRAFT_DEBUG] Calling API with id:',
-        dataToSave.id,
-        'slug:',
-        dataToSave.slug,
-      );
       const data = await saveDraftMutation.mutateAsync(dataToSave);
-      console.log(
-        '[DRAFT_DEBUG] API success, returned id:',
-        data.id,
-        'slug:',
-        data.slug,
-      );
       lastSavedPayloadKeyRef.current = getDraftPayloadKey({
         ...dataToSave,
         id: data.id,
@@ -195,10 +172,6 @@ export const useListingForm = (
     } catch (error) {
       console.log('[DRAFT_DEBUG] Error:', error);
     } finally {
-      console.log(
-        '[DRAFT_DEBUG] Finally block, shouldProcessNext:',
-        queueRefRef.current.shouldProcessNext,
-      );
       setDraftSaving(false);
       setQueueRef((q) => ({
         ...q,
@@ -206,7 +179,6 @@ export const useListingForm = (
       }));
       // Check if we need to process another save
       if (queueRefRef.current.shouldProcessNext) {
-        console.log('[DRAFT_DEBUG] Processing queued save via setTimeout');
         // Use setTimeout to break the call stack and ensure queue state is updated
         setTimeout(() => {
           void processSaveQueue();
@@ -224,10 +196,6 @@ export const useListingForm = (
   }, [processSaveQueue]);
 
   const onChange = useCallback(() => {
-    console.log('[DRAFT_DEBUG] saveDraft() called', {
-      isEditing,
-      stack: new Error().stack?.split('\n').slice(1, 4).join('\n'),
-    });
     if (isEditing || isHydratingSavedFieldsRef.current) return;
 
     const payloadKey = getDraftPayloadKey(normalizeDraftPayload(getValues()));

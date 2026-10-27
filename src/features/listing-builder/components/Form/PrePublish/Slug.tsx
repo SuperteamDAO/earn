@@ -26,7 +26,6 @@ export function Slug() {
   const form = useListingForm();
   const isEditing = useAtomValue(isEditingAtom);
 
-  // const [isValidated, setIsValidated] = useState(false);
   const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
 
   const slug = useWatch({
@@ -98,11 +97,6 @@ export function Slug() {
       await form.trigger('slug');
       form.setFocus('slug');
       // Only save if slug actually changed
-      console.log('[DRAFT_DEBUG] Slug.tsx useEffect', {
-        prevSlug: prevDebouncedSlugRef.current,
-        debouncedSlug,
-        willSave: prevDebouncedSlugRef.current !== debouncedSlug,
-      });
       if (prevDebouncedSlugRef.current !== debouncedSlug) {
         prevDebouncedSlugRef.current = debouncedSlug;
         form.saveDraft();

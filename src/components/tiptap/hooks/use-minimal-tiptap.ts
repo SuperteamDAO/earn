@@ -206,13 +206,8 @@ export const useMinimalTiptapEditor = ({
       getPendingDeletions: () => Array.from(pendingDeletionsRef.current),
       processPendingDeletions: async () => {
         const pendingCount = pendingDeletionsRef.current.size;
-        console.log(
-          `Processing pending deletions: ${pendingCount} images`,
-          Array.from(pendingDeletionsRef.current),
-        );
 
         if (pendingCount === 0) {
-          console.log('No images to delete');
           return;
         }
 
@@ -221,7 +216,6 @@ export const useMinimalTiptapEditor = ({
             try {
               await deleteImageFromCloudinary(src, imageSetting.source);
               trackedImagesRef.current.delete(src);
-              console.log('Successfully deleted image:', src);
               return { src, success: true };
             } catch (error) {
               console.error('Error deleting image:', error);
@@ -241,8 +235,6 @@ export const useMinimalTiptapEditor = ({
           console.warn(
             `Cleanup completed with ${failedCount} failed deletions (retained for retry)`,
           );
-        } else {
-          console.log('Cleanup completed successfully');
         }
       },
       clearPendingDeletions: () => {
@@ -254,15 +246,7 @@ export const useMinimalTiptapEditor = ({
           (src) => !originalImageUrls.has(src),
         );
 
-        console.log(
-          `Processing orphaned image cleanup: ${orphanedImages.length} images`,
-          orphanedImages,
-        );
-        console.log('Original images:', Array.from(originalImageUrls));
-        console.log('Tracked images:', Array.from(trackedImagesRef.current));
-
         if (orphanedImages.length === 0) {
-          console.log('No orphaned images to delete');
           return;
         }
 
@@ -270,19 +254,16 @@ export const useMinimalTiptapEditor = ({
           try {
             await deleteImageFromCloudinary(src, imageSetting.source);
             trackedImagesRef.current.delete(src);
-            console.log('Successfully deleted orphaned image:', src);
           } catch (error) {
             console.error('Error deleting orphaned image:', error);
           }
         });
 
         await Promise.all(deletionPromises);
-        console.log('Orphaned image cleanup completed');
       },
     };
 
     if (typeof window !== 'undefined') {
-      console.log('Setting up global window functions');
       window.__processImageCleanup = manager.processPendingDeletions;
       window.__clearImageCleanup = manager.clearPendingDeletions;
       window.__processOrphanedImageCleanup =
@@ -336,31 +317,17 @@ export const useMinimalTiptapEditor = ({
           pendingDeletionsRef.current.delete(src);
           return src;
         },
-        onImageRemoved({ id, src }) {
-          console.log('Image removed', { id, src });
-          console.log('Is tracked?', trackedImagesRef.current.has(src));
-          console.log('Tracked images:', Array.from(trackedImagesRef.current));
+        onImageRemoved({ src }) {
           if (src && trackedImagesRef.current.has(src)) {
             pendingDeletionsRef.current.add(src);
-            console.log('Image marked for deletion:', src);
-            console.log(
-              'Current pending deletions:',
-              pendingDeletionsRef.current,
-            );
-          } else {
-            console.log('Image not tracked, not adding to pending deletions');
           }
         },
-        onImageRestored: async ({ id, src }) => {
-          console.log('Image restored', { id, src });
-
+        onImageRestored: async ({ src }) => {
           if (pendingDeletionsRef.current.has(src)) {
             pendingDeletionsRef.current.delete(src);
-            console.log('Image unmarked for deletion:', src);
           }
 
           trackedImagesRef.current.add(src);
-          console.log('Image re-added to tracking:', src);
 
           if (!src.includes('cloudinary.com')) {
             try {
@@ -465,7 +432,6 @@ export const useMinimalTiptapEditor = ({
         onCleanup: (src) => {
           if (trackedImagesRef.current.has(src)) {
             pendingDeletionsRef.current.add(src);
-            console.log('Image marked for cleanup deletion:', src);
           }
         },
       }),

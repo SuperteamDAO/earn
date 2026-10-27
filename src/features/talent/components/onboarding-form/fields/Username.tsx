@@ -118,7 +118,6 @@ export function UsernameField({
                   const value = e.target.value.replace(/\s+/g, '-');
                   debouncedSetUsername(value);
                   field.onChange(value);
-                  // debouncedSetIsUsernameTyping(false)
                 }}
               />
               {!errors.username?.message &&

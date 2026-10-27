@@ -197,16 +197,10 @@ async function handleAgentJobQueuing(result: BountiesModel) {
     logger.info(
       `Successfully queued agent job for ${agentType} with id ${result.id}`,
     );
-    console.log(
-      `Successfully queued agent job for ${agentType} with id ${result.id}`,
-    );
   } catch (err) {
     logger.error(
       `Failed to queue agent job for ${agentType} with id ${result.id}`,
       err,
-    );
-    console.log(
-      `Failed to queue agent job for ${agentType} with id ${result.id}`,
     );
   }
 }
@@ -221,9 +215,6 @@ async function handleTelegramNotifications(result: BountiesModel) {
     });
 
     logger.info(
-      `Successfully queued telegram notification for listing ${result.id}`,
-    );
-    console.log(
       `Successfully queued telegram notification for listing ${result.id}`,
     );
   } catch (err) {

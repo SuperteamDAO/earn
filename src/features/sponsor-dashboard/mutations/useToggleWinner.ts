@@ -85,12 +85,6 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
                 update.isWinner && submission.label === 'Spam'
                   ? 'Unreviewed'
                   : submission.label;
-              console.log(
-                'updateWinner',
-                update.isWinner,
-                'submission status',
-                submission.status,
-              );
               const updatedStatus =
                 update.isWinner && submission.status === 'Rejected'
                   ? 'Pending'

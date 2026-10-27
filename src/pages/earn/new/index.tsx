@@ -42,10 +42,8 @@ export default function NewProfilePage({
   const [isSponsorLoading, setIsSponsorLoading] = useState(false);
 
   const checkTalent = async () => {
-    // localStorage.setItem(ONBOARDING_KEY, 'talent');
     if (!user) return;
     try {
-      // localStorage.removeItem(ONBOARDING_KEY);
       if (!user?.isTalentFilled) {
         const originUrl = params?.get('originUrl');
         const type = params?.get('type');
@@ -65,10 +63,8 @@ export default function NewProfilePage({
   };
 
   const checkSponsor = async () => {
-    // localStorage.setItem(ONBOARDING_KEY, 'sponsor');
     if (!user) return;
     try {
-      // localStorage.removeItem(ONBOARDING_KEY);
       const { data } =
         await api.get<UserSponsorsResponse>('/api/user-sponsors');
       if (data.hasSponsorMembership && user.currentSponsorId) {

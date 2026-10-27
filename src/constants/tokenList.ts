@@ -30,11 +30,8 @@ const notifyListeners = () => {
   }
 };
 
-export let tokenList: Token[] = [];
-
 const setTokenList = (tokens: Token[]) => {
   tokenListState = tokens;
-  tokenList = tokens;
   notifyListeners();
 };
 

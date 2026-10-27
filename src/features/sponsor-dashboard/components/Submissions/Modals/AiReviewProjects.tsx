@@ -138,7 +138,6 @@ export default function AiReviewProjectApplicationsModal({
   );
 
   const nonAnalysedApplications = useMemo(() => {
-    console.log('unreviewedApplications', unreviewedApplications);
     return unreviewedApplications?.filter(
       (appl) => !(appl.ai as ProjectApplicationAi)?.review,
     );
@@ -164,9 +163,7 @@ export default function AiReviewProjectApplicationsModal({
     setTimeout(async () => {
       setProgress(100);
       try {
-        console.log('Commiting Reviewed applications');
         const data = await commitReviews();
-        console.log('commit data - ', data.data);
         setCompletedStats({
           totalReviewed: data.data.length,
           shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
@@ -518,7 +515,6 @@ function formatTime(milliseconds: number): string {
   return `${hours}h ${minutes}m`;
 }
 function estimateTime(totalApplications: number, singular = false): string {
-  console.log('total applications', totalApplications);
   const lowerBoundSeconds = totalApplications * 10;
   const upperBoundSeconds = totalApplications * 20;
 

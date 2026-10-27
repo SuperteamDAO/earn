@@ -126,12 +126,7 @@ export const SocialInput = ({
                 <FormLabel className="relative">
                   <span className="sr-only">{name}</span>
                   {Icon && showIcon && (
-                    <Icon
-                      className={cn(
-                        'mr-2 h-5 w-5 text-slate-600',
-                        // socialName === 'twitter' && 'h-[1.125rem] w-[1.125rem]'
-                      )}
-                    />
+                    <Icon className={cn('mr-2 h-5 w-5 text-slate-600')} />
                   )}
                   {required && !formLabel && (
                     <span className="absolute -top-1 right-1 font-medium text-red-500">

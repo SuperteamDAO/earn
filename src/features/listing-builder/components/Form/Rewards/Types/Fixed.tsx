@@ -28,9 +28,6 @@ export function Fixed() {
   useEffect(() => {
     if (type === 'project') form.setValue('rewardAmount', rewards?.[1]);
   }, [type]);
-  useEffect(() => {
-    console.log(form.formState.errors.rewards);
-  }, [form.formState.errors.rewards]);
   return (
     <FormField
       control={form.control}

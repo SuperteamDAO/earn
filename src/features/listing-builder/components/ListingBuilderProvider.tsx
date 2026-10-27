@@ -143,7 +143,6 @@ function ListingEditor({
                   <WinnerAnnouncementDate />
                   <Skills />
                   <POC />
-                  {/* <EligibilityQuestions /> */}
                   <EligibilityQuestionsSheet />
                 </div>
               </div>

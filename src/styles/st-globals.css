@@ -695,17 +695,6 @@
     animation: st-scaleUp 300ms;
   }
 
-  /* ==================== Dropdown Component ==================== */
-  .st-dropdown-button {
-    background: linear-gradient(180deg, #161637 0%, #281951 100%);
-    border: 1px solid rgba(177, 177, 177, 0.2);
-  }
-
-  .st-dropdown-menu {
-    background: linear-gradient(180deg, #161637 0%, #281951 100%);
-    border: 1px solid rgba(177, 177, 177, 0.2);
-  }
-
   /* ==================== Accelerator Section ==================== */
   .accelerator-heading {
     font-family: var(--font-dm-sans), sans-serif;

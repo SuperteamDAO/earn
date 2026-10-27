@@ -108,12 +108,6 @@ export function TitleAndType() {
   useEffect(() => {
     const newSlug = generatedSlugValidated?.data.slug;
     const currentSlug = form.getValues('slug');
-    console.log('[DRAFT_DEBUG] TitleAndType slug useEffect', {
-      newSlug,
-      currentSlug,
-      isTitleDirty,
-      willSave: !!(newSlug && isTitleDirty && newSlug !== currentSlug),
-    });
     if (newSlug && isTitleDirty && newSlug !== currentSlug) {
       form.setValue('slug', newSlug, {
         shouldValidate: true,
@@ -263,7 +257,6 @@ function Type() {
         form.setValue('rewardAmount', values.rewards?.[1]);
       } else {
         form.setValue('rewardAmount', undefined);
-        console.log('pre type change ', values.rewards);
         if (
           values.rewards &&
           Object.values(values.rewards).some(

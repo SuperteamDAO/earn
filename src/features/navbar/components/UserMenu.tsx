@@ -50,7 +50,6 @@ export function UserMenu() {
   }, [isOpen, onOpen]);
 
   const handleClose = async () => {
-    console.log('close -', router);
     await router.replace(
       router.asPath.replace('#emailPreferences', ''),
       undefined,

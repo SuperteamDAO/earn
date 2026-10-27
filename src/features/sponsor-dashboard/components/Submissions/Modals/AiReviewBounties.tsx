@@ -142,7 +142,6 @@ export default function AiReviewBountiesSubmissionsModal({
   );
 
   const nonAnalysedSubmissions = useMemo(() => {
-    console.log('unreviewedSubmissions', unreviewedSubmissions);
     return unreviewedSubmissions?.filter(
       (appl) => !(appl.ai as BountySubmissionAi)?.evaluation,
     );
@@ -168,9 +167,7 @@ export default function AiReviewBountiesSubmissionsModal({
     setTimeout(async () => {
       setProgress(100);
       try {
-        console.log('Commiting Reviewed submissions');
         const data = await commitReviews();
-        console.log('commit data - ', data.data);
         setCompletedStats({
           totalReviewed: data.data.length,
           shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
@@ -561,7 +558,6 @@ function formatTime(milliseconds: number): string {
   return `${hours}h ${minutes}m`;
 }
 function estimateTime(totalSubmissions: number, singular = false): string {
-  console.log('total submissions', totalSubmissions);
   const lowerBoundSeconds = totalSubmissions * 10;
   const upperBoundSeconds = totalSubmissions * 20;
 

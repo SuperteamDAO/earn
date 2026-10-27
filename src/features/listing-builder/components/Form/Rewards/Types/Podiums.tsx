@@ -166,7 +166,6 @@ export const Podiums = () => {
   }, [form, rewards, updateTotalReward]);
 
   return (
-    //  <div className="space-y-4 flex-1">
     <FormField
       key="rewards"
       name="rewards"
@@ -361,6 +360,5 @@ export const Podiums = () => {
         </FormItem>
       )}
     />
-    // </div>
   );
 };

@@ -31,14 +31,12 @@ import { Progress } from '@/components/ui/progress';
 import { StatusPill } from '@/components/ui/status-pill';
 import { Tooltip } from '@/components/ui/tooltip';
 
-// import { chunkArray } from '@/utils/chunkArray';
 import {
   type GrantApplicationAi,
   type GrantsAi,
   type GrantWithApplicationCount,
 } from '@/features/grants/types';
 import { useCommitReviewsGrantApplications } from '@/features/sponsor-dashboard/mutations/useCommitReviewsGrantApplications';
-// import { useReviewApplication } from '@/features/sponsor-dashboard/mutations/useReviewApplication';
 import { unreviewedGrantApplicationsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-grant-applications';
 import { type GrantApplicationWithUser } from '@/features/sponsor-dashboard/types';
 import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
@@ -77,16 +75,12 @@ export default function AiReviewModal({ applications, grant }: Props) {
     refetchUnreviewedApplications();
   }, [applications, refetchUnreviewedApplications]);
 
-  // const { mutateAsync: reviewApplication } = useReviewApplication(
-  //   grant?.slug || '',
-  // );
   const { mutateAsync: commitReviews } = useCommitReviewsGrantApplications(
     grant?.slug || '',
     grant?.id || '',
   );
 
   const nonAnalysedApplications = useMemo(() => {
-    console.log('unreviewedApplications', unreviewedApplications);
     return unreviewedApplications?.filter(
       (appl) => !(appl.ai as GrantApplicationAi)?.review,
     );
@@ -126,48 +120,10 @@ export default function AiReviewModal({ applications, grant }: Props) {
     posthog.capture('start_ai review grants');
     setState('PROCESSING');
 
-    // const batchSize = 5;
-    // const initalSize = nonAnalysedApplications?.length || 0;
-
-    // console.log('nonAnalysedApplications - ', nonAnalysedApplications.length);
-    // if (nonAnalysedApplications && nonAnalysedApplications.length > 0) {
-    //   setEstimatedTimeSingular(estimateTime(initalSize || 1, true));
-    //   const totalApplications = nonAnalysedApplications.length;
-    //   let processedApplications = 0;
-    //   const batchedApplications = chunkArray(
-    //     nonAnalysedApplications,
-    //     batchSize,
-    //   );
-    //
-    //   for (const application of batchedApplications) {
-    //     await Promise.all(
-    //       application.map(async (appl) => {
-    //         try {
-    //           console.log('start review for application - ', appl.id);
-    //           await reviewApplication(appl);
-    //           processedApplications++;
-    //           setProgress(() =>
-    //             Math.round((processedApplications / totalApplications) * 100),
-    //           );
-    //           setEstimatedTimeSingular(
-    //             estimateTime((initalSize || 1) - processedApplications, true),
-    //           );
-    //         } catch (error: any) {
-    //           console.log(
-    //             'Error occured while reviewing application with id ',
-    //             appl.id,
-    //           );
-    //         }
-    //       }),
-    //     );
-    //   }
-    // }
     setTimeout(async () => {
       setProgress(100);
       try {
-        console.log('Commiting Reviewed applications');
         const data = await commitReviews();
-        console.log('commit data - ', data.data);
         setCompletedStats({
           totalReviewed: data.data.length,
           lowQuality: data.data.filter((s) => s.label === 'Low_Quality').length,
@@ -291,24 +247,6 @@ export default function AiReviewModal({ applications, grant }: Props) {
               <DialogTitle className="text-xl font-semibold">
                 Review with AI
               </DialogTitle>
-              {/* <div className="flex items-center text-muted-foreground"> */}
-              {/*   <span className="text-sm">Powered by</span> */}
-              {/*   <svg */}
-              {/*     className="ml-2 h-5 w-5" */}
-              {/*     viewBox="0 0 24 24" */}
-              {/*     fill="none" */}
-              {/*     xmlns="http://www.w3.org/2000/svg" */}
-              {/*   > */}
-              {/*     <path */}
-              {/*       d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" */}
-              {/*       stroke="currentColor" */}
-              {/*       strokeWidth="2" */}
-              {/*       strokeLinecap="round" */}
-              {/*       strokeLinejoin="round" */}
-              {/*     /> */}
-              {/*   </svg> */}
-              {/*   <span className="ml-1 text-sm">ChatGPT</span> */}
-              {/* </div> */}
             </CardHeader>
 
             {state === 'INIT' && (
@@ -543,7 +481,6 @@ function formatTime(milliseconds: number): string {
   return `${hours}h ${minutes}m`;
 }
 function estimateTime(totalApplications: number, singular = false): string {
-  console.log('total applications', totalApplications);
   const lowerBoundSeconds = totalApplications * 10;
   const upperBoundSeconds = totalApplications * 20;
 

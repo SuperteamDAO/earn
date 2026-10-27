@@ -75,7 +75,6 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
     if (!data.id) throw new Error('Missing ID');
 
     if (typeof window !== 'undefined' && window.__processImageCleanup) {
-      console.log('Processing image cleanup before submission');
       try {
         await window.__processImageCleanup();
       } catch (error) {

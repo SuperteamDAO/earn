@@ -45,8 +45,6 @@ export default function LocalProfiles() {
     };
   }, [setSearchText]);
 
-  console.log(allUsers?.[0]);
-
   useEffect(() => {
     posthog.capture('members tab_sponsor');
   }, []);

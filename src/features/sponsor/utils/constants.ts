@@ -11,8 +11,4 @@ export const NAV_LINKS = [
     label: 'Pricing',
     link: '#pricing',
   },
-  // {
-  //   label: 'FAQs',
-  //   link: '#faqs',
-  // },
 ];

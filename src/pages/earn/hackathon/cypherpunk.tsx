@@ -191,8 +191,6 @@ function HeroMini({
   );
 
   useEffect(() => {
-    console.log('start date', START_DATE);
-    console.log('close date', CLOSE_DATE);
     function updateStatus() {
       if (dayjs().isAfter(dayjs(CLOSE_DATE))) {
         setStatus('Closed');

@@ -19,10 +19,6 @@ interface Props {
   onReferralOpen: () => void;
 }
 
-// const AnnouncementBar = dynamic(() =>
-//   import('@/features/navbar').then((mod) => mod.AnnouncementBar),
-// );
-
 const MobileDrawer = dynamic(
   () => import('./MobileDrawer').then((mod) => mod.MobileDrawer),
   {
@@ -58,7 +54,6 @@ export const MobileNavbar = ({
 
   return (
     <>
-      {/* {router.pathname === '/' && <AnnouncementBar />} */}
       <div className="sticky top-0 z-50">
         <div className="flex min-h-12 items-center justify-between border-b border-black/20 bg-white px-1 py-1 lg:hidden">
           <div className="flex items-center gap-3">

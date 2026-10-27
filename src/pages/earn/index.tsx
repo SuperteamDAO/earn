@@ -126,7 +126,6 @@ export default function HomePage({
                     type="home"
                     potentialSession={potentialSession}
                   />
-                  {/* <HackathonSection type="home" /> */}
                   <GrantsSection type="home" />
                 </div>
               </div>
