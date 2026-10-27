@@ -129,13 +129,11 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
       form.saveDraft();
       setShowCallout(false);
     }
-  }, [isPrivate]);
+  }, [isPrivate, form.setValue, form.saveDraft]);
 
-  useEffect(() => {
-    if (!isUnderMinimum && showCallout) {
-      setShowCallout(false);
-    }
-  }, [isUnderMinimum, showCallout]);
+  if (!isUnderMinimum && showCallout) {
+    setShowCallout(false);
+  }
 
   useEffect(() => {
     if (isPro && isUnderMinimum && !isShaking) {
@@ -143,7 +141,7 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
       form.saveDraft();
       setShowCallout(true);
     }
-  }, [isPro, isUnderMinimum, isShaking]);
+  }, [isPro, isUnderMinimum, isShaking, form.setValue, form.saveDraft]);
 
   const handleUpdateRewards = () => {
     if (!tokenUsdValue || estimatedUsdValue === null) return;
@@ -205,6 +203,7 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
   const showNudges = !showCallout && !isPro;
 
   useEffect(() => {
+    // react-doctor-disable-next-line react-doctor/no-pass-data-to-parent, react-doctor/no-pass-live-state-to-parent, react-doctor/no-prop-callback-in-effect -- the callout state is driven by this component's handlers and resets when the dialog content remounts; lifting it would keep it across reopen
     onShowNudgesChange?.(showNudges);
   }, [showNudges, onShowNudgesChange]);
 

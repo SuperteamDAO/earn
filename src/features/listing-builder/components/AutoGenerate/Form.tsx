@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -115,7 +115,7 @@ export function AutoGenerateForm({
         />
         <AnimatePresence>
           {input.length === 0 && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               exit={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
@@ -126,7 +126,7 @@ export function AutoGenerateForm({
                 type={type}
                 onSelectTemplate={({ prompt }) => setInput(prompt)}
               />
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
         <AnimatePresence>
@@ -136,7 +136,7 @@ export function AutoGenerateForm({
               const charsWithoutTrailingSpaces = input.trim().length;
               return charsWithoutTrailingSpaces < MIN_CHARACTERS;
             })() && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
@@ -147,7 +147,7 @@ export function AutoGenerateForm({
                   Write at least {MIN_CHARACTERS - input.trim().length}{' '}
                   characters more
                 </p>
-              </motion.div>
+              </m.div>
             )}
         </AnimatePresence>
       </div>

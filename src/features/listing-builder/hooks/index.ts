@@ -186,7 +186,17 @@ export const useListingForm = (
         }, 0);
       }
     }
-  }, [queueRefRef, isEditing]);
+  }, [
+    queueRefRef,
+    isEditing,
+    getValues,
+    setQueueRef,
+    setHideAutoSave,
+    setDraftSaving,
+    saveDraftMutation.mutateAsync,
+    formMethods.getValues,
+    formMethods.setValue,
+  ]);
 
   const debouncedSaveRef = useRef<ReturnType<typeof debounce>>(undefined);
 
@@ -206,7 +216,7 @@ export const useListingForm = (
 
     setHideAutoSave(true);
     debouncedSaveRef.current?.();
-  }, [isEditing, getValues]);
+  }, [isEditing, getValues, setHideAutoSave]);
 
   const submitListing = useCallback(async () => {
     const formData = refineReadyListing(getValues());
@@ -257,7 +267,16 @@ export const useListingForm = (
       if (typeof s === 'number') return s + 1;
       else return 1;
     });
-  }, [reset]);
+  }, [
+    reset,
+    isGod,
+    isEditing,
+    isST,
+    hackathons,
+    getValues,
+    setDescriptionKey,
+    setSkillsKey,
+  ]);
 
   const validateFields = useCallback(
     async (fields: ValidationFields) => {
@@ -304,7 +323,7 @@ export const useListingForm = (
         return false;
       }
     },
-    [formMethods, formSchema, isGod, isEditing, isST],
+    [formMethods, formSchema, hackathons],
   );
 
   const validateEligibilityQuestions = () =>

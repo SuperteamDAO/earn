@@ -116,7 +116,13 @@ export function TitleAndType() {
       });
       form.saveDraft();
     }
-  }, [generatedSlugValidated, isTitleDirty]);
+  }, [
+    generatedSlugValidated,
+    isTitleDirty,
+    form.getValues,
+    form.setValue,
+    form.saveDraft,
+  ]);
 
   return (
     <FormField

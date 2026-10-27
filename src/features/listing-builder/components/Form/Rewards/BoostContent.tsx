@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { MailIcon, StarIcon } from 'lucide-react';
-import { AnimatePresence, LayoutGroup, motion } from 'motion/react';
+import { AnimatePresence, LayoutGroup, m } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -34,6 +34,8 @@ import {
   getTotalImpressionsForUsd,
   resolveEmailImpressions,
 } from '../Boost/utils';
+
+const impressionsFormatter = new Intl.NumberFormat('en-US');
 
 export function BoostContent({
   boostStep,
@@ -136,10 +138,12 @@ export function BoostContent({
   useEffect(() => {
     const idx = anchorSteps.findIndex((s) => s === defaultStep);
     setSnappedIndex(idx >= 0 ? idx : 0);
+    // react-doctor-disable-next-line react-doctor/no-pass-data-to-parent -- boostStep lives in Rewards/Sheet, which also feeds it to the footer; moving the anchor math there is a larger change outside this file
     setBoostStep(defaultStep);
     setHasInteracted(false);
     prevRawRef.current = null;
     justSwitchedRef.current = false;
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- Rewards/Sheet passes setBoostStep as an inline arrow, so depending on it would reset the step on every parent render
   }, [defaultStep, anchorSteps]);
 
   const activeStep = hasInteracted ? (boostStep as number) : defaultStep;
@@ -217,12 +221,16 @@ export function BoostContent({
         created.push(v);
       });
     };
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      window.requestIdleCallback(preload);
-    } else {
-      setTimeout(preload, 0);
+    if ('requestIdleCallback' in window) {
+      const idleId = window.requestIdleCallback(preload);
+      return () => {
+        window.cancelIdleCallback(idleId);
+        created.forEach((v) => v.remove());
+      };
     }
+    const timer = setTimeout(preload, 0);
     return () => {
+      clearTimeout(timer);
       created.forEach((v) => v.remove());
     };
   }, []);
@@ -238,7 +246,7 @@ export function BoostContent({
               className="size-8"
             />
             <AnimatePresence mode="popLayout">
-              <motion.span
+              <m.span
                 key={`tokens-${Math.round(previewTokens * 1000)}`}
                 initial={{ y: 8, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -246,16 +254,16 @@ export function BoostContent({
                 transition={{ duration: 0.18 }}
               >
                 {formatNumberWithSuffix(previewTokens, 1, true)}
-              </motion.span>
+              </m.span>
             </AnimatePresence>
           </p>
           <p className="relative text-sm text-slate-500">
             {token} <span className="text-slate-500/30">•</span> ~$
             <AnimatePresence mode="popLayout">
               {isUsdPending ? (
-                <motion.span key="pending">...</motion.span>
+                <m.span key="pending">...</m.span>
               ) : previewUSD !== null ? (
-                <motion.span
+                <m.span
                   key={`usd-${Math.round(previewUSD)}`}
                   initial={{ y: 8, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -263,9 +271,9 @@ export function BoostContent({
                   transition={{ duration: 0.18 }}
                 >
                   {formatNumberWithSuffix(previewUSD, 1, true)}
-                </motion.span>
+                </m.span>
               ) : (
-                <motion.span key="na">N/A</motion.span>
+                <m.span key="na">N/A</m.span>
               )}
             </AnimatePresence>
           </p>
@@ -275,15 +283,15 @@ export function BoostContent({
         <div className="text-center">
           <p className="relative text-4xl font-semibold text-slate-900">
             <AnimatePresence mode="popLayout">
-              <motion.span
+              <m.span
                 key={`imp-${Math.round(totalImpressions)}`}
                 initial={{ y: 8, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -8, opacity: 0 }}
                 transition={{ duration: 0.18 }}
               >
-                {new Intl.NumberFormat('en-US').format(totalImpressions)}
-              </motion.span>
+                {impressionsFormatter.format(totalImpressions)}
+              </m.span>
             </AnimatePresence>
           </p>
           <p className="text-sm text-slate-500">Estimated Reach</p>
@@ -372,7 +380,7 @@ export function BoostContent({
             What&apos;s included
           </p>
 
-          <motion.div
+          <m.div
             layout
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -393,9 +401,9 @@ export function BoostContent({
               currentValue={previewUSD || 0}
               previewVideoSrc={buildVideoUrl('x-thread')}
             />
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             layout
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -421,9 +429,9 @@ export function BoostContent({
               currentValue={previewUSD || 0}
               previewVideoSrc={buildVideoUrl('x-standalone')}
             />
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             layout
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -449,11 +457,11 @@ export function BoostContent({
               currentValue={previewUSD || 0}
               previewVideoSrc={buildVideoUrl('email')}
             />
-          </motion.div>
+          </m.div>
 
           <AnimatePresence>
             {isFeatureAvailable ? (
-              <motion.div
+              <m.div
                 key="featured"
                 layout
                 initial={{ opacity: 0, y: 6 }}
@@ -482,7 +490,7 @@ export function BoostContent({
                   currentValue={previewUSD || 0}
                   previewVideoSrc={buildVideoUrl('featured')}
                 />
-              </motion.div>
+              </m.div>
             ) : null}
           </AnimatePresence>
         </div>

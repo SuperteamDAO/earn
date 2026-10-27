@@ -1,7 +1,7 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { type UIMessage } from 'ai';
 import { ArrowLeft, ArrowUp, Loader2 } from 'lucide-react';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -72,6 +72,7 @@ export function AutoGenerateChat({
             size="icon"
             className="!size-6 rounded-full bg-slate-50 px-0 text-xs text-slate-400"
             onClick={handleBack}
+            aria-label="Go back"
           >
             <ArrowLeft className="size-4! text-slate-400" />
           </Button>
@@ -81,7 +82,7 @@ export function AutoGenerateChat({
         </div>
         <div className="flex items-center gap-2">
           <DialogClose asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" aria-label="Close">
               <Cross2Icon className="h-4 w-4 text-slate-400" />
             </Button>
           </DialogClose>
@@ -110,7 +111,8 @@ export function AutoGenerateChat({
                     {message.parts
                       .filter((part) => part.type === 'text')
                       .map((part, index) => (
-                        <motion.div
+                        <m.div
+                          // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- text parts have no id; a streamed message only appends parts, never reorders them
                           key={index}
                           initial={{ opacity: 0, filter: 'blur(4px)' }}
                           animate={{ opacity: 1, filter: 'blur(0px)' }}
@@ -118,7 +120,7 @@ export function AutoGenerateChat({
                           transition={{ duration: 0.4 }}
                         >
                           <MarkdownRenderer>{part.text}</MarkdownRenderer>
-                        </motion.div>
+                        </m.div>
                       ))}
                   </div>
                 ))}
@@ -145,7 +147,7 @@ export function AutoGenerateChat({
             className="focus:border-primary min-h-10 w-full resize-none rounded-md border bg-white p-2 pr-7 text-sm placeholder:text-sm focus:outline-none"
           />
           {input.length > 0 && (
-            <motion.div
+            <m.div
               className="absolute right-2 bottom-3.5 flex h-6 items-center justify-center"
               initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -171,7 +173,7 @@ export function AutoGenerateChat({
                   </>
                 )}
               </Button>
-            </motion.div>
+            </m.div>
           )}
         </div>
         {input.length === 0 && (

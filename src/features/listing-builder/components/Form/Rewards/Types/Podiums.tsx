@@ -25,13 +25,17 @@ import { calculateTotalRewardsForPodium } from '@/features/listing-builder/utils
 import { useListingForm } from '../../../../hooks';
 import { TokenNumberInput } from '../Tokens/TokenNumberInput';
 
+// Shared fallback so an unset rewards field keeps one identity across renders.
+const DEFAULT_REWARDS: Record<string, number> = { '1': NaN };
+
 export const Podiums = () => {
   const form = useListingForm();
 
-  const rewards = useWatch({
-    control: form.control,
-    name: 'rewards',
-  }) || { '1': NaN };
+  const rewards =
+    useWatch({
+      control: form.control,
+      name: 'rewards',
+    }) || DEFAULT_REWARDS;
 
   const maxBonusSpots =
     useWatch({
@@ -86,15 +90,14 @@ export const Podiums = () => {
       const needsReindex = positions.some((pos, index) => pos !== index + 1);
 
       if (needsReindex) {
-        const reindexedRewards = Object.entries(rewards).reduce(
-          (acc, [key, value]) => {
-            const pos = Number(key);
-            if (pos === BONUS_REWARD_POSITION) return { ...acc, [key]: value };
-            const newPos = positions.indexOf(pos) + 1;
-            return { ...acc, [newPos]: value };
-          },
-          {},
-        );
+        const reindexedRewards = Object.entries(rewards).reduce<
+          Record<string, number>
+        >((acc, [key, value]) => {
+          const pos = Number(key);
+          if (pos === BONUS_REWARD_POSITION) acc[key] = value;
+          else acc[positions.indexOf(pos) + 1] = value;
+          return acc;
+        }, {});
 
         form.setValue('rewards', reindexedRewards);
         updateTotalReward(reindexedRewards);
@@ -129,15 +132,14 @@ export const Podiums = () => {
     (position: number) => {
       //eslint-disable-next-line
       const { [position]: removed, ...rest } = rewards;
-      const reindexedRewards = Object.entries(rest).reduce(
-        (acc, [key, value]) => {
-          const pos = Number(key);
-          if (pos === BONUS_REWARD_POSITION) return { ...acc, [key]: value };
-          const newPos = pos > position ? pos - 1 : pos;
-          return { ...acc, [newPos]: value };
-        },
-        {},
-      );
+      const reindexedRewards = Object.entries(rest).reduce<
+        Record<string, number>
+      >((acc, [key, value]) => {
+        const pos = Number(key);
+        if (pos === BONUS_REWARD_POSITION) acc[key] = value;
+        else acc[pos > position ? pos - 1 : pos] = value;
+        return acc;
+      }, {});
 
       form?.setValue('rewards', reindexedRewards);
       updateTotalReward(reindexedRewards);

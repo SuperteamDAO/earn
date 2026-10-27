@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 
 import { cn } from '@/utils/cn';
 import { easeOutQuad } from '@/utils/easings';
@@ -11,9 +11,10 @@ export function TextLightSweep({
   className?: string;
 }) {
   return (
-    <motion.p className={cn('relative', className)}>
+    <m.p className={cn('relative', className)}>
       {text.split('').map((char, index) => (
-        <motion.span
+        <m.span
+          // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- one span per character of a fixed string; characters repeat, so position is the only identity
           key={index}
           initial={{ opacity: 0.2 }}
           animate={{ opacity: 1 }}
@@ -27,11 +28,11 @@ export function TextLightSweep({
           className="inline-block"
         >
           {char === ' ' ? '\u00A0' : char}
-        </motion.span>
+        </m.span>
       ))}
 
       {/* Light sweep effect overlay */}
-      <motion.span
+      <m.span
         className="absolute inset-0 w-1/4 bg-gradient-to-r from-transparent via-white/30 to-transparent"
         animate={{
           x: ['0%', '200%'],
@@ -46,6 +47,6 @@ export function TextLightSweep({
             'linear-gradient(to right, transparent, white, transparent)',
         }}
       />
-    </motion.p>
+    </m.p>
   );
 }

@@ -15,23 +15,24 @@ export function ProgressiveBlurOut({
 }: Props) {
   const [fadeOpacity, setFadeOpacity] = useState(1);
 
-  const updateFade = () => {
-    if (!scrollEl) return;
-    const isScrollable = scrollEl.scrollHeight > scrollEl.clientHeight;
-    if (!isScrollable) {
-      setFadeOpacity(0);
-      return;
-    }
-    const distanceFromBottom =
-      scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
-    const clamped = Math.max(0, Math.min(distanceFromBottom, FADE_DISTANCE));
-    const opacity = clamped / FADE_DISTANCE;
-    setFadeOpacity(opacity);
-  };
-
+  // react-doctor-disable-next-line react-doctor/no-derived-state-effect -- subscribes to scroll and resize on the DOM node; the opacity is a DOM measurement, not derived from props or state
   useEffect(() => {
     if (!scrollEl) return;
     let rafId: number | null = null;
+
+    const updateFade = () => {
+      const isScrollable = scrollEl.scrollHeight > scrollEl.clientHeight;
+      if (!isScrollable) {
+        setFadeOpacity(0);
+        return;
+      }
+      const distanceFromBottom =
+        scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
+      const clamped = Math.max(0, Math.min(distanceFromBottom, FADE_DISTANCE));
+      const opacity = clamped / FADE_DISTANCE;
+      // react-doctor-disable-next-line react-doctor/no-derived-state -- measured from live scroll position in scroll/resize callbacks; render cannot read it
+      setFadeOpacity(opacity);
+    };
 
     const handleScroll = () => {
       if (rafId !== null) return;
@@ -55,7 +56,7 @@ export function ProgressiveBlurOut({
         cancelAnimationFrame(rafId);
       }
     };
-  }, [scrollEl]);
+  }, [scrollEl, FADE_DISTANCE]);
 
   return (
     <div
