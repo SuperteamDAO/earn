@@ -17,6 +17,14 @@ export function Pagination({ page, setPage, count }: Props) {
   const [inputValue, setInputValue] = useState(String(page));
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Outside editing, the inputs show the current page again whenever the page
+  // or editing state changes (Prev/Next, Escape, commit).
+  const [syncedFrom, setSyncedFrom] = useState({ page, isEditing });
+  if (syncedFrom.page !== page || syncedFrom.isEditing !== isEditing) {
+    setSyncedFrom({ page, isEditing });
+    if (!isEditing) setInputValue(String(page));
+  }
+
   const debouncedHandleClick = useMemo(
     () => debounce((newPage: number) => setPage(newPage), 500),
     [setPage],
