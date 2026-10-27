@@ -1,5 +1,5 @@
 import { InfoIcon } from 'lucide-react';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -32,22 +32,25 @@ export function WinnerAnnouncementDate() {
     ? dayjs(deadline).add(30, 'day').startOf('day').toDate()
     : undefined;
 
-  const handleQuickSelect = (days: number, autoSave: boolean = true) => {
-    if (!deadline) return;
-    const newDate = dayjs(deadline).add(days, 'day').endOf('day').toDate();
-    form.setValue(
-      'commitmentDate',
-      dayjs(newDate).format(DEADLINE_FORMAT).replace('Z', ''),
-    );
-    form.clearErrors('commitmentDate');
-    if (autoSave) form.saveDraft();
-  };
+  const handleQuickSelect = useCallback(
+    (days: number, autoSave: boolean = true) => {
+      if (!deadline) return;
+      const newDate = dayjs(deadline).add(days, 'day').endOf('day').toDate();
+      form.setValue(
+        'commitmentDate',
+        dayjs(newDate).format(DEADLINE_FORMAT).replace('Z', ''),
+      );
+      form.clearErrors('commitmentDate');
+      if (autoSave) form.saveDraft();
+    },
+    [deadline, form],
+  );
 
   useEffect(() => {
     if (!deadline) return;
     if (form.getValues('commitmentDate')) return;
     handleQuickSelect(14, false);
-  }, [deadline, form]);
+  }, [deadline, form, handleQuickSelect]);
 
   return (
     <FormField

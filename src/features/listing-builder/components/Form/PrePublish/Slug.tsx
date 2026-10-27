@@ -89,7 +89,8 @@ export function Slug() {
       });
       form.setFocus('slug');
     }
-  }, [isSlugTaken]);
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- fires when the check flips to taken; re-running per slug keystroke would re-set the stale error while the user types
+  }, [isSlugTaken, form.setError, form.setFocus]);
 
   const prevDebouncedSlugRef = useRef<string | undefined>(undefined);
   useEffect(() => {
@@ -103,7 +104,7 @@ export function Slug() {
       }
     }
     validateSlug();
-  }, [debouncedSlug]);
+  }, [debouncedSlug, form.trigger, form.setFocus, form.saveDraft]);
 
   return (
     <FormField

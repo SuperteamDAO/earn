@@ -27,7 +27,8 @@ export function Fixed() {
   });
   useEffect(() => {
     if (type === 'project') form.setValue('rewardAmount', rewards?.[1]);
-  }, [type]);
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- copies the prize once when the type becomes project; later edits set rewardAmount in onChange, and re-syncing would turn a cleared 0 into undefined
+  }, [type, form.setValue]);
   return (
     <FormField
       control={form.control}

@@ -33,7 +33,7 @@ export function POC() {
         form.setValue('pocSocials', user.email);
       }
     }
-  }, [user, pocSocial, wasTouched]);
+  }, [user, pocSocial, wasTouched, form.setValue]);
   return (
     <FormField
       name="pocSocials"

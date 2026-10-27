@@ -62,6 +62,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
       const error = isAxiosError(listingError) ? listingError : undefined;
       if (error?.response?.status === 403) {
         toast.error('This listing does not belong to you');
+        // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- the 403 comes from a client query behind the Privy session, and the skeleton renders while this navigates
         router.push('/earn/dashboard/listings');
         return;
       }
@@ -76,6 +77,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
         listing.sponsorId !== user?.currentSponsorId &&
         user?.role !== 'GOD'
       ) {
+        // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- ownership is known only after the client listing query and the session user load
         router.push('/earn/dashboard/listings');
         return;
       }
