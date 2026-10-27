@@ -83,16 +83,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           NULL as rewards,
           NULL as rewardAmount,
           g.totalPaid as totalPaymentsMade,
+          NULL as maxBonusSpots,
           NULL as isWinnersAnnounced,
-          g.minReward as minRewardAsk,
           g.maxReward as maxRewardAsk,
+          g.minReward as minRewardAsk,
           NULL as compensationType,
           g.createdAt,
           NULL as isFndnPaying,
           NULL as usdValue,
           0 as isPro,
           g.airtableId,
-          NULL as maxBonusSpots,
           CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
         FROM Grants g
         WHERE g.isActive = true
