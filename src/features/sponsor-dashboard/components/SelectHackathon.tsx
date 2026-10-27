@@ -48,7 +48,7 @@ export function SelectHackathon({
         hackathon: user?.Hackathon,
       });
     }
-  }, [user]);
+  }, [type, user]);
 
   const loadHackathons = (
     inputValue: string,
@@ -84,10 +84,7 @@ export function SelectHackathon({
     }
   };
 
-  const SingleValue = ({
-    children,
-    ...props
-  }: SingleValueProps<HackathonOption, false>) => {
+  const SingleValue = (props: SingleValueProps<HackathonOption, false>) => {
     const { data, selectProps } = props;
 
     if (selectProps.menuIsOpen) {

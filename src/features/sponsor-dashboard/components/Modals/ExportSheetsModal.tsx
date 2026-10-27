@@ -23,6 +23,32 @@ export const ExportSheetsModal = ({
   queryParams,
   entityName = 'data',
 }: ExportSheetsModalProps) => {
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose} modal>
+      <DialogContent className="m-0 max-w-xl p-0" hideCloseIcon>
+        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
+          Export to Google Sheets
+        </DialogTitle>
+        <Separator />
+        {/* Radix unmounts DialogContent while closed, so every open mounts a
+            fresh ExportSheetsBody and starts a new export. */}
+        <ExportSheetsBody
+          onClose={onClose}
+          apiEndpoint={apiEndpoint}
+          queryParams={queryParams}
+          entityName={entityName}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const ExportSheetsBody = ({
+  onClose,
+  apiEndpoint,
+  queryParams,
+  entityName,
+}: Omit<ExportSheetsModalProps, 'isOpen'>) => {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
     'loading',
   );
@@ -52,25 +78,17 @@ export const ExportSheetsModal = ({
     },
   });
 
-  useEffect(() => {
-    if (isOpen && !hasTriggeredRef.current) {
-      hasTriggeredRef.current = true;
-      // Reset state and trigger mutation when modal opens
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setStatus('loading');
-
-      setCountdown(15);
-
-      setSheetUrl(null);
-      exportMutation.reset();
-      exportMutation.mutate();
-    } else if (!isOpen) {
-      hasTriggeredRef.current = false;
-    }
-  }, [isOpen]);
+  const { mutate: startExport } = exportMutation;
 
   useEffect(() => {
-    if (status !== 'loading' || !isOpen) return;
+    // Strict Mode mounts effects twice; the ref keeps it to one export per open.
+    if (hasTriggeredRef.current) return;
+    hasTriggeredRef.current = true;
+    startExport();
+  }, [startExport]);
+
+  useEffect(() => {
+    if (status !== 'loading') return;
 
     const timer = setInterval(() => {
       setCountdown((prev) => {
@@ -82,7 +100,7 @@ export const ExportSheetsModal = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [status, isOpen, sheetUrl]);
+  }, [status, sheetUrl]);
 
   const handleRetry = () => {
     setStatus('loading');
@@ -90,14 +108,6 @@ export const ExportSheetsModal = ({
     setSheetUrl(null);
     exportMutation.reset();
     exportMutation.mutate();
-  };
-
-  const handleClose = () => {
-    setStatus('loading');
-    setCountdown(15);
-    setSheetUrl(null);
-    exportMutation.reset();
-    onClose();
   };
 
   const renderContent = () => {
@@ -131,7 +141,7 @@ export const ExportSheetsModal = ({
             </div>
             <div className="flex gap-3">
               <div className="flex-1" />
-              <Button variant="ghost" type="button" onClick={handleClose}>
+              <Button variant="ghost" type="button" onClick={onClose}>
                 Cancel
               </Button>
             </div>
@@ -163,7 +173,7 @@ export const ExportSheetsModal = ({
 
             <div className="flex gap-3">
               <div className="flex-1" />
-              <Button variant="ghost" type="button" onClick={handleClose}>
+              <Button variant="ghost" type="button" onClick={onClose}>
                 Close
               </Button>
               <a
@@ -206,7 +216,7 @@ export const ExportSheetsModal = ({
 
             <div className="mt-4 flex gap-3">
               <div className="flex-1" />
-              <Button variant="ghost" type="button" onClick={handleClose}>
+              <Button variant="ghost" type="button" onClick={onClose}>
                 Close
               </Button>
               <Button
@@ -239,15 +249,5 @@ export const ExportSheetsModal = ({
     }
   };
 
-  return (
-    <Dialog open={isOpen} onOpenChange={handleClose} modal>
-      <DialogContent className="m-0 max-w-xl p-0" hideCloseIcon>
-        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
-          Export to Google Sheets
-        </DialogTitle>
-        <Separator />
-        <div className="px-6 pb-6 text-[0.95rem]">{renderContent()}</div>
-      </DialogContent>
-    </Dialog>
-  );
+  return <div className="px-6 pb-6 text-[0.95rem]">{renderContent()}</div>;
 };

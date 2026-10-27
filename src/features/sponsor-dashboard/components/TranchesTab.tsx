@@ -112,7 +112,7 @@ export const TranchesTab = ({ slug }: Props) => {
         return tranches[0];
       });
     }
-  }, [tranches, searchText]);
+  }, [tranches, searchText, setSelectedTranche]);
 
   const {
     isOpen: approveIsOpen,
@@ -325,6 +325,7 @@ export const TranchesTab = ({ slug }: Props) => {
       </div>
 
       <RejectTrancheModal
+        key={selectedTranche?.id}
         trancheId={selectedTranche?.id}
         rejectIsOpen={rejectedIsOpen}
         rejectOnClose={rejectedOnClose}
@@ -339,6 +340,7 @@ export const TranchesTab = ({ slug }: Props) => {
       />
 
       <ApproveTrancheModal
+        key={`${selectedTranche?.id}:${selectedTranche?.ask}`}
         trancheId={selectedTranche?.id}
         approveIsOpen={approveIsOpen}
         approveOnClose={approveOnClose}

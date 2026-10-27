@@ -60,6 +60,7 @@ function GrantApplications({ slug }: Props) {
         const hasSponsorId = error?.response?.data?.sponsorId;
         if (!hasSponsorId) {
           toast.error('This grant does not belong to you');
+          // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- ownership is known only from the client query's 403 after useAutoSwitchSponsor has tried switching sponsors, so the server cannot decide this up front
           router.push('/earn/dashboard/listings');
         }
       }
@@ -72,6 +73,7 @@ function GrantApplications({ slug }: Props) {
     }
 
     if (grant.sponsorId !== user.currentSponsorId) {
+      // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- compares the client-fetched grant with the client-side current sponsor, and must wait for useAutoSwitchSponsor to settle
       router.push('/earn/dashboard/listings');
     }
   }, [grant, user?.currentSponsorId, router, isSwitchingSponsor]);

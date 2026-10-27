@@ -72,6 +72,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
   });
 
   useEffect(() => {
+    // react-doctor-disable-next-line react-doctor/query-no-query-in-effect -- the unreviewed list must follow the parent's `applications` prop, which is not part of this query's key, and refetchOnMount is off
     refetchUnreviewedApplications();
   }, [applications, refetchUnreviewedApplications]);
 
@@ -148,14 +149,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
         setState('ERROR');
       }
     }, 500);
-  }, [
-    applications,
-    unreviewedApplications,
-    nonAnalysedApplications,
-    posthog,
-    commitReviews,
-    refetchUnreviewedApplications,
-  ]);
+  }, [commitReviews, refetchUnreviewedApplications]);
   function onComplete() {
     setState('INIT');
     setProgress(0);

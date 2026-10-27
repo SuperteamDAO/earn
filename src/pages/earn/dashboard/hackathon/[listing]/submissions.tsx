@@ -82,6 +82,7 @@ export default function BountySubmissions({ listing }: Props) {
         const hasSponsorId = error?.response?.data?.sponsorId;
         if (!hasSponsorId) {
           toast.error('This listing does not belong to you');
+          // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- ownership is known only from the client query's 403 after useAutoSwitchSponsor has tried switching sponsors, so the server cannot decide this up front
           router.push('/earn/dashboard/listings');
         }
       }
@@ -145,7 +146,7 @@ export default function BountySubmissions({ listing }: Props) {
     if (filteredSubmissions && filteredSubmissions.length > 0) {
       setSelectedSubmission(filteredSubmissions[0]);
     }
-  }, [filteredSubmissions]);
+  }, [filteredSubmissions, setSelectedSubmission]);
 
   useEffect(() => {
     if (bounty && user?.currentSponsorId) {
@@ -172,6 +173,7 @@ export default function BountySubmissions({ listing }: Props) {
 
   useEffect(() => {
     if (searchParams?.has('scout')) posthog.capture('scout tab_scout');
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- page-view analytics: capture once on landing, not again whenever the query string changes
   }, []);
 
   const usedPositions = submissions

@@ -48,6 +48,12 @@ interface Props {
 
 const surveyOpenAtom = atom(false);
 
+const getActiveTab = (tabParam: string | null | undefined) => {
+  if (tabParam === 'scout') return 'scout';
+  if (tabParam === 'payments') return 'payments';
+  return 'submissions';
+};
+
 export default function BountySubmissions({ slug }: Props) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -77,17 +83,12 @@ export default function BountySubmissions({ slug }: Props) {
     selectedSubmissionIdsAtom,
   );
 
-  const getActiveTab = () => {
-    const tabParam = searchParams?.get('tab');
-    if (tabParam === 'scout') return 'scout';
-    if (tabParam === 'payments') return 'payments';
-    return 'submissions';
-  };
-
-  const [activeTab, setActiveTab] = useState(getActiveTab());
+  const [activeTab, setActiveTab] = useState(() =>
+    getActiveTab(searchParams?.get('tab')),
+  );
 
   useEffect(() => {
-    setActiveTab(getActiveTab());
+    setActiveTab(getActiveTab(searchParams?.get('tab')));
   }, [searchParams]);
 
   const handleTabChange = (value: string) => {
@@ -115,7 +116,6 @@ export default function BountySubmissions({ slug }: Props) {
     };
   }, [router.events, setSelectedSubmissionIds]);
 
-  const [isToggledAll, setIsToggledAll] = useState(false);
   const [currentAction, setCurrentAction] = useState<
     'reject' | 'bonus' | 'spam' | 'shortlist' | null
   >(null);
@@ -156,6 +156,7 @@ export default function BountySubmissions({ slug }: Props) {
         const hasSponsorId = error?.response?.data?.sponsorId;
         if (!hasSponsorId) {
           toast.error('This listing does not belong to you');
+          // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- ownership is known only from the client query's 403 after useAutoSwitchSponsor has tried switching sponsors, so the server cannot decide this up front
           router.push('/earn/dashboard/listings');
         }
       }
@@ -170,24 +171,26 @@ export default function BountySubmissions({ slug }: Props) {
     } else {
       onTogglerClose();
     }
-  }, [selectedSubmissionIds]);
+  }, [selectedSubmissionIds, onTogglerOpen, onTogglerClose]);
 
   useEffect(() => {
-    const newSet = new Set(selectedSubmissionIds);
-    Array.from(selectedSubmissionIds).forEach((a) => {
-      const submissionWithId = submissions?.find(
-        (submission) => submission.id === a,
-      );
-      if (
-        submissionWithId &&
-        (submissionWithId.status !== 'Pending' ||
-          submissionWithId.winnerPosition)
-      ) {
-        newSet.delete(a);
-      }
+    setSelectedSubmissionIds((prev) => {
+      const newSet = new Set(prev);
+      Array.from(prev).forEach((a) => {
+        const submissionWithId = submissions?.find(
+          (submission) => submission.id === a,
+        );
+        if (
+          submissionWithId &&
+          (submissionWithId.status !== 'Pending' ||
+            submissionWithId.winnerPosition)
+        ) {
+          newSet.delete(a);
+        }
+      });
+      return newSet;
     });
-    setSelectedSubmissionIds(newSet);
-  }, [submissions]);
+  }, [submissions, setSelectedSubmissionIds]);
 
   const isAllCurrentToggled = () =>
     filteredSubmissions
@@ -213,7 +216,7 @@ export default function BountySubmissions({ slug }: Props) {
     (id: string) => {
       return selectedSubmissionIds.has(id);
     },
-    [selectedSubmissionIds, submissions],
+    [selectedSubmissionIds],
   );
 
   const handleModalAction = (
@@ -321,7 +324,7 @@ export default function BountySubmissions({ slug }: Props) {
         return filteredSubmissions[0];
       });
     }
-  }, [filteredSubmissions]);
+  }, [filteredSubmissions, setSelectedSubmission]);
 
   useEffect(() => {
     if (bounty && user?.currentSponsorId) {
@@ -330,6 +333,7 @@ export default function BountySubmissions({ slug }: Props) {
       }
 
       if (bounty.sponsorId !== user.currentSponsorId) {
+        // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- compares the client-fetched listing with the client-side current sponsor, and must wait for useAutoSwitchSponsor to settle
         router.push('/earn/dashboard/listings');
         return;
       }
@@ -357,11 +361,10 @@ export default function BountySubmissions({ slug }: Props) {
 
   useEffect(() => {
     if (searchParams?.has('scout')) posthog.capture('scout tab_scout');
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- page-view analytics: capture once on landing, not again whenever the query string changes
   }, []);
 
-  useEffect(() => {
-    setIsToggledAll(isAllCurrentToggled());
-  }, [selectedSubmissionIds, filteredSubmissions]);
+  const isToggledAll = isAllCurrentToggled();
 
   const toggleAllSubmissions = () => {
     if (!isAllCurrentToggled()) {
@@ -439,7 +442,8 @@ export default function BountySubmissions({ slug }: Props) {
               submissionsLeft={
                 submissions?.filter((s) => !s.isWinner).length || 0
               }
-              showSurvey={() => setSurveyOpen(true)}
+              // Opens after the results modal's close animation.
+              showSurvey={() => setTimeout(() => setSurveyOpen(true), 500)}
             />
           )}
           {surveyOpen && bounty?.type !== 'grant' && (

@@ -80,37 +80,43 @@ export default function Hackathon() {
     debouncedSetSearchTextRef.current?.(value);
   }, []);
 
-  const getBounties = async () => {
-    setIsBountiesLoading(true);
-    try {
-      const hackathonQuery = await api.get('/api/hackathon/listings/', {
-        params: {
-          searchText,
-          skip,
-          take: length,
-        },
-      });
-      const hackathonData = hackathonQuery.data;
-      setTotalBounties(hackathonData.total);
-      setStartDate(hackathonData.startDate);
-      setBounties(hackathonData.listings);
-      setIsBountiesLoading(false);
-    } catch (error) {
-      setIsBountiesLoading(false);
-    }
-  };
+  useEffect(() => {
+    if (!user?.hackathonId && user?.role !== 'GOD') return;
+    let ignore = false;
+    const getBounties = async () => {
+      setIsBountiesLoading(true);
+      try {
+        const hackathonQuery = await api.get('/api/hackathon/listings/', {
+          params: {
+            searchText,
+            skip,
+            take: length,
+          },
+        });
+        if (ignore) return;
+        const hackathonData = hackathonQuery.data;
+        setTotalBounties(hackathonData.total);
+        setStartDate(hackathonData.startDate);
+        setBounties(hackathonData.listings);
+        setIsBountiesLoading(false);
+      } catch (error) {
+        if (!ignore) setIsBountiesLoading(false);
+      }
+    };
+    const timer = setTimeout(() => {
+      getBounties();
+    }, 0);
+    return () => {
+      ignore = true;
+      clearTimeout(timer);
+    };
+  }, [user?.hackathonId, user?.role, skip, searchText]);
 
   useEffect(() => {
-    if (user?.hackathonId || user?.role === 'GOD') {
-      setTimeout(() => {
-        getBounties();
-      }, 0);
-    }
-  }, [user?.hackathonId, skip, searchText]);
-
-  useEffect(() => {
+    let ignore = false;
     const getSponsorStats = async () => {
       const sponsorData = await api.get('/api/hackathon/stats');
+      if (ignore) return;
       setSponsorStats({
         ...sponsorData.data,
         totalHackathonRewards: sponsorData.data.totalRewardAmount,
@@ -120,6 +126,9 @@ export default function Hackathon() {
       setIsStatsLoading(false);
     };
     getSponsorStats();
+    return () => {
+      ignore = true;
+    };
   }, [user?.hackathonId]);
 
   const hasHackathonStarted = startDate ? dayjs().isAfter(startDate) : true;
@@ -229,9 +238,9 @@ export default function Hackathon() {
                             alt={`${currentBounty?.sponsor?.name}`}
                             src={currentBounty?.sponsor?.logo ?? undefined}
                           />
-                          <a className="overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500">
+                          <span className="overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500">
                             {currentBounty.title}
-                          </a>
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="py-2">
@@ -348,7 +357,7 @@ export default function Hackathon() {
                 size="sm"
                 disabled={skip <= 0}
                 onClick={() =>
-                  skip >= length ? setSkip(skip - length) : setSkip(0)
+                  setSkip((prev) => (prev >= length ? prev - length : 0))
                 }
               >
                 <ChevronLeft className="mr-2 h-5 w-5" />

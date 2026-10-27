@@ -350,7 +350,7 @@ const Index = () => {
             size="sm"
             disabled={skip <= 0}
             onClick={() =>
-              skip >= length ? setSkip(skip - length) : setSkip(0)
+              setSkip((prev) => (prev >= length ? prev - length : 0))
             }
             className="flex items-center"
           >

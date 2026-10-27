@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -30,7 +30,7 @@ export const SponsorInfoModal = ({
 }) => {
   const { user, refetchUser } = useUser();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
+  const uploadedPhotoUrlRef = useRef<string | null>(null);
 
   const form = useForm<UserSponsorDetails>({
     resolver: zodResolver(userSponsorDetailsSchema),
@@ -43,7 +43,7 @@ export const SponsorInfoModal = ({
     },
   });
 
-  const [isGooglePhoto, setIsGooglePhoto] = useState<boolean>(
+  const isGooglePhotoRef = useRef<boolean>(
     user?.photo?.includes('googleusercontent.com') || false,
   );
 
@@ -59,7 +59,12 @@ export const SponsorInfoModal = ({
         message: usernameValidationError,
       });
     } else form.clearErrors('username');
-  }, [usernameValidationError, isUsernameInvalid]);
+  }, [
+    usernameValidationError,
+    isUsernameInvalid,
+    form.setError,
+    form.clearErrors,
+  ]);
 
   const updateUserMutation = useMutation({
     mutationFn: async (data: UserSponsorDetails) => {
@@ -88,7 +93,8 @@ export const SponsorInfoModal = ({
     if (isUsernameInvalid) return;
 
     const finalPhoto =
-      uploadedPhotoUrl || (isGooglePhoto ? user?.photo : data.photo);
+      uploadedPhotoUrlRef.current ||
+      (isGooglePhotoRef.current ? user?.photo : data.photo);
 
     updateUserMutation.mutate({
       ...data,
@@ -154,13 +160,13 @@ export const SponsorInfoModal = ({
                 className="w-full"
                 defaultValue={user?.photo || undefined}
                 onChange={(result) => {
-                  setIsGooglePhoto(false);
-                  setUploadedPhotoUrl(result.secureUrl);
+                  isGooglePhotoRef.current = false;
+                  uploadedPhotoUrlRef.current = result.secureUrl;
                   form.setValue('photo', result.secureUrl);
                 }}
                 onReset={() => {
-                  setIsGooglePhoto(false);
-                  setUploadedPhotoUrl(null);
+                  isGooglePhotoRef.current = false;
+                  uploadedPhotoUrlRef.current = null;
                   form.setValue('photo', '');
                 }}
               />

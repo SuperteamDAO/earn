@@ -1,5 +1,5 @@
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import { useEffect } from 'react';
@@ -57,15 +57,20 @@ export const CreateListingModal = ({
       <DialogContent
         hideCloseIcon
         className="overflow-hidden rounded-lg bg-white p-0 sm:max-w-160"
+        onOpenAutoFocus={(e) => {
+          // Focus the dialog itself instead of its first button, so no button
+          // shows a focus ring as soon as the modal opens.
+          e.preventDefault();
+          if (e.currentTarget instanceof HTMLElement) e.currentTarget.focus();
+        }}
       >
-        <button className="sr-only" />
         <ScrollArea
           className="max-h-svh"
           viewportProps={{
             className: 'h-full *:h-full',
           }}
         >
-          <motion.div
+          <m.div
             initial={{
               opacity: 0,
               transform: 'translateY(-30px)',
@@ -84,7 +89,7 @@ export const CreateListingModal = ({
                   Select the type of listing
                 </h2>
                 <DialogClose asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" aria-label="Close">
                     <Cross2Icon className="h-4 w-4 text-slate-400" />
                   </Button>
                 </DialogClose>
@@ -157,7 +162,7 @@ export const CreateListingModal = ({
                 ))}
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </ScrollArea>
       </DialogContent>
     </Dialog>

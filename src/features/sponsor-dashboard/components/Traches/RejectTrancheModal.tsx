@@ -1,5 +1,5 @@
 import { ChevronDown, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -99,17 +99,11 @@ export const RejectTrancheModal = ({
     } catch (e) {
       console.error(e);
     } finally {
+      // react-doctor-disable-next-line react-doctor/no-unowned-async-error-clear -- the submit button is disabled while `loading`, and the parent keys this modal by tranche id, so no other request can own this flag
       setLoading(false);
       closeWithoutGuard();
     }
   };
-
-  useEffect(() => {
-    setCustomNote('');
-    setIsCustomEmailOpen(false);
-    setEmailError(null);
-    setLoading(false);
-  }, [trancheId]);
 
   return (
     <>

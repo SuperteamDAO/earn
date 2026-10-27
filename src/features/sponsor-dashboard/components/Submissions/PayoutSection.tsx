@@ -39,8 +39,11 @@ const PaymentDetailsRow = ({
   return (
     <>
       <TableCell>
-        {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+        {paymentDetails.map((payment) => (
+          <div
+            className="my-2 flex items-center justify-between"
+            key={payment.tranche}
+          >
             <p className="text-sm font-medium text-slate-500">
               Tranche {payment.tranche}
             </p>
@@ -48,8 +51,11 @@ const PaymentDetailsRow = ({
         ))}
       </TableCell>
       <TableCell>
-        {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+        {paymentDetails.map((payment) => (
+          <div
+            className="my-2 flex items-center justify-between"
+            key={payment.tranche}
+          >
             <div className="flex items-center gap-1">
               <TokenIcon
                 className="h-4 w-4 rounded-full"
@@ -65,9 +71,9 @@ const PaymentDetailsRow = ({
       </TableCell>
       <TableCell colSpan={2}>
         {paymentDetails.map(
-          (payment, index) =>
+          (payment) =>
             payment.txId && (
-              <div key={index} className="my-2">
+              <div key={payment.tranche} className="my-2">
                 <div
                   className="flex cursor-pointer items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900"
                   onClick={() => {

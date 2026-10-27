@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -123,6 +123,7 @@ export default function AiReviewProjectApplicationsModal({
       !!user?.currentSponsorId &&
       user?.currentSponsorId === listing?.sponsorId
     ) {
+      // react-doctor-disable-next-line react-doctor/query-no-query-in-effect -- the unreviewed list must follow the parent's `applications` prop, which is not part of this query's key, and refetchOnMount is off
       refetchUnreviewedApplications();
     }
   }, [
@@ -183,14 +184,7 @@ export default function AiReviewProjectApplicationsModal({
         setState('ERROR');
       }
     }, 10000);
-  }, [
-    applications,
-    unreviewedApplications,
-    nonAnalysedApplications,
-    posthog,
-    commitReviews,
-    refetchUnreviewedApplications,
-  ]);
+  }, [commitReviews, refetchUnreviewedApplications]);
   function onComplete() {
     setState('INIT');
     setProgress(0);
@@ -296,7 +290,7 @@ export default function AiReviewProjectApplicationsModal({
           <AnimateChangeInHeight>
             <AnimatePresence mode="popLayout">
               {state === 'INIT' && (
-                <motion.div
+                <m.div
                   key="init"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -356,10 +350,10 @@ export default function AiReviewProjectApplicationsModal({
                       approving or rejecting a project application.
                     </p>
                   </CardFooter>
-                </motion.div>
+                </m.div>
               )}
               {state === 'PROCESSING' && (
-                <motion.div
+                <m.div
                   key="processing"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -387,10 +381,10 @@ export default function AiReviewProjectApplicationsModal({
                       Approx. {estimatedTimeSingular} remaining
                     </p>
                   </CardFooter>
-                </motion.div>
+                </m.div>
               )}
               {state === 'DONE' && (
-                <motion.div
+                <m.div
                   key="done"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -447,10 +441,10 @@ export default function AiReviewProjectApplicationsModal({
                       Have a look
                     </Button>
                   </CardContent>
-                </motion.div>
+                </m.div>
               )}
               {state === 'ERROR' && (
-                <motion.div
+                <m.div
                   key="error"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -478,7 +472,7 @@ export default function AiReviewProjectApplicationsModal({
                       Try Again
                     </Button>
                   </CardContent>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </AnimateChangeInHeight>

@@ -79,11 +79,14 @@ export default function UpdateSponsor() {
         });
       }
     }
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- touchedFields.name is read, not reacted to: with mode 'onBlur' it flips during blur validation, and re-running then would clear the resolver's fresh error on an empty name
   }, [
     sponsorNameValidationErrorMessage,
     isSponsorNameInvalid,
     form.formState.errors.name?.message,
     sponsorName,
+    form.clearErrors,
+    form.setError,
   ]);
 
   const {
@@ -103,11 +106,14 @@ export default function UpdateSponsor() {
         message: slugValidationErrorMessage,
       });
     }
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- touchedFields.slug is read, not reacted to: with mode 'onBlur' it flips during blur validation, and re-running then would clear the resolver's fresh slug error
   }, [
     slugValidationErrorMessage,
     isSlugInvalid,
     form.formState.errors.slug?.message,
     slug,
+    form.clearErrors,
+    form.setError,
   ]);
 
   const { data: sponsorData } = useQuery(sponsorQuery(user?.currentSponsorId));
