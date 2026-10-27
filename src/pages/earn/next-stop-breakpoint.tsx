@@ -216,7 +216,7 @@ function HeroMini({
 }) {
   const isMd = useBreakpoint('md');
   const [isMounted, setIsMounted] = useState(false);
-  const [countdownDate, setCountdownDate] = useState<Date>(
+  const [countdownDate, setCountdownDate] = useState<Date>(() =>
     dayjs.utc(startDate).toDate(),
   );
   const [status, setStatus] = useState<HackathonStatus>('Start In');

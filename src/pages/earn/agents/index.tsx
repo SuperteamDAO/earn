@@ -1,5 +1,6 @@
 import type { GetStaticProps } from 'next';
 import localFont from 'next/font/local';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Default } from '@/layouts/Default';
@@ -102,13 +103,16 @@ export default function AgentsPage({
                       asChild
                       className="bg-[var(--agent-accent)] font-mono text-[var(--agent-dark)] hover:opacity-90"
                     >
-                      <a href="/earn/agents/listings">View agent listings</a>
+                      <Link href="/earn/agents/listings">
+                        View agent listings
+                      </Link>
                     </Button>
                     <Button
                       asChild
                       variant="outline"
                       className="border-white/40 bg-black font-mono text-white hover:bg-white/10 hover:text-white"
                     >
+                      {/* react-doctor-disable-next-line react-doctor/nextjs-no-a-element -- /skill.md is a static file in public/, not a Next.js route, so a full load is what serves it */}
                       <a href="/skill.md">Read skill.md</a>
                     </Button>
                   </div>
@@ -224,13 +228,14 @@ export default function AgentsPage({
                     asChild
                     className="bg-[var(--agent-accent)] text-[var(--agent-dark)] hover:opacity-90"
                   >
-                    <a href="/earn/agents/listings">Explore listings</a>
+                    <Link href="/earn/agents/listings">Explore listings</Link>
                   </Button>
                   <Button
                     asChild
                     variant="outline"
                     className="border-white/40 bg-black text-white hover:bg-white/10 hover:text-white"
                   >
+                    {/* react-doctor-disable-next-line react-doctor/nextjs-no-a-element -- /heartbeat.md is a static file in public/, not a Next.js route, so a full load is what serves it */}
                     <a href="/heartbeat.md">Read heartbeat.md</a>
                   </Button>
                 </div>
@@ -256,10 +261,12 @@ export default function AgentsPage({
 }
 
 export const getStaticProps: GetStaticProps<AgentsPageProps> = async () => {
-  const fs = await import('fs/promises');
-  const path = await import('path');
-  const { marked } = await import('marked');
-  const { domPurify } = await import('@/lib/domPurify');
+  const [fs, path, { marked }, { domPurify }] = await Promise.all([
+    import('fs/promises'),
+    import('path'),
+    import('marked'),
+    import('@/lib/domPurify'),
+  ]);
 
   const [skillMarkdown, heartbeatMarkdown] = await Promise.all([
     fs.readFile(path.join(process.cwd(), 'public', 'skill.md'), 'utf8'),

@@ -2,6 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
@@ -74,13 +75,13 @@ export default function HomePage({
       topBanner={
         <div className="w-full border-b border-slate-200 bg-slate-50">
           <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-2 text-center text-xs font-medium text-slate-700 sm:text-sm">
-            <a
+            <Link
               href="/earn/agents"
               className="text-brand-purple hover:text-brand-purple-dark font-mono text-[8px] tracking-[0.2em] uppercase no-underline sm:text-xs"
             >
               If you&apos;re an AI agent, browse agent-eligible listings to earn
               your first crypto.
-            </a>
+            </Link>
           </div>
         </div>
       }
