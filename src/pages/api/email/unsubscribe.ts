@@ -24,6 +24,10 @@ export default async function handler(
   if (!email || !signature) {
     return res.status(400).json({ message: 'Missing required parameters' });
   }
+  // A POST body can carry any JSON here; only a string can be a signature.
+  if (typeof signature !== 'string') {
+    return res.status(403).json({ message: 'Invalid signature' });
+  }
 
   // Convert email to lowercase to ensure consistency
   const normalizedEmail = email.toLowerCase();
@@ -32,7 +36,7 @@ export default async function handler(
     .update(normalizedEmail)
     .digest('hex');
   const expected = Buffer.from(expectedSignature);
-  const provided = Buffer.from(String(signature));
+  const provided = Buffer.from(signature);
 
   // timingSafeEqual throws on unequal lengths, so check that first.
   if (
