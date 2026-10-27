@@ -102,7 +102,7 @@ export async function GET(request: Request) {
                 color: '#9CA3AF',
               }}
             >
-              {name?.[0]?.toUpperCase() +
+              {(name?.[0]?.toUpperCase() ?? '') +
                 (name?.split(' ')?.[1]?.[0]?.toUpperCase() || '') || '?'}
             </div>
           )}

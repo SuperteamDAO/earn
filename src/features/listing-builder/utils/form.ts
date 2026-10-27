@@ -167,6 +167,20 @@ export const toFormEligibility = (
     }),
   );
 
+// Older listings can store rewards as an array. Number it from 1, as
+// validateFields does, because 0-based positions fail the reward schema.
+const toFormRewards = (
+  rewards: Listing['rewards'],
+): ListingFormData['rewards'] => {
+  if (!rewards) return undefined;
+  if (Array.isArray(rewards)) {
+    return Object.fromEntries(
+      rewards.filter(Boolean).map((value, index) => [String(index + 1), value]),
+    );
+  }
+  return Object.fromEntries(Object.entries(rewards));
+};
+
 // Applying a template keeps the sponsor's current settings and takes only the
 // template's content: title, description, skills and type.
 export const cleanTemplate = (
@@ -231,9 +245,7 @@ export function transformListingToFormListing(
     description: listing.description || '',
     eligibility: toFormEligibility(listing.eligibility),
     region: listing.region || 'Global',
-    rewards: listing.rewards
-      ? Object.fromEntries(Object.entries(listing.rewards))
-      : undefined,
+    rewards: toFormRewards(listing.rewards),
     compensationType: listing.compensationType as CompensationType,
     rewardAmount: listing.rewardAmount,
     maxBonusSpots: listing.maxBonusSpots,
