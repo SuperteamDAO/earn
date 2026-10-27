@@ -51,7 +51,7 @@ export async function fetchWalletActivity(
       if (!tx?.meta) continue;
 
       const walletIndex = tx.transaction.message.accountKeys.findIndex(
-        (acc: any) => acc.pubkey === walletAddress || acc === walletAddress,
+        (acc) => acc.pubkey === walletAddress,
       );
 
       if (walletIndex !== -1) {
@@ -158,7 +158,7 @@ export async function fetchWalletActivity(
                 return (
                   (parsed.type === 'transfer' ||
                     parsed.type === 'transferChecked') &&
-                  (instruction as any).program === 'spl-token'
+                  instruction.program === 'spl-token'
                 );
               });
 

@@ -1,9 +1,10 @@
-export type TIMEFRAME =
-  | 'THIS_YEAR'
-  | 'LAST_30_DAYS'
-  | 'LAST_7_DAYS'
-  | 'ALL_TIME';
-export type SKILL = 'ALL' | 'CONTENT' | 'DESIGN' | 'DEVELOPMENT' | 'OTHER';
+import {
+  type TalentRankingSkills,
+  type TalentRankingTimeframe,
+} from '@/prisma/enums';
+
+export type TIMEFRAME = TalentRankingTimeframe;
+export type SKILL = TalentRankingSkills;
 
 export interface RowType {
   rank: number;

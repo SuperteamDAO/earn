@@ -43,7 +43,7 @@ export function RanksTable({
 }: Props) {
   const { user } = useUser();
 
-  const userSkills = getSubskills(user?.skills as any, skillCategories[skill]);
+  const userSkills = getSubskills(user?.skills ?? null, skillCategories[skill]);
 
   return (
     <div
@@ -247,7 +247,10 @@ export function RanksTable({
                     }}
                     target="_blank"
                   >
-                    <EarnAvatar avatar={user.photo} id={user.firstName} />
+                    <EarnAvatar
+                      avatar={user.photo}
+                      id={user.firstName ?? undefined}
+                    />
                     <div className="flex flex-col items-start justify-center gap-1 md:justify-start">
                       <p className="block max-w-[7rem] overflow-x-hidden text-ellipsis whitespace-nowrap text-black group-hover:underline md:hidden">
                         {user.firstName +

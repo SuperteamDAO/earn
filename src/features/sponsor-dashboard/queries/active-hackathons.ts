@@ -1,9 +1,19 @@
 import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
+// What /api/sponsor-dashboard/active-hackathons selects; dates arrive as strings.
+export interface ActiveHackathon {
+  id: string;
+  name: string;
+  slug: string;
+  altLogo: string | null;
+  logo: string;
+  startDate: string | null;
+  deadline: string | null;
+  eligibility: unknown;
+}
 
-const fetchActiveHackathons = async (): Promise<HackathonModel[]> => {
+const fetchActiveHackathons = async (): Promise<ActiveHackathon[]> => {
   const { data } = await api.get(`/api/sponsor-dashboard/active-hackathons/`);
   return data;
 };

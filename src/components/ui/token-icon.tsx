@@ -6,7 +6,7 @@ import { Skeleton } from './skeleton';
 
 interface TokenIconProps {
   symbol?: string | null;
-  alt?: string;
+  alt?: string | null;
   className?: string;
 }
 
@@ -23,5 +23,11 @@ export function TokenIcon({
     return <Skeleton className={cn('rounded-full', className)} />;
   }
 
-  return <LocalImage src={getIcon(symbol)} alt={alt} className={className} />;
+  return (
+    <LocalImage
+      src={getIcon(symbol)}
+      alt={alt ?? 'token'}
+      className={className}
+    />
+  );
 }

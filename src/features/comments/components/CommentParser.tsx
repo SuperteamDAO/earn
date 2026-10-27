@@ -15,7 +15,7 @@ interface Props {
   value: string;
   type: CommentType;
   isAnnounced: boolean;
-  submissionId?: string;
+  submissionId?: string | null;
   isListingAndUserPro?: boolean;
 }
 

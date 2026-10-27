@@ -36,7 +36,7 @@ import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
 
 interface Props {
   applications: SubmissionWithUser[] | undefined;
-  listing: Listing | undefined;
+  listing: Omit<Listing, 'Hackathon'> | undefined;
 }
 export default function AiReviewProjectApplicationsModal({
   applications,
@@ -175,7 +175,7 @@ export default function AiReviewProjectApplicationsModal({
         posthog.capture('complete_ai review project');
         setState('DONE');
         await refetchUnreviewedApplications();
-      } catch (error: any) {
+      } catch (error) {
         console.log(
           'error occured while commiting reviewed applications',
           error,

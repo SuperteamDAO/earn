@@ -1,4 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth';
+import { isAxiosError } from 'axios';
 import { createHash } from 'crypto';
 import type { GetServerSideProps } from 'next';
 import Head from 'next/head';
@@ -100,9 +101,11 @@ export default function ClaimPage({
         response?.data?.agentUsername || agentUsername || null,
       );
       toast.success('Agent claimed successfully');
-    } catch (error: any) {
+    } catch (error) {
       const apiError =
-        error?.response?.data?.error || 'Unable to claim this agent';
+        (isAxiosError<{ error?: string }>(error) &&
+          error.response?.data?.error) ||
+        'Unable to claim this agent';
       toast.error(apiError);
     } finally {
       setIsClaiming(false);

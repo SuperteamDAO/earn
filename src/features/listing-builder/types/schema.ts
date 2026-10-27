@@ -2,11 +2,10 @@ import { z } from 'zod';
 
 import { skillsArraySchema } from '@/interface/skills';
 import { BountyType, CompensationType, status } from '@/prisma/enums';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { dayjs } from '@/utils/dayjs';
 
-import { type Listing } from '@/features/listings/types';
+import { type BuilderHackathon } from '@/features/listing-builder/types';
 import {
   emailRegex,
   telegramRegex,
@@ -41,8 +40,9 @@ interface ListingFormSchemaOptions {
   isGod: boolean;
   isEditing: boolean;
   isST: boolean;
-  pastListing?: Listing;
-  hackathons?: HackathonModel[];
+  // Only the saved deadline is read (to stop it moving earlier when editing).
+  pastListing?: { deadline?: string | Date | null };
+  hackathons?: BuilderHackathon[];
 }
 export const createListingFormSchema = ({
   isGod,
@@ -318,7 +318,7 @@ export const createListingFormSchema = ({
 export const createListingRefinements = async (
   data: ListingFormData,
   ctx: z.RefinementCtx,
-  hackathons?: HackathonModel[],
+  hackathons?: BuilderHackathon[],
   pick?: ValidationFields,
 ) => {
   if (data.type === 'project') {

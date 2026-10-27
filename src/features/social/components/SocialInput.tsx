@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { type Control } from 'react-hook-form';
+import { type Control, type FieldValues, type Path } from 'react-hook-form';
 
 import { VerifiedXIcon } from '@/components/icons/VerifiedXIcon';
 import { Button } from '@/components/ui/button';
@@ -30,19 +30,23 @@ const getDisplayValue = (name: SocialType, value: string) => {
   return value;
 };
 
-type SocialInputAllProps = {
-  control: Control<any>;
+type SocialInputAllProps<T extends FieldValues> = {
+  control: Control<T>;
   required?: SocialType[];
 };
 
-export const SocialInputAll = ({ control, required }: SocialInputAllProps) => {
+export const SocialInputAll = <T extends FieldValues>({
+  control,
+  required,
+}: SocialInputAllProps<T>) => {
   return (
     <>
       {socials.map(({ name, placeholder }) => {
         return (
           <div className="mb-5" key={name}>
             <SocialInput
-              name={name}
+              // Forms using SocialInputAll declare a field per social name.
+              name={name as Path<T>}
               socialName={name}
               placeholder={placeholder}
               required={required?.includes(name)}
@@ -55,9 +59,9 @@ export const SocialInputAll = ({ control, required }: SocialInputAllProps) => {
   );
 };
 
-interface SocialInputProps {
-  control: Control<any>;
-  name: string;
+interface SocialInputProps<T extends FieldValues> {
+  control: Control<T>;
+  name: Path<T>;
   socialName: SocialType;
   required?: boolean;
   placeholder?: string;
@@ -75,7 +79,7 @@ interface SocialInputProps {
   isPro?: boolean;
   readOnly?: boolean;
 }
-export const SocialInput = ({
+export const SocialInput = <T extends FieldValues>({
   control,
   name,
   required,
@@ -92,7 +96,7 @@ export const SocialInput = ({
   onVerify,
   isPro = false,
   readOnly = false,
-}: SocialInputProps) => {
+}: SocialInputProps<T>) => {
   const social = useMemo(
     () => socials.find((s) => s.name === socialName),
     [socials, socialName],

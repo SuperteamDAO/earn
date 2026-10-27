@@ -140,7 +140,7 @@ export default function AiReviewModal({ applications, grant }: Props) {
         posthog.capture('complete_ai review grants');
         setState('DONE');
         await refetchUnreviewedApplications();
-      } catch (error: any) {
+      } catch (error) {
         console.log(
           'error occured while commiting reviewed applications',
           error,

@@ -36,7 +36,7 @@ import { ReviewLoadingAnimation } from './ReviewLoadingAnimation';
 
 interface Props {
   submissions: SubmissionWithUser[] | undefined;
-  listing: Listing | undefined;
+  listing: Omit<Listing, 'Hackathon'> | undefined;
 }
 export default function AiReviewBountiesSubmissionsModal({
   submissions,
@@ -183,7 +183,7 @@ export default function AiReviewBountiesSubmissionsModal({
         posthog.capture('complete_ai review bounties');
         setState('DONE');
         await refetchUnreviewedSubmissions();
-      } catch (error: any) {
+      } catch (error) {
         console.log(
           'error occured while commiting reviewed submissions',
           error,

@@ -56,7 +56,7 @@ function PrivyInitFlagBridge(): null {
   const { ready } = usePrivy();
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      (window as any).__privyInitializing = !ready;
+      window.__privyInitializing = !ready;
     }
   }, [ready]);
   return null;

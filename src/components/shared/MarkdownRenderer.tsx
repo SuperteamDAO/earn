@@ -1,8 +1,10 @@
-import parse, { type HTMLReactParserOptions } from 'html-react-parser';
+import parse, { Element, type HTMLReactParserOptions } from 'html-react-parser';
 import { marked } from 'marked';
 import { memo, useEffect, useState } from 'react';
 const options: HTMLReactParserOptions = {
-  replace: ({ name, children, attribs }: any) => {
+  replace: (domNode) => {
+    if (!(domNode instanceof Element)) return;
+    const { name, children, attribs } = domNode;
     if (name === 'p' && (!children || children.length === 0)) {
       return <br />;
     }

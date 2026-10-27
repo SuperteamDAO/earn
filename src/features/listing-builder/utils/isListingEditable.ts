@@ -13,7 +13,7 @@ type ListingInput =
   | {
       type: string;
       deadline?: string | Date | null;
-      [key: string]: any;
+      [key: string]: unknown;
     };
 
 type UserInput =
@@ -25,7 +25,7 @@ type UserInput =
           id?: string | null;
         } | null;
       } | null;
-      [key: string]: any;
+      [key: string]: unknown;
     }
   | null;
 

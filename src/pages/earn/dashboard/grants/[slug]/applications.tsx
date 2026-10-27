@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useAtomValue } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -52,7 +53,9 @@ function GrantApplications({ slug }: Props) {
 
   useEffect(() => {
     if (grantError && !isSwitchingSponsor) {
-      const error = grantError as any;
+      const error = isAxiosError<{ sponsorId?: string }>(grantError)
+        ? grantError
+        : undefined;
       if (error?.response?.status === 403) {
         const hasSponsorId = error?.response?.data?.sponsorId;
         if (!hasSponsorId) {

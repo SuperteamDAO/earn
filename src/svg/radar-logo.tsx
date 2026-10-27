@@ -1,4 +1,6 @@
-export const RadarLogo = ({ styles }: { styles?: any }) => {
+import { type CSSProperties } from 'react';
+
+export const RadarLogo = ({ styles }: { styles?: CSSProperties }) => {
   return (
     <svg
       width="307"

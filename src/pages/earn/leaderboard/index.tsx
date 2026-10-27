@@ -3,6 +3,7 @@ import { type GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useTransition } from 'react';
 
+import { parseSkillEntries } from '@/interface/skills';
 import { type PrismaUserWithoutKYC } from '@/interface/user';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
@@ -261,7 +262,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       formatterUserRank = {
         rank: userRank.rank,
         skills: getSubskills(
-          userRank.user.skills as any,
+          parseSkillEntries(userRank.user.skills),
           skillCategories[skill],
         ),
         username: userRank.user.username,
@@ -279,7 +280,10 @@ export const getServerSideProps: GetServerSideProps = async ({
     props: {
       results: results.map((result) => ({
         rank: result.rank,
-        skills: getSubskills(result.user.skills as any, skillCategories[skill]),
+        skills: getSubskills(
+          parseSkillEntries(result.user.skills),
+          skillCategories[skill],
+        ),
         username: result.user.username,
         name: result.user.firstName + ' ' + result.user.lastName,
         pfp: result.user.photo,

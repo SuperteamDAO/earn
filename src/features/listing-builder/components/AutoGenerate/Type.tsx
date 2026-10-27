@@ -20,18 +20,18 @@ import {
   SelectTrigger,
 } from '@/components/ui/select';
 import { type BountyType } from '@/generated/prisma/enums';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { BountyIcon } from '@/svg/bounty-icon';
 import { ProjectIcon } from '@/svg/project-icon';
 
 import { getVisibleHackathons } from '@/features/hackathon/utils/getVisibleHackathons';
+import { type BuilderHackathon } from '@/features/listing-builder/types';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 interface AutoGenerateTypeProps {
   input: string;
   setInput: (input: string) => void;
   setType: (type: BountyType | 'hackathon') => void;
   type: BountyType | 'hackathon';
-  hackathons?: HackathonModel[];
+  hackathons?: BuilderHackathon[];
   setHackathonSlug: (hackathon: string) => void;
   hackathonSlug: string;
 }

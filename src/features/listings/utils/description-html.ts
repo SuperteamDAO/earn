@@ -62,7 +62,7 @@ const DESCRIPTION_SANITIZE_CONFIG = {
 // Produces the same HTML string on the server and the client, so the
 // description can be server-rendered without hydration mismatches.
 export function getDescriptionHtml(
-  description: string | undefined,
+  description: string | undefined | null,
   h1ClassName: string,
 ): string {
   let normalized = description ?? '';

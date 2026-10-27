@@ -41,6 +41,7 @@ import { hackathonsAtom, isEditingAtom, isSTAtom } from '../../atoms';
 import { getDefaultListingToken } from '../../constants';
 import { useListingForm } from '../../hooks';
 import { slugCheckQuery } from '../../queries/slug-check';
+import { toFormEligibility } from '../../utils/form';
 import { calculateTotalRewardsForPodium } from '../../utils/rewards';
 import { getSuggestions } from '../../utils/suggestions';
 
@@ -224,7 +225,7 @@ function Type() {
       const hackathon = hackathons?.find((s) => s.slug === newType);
       if (hackathon) {
         form.setValue('hackathonId', hackathon.id);
-        form.setValue('eligibility', hackathon?.eligibility as any);
+        form.setValue('eligibility', toFormEligibility(hackathon?.eligibility));
         form.setValue('token', getDefaultListingToken(isST, hackathon.slug));
       }
     } else {

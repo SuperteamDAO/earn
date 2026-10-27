@@ -95,7 +95,7 @@ export const PayoutSection = ({
   bounty,
 }: {
   submissions: SubmissionWithUser[];
-  bounty: Listing;
+  bounty: Omit<Listing, 'Hackathon'>;
 }) => {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const { connected: walletConnected } = useWallet();

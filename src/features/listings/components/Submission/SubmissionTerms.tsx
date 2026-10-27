@@ -15,7 +15,7 @@ export const SubmissionTerms = ({
   isOpen: boolean;
   onClose: () => void;
   sponsorName: string;
-  entityName?: string;
+  entityName?: string | null;
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose} modal>

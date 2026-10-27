@@ -442,7 +442,7 @@ export function DateTimePicker({
           ></div>
           <MonthYearPicker
             value={month}
-            mode={monthYearPicker as any}
+            mode={monthYearPicker}
             onChange={onMonthYearChanged}
             minDate={minDate}
             maxDate={maxDate}
@@ -487,7 +487,8 @@ function MonthYearPicker({
   isPro = false,
 }: {
   value: Date;
-  mode: 'month' | 'year';
+  // false while the month/year overlay is closed: neither grid renders
+  mode: 'month' | 'year' | false;
   minDate?: Date;
   maxDate?: Date;
   onChange: (value: Date, mode: 'month' | 'year') => void;

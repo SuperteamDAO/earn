@@ -1,7 +1,7 @@
 import Head from 'next/head';
 
 interface JsonLdProps {
-  readonly data: Record<string, any> | Record<string, any>[];
+  readonly data: object | object[];
 }
 
 /**
@@ -11,7 +11,7 @@ interface JsonLdProps {
 export function JsonLd({ data }: JsonLdProps) {
   const jsonLdArray = Array.isArray(data) ? data : [data];
 
-  const serializeJsonLd = (schema: Record<string, any>) =>
+  const serializeJsonLd = (schema: object) =>
     JSON.stringify(schema, null, 0).replace(/</g, '\\u003c');
 
   return (

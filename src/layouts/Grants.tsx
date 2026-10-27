@@ -168,7 +168,6 @@ export function GrantPageLayout({
                             <ExtraInfoSection
                               skills={iterableSkills}
                               region={grant.region}
-                              requirements={grant.requirements}
                               pocSocials={grant.pocSocials}
                               isGrant
                             />

@@ -1,20 +1,14 @@
 import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
+import { type SubmissionGetPayload } from '@/prisma/models/Submission';
+import { type JsonResponse } from '@/utils/jsonResponse';
 
-interface HomeFeed {
-  createdAt: string;
-  isWinner: boolean;
-  listing: {
-    type: string;
-    isWinnersAnnounced: boolean;
-  };
-  user: {
-    firstName: string;
-    lastName: string;
-    username: string;
-  };
-}
+import { type homeFeedSelect } from '@/features/feed/constants/homeFeed';
+
+type HomeFeed = JsonResponse<
+  SubmissionGetPayload<{ select: typeof homeFeedSelect }>
+>;
 
 const fetchHomeFeed = async (): Promise<HomeFeed[]> => {
   const { data } = await api.get('/api/homepage/feed');

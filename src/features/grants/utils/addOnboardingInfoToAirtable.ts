@@ -8,6 +8,7 @@ import {
   airtableUrl,
   fetchAirtableRecordId,
 } from '@/utils/airtable';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 interface GrantApplicationWithUserAndGrant extends GrantApplicationModel {
   grant: {
@@ -136,10 +137,10 @@ export async function addOnboardingInfoToAirtable(
       `Successfully added recipient info to Airtable for application ${applicationId}. Response status: ${response.status}`,
     );
     return response.data;
-  } catch (error: any) {
-    const errorMessage = `Error in addOnboardingInfoToAirtable for application ${applicationId}: ${error.message}`;
+  } catch (error) {
+    const errorMessage = `Error in addOnboardingInfoToAirtable for application ${applicationId}: ${getErrorMessage(error)}`;
     logger.error(errorMessage, {
-      error: error.stack || error,
+      error: (error instanceof Error && error.stack) || error,
       applicationId: applicationId,
       ...(axios.isAxiosError(error) && {
         axiosResponseStatus: error.response?.status,

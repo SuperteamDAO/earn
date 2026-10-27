@@ -75,7 +75,9 @@ interface TalentProps {
   shouldNoIndex: boolean;
 }
 
-const getWorkPreferenceText = (workPrefernce?: string): string | null => {
+const getWorkPreferenceText = (
+  workPrefernce?: string | null,
+): string | null => {
   if (!workPrefernce || workPrefernce === 'Not looking for Work') {
     return null;
   }
@@ -522,7 +524,7 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
                   <div className="w-full md:w-1/2">
                     <p className="font-medium text-slate-900">Skills</p>
                     {Array.isArray(talent.skills) ? (
-                      talent.skills.map((skillItem: any, index: number) => {
+                      talent.skills.map((skillItem, index: number) => {
                         return skillItem ? (
                           <div className="mt-4" key={index}>
                             <p className="text-xs font-medium text-slate-400">
@@ -592,7 +594,13 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
             <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-25">
               <div className="flex w-full gap-6 md:w-1/2">
                 {socialLinks.map(({ Icon, link }, i) => {
-                  return <Icon link={link} className="h-5 w-5" key={i} />;
+                  return (
+                    <Icon
+                      link={link ?? undefined}
+                      className="h-5 w-5"
+                      key={i}
+                    />
+                  );
                 })}
               </div>
               <div className="flex w-full gap-6 md:w-1/2 md:gap-8">

@@ -227,7 +227,7 @@ export default function Hackathon() {
                           <img
                             className="mr-2 h-5 rounded-sm"
                             alt={`${currentBounty?.sponsor?.name}`}
-                            src={currentBounty?.sponsor?.logo}
+                            src={currentBounty?.sponsor?.logo ?? undefined}
                           />
                           <a className="overflow-hidden text-[15px] font-medium text-ellipsis whitespace-nowrap text-slate-500">
                             {currentBounty.title}
