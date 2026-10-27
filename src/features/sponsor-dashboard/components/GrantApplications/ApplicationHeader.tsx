@@ -160,7 +160,7 @@ export const ApplicationHeader = ({
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="cursor-pointer rounded-md p-2 text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-500">
+              <div className="cursor-pointer rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-500">
                 <MoreVertical className="h-4 w-4" />
               </div>
             </DropdownMenuTrigger>

@@ -96,7 +96,7 @@ export function UserMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger
           id="user menu"
-          className="ph-no-capture rounded-lg border border-white px-2 py-1 transition-all duration-100 hover:bg-slate-100 focus:outline-hidden active:border-slate-300 active:bg-slate-200 data-[state=open]:bg-slate-100"
+          className="ph-no-capture rounded-lg border border-white px-2 py-1 transition-colors duration-100 hover:bg-slate-100 focus:outline-hidden active:border-slate-300 active:bg-slate-200 data-[state=open]:bg-slate-100"
           onClick={() => {
             posthog.capture('clicked_user menu');
           }}

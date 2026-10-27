@@ -84,7 +84,7 @@ export function Survey({ open, setOpen }: Props) {
         unsetDefaultPosition
         unsetDefaultTransition
         hideCloseIcon
-        className="data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full right-4 bottom-4 max-w-[22.5rem] translate-x-0 translate-y-0 overflow-hidden p-0 duration-300"
+        className="data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full animation-duration-300 right-4 bottom-4 max-w-[22.5rem] translate-x-0 translate-y-0 overflow-hidden p-0"
       >
         <AnimateChangeInHeight duration={0.3}>
           <AnimatePresence mode="popLayout">

@@ -298,7 +298,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
           <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex h-9 items-center justify-between rounded-lg border border-slate-300 bg-transparent px-2 text-sm font-medium text-slate-500 capitalize shadow-xs transition-all duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200 xl:min-w-40">
+                <button className="flex h-9 items-center justify-between rounded-lg border border-slate-300 bg-transparent px-2 text-sm font-medium text-slate-500 capitalize shadow-xs transition-[border-color,border-radius] duration-300 ease-in-out hover:border-slate-200 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200 xl:min-w-40">
                   {activeStatus && (
                     <StatusPill
                       color={getColorStyles(activeStatus!).color}

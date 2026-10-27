@@ -394,7 +394,7 @@ export function MultiImageUploader({
               <button
                 type="button"
                 onClick={goToPrevious}
-                className="focus-visible:ring-brand-purple/40 absolute left-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-all hover:bg-white focus:outline-none focus-visible:ring-2"
+                className="focus-visible:ring-brand-purple/40 absolute left-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-[background-color,box-shadow] hover:bg-white focus:outline-none focus-visible:ring-2"
                 aria-label="Previous file"
               >
                 <ChevronLeft className="h-6 w-6" />
@@ -421,7 +421,7 @@ export function MultiImageUploader({
               <button
                 type="button"
                 onClick={goToNext}
-                className="focus-visible:ring-brand-purple/40 absolute right-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-all hover:bg-white focus:outline-none focus-visible:ring-2"
+                className="focus-visible:ring-brand-purple/40 absolute right-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-[background-color,box-shadow] hover:bg-white focus:outline-none focus-visible:ring-2"
                 aria-label="Next file"
               >
                 <ChevronRight className="h-6 w-6" />

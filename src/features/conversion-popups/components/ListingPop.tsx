@@ -147,7 +147,7 @@ const Desktop = ({
         }}
         unsetDefaultPosition
         unsetDefaultTransition
-        className="data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full right-4 bottom-4 max-w-[22.5rem] translate-x-0 translate-y-0 overflow-hidden duration-500"
+        className="data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full animation-duration-500 right-4 bottom-4 max-w-[22.5rem] translate-x-0 translate-y-0 overflow-hidden"
       >
         <DialogHeader className="">
           <LocalImage

@@ -101,7 +101,7 @@ export const MobileNavbar = ({
                 </Button>
                 <div className="relative">
                   <div
-                    className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700 md:gap-2"
+                    className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1.5 text-slate-500 transition-colors duration-100 hover:bg-slate-100 hover:text-slate-700 md:gap-2"
                     onClick={openCreditDrawer}
                   >
                     <CreditIcon
