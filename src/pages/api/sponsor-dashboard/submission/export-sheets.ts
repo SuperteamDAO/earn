@@ -1,11 +1,13 @@
 import { drive } from '@googleapis/drive';
-import { sheets } from '@googleapis/sheets';
+import { sheets, type sheets_v4 } from '@googleapis/sheets';
 import { OAuth2Client } from 'google-auth-library';
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
+import { getErrorMessage } from '@/utils/getErrorMessage';
+import { parseQuestionAnswers } from '@/utils/parseQuestionAnswers';
 import { plainTextFromHtmlTurndown } from '@/utils/plainTextFromHtml';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -36,10 +38,10 @@ function getGoogleAuthClient() {
   return oauth2Client;
 }
 
-function jsonToSheetRows(data: any[]): string[][] {
+function jsonToSheetRows(data: Record<string, unknown>[]): string[][] {
   if (data.length === 0) return [];
 
-  const headers = Object.keys(data[0]);
+  const headers = Object.keys(data[0] ?? {});
 
   const rows = [
     ['Please go to File -> Make a Copy to duplicate and edit this document'],
@@ -111,52 +113,55 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     const eligibilityQuestions = new Set<string>();
-    submissions.forEach((submission: any) => {
-      submission.eligibilityAnswers?.forEach((answer: any) => {
+    submissions.forEach((submission) => {
+      parseQuestionAnswers(submission.eligibilityAnswers).forEach((answer) => {
         eligibilityQuestions.add(answer.question);
       });
     });
 
     logger.debug('Transforming submissions to JSON format for Sheets export');
 
-    const finalJson = submissions.map((submission, i: number) => {
-      const user = submission.user;
-      const accountAge = Math.abs(dayjs(user.createdAt).diff(dayjs(), 'day'));
-      const eligibility: any = {};
-      eligibilityQuestions.forEach((question) => {
-        const answer = (submission.eligibilityAnswers as Array<any>)?.find(
-          (e: any) => e.question === question,
-        );
-        eligibility[question] = answer
-          ? plainTextFromHtmlTurndown.turndown(answer.answer)
-          : '';
-      });
-      return {
-        'Sr no': i + 1,
-        'Profile Link': `https://superteam.fun/earn/t/${user.username}`,
-        Name: `${user.firstName} ${user.lastName}`,
-        'Submission Link': submission.link || '',
-        ...eligibility,
-        'Anything Else': plainTextFromHtmlTurndown.turndown(
-          submission.otherInfo || '',
-        ),
-        Ask: submission.ask || '',
-        'Tweet Link': submission.tweet || '',
-        'Email ID': user.email,
-        'User Twitter': user.twitter || '',
-        'User Telegram': submission.telegram || user.telegram || '',
-        'User Wallet': user.walletAddress,
-        'User Location': user.location || '',
-        Label: submission.label,
-        'Winner Position': submission.isWinner
-          ? submission.winnerPosition === BONUS_REWARD_POSITION
-            ? 'Bonus'
-            : submission.winnerPosition
-          : '',
-        'Account Age': `${accountAge} day${accountAge > 1 ? 's' : ''} ago`,
-        Notes: plainTextFromHtmlTurndown.turndown(submission.notes || ''),
-      };
-    });
+    // Rows carry one column per eligibility question, so keys are dynamic.
+    const finalJson = submissions.map(
+      (submission, i: number): Record<string, string | number | null> => {
+        const user = submission.user;
+        const accountAge = Math.abs(dayjs(user.createdAt).diff(dayjs(), 'day'));
+        const eligibility: Record<string, string> = {};
+        eligibilityQuestions.forEach((question) => {
+          const answer = parseQuestionAnswers(
+            submission.eligibilityAnswers,
+          ).find((e) => e.question === question);
+          eligibility[question] = answer
+            ? plainTextFromHtmlTurndown.turndown(answer.answer)
+            : '';
+        });
+        return {
+          'Sr no': i + 1,
+          'Profile Link': `https://superteam.fun/earn/t/${user.username}`,
+          Name: `${user.firstName} ${user.lastName}`,
+          'Submission Link': submission.link || '',
+          ...eligibility,
+          'Anything Else': plainTextFromHtmlTurndown.turndown(
+            submission.otherInfo || '',
+          ),
+          Ask: submission.ask || '',
+          'Tweet Link': submission.tweet || '',
+          'Email ID': user.email,
+          'User Twitter': user.twitter || '',
+          'User Telegram': submission.telegram || user.telegram || '',
+          'User Wallet': user.walletAddress,
+          'User Location': user.location || '',
+          Label: submission.label,
+          'Winner Position': submission.isWinner
+            ? submission.winnerPosition === BONUS_REWARD_POSITION
+              ? 'Bonus'
+              : submission.winnerPosition
+            : '',
+          'Account Age': `${accountAge} day${accountAge > 1 ? 's' : ''} ago`,
+          Notes: plainTextFromHtmlTurndown.turndown(submission.notes || ''),
+        };
+      },
+    );
 
     logger.debug('Initializing Google Sheets API client');
 
@@ -165,10 +170,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     try {
       await auth.getAccessToken();
       logger.debug('Successfully authenticated with Google APIs');
-    } catch (authError: any) {
-      logger.error(`Authentication failed: ${authError.message}`);
+    } catch (authError) {
+      logger.error(`Authentication failed: ${getErrorMessage(authError)}`);
       throw new Error(
-        `Failed to authenticate with Google: ${authError.message}`,
+        `Failed to authenticate with Google: ${getErrorMessage(authError)}`,
       );
     }
 
@@ -309,8 +314,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           ...(() => {
             if (finalJson.length === 0) return [];
 
-            const headers = Object.keys(finalJson[0]);
-            const columnWidthRequests: any[] = [];
+            const headers = Object.keys(finalJson[0] ?? {});
+            const columnWidthRequests: sheets_v4.Schema$Request[] = [];
 
             headers.forEach((header, colIndex) => {
               const lengths: number[] = [];
@@ -404,7 +409,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     return res.status(200).json({
       url: spreadsheetUrl,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     logger.error(
       `User ${userId} unable to export to Google Sheets: ${safeStringify(error)}`,

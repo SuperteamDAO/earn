@@ -66,7 +66,10 @@ export default async function handler(
     const commentsCountInclude: CommentFindManyArgs = {
       where: commentsWhere,
     };
-    let feedPost: any[] | null = null;
+    // Each branch returns richer objects; these are the fields the sort reads.
+    let feedPost:
+      | { id: string | null; likeCount?: number | null; createdAt: Date }[]
+      | null = null;
     switch (type) {
       case 'submission': {
         const submissionInclude: SubmissionInclude = {
@@ -324,7 +327,7 @@ export default async function handler(
     });
     res.status(200).json(feedPost);
     return;
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching Post of type${type} with ID ${id}: ${safeStringify(error)}`,
     );
@@ -333,7 +336,7 @@ export default async function handler(
 }
 
 const hasWinnerPosition = (
-  obj: any,
+  obj: object,
 ): obj is { winnerPosition: number | null } => {
   return 'winnerPosition' in obj;
 };

@@ -150,7 +150,7 @@ export async function POST(
 
     logger.info(`Listing ${id} unpublished successfully`);
     return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`Error unpublishing listing ${id}: ${safeStringify(error)}`);
     return NextResponse.json(
       {

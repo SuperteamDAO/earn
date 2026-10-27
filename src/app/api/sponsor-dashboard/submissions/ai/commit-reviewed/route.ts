@@ -163,11 +163,11 @@ export async function POST(request: NextRequest) {
         },
       );
 
-      let processedWithoutFinalLabel: any[] = [];
+      let processedWithoutFinalLabel: typeof processedWithFinalLabel = [];
 
       if (submissionsWithoutFinalLabel.length > 0) {
-        const lowQualitySubmissions: any[] = [];
-        const remainingSubmissions: any[] = [];
+        const lowQualitySubmissions: typeof submissionsWithoutFinalLabel = [];
+        const remainingSubmissions: typeof submissionsWithoutFinalLabel = [];
 
         submissionsWithoutFinalLabel.forEach((submission) => {
           const ai = submission.ai as unknown as BountySubmissionAi;
@@ -292,7 +292,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 400 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.log(error);
     return NextResponse.json(
       {

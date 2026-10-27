@@ -42,7 +42,7 @@ async function grantDelete(
     return res
       .status(200)
       .json({ message: `Draft Grant with id=${id} deleted successfully.` });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while deleting grant with ID: ${id}: ${safeStringify(error)}`,
     );

@@ -80,7 +80,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.info('Successfully fetched member details');
     res.status(200).json({ total, data: result });
-  } catch (err: any) {
+  } catch (err) {
     logger.error(`Error fetching members: ${safeStringify(err)}`);
     res.status(400).json({ error: 'Error occurred while fetching members.' });
   }

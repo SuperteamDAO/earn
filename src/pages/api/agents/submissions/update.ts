@@ -95,14 +95,14 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
     }
 
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `[AgentSubmissionUpdate] Agent ${agentId} unable to update submission: ${safeStringify(error)}`,
     );
 
     let statusCode = 403;
     try {
-      JSON.parse(error.message);
+      JSON.parse(error instanceof Error ? error.message : '');
       statusCode = 400;
     } catch {}
 

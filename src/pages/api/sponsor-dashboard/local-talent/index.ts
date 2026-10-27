@@ -1,5 +1,6 @@
 import type { NextApiResponse } from 'next';
 
+import { type Skills } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
@@ -74,7 +75,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         firstName: string | null;
         lastName: string | null;
         email: string;
-        skills: any;
+        skills: Skills | null;
         telegram: string | null;
         twitter: string | null;
         website: string | null;
@@ -82,8 +83,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         username: string | null;
         photo: string | null;
         bio: string | null;
-        community: any;
-        interests: any;
+        community: string | null;
+        interests: string | null;
         createdAt: Date;
         totalSubmissions: number;
         wins: number;
@@ -140,7 +141,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.info('Successfully fetched and processed user details');
     res.status(200).json(rankedTalent);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error fetching and processing users: ${safeStringify(error)}`,
     );

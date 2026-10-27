@@ -222,11 +222,11 @@ async function commentHandler(
       logPrefix: 'CommentCreateAPI',
     });
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `[CommentCreateAPI] Error adding comment for user ${userId}: ${safeStringify(error)}`,
     );
-    const errorMessage = error?.message ?? '';
+    const errorMessage = error instanceof Error ? error.message : '';
     if (
       errorMessage.includes('Only the listing POC can pin comments') ||
       errorMessage.includes('Pinning is only allowed for bounty comments')

@@ -89,7 +89,7 @@ async function updateMemberRole(
 
     logger.info(`Successfully updated member ${id} to sponsor role ${role}`);
     return res.status(200).json({ message: 'Role updated successfully.' });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`Error updating member role: ${safeStringify(error)}`);
     return res.status(500).json({ error: 'Internal server error' });
   }

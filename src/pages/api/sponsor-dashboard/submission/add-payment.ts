@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type BountiesUpdateInput } from '@/prisma/models/Bounties';
 import { getTokenBySymbol } from '@/server/tokenList';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -9,6 +10,7 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
+import { getPaymentAmount } from '@/features/listings/utils/paymentDetails';
 import { addSubmissionPaymentRequestSchema } from '@/features/sponsor-dashboard/types';
 import {
   findUsedPaymentTxIds,
@@ -110,11 +112,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         });
       }
     } else {
-      const existingPayments =
-        (currentSubmission.paymentDetails as any[]) || [];
-      const existingTranches = existingPayments.map((p) => p.tranche);
+      const existingPaymentCount = Array.isArray(
+        currentSubmission.paymentDetails,
+      )
+        ? currentSubmission.paymentDetails.length
+        : 0;
       const newTranche = paymentDetail.tranche;
-      const expectedNextTranche = existingTranches.length + 1;
+      const expectedNextTranche = existingPaymentCount + 1;
 
       if (newTranche !== expectedNextTranche) {
         logger.warn(
@@ -134,7 +138,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       });
     }
 
-    const winnerReward = (listing.rewards as Record<string, any>)?.[
+    const winnerReward = (listing.rewards as Record<string, number> | null)?.[
       winnerPosition + ''
     ] as number;
     if (!winnerReward) {
@@ -182,13 +186,15 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const finalPaymentDetails = isProject
       ? [
-          ...((currentSubmission.paymentDetails as any[]) || []),
+          ...(Array.isArray(currentSubmission.paymentDetails)
+            ? currentSubmission.paymentDetails
+            : []),
           ...paymentDetails,
         ]
       : paymentDetails;
 
-    const totalAllPayments = finalPaymentDetails.reduce(
-      (sum, payment) => sum + payment.amount,
+    const totalAllPayments = finalPaymentDetails.reduce<number>(
+      (sum, payment) => sum + getPaymentAmount(payment),
       0,
     );
     const isFullyPaid = totalAllPayments >= winnerReward;
@@ -205,7 +211,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     const bountyId = result.listingId;
-    const updatedBounty: any = {};
+    const updatedBounty: BountiesUpdateInput = {};
 
     logger.info(`Sending payment notification email for submission ID: ${id}`);
     await queueEmail({
@@ -226,7 +232,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.info(`Successfully updated submission payment status for ID: ${id}`);
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error updating payment status for submission ${id}: ${safeStringify(
         error,

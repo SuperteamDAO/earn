@@ -3,15 +3,20 @@ import { ImageResponse } from 'next/og';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { getTokenIcon } from '@/server/tokenList';
 import { convertToJpegUrl } from '@/utils/cloudinary';
-import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
+import { getErrorMessage } from '@/utils/getErrorMessage';
+import {
+  createParamReader,
+  formatNumber,
+  formatString,
+  loadGoogleFont,
+} from '@/utils/ogHelpers';
 import { getURL } from '@/utils/validUrl';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const getParam = (name: string, processFn = (x: any) => x) =>
-      searchParams.has(name) ? processFn(searchParams.get(name)) : null;
+    const getParam = createParamReader(searchParams);
     const title = getParam('title', (x) =>
       formatString(decodeURIComponent(x), 97),
     );
@@ -263,8 +268,8 @@ export async function GET(request: Request) {
         ],
       },
     );
-  } catch (e: any) {
-    console.log(`${e.message}`);
+  } catch (e) {
+    console.log(getErrorMessage(e));
     return new Response(`Failed to generate the image`, {
       status: 500,
     });

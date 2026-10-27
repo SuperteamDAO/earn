@@ -51,7 +51,7 @@ async function getBookmarks(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.info(`Fetched ${listings.length} bookmarks for user ID: ${userId}`);
     return res.status(200).json(listings);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching bookmarks for user ID=${req.userId}: ${safeStringify(error)}`,
     );

@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
 
     logger.info(`Successfully fetched bounty templates for type: ${type}`);
     return NextResponse.json(result, { status: 200 });
-  } catch (err: any) {
+  } catch (err) {
     logger.error(
       `Error occurred while fetching bounty templates: ${safeStringify(err)}`,
     );

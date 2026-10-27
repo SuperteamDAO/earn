@@ -428,7 +428,7 @@ s.name LIKE CONCAT('%', ?, '%')
       bountiesCount: bounties.length,
       grantsCount: grantsWithTotalApplications.length,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error('Error fetching bounties or grants:', err);
     res.status(500).json({ error: 'Internal Server Error' });
   }

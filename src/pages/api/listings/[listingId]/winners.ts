@@ -64,7 +64,7 @@ export default async function submission(
       `Fetched ${result.length} winning submissions for listing ID: ${listingId}`,
     );
     res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching winning submissions for listing ID=${listingId}: ${safeStringify(error)}`,
     );

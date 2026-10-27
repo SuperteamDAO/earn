@@ -34,7 +34,7 @@ export default async function getAllUsers(
 
     logger.info(`User details fetched successfully for user ID: ${id}`);
     return res.status(200).json(user);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching user details: ${safeStringify(error)}`,
     );

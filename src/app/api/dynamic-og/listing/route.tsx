@@ -7,7 +7,12 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { getTokenIcon } from '@/server/tokenList';
 import { convertToJpegUrl } from '@/utils/cloudinary';
-import { formatNumber, formatString, loadGoogleFont } from '@/utils/ogHelpers';
+import {
+  createParamReader,
+  formatNumber,
+  formatString,
+  loadGoogleFont,
+} from '@/utils/ogHelpers';
 import { safeStringify } from '@/utils/safeStringify';
 import { getURL } from '@/utils/validUrl';
 
@@ -115,12 +120,9 @@ export async function GET(request: Request) {
       isSponsorVerified: previewListing?.sponsor?.isVerified?.toString(),
     };
 
-    const getParam = (name: any, processFn = (x: any) => x) =>
-      previewParams[name] != null
-        ? processFn(previewParams[name])
-        : searchParams.has(name)
-          ? processFn(searchParams.get(name))
-          : null;
+    const getParam = createParamReader({
+      get: (name) => previewParams[name] ?? searchParams.get(name),
+    });
 
     const title = getParam('title', (x) =>
       formatString(safeDecodeURIComponent(x), 100),
@@ -415,7 +417,7 @@ export async function GET(request: Request) {
     );
 
     return response;
-  } catch (e: any) {
+  } catch (e) {
     logger.error(
       `Listing OG image generation failed: ${safeStringify({
         ...requestContext,
