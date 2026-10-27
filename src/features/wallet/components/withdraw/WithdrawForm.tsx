@@ -17,6 +17,8 @@ import { type TokenAsset } from '../../types/TokenAsset';
 import { type WithdrawFormData } from '../../utils/withdrawFormSchema';
 import { TokenAmountInput } from './TokenAmountInput';
 
+const balanceFormatter = new Intl.NumberFormat('en-US');
+
 interface WithdrawFormProps {
   form: UseFormReturn<WithdrawFormData>;
   selectedToken?: TokenAsset;
@@ -59,8 +61,7 @@ export const WithdrawForm = ({
             {selectedToken && !hasInsufficientBalance && (
               <div className="flex justify-between text-xs font-medium text-slate-500">
                 <span>
-                  Balance:{' '}
-                  {new Intl.NumberFormat('en-US').format(selectedToken.amount)}{' '}
+                  Balance: {balanceFormatter.format(selectedToken.amount)}{' '}
                   {selectedToken.tokenSymbol}
                 </span>
                 <span>

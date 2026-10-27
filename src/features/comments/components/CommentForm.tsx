@@ -42,7 +42,6 @@ export const CommentForm = ({
   const [newComment, setNewComment] = useState('');
   const [newCommentLoading, setNewCommentLoading] = useState(false);
   const [newCommentError, setNewCommentError] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isPinned, setIsPinned] = useState(false);
 
   const containsLink = newComment
@@ -85,25 +84,22 @@ export const CommentForm = ({
     return isTalentFilled || isSponsor;
   }, [user]);
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (newComment && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (newComment && e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
 
-        if (canComment() && !isTemplate && !isDisabled) {
-          handleSubmit();
-        }
+      if (canComment() && !isTemplate && !isDisabled) {
+        handleSubmit();
       }
-    },
-    [newComment, canComment, isTemplate, isDisabled, handleSubmit],
-  );
+    }
+  };
 
   useEffect(() => {
     const saved = sessionStorage.getItem(`comment-${refId}`);
     if (saved) {
       setNewComment(saved);
     }
-  }, []);
+  }, [refId]);
 
   useEffect(() => {
     if (newComment) {
@@ -111,11 +107,9 @@ export const CommentForm = ({
     } else {
       sessionStorage.removeItem(`comment-${refId}`);
     }
-  }, [newComment]);
+  }, [newComment, refId]);
 
-  useEffect(() => {
-    setIsCollapsed(!newComment);
-  }, [newComment]);
+  const isCollapsed = !newComment;
 
   const isPoc = poc?.id === user?.id;
 

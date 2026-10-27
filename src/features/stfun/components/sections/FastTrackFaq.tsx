@@ -67,13 +67,14 @@ export default function FastTrackFaq() {
             href="https://x.com/rieker_noe"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Message Noe on X"
             className="underline"
           >
             here
           </a>
         </p>
         {faqs.map((faq, index) => (
-          <div key={index} className="faq-item">
+          <div key={faq.question} className="faq-item">
             <button className="faq-question" onClick={() => toggle(index)}>
               {faq.question}
               <span className="faq-icon">{faq.open ? '▲' : '▼'}</span>

@@ -120,9 +120,9 @@ export const RecentActivity = () => {
         </Link>
       </div>
       <div className="mt-4 flex w-full flex-col gap-4">
-        {data?.map((act, i) => (
+        {data?.map((act) => (
           <ActivityCard
-            key={i}
+            key={`${act.user.username}-${act.createdAt}`}
             firstName={act.user.firstName}
             lastName={act.user.lastName}
             username={act.user.username}

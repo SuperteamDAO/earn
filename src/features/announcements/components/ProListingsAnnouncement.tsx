@@ -33,7 +33,7 @@ export function ProListingsAnnouncement({
   onOpenChange?: (open: boolean) => void;
 }) {
   const user = useUser();
-  const [showModal, setShowModal] = useState(false);
+  const [autoOpen, setAutoOpen] = useState(false);
   const { data: userCountData } = useQuery(userCountQuery);
 
   const roundedUserCount =
@@ -42,18 +42,15 @@ export function ProListingsAnnouncement({
       : 150000;
 
   useEffect(() => {
-    if (forceOpen !== undefined) {
-      setShowModal(forceOpen);
-      onOpenChange?.(forceOpen);
-      return;
-    }
-
-    if (isAnyModalOpen) return;
+    if (forceOpen !== undefined || isAnyModalOpen) return;
     const seen = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!seen && !!user.user?.currentSponsorId) {
-      setShowModal(true);
+      // react-doctor-disable-next-line react-doctor/no-adjust-state-on-prop-change -- the seen flag lives in localStorage, readable only after mount, and the modal must stay open once shown even if isAnyModalOpen flips later
+      setAutoOpen(true);
     }
-  }, [forceOpen, isAnyModalOpen, user.user?.currentSponsorId, onOpenChange]);
+  }, [forceOpen, isAnyModalOpen, user.user?.currentSponsorId]);
+
+  const showModal = forceOpen ?? autoOpen;
 
   const isLoggedInAndIsSponsor = Boolean(
     user.user && !!user.user.currentSponsorId,
@@ -63,7 +60,7 @@ export function ProListingsAnnouncement({
 
   function handleModalClose() {
     localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
-    setShowModal(false);
+    setAutoOpen(false);
     onOpenChange?.(false);
   }
 

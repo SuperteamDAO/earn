@@ -310,9 +310,9 @@ export default function LoveRespect({ collab = false }: LoveRespectProps) {
         <div className="scroll-wrapper grid w-full">
           {/* Row 1 */}
           <div className="item-row item-row-1 flex flex-row">
-            {pairedTestimonials.map((pair, index) => (
+            {pairedTestimonials.map((pair) => (
               <div
-                key={`row1-${index}`}
+                key={pair[0].tweet_link}
                 className="item-col flex h-fit flex-row md:flex-col"
               >
                 <div className="testimonial-item">
@@ -340,9 +340,9 @@ export default function LoveRespect({ collab = false }: LoveRespectProps) {
           </div>
           {/* Row 2 - Duplicate for infinite scroll */}
           <div className="item-row item-row-2 flex flex-row">
-            {pairedTestimonials.map((pair, index) => (
+            {pairedTestimonials.map((pair) => (
               <div
-                key={`row2-${index}`}
+                key={pair[0].tweet_link}
                 className="item-col flex h-fit flex-row md:flex-col"
               >
                 <div className="testimonial-item">
@@ -370,9 +370,9 @@ export default function LoveRespect({ collab = false }: LoveRespectProps) {
           </div>
           {/* Row 3 - Only visible on large screens */}
           <div className="item-row item-row-3 hidden flex-row lg:flex">
-            {pairedTestimonials.map((pair, index) => (
+            {pairedTestimonials.map((pair) => (
               <div
-                key={`row3-${index}`}
+                key={pair[0].tweet_link}
                 className="item-col flex h-fit flex-row md:flex-col"
               >
                 <div className="testimonial-item">

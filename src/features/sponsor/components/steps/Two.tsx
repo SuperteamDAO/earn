@@ -43,8 +43,8 @@ function Profile({ submissions }: ProfileProps) {
 export function StepTwo() {
   return (
     <div className="flex h-[18.75rem] w-[21.5rem] flex-col justify-between">
-      {submissions.map((submission, index) => (
-        <Profile key={index} submissions={submission} />
+      {submissions.map((submission) => (
+        <Profile key={submission.title} submissions={submission} />
       ))}
     </div>
   );

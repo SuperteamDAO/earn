@@ -11,6 +11,12 @@ import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibil
 import { ProIntro } from './ProIntro';
 import { ProPerksCards } from './ProPerksCard';
 
+const usdFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 0,
+});
+
 const ProBenefitItem = ({ text }: { text: string }) => {
   return (
     <div className="flex items-center gap-3">
@@ -51,12 +57,7 @@ const ProEligibility = ({ totalWinnings }: { totalWinnings: number }) => {
             <p className="text-sm text-slate-500">
               Earn atleast $1,000.{' '}
               <span className="ml-2 text-slate-400">
-                {new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: 'USD',
-                  maximumFractionDigits: 0,
-                }).format(totalWinnings ?? 0)}{' '}
-                /1000
+                {usdFormatter.format(totalWinnings ?? 0)} /1000
               </span>
             </p>
           ) : (

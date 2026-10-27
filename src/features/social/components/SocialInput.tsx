@@ -99,7 +99,7 @@ export const SocialInput = <T extends FieldValues>({
 }: SocialInputProps<T>) => {
   const social = useMemo(
     () => socials.find((s) => s.name === socialName),
-    [socials, socialName],
+    [socialName],
   );
   const Icon = social?.icon;
   return (

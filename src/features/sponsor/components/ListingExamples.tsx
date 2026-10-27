@@ -109,6 +109,7 @@ export function ListingExamples() {
             const titleColor = isDarkText ? 'text-black' : 'text-white';
             return (
               <div
+                // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- the marquee repeats the same cards, so titles collide by design; the index tells the copies apart and the static list never reorders
                 key={`${card.title}-${index}`}
                 className="h-[21.9375rem] w-[16.5625rem] flex-shrink-0"
               >

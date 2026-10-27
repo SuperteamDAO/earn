@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
 import { CheckIcon } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import {
@@ -42,10 +42,10 @@ export function UsernameField({
     validating,
   } = useUsernameValidation();
   const [isUsernameTyping, setIsUsernameTyping] = useState(false);
-  const debouncedSetIsUsernameTyping = useRef(
+  const [debouncedSetIsUsernameTyping] = useState(() =>
     debounce(setIsUsernameTyping, 500),
-  ).current;
-  const debouncedSetUsername = useRef(debounce(setUsername, 500)).current;
+  );
+  const [debouncedSetUsername] = useState(() => debounce(setUsername, 500));
 
   const watchedUsername = useWatch({ control, name: 'username' });
   useEffect(() => {
@@ -56,11 +56,13 @@ export function UsernameField({
 
   useEffect(() => {
     if (isUsernameTyping || validating) {
+      // react-doctor-disable-next-line react-doctor/no-prop-callback-in-effect -- validating comes from useUsernameValidation inside this field and typing is debounced here; the parent Form needs the combined flag to block submit
       setUsernameValidating(true);
     } else {
+      // react-doctor-disable-next-line react-doctor/no-prop-callback-in-effect -- validating comes from useUsernameValidation inside this field and typing is debounced here; the parent Form needs the combined flag to block submit
       setUsernameValidating(false);
     }
-  }, [isUsernameTyping, validating]);
+  }, [isUsernameTyping, validating, setUsernameValidating]);
 
   useEffect(() => {
     async function validateUsername() {
@@ -79,7 +81,15 @@ export function UsernameField({
       debouncedSetIsUsernameTyping(false);
     }
     validateUsername();
-  }, [validationErrorMessage, isInvalid, username, errors.username?.message]);
+  }, [
+    validationErrorMessage,
+    isInvalid,
+    username,
+    errors.username?.message,
+    setError,
+    clearErrors,
+    debouncedSetIsUsernameTyping,
+  ]);
 
   const { data: randomUsername } = useQuery({
     ...usernameRandomQuery(user?.firstName),
@@ -87,14 +97,18 @@ export function UsernameField({
     refetchOnWindowFocus: false,
   });
 
+  // Keyed on this flag rather than the user object so a user refetch cannot
+  // overwrite a username the person already typed with the random suggestion.
+  const needsRandomUsername = !!user && !user.username;
   useEffect(() => {
-    setTimeout(() => {
-      if (user && !user?.username && randomUsername?.username) {
+    const timer = setTimeout(() => {
+      if (needsRandomUsername && randomUsername?.username) {
         setValue('username', randomUsername.username);
-        setUsername(randomUsername?.username);
+        setUsername(randomUsername.username);
       }
     }, 1000);
-  }, [randomUsername]);
+    return () => clearTimeout(timer);
+  }, [randomUsername, needsRandomUsername, setValue, setUsername]);
 
   return (
     <FormField

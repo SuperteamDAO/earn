@@ -10,11 +10,10 @@ export async function fetchWalletActivity(
   rpc: SolanaRpc,
   walletAddress: Address,
 ): Promise<TokenActivity[]> {
-  const tokenList = await getTokenList();
-  const signaturesResponse = await rpc
-    .getSignaturesForAddress(walletAddress, { limit: 50 })
-    .send();
-  const signatures = signaturesResponse;
+  const [tokenList, signatures] = await Promise.all([
+    getTokenList(),
+    rpc.getSignaturesForAddress(walletAddress, { limit: 50 }).send(),
+  ]);
 
   const activities: TokenActivity[] = [];
   const batchSize = 5;

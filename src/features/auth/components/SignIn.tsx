@@ -148,7 +148,7 @@ export const SignIn = ({
       </div>
 
       <div className="rounded-b-md bg-slate-100 py-[7px]">
-        <p className="text-center text-xs text-slate-400">
+        <div className="text-center text-xs text-slate-400">
           Need help? Reach out to us at{' '}
           {isMD ? (
             <CopyButton
@@ -170,7 +170,7 @@ export const SignIn = ({
               support@superteam.fun
             </a>
           )}
-        </p>
+        </div>
       </div>
     </div>
   );

@@ -107,7 +107,12 @@ export const ATAConfirmation = ({
               deducted from your current withdrawal. After this setup, future{' '}
               {token} withdrawals to this wallet address won’t require
               additional fees. Read more{' '}
-              <a href={ataLink} target="_blank" className="underline">
+              <a
+                href={ataLink}
+                target="_blank"
+                aria-label="Read more about Solana rent"
+                className="underline"
+              >
                 here
               </a>
               .

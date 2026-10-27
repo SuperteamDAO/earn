@@ -64,9 +64,9 @@ export const WalletActivity = ({
 
   return (
     <div className="mt-0.5">
-      {visibleActivities.map((activity, index) => (
+      {visibleActivities.map((activity) => (
         <ActivityItem
-          key={`${activity.timestamp}-${index}`}
+          key={`${activity.signature}-${activity.tokenAddress}-${activity.type}`}
           activity={activity}
           setView={setView}
           setTxData={setTxData}

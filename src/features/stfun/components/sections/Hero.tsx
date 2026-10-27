@@ -143,8 +143,7 @@ export default function Hero({
             srcSet={`${ASSET_URL}/st/hero/hero_home0.5x.webp 640w, ${ASSET_URL}/st/hero/hero_home.webp 1440w, ${ASSET_URL}/st/hero/hero_home1.5x.webp 2560w`}
             sizes="(max-width: 640px) 100vw, (max-width: 1440px) 100vw, 2560px"
             loading="eager"
-            // @ts-expect-error fetchpriority is a valid attribute but not typed
-            fetchpriority="high"
+            fetchPriority="high"
             alt=""
             className="absolute inset-0 h-full w-full object-cover"
           />

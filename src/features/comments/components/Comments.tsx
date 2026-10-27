@@ -7,6 +7,7 @@ import {
   type SetStateAction,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
@@ -62,7 +63,7 @@ export const Comments = ({
   const queryClient = useQueryClient();
   const setValidUsernames = useSetAtom(validUsernamesAtom);
   const [localComments, setLocalComments] = useState<Comment[]>([]);
-  const [loadedPages, setLoadedPages] = useState(1);
+  const loadedPagesRef = useRef(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const {
@@ -73,6 +74,7 @@ export const Comments = ({
 
   useEffect(() => {
     if (commentsData) {
+      // react-doctor-disable-next-line react-doctor/no-pass-data-to-parent, react-doctor/no-pass-live-state-to-parent, react-doctor/no-prop-callback-in-effect -- FeedCardContainer and the Listing layout own the count (they render it and increment it on new comments); lifting this query into both parents is a cross-file change outside this cleanup
       setCount(commentsData.count);
       setValidUsernames(commentsData.validUsernames);
     }
@@ -120,11 +122,11 @@ export const Comments = ({
     setIsLoadingMore(true);
     try {
       const response = await api.get(`/api/comment/${refId}`, {
-        params: { skip: loadedPages * take, take },
+        params: { skip: loadedPagesRef.current * take, take },
       });
       const newComments = response.data.result as Comment[];
       setLocalComments((prev) => [...prev, ...newComments]);
-      setLoadedPages((p) => p + 1);
+      loadedPagesRef.current += 1;
     } catch (e) {
       console.error('Failed to load more comments:', e);
     }

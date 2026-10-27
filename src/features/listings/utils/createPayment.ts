@@ -181,6 +181,7 @@ export async function createPayment({ userId }: CreatePaymentProps) {
         logger.info(
           `Adding payment info to Airtable for submission ${submissionId}`,
         );
+        // react-doctor-disable-next-line react-doctor/async-await-in-loop -- Airtable rate-limits each base to 5 requests per second and every insert also does record lookups, so payments are written one at a time
         await addPaymentInfoToAirtable(typedSubmission);
         await prisma.submission.update({
           where: { id: submissionId },

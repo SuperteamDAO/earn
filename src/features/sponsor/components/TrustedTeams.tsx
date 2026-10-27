@@ -117,6 +117,7 @@ export function TrustedTeams() {
         >
           {multipliedLogos.map((logo, index) => (
             <div
+              // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- the marquee repeats the same logos, so alts collide by design; the index tells the copies apart and the static list never reorders
               key={`${logo.alt}-${index}`}
               className="flex-shrink-0 transition-opacity"
             >

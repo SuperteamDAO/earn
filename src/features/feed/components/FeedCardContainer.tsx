@@ -206,6 +206,7 @@ export const FeedCardContainer = ({
                     <EarnAvatar
                       avatar={comment.author.photo!}
                       id={comment.author.name!}
+                      // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- commenters carry no id and the same author can appear twice; the avatars hold no state, so position is the identity
                       key={index}
                       className="h-6 w-6 border border-white"
                     />

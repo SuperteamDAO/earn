@@ -63,7 +63,7 @@ export const Login = ({
         popupTimeout.pause();
       }
     }
-  }, [isOpen]);
+  }, [isOpen, popupTimeout]);
 
   const handleOpenChange = useCallback(
     (open: boolean) => {

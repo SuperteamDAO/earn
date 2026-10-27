@@ -69,9 +69,9 @@ export function HomeTalentBanner({ totalUsers }: HomeTalentBannerProps) {
         </button>
         <div className="flex items-center">
           <div className="flex -space-x-2">
-            {avatars.map((avatar, index) => (
+            {avatars.map((avatar) => (
               <ExternalImage
-                key={index}
+                key={avatar.src}
                 className="relative h-6 w-6 rounded-full border border-[#49139c] md:h-8 md:w-8"
                 src={avatar.src}
                 alt={avatar.name}

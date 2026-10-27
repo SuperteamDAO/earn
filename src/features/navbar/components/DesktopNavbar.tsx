@@ -69,12 +69,9 @@ export const DesktopNavbar = ({
 
   const hideSponsorCTA = useMemo(() => {
     if (!isNewTalentRoute) return false;
-    try {
-      const url = new URL(window.location.origin + router.asPath);
-      return url.searchParams.get('referral') === 'true';
-    } catch {
-      return router.asPath.includes('referral=true');
-    }
+    // The base only lets URL parse a relative path; it is the same on server and client.
+    const url = new URL(router.asPath, 'http://localhost');
+    return url.searchParams.get('referral') === 'true';
   }, [isNewTalentRoute, router.asPath]);
 
   const maxWidth = useMemo(() => {

@@ -13,63 +13,64 @@ export async function fetchComments({
   skip = 0,
   take = 0,
 }: FetchCommentsParams) {
-  const result = await prisma.comment.findMany({
-    where: {
-      refId,
-      isActive: true,
-      isArchived: false,
-      replyToId: null,
-      type: {
-        not: 'SUBMISSION',
-      },
-    },
-    orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
-    skip: skip ?? 0,
-    take,
-    include: {
-      author: {
-        select: {
-          firstName: true,
-          lastName: true,
-          photo: true,
-          username: true,
-          currentSponsorId: true,
-          isPro: true,
-          isAgent: true,
+  const [result, commentsCount] = await Promise.all([
+    prisma.comment.findMany({
+      where: {
+        refId,
+        isActive: true,
+        isArchived: false,
+        replyToId: null,
+        type: {
+          not: 'SUBMISSION',
         },
       },
-      replies: {
-        include: {
-          author: {
-            select: {
-              firstName: true,
-              lastName: true,
-              photo: true,
-              username: true,
-              currentSponsorId: true,
-              isPro: true,
-              isAgent: true,
-            },
+      orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
+      skip: skip ?? 0,
+      take,
+      include: {
+        author: {
+          select: {
+            firstName: true,
+            lastName: true,
+            photo: true,
+            username: true,
+            currentSponsorId: true,
+            isPro: true,
+            isAgent: true,
           },
         },
-        orderBy: {
-          createdAt: 'asc',
+        replies: {
+          include: {
+            author: {
+              select: {
+                firstName: true,
+                lastName: true,
+                photo: true,
+                username: true,
+                currentSponsorId: true,
+                isPro: true,
+                isAgent: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'asc',
+          },
         },
       },
-    },
-  });
-
-  const commentsCount = await prisma.comment.count({
-    where: {
-      refId,
-      isActive: true,
-      isArchived: false,
-      replyToId: null,
-      type: {
-        not: 'SUBMISSION',
+    }),
+    prisma.comment.count({
+      where: {
+        refId,
+        isActive: true,
+        isArchived: false,
+        replyToId: null,
+        type: {
+          not: 'SUBMISSION',
+        },
       },
-    },
-  });
+    }),
+  ]);
 
   const mentionedUsernames = extractUsernames(result);
   const validUsernames = await prisma.user.findMany({

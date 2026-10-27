@@ -1,7 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bookmark } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -99,18 +99,10 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
   >(() => readStoredBookmarkIntent(id));
 
   const clearPendingBookmarkIntent = useCallback((): void => {
+    // react-doctor-disable-next-line react-doctor/no-adjust-state-on-prop-change -- the intent survives the login flow in sessionStorage, so it can only be resolved (and the stored copy removed) once auth and user data are ready
     setPendingBookmarkIntent(undefined);
     clearStoredBookmarkIntent(id);
   }, [id]);
-
-  useEffect(() => {
-    if (
-      optimisticIsBookmarked !== undefined &&
-      actualIsBookmarked === optimisticIsBookmarked
-    ) {
-      setOptimisticIsBookmarked(undefined);
-    }
-  }, [actualIsBookmarked, optimisticIsBookmarked]);
 
   const { mutate: mutateBookmark, isPending: isBookmarkMutating } = useMutation(
     {
@@ -120,10 +112,7 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
         setOptimisticIsBookmarked(newBookmarkState);
         return { newBookmarkState };
       },
-      onSuccess: (_data, _variables, context) => {
-        queryClient.invalidateQueries({
-          queryKey: listingBookmarksQuery(id).queryKey,
-        });
+      onSuccess: async (_data, _variables, context) => {
         queryClient.invalidateQueries({
           queryKey: ['your-bookmarks'],
         });
@@ -133,6 +122,11 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
         toast.success(
           context?.newBookmarkState ? 'Bookmarked' : 'Bookmark removed',
         );
+        // Keep the optimistic value until the refetched bookmarks replace it.
+        await queryClient.invalidateQueries({
+          queryKey: listingBookmarksQuery(id).queryKey,
+        });
+        setOptimisticIsBookmarked(undefined);
       },
       onError: () => {
         setOptimisticIsBookmarked(undefined);
@@ -209,7 +203,7 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
   return (
     <div className="flex items-center gap-2">
       <AnimatePresence mode="wait">
-        <motion.p
+        <m.p
           key={displayCount}
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
@@ -218,12 +212,12 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
           className="text-slate-500"
         >
           {displayCount}
-        </motion.p>
+        </m.p>
       </AnimatePresence>
       <div className="flex -space-x-3">
         <AnimatePresence>
           {avatars.slice(0, avatarCount).map((avatar) => (
-            <motion.div
+            <m.div
               key={avatar.name}
               initial={{ opacity: 0, scale: 0.8, x: -8 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -237,7 +231,7 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
                 <AvatarImage src={avatar.src} alt={avatar.name || ''} />
                 <AvatarFallback>{avatar.name}</AvatarFallback>
               </Avatar>
-            </motion.div>
+            </m.div>
           ))}
         </AnimatePresence>
       </div>
@@ -254,7 +248,7 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
             });
           }}
         >
-          <motion.div
+          <m.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
@@ -275,7 +269,7 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
               aria-label="Bookmark"
             >
               <AnimatePresence mode="wait">
-                <motion.div
+                <m.div
                   key={isBookmarked ? 'bookmarked' : 'bookmark'}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -283,7 +277,7 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
                   transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
                   className="flex items-center gap-2"
                 >
-                  <motion.div
+                  <m.div
                     initial={{ scale: 0.8 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0.8 }}
@@ -294,8 +288,8 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
                     ) : (
                       <Bookmark />
                     )}
-                  </motion.div>
-                  <motion.span
+                  </m.div>
+                  <m.span
                     initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 4 }}
@@ -307,11 +301,11 @@ export const BookmarkListing = ({ id, isTemplate = false }: Props) => {
                     ) : (
                       <span>Bookmark</span>
                     )}
-                  </motion.span>
-                </motion.div>
+                  </m.span>
+                </m.div>
               </AnimatePresence>
             </Button>
-          </motion.div>
+          </m.div>
         </AuthWrapper>
       </div>
     </div>
