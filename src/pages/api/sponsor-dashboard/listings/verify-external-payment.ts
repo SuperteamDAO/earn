@@ -9,7 +9,10 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
-import { getPaymentAmount } from '@/features/listings/utils/paymentDetails';
+import {
+  getPaymentAmount,
+  readPaymentHistory,
+} from '@/features/listings/utils/paymentDetails';
 import {
   type ValidatePaymentResult,
   verifyExternalPaymentRequestSchema,
@@ -188,9 +191,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         }
 
         const isProject = listing.type === 'project';
-        const existingPayments = Array.isArray(submission.paymentDetails)
-          ? submission.paymentDetails
-          : [];
+        const existingPayments = readPaymentHistory(submission.paymentDetails);
+        if (!existingPayments) {
+          logger.error(
+            `Submission ${submission.id} has payment history in an unexpected format`,
+          );
+          throw new Error('Unexpected payment history format');
+        }
         const totalAlreadyPaid = existingPayments.reduce<number>(
           (sum, payment) => sum + getPaymentAmount(payment),
           0,
@@ -289,9 +296,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       ] as number;
 
       const isProject = listing.type === 'project';
-      const existingPayments = Array.isArray(submission.paymentDetails)
-        ? submission.paymentDetails
-        : [];
+      const existingPayments = readPaymentHistory(submission.paymentDetails);
+      if (!existingPayments) continue;
 
       const newPayments = results
         .filter(
