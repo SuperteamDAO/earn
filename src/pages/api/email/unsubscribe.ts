@@ -1,4 +1,4 @@
-import { createHmac } from 'crypto';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -31,8 +31,14 @@ export default async function handler(
   const expectedSignature = createHmac('sha256', process.env.UNSUB_SECRET!)
     .update(normalizedEmail)
     .digest('hex');
+  const expected = Buffer.from(expectedSignature);
+  const provided = Buffer.from(String(signature));
 
-  if (signature !== expectedSignature) {
+  // timingSafeEqual throws on unequal lengths, so check that first.
+  if (
+    provided.length !== expected.length ||
+    !timingSafeEqual(provided, expected)
+  ) {
     return res.status(403).json({ message: 'Invalid signature' });
   }
 

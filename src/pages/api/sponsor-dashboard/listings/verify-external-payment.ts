@@ -113,6 +113,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const validationResults: ValidatePaymentResult[] = [];
+    const submissionsById = new Map(submissions.map((s) => [s.id, s]));
 
     const txIds = paymentLinks
       .map((link) => link.txId)
@@ -164,9 +165,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           throw new Error('Invalid URL');
         }
 
-        const submission = submissions.find(
-          (s) => s.id === paymentLink.submissionId,
-        );
+        const submission = submissionsById.get(paymentLink.submissionId);
         if (!submission) throw new Error('Submission not found');
 
         const {
@@ -274,56 +273,59 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         {} as Record<string, ValidatePaymentResult[]>,
       );
 
-    for (const [submissionId, results] of Object.entries(
-      successfulResultsBySubmission,
-    )) {
-      logger.debug(
-        `Updating submission with ID: ${submissionId} with ${results.length} new external payment(s)`,
-      );
+    await Promise.all(
+      Object.entries(successfulResultsBySubmission).map(
+        async ([submissionId, results]) => {
+          logger.debug(
+            `Updating submission with ID: ${submissionId} with ${results.length} new external payment(s)`,
+          );
 
-      const submission = submissions.find((s) => s.id === submissionId);
-      if (!submission) continue;
+          const submission = submissionsById.get(submissionId);
+          if (!submission) return;
 
-      const winnerReward = (listing.rewards as Record<string, number> | null)?.[
-        submission.winnerPosition + ''
-      ] as number;
+          const winnerReward = (
+            listing.rewards as Record<string, number> | null
+          )?.[submission.winnerPosition + ''] as number;
 
-      const isProject = listing.type === 'project';
-      const existingPayments = Array.isArray(submission.paymentDetails)
-        ? submission.paymentDetails
-        : [];
+          const isProject = listing.type === 'project';
+          const existingPayments = Array.isArray(submission.paymentDetails)
+            ? submission.paymentDetails
+            : [];
 
-      const newPayments = results
-        .filter(
-          (
-            result,
-          ): result is ValidatePaymentResult & { actualAmount: number } =>
-            typeof result.actualAmount === 'number' && result.actualAmount > 0,
-        )
-        .map((result, i) => ({
-          txId: result.txId,
-          amount: result.actualAmount,
-          tranche: isProject ? existingPayments.length + 1 + i : 1,
-        }));
+          const newPayments = results
+            .filter(
+              (
+                result,
+              ): result is ValidatePaymentResult & { actualAmount: number } =>
+                typeof result.actualAmount === 'number' &&
+                result.actualAmount > 0,
+            )
+            .map((result, i) => ({
+              txId: result.txId,
+              amount: result.actualAmount,
+              tranche: isProject ? existingPayments.length + 1 + i : 1,
+            }));
 
-      const allPayments = [...existingPayments, ...newPayments];
+          const allPayments = [...existingPayments, ...newPayments];
 
-      const totalPaidAmount = allPayments.reduce<number>(
-        (sum, payment) => sum + getPaymentAmount(payment),
-        0,
-      );
-      const isFullyPaid = totalPaidAmount >= winnerReward;
+          const totalPaidAmount = allPayments.reduce<number>(
+            (sum, payment) => sum + getPaymentAmount(payment),
+            0,
+          );
+          const isFullyPaid = totalPaidAmount >= winnerReward;
 
-      await prisma.submission.update({
-        where: {
-          id: submissionId,
+          await prisma.submission.update({
+            where: {
+              id: submissionId,
+            },
+            data: {
+              isPaid: isFullyPaid,
+              paymentDetails: allPayments,
+            },
+          });
         },
-        data: {
-          isPaid: isFullyPaid,
-          paymentDetails: allPayments,
-        },
-      });
-    }
+      ),
+    );
 
     return res.status(200).json({ validationResults });
   } catch (err) {

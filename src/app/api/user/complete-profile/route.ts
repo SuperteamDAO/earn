@@ -215,20 +215,15 @@ export async function POST(request: NextRequest) {
       'productAndNewsletter',
     ]);
 
-    for (const category of categories) {
-      await prisma.emailSettings.deleteMany({
-        where: {
-          userId,
-          category,
-        },
-      });
-      await prisma.emailSettings.create({
-        data: {
-          user: { connect: { id: userId } },
-          category,
-        },
-      });
-    }
+    await prisma.emailSettings.deleteMany({
+      where: {
+        userId,
+        category: { in: [...categories] },
+      },
+    });
+    await prisma.emailSettings.createMany({
+      data: [...categories].map((category) => ({ userId, category })),
+    });
 
     logger.info(
       `Completing user profile for user ID: ${userId}; fields: ${Object.keys(updatedData).join(', ')}`,

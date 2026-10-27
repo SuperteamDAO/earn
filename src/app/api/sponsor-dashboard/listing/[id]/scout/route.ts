@@ -509,6 +509,8 @@ END)
     `;
 
     logger.debug('Executing insert query for new scouts');
+    // Every value goes through bindParam; only fixed SQL fragments are interpolated.
+    // react-doctor-disable-next-line react-doctor/raw-sql-injection-risk -- values are bound parameters
     await prisma.$executeRawUnsafe(insertQuery, ...insertQueryParams);
 
     if (prevScouts.length > 0) {

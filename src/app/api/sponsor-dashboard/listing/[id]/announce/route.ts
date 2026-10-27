@@ -423,6 +423,7 @@ export async function POST(
                   const user = winner.user;
 
                   if (user.isKYCVerified && user.kycVerifiedAt) {
+                    // react-doctor-disable-next-line react-doctor/async-await-in-loop -- each createPayment writes to Airtable, which rate-limits a base to 5 requests per second, so winners are processed one at a time
                     await createPayment({ userId: winner.userId });
                   } else {
                     logger.warn(

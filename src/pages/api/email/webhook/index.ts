@@ -46,12 +46,14 @@ async function deleteEmailSettings(recipientEmail: string) {
   });
 
   if (users.length > 0) {
-    for (const user of users) {
-      await prisma.emailSettings.deleteMany({
-        where: { userId: user.id },
-      });
-      console.log(`Deleted EmailSettings for user ID: ${user.id}`);
-    }
+    await Promise.all(
+      users.map(async (user) => {
+        await prisma.emailSettings.deleteMany({
+          where: { userId: user.id },
+        });
+        console.log(`Deleted EmailSettings for user ID: ${user.id}`);
+      }),
+    );
   } else {
     console.log(`No users found with email ${recipientEmail}`);
   }

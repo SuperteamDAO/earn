@@ -38,39 +38,40 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(404).json({ error: 'Hackathon not found' });
     }
 
-    const totalListings = await prisma.bounties.count({
-      where: {
-        hackathonId: hackathon.id,
-        isActive: true,
-        isArchived: false,
-        status: 'OPEN',
-        isPublished: true,
-      },
-    });
-
-    const totalSubmissions = await prisma.submission.count({
-      where: {
-        listing: {
-          hackathonId: hackathon.id,
-          isActive: true,
-          isArchived: false,
-          status: 'OPEN',
-        },
-      },
-    });
-
-    const totalRewardAmount = await prisma.bounties.aggregate({
-      _sum: {
-        usdValue: true,
-      },
-      where: {
-        hackathonId: hackathon.id,
-        isActive: true,
-        isArchived: false,
-        status: 'OPEN',
-        isPublished: true,
-      },
-    });
+    const [totalListings, totalSubmissions, totalRewardAmount] =
+      await Promise.all([
+        prisma.bounties.count({
+          where: {
+            hackathonId: hackathon.id,
+            isActive: true,
+            isArchived: false,
+            status: 'OPEN',
+            isPublished: true,
+          },
+        }),
+        prisma.submission.count({
+          where: {
+            listing: {
+              hackathonId: hackathon.id,
+              isActive: true,
+              isArchived: false,
+              status: 'OPEN',
+            },
+          },
+        }),
+        prisma.bounties.aggregate({
+          _sum: {
+            usdValue: true,
+          },
+          where: {
+            hackathonId: hackathon.id,
+            isActive: true,
+            isArchived: false,
+            status: 'OPEN',
+            isPublished: true,
+          },
+        }),
+      ]);
 
     return res.status(200).json({
       name: hackathon.name,
