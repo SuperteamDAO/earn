@@ -127,9 +127,9 @@ function transToGroupOption(options: Option[], groupBy?: string) {
 }
 
 function removePickedOption(groupOption: GroupOption, picked: Option[]) {
-  const cloneOption = JSON.parse(JSON.stringify(groupOption)) as GroupOption;
+  const cloneOption: GroupOption = {};
 
-  for (const [key, value] of Object.entries(cloneOption)) {
+  for (const [key, value] of Object.entries(groupOption)) {
     cloneOption[key] = value.filter(
       (val) => !picked.find((p) => p.value === val.value),
     );
@@ -175,13 +175,15 @@ const CommandEmpty = forwardRef<
 
 CommandEmpty.displayName = 'CommandEmpty';
 
+const NO_OPTIONS: Option[] = [];
+
 const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
   (
     {
       value,
       onChange,
       placeholder = 'Select...',
-      defaultOptions: arrayDefaultOptions = [],
+      defaultOptions: arrayDefaultOptions = NO_OPTIONS,
       options: arrayOptions,
       delay,
       onSearch,
@@ -211,7 +213,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
     const dropdownRef = React.useRef<HTMLDivElement>(null); // Added this
 
     const [selected, setSelected] = React.useState<Option[]>(value || []);
-    const [options, setOptions] = React.useState<GroupOption>(
+    const [options, setOptions] = React.useState<GroupOption>(() =>
       transToGroupOption(arrayDefaultOptions, groupBy),
     );
     const [inputValue, setInputValue] = React.useState('');
@@ -324,16 +326,23 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       };
 
       void exec();
+      // react-doctor-disable-next-line react-doctor/exhaustive-deps -- an inline onSearchSync gets a new identity every parent render, and re-running on that would call setOptions and loop
     }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 
     useEffect(() => {
       /** async search */
+      let cancelled = false;
 
       const doSearch = async () => {
         setIsLoading(true);
-        const res = await onSearch?.(debouncedSearchTerm);
-        setOptions(transToGroupOption(res || [], groupBy));
-        setIsLoading(false);
+        try {
+          const res = await onSearch?.(debouncedSearchTerm);
+          if (cancelled) return;
+          setOptions(transToGroupOption(res || [], groupBy));
+        } finally {
+          // react-doctor-disable-next-line react-doctor/no-loading-flag-reset-outside-finally -- this is the finally; the guard stops a superseded run from clearing the newer run's spinner, and the effect cleanup clears it for cancelled runs
+          if (!cancelled) setIsLoading(false);
+        }
       };
 
       const exec = async () => {
@@ -343,12 +352,17 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
           await doSearch();
         }
 
-        if (debouncedSearchTerm) {
+        if (!cancelled && debouncedSearchTerm) {
           await doSearch();
         }
       };
 
       void exec();
+      return () => {
+        cancelled = true;
+        setIsLoading(false);
+      };
+      // react-doctor-disable-next-line react-doctor/exhaustive-deps -- an inline onSearch gets a new identity every parent render, and re-running on that would refetch and loop through setOptions
     }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 
     const CreatableItem = () => {
@@ -480,6 +494,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   >
                     {option.label}
                     <button
+                      aria-label={`Remove ${option.label}`}
                       className={cn(
                         'ring-offset-background ml-1 rounded-full outline-hidden focus:ring-2 focus:ring-offset-2',
                         (disabled || option.fixed) && 'hidden',
@@ -541,6 +556,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
             </div>
             <button
               type="button"
+              aria-label="Clear all"
               onClick={() => {
                 setSelected(selected.filter((s) => s.fixed));
                 onChange?.(selected.filter((s) => s.fixed));

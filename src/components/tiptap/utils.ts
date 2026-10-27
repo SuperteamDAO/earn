@@ -105,6 +105,7 @@ const sanitizeUrl = (
 
 export const blobUrlToBase64 = async (blobUrl: string): Promise<string> => {
   const response = await fetch(blobUrl);
+  if (!response.ok) throw new Error('Failed to fetch blob');
   const blob = await response.blob();
 
   return new Promise((resolve, reject) => {

@@ -47,6 +47,7 @@ export function LinkTextParser({ text, className, ...props }: Props) {
 
           return (
             <a
+              // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- parts come from splitting a static string and have no identity beyond their position
               key={index}
               className="text-brand-purple break-all hover:underline"
               href={href}
@@ -58,7 +59,11 @@ export function LinkTextParser({ text, className, ...props }: Props) {
           );
         }
         return (
-          <span key={index} className="">
+          <span
+            // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- parts come from splitting a static string and have no identity beyond their position
+            key={index}
+            className=""
+          >
             {part}
           </span>
         );

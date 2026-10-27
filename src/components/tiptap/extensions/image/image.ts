@@ -155,6 +155,7 @@ const defaultCopyImage = async (
   const { src } = props;
   try {
     const res = await fetch(src);
+    if (!res.ok) throw new Error('Failed to fetch image');
     const blob = await res.blob();
     await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
     options.onActionSuccess?.({ ...props, action: 'copyImage' });
@@ -237,6 +238,7 @@ export const Image = TiptapImage.extend<CustomImageOptions>({
             return commands.insertContent(
               validImages.map((image) => {
                 if (image.src instanceof File) {
+                  // react-doctor-disable-next-line react-doctor/no-create-object-url-without-revoke -- the blob URL lives in the document and undo history, and ImageViewBlock re-reads it whenever the node remounts, so there is no safe point to revoke it
                   const blobUrl = URL.createObjectURL(image.src);
                   return {
                     type: this.type.name,

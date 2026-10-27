@@ -14,10 +14,15 @@ const options: HTMLReactParserOptions = {
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   const [rawHtml, setRawHtml] = useState('');
   useEffect(() => {
+    let cancelled = false;
     const awaitedParse = async () => {
-      setRawHtml(await marked.parse(children || '', { gfm: true }));
+      const html = await marked.parse(children || '', { gfm: true });
+      if (!cancelled) setRawHtml(html);
     };
     awaitedParse();
+    return () => {
+      cancelled = true;
+    };
   }, [children]);
 
   return (

@@ -140,7 +140,7 @@ export function SponsorLayout({
     if (open) {
       setAutoGenerateOpen(true);
     }
-  }, [open]);
+  }, [open, setAutoGenerateOpen]);
 
   const { data: isCreateListingAllowed } = useQuery(
     isCreateListingAllowedQuery,
@@ -167,7 +167,7 @@ export function SponsorLayout({
       }
     };
     modalsToShow();
-  }, [user]);
+  }, [user, onSponsorInfoModalOpen]);
 
   useEffect(() => {
     if (
@@ -177,8 +177,10 @@ export function SponsorLayout({
       user &&
       !user?.currentSponsorId
     ) {
+      // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- the condition depends on Privy auth state and the user's sponsor, which only resolve on the client, so there is nothing for middleware or getServerSideProps to check
       router.push('/earn');
     }
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- the Pages Router rebinds router.push on every route change, so depending on it would re-run this redirect mid-transition
   }, [user, authenticated, ready, isUserLoading]);
 
   const { data: hackathons } = useQuery({

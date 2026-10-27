@@ -46,7 +46,7 @@ export function useContainerSize(
         : elementOrRef;
 
     if (!currentElement) {
-      setTimeout(() => {
+      const resetTimer = setTimeout(() => {
         setSize((prev) => {
           if (
             prev.width !== DEFAULT_RECT.width ||
@@ -57,11 +57,11 @@ export function useContainerSize(
           return prev;
         });
       }, 0);
-      return;
+      return () => clearTimeout(resetTimer);
     }
 
     const initialRect = currentElement.getBoundingClientRect();
-    setTimeout(() => {
+    const initialTimer = setTimeout(() => {
       setSize((prev) => {
         if (
           Math.round(prev.width) !== Math.round(initialRect.width) ||
@@ -82,6 +82,7 @@ export function useContainerSize(
     window.addEventListener('resize', handleResize);
 
     return () => {
+      clearTimeout(initialTimer);
       resizeObserver.disconnect();
       window.removeEventListener('click', handleResize);
       window.removeEventListener('resize', handleResize);

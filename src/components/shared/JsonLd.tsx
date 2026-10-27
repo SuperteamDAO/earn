@@ -18,6 +18,7 @@ export function JsonLd({ data }: JsonLdProps) {
     <Head>
       {jsonLdArray.map((schema, index) => (
         <script
+          // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- schemas are a fixed per-page array that never reorders, and next/head uses this key to dedupe tags
           key={`json-ld-${index}`}
           type="application/ld+json"
           dangerouslySetInnerHTML={{

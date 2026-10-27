@@ -291,11 +291,11 @@ export function RegionCombobox({
                 </CommandItem>
               )}
             </CommandGroup>
-            {filteredOptions?.map((option, idx) => {
+            {filteredOptions?.map((option) => {
               if (isGroupedOption(option)) {
                 return (
                   <CommandGroup
-                    key={`${option.label}-${idx}`}
+                    key={`group-${option.label}`}
                     heading={option.label}
                   >
                     {option.options.map((item) => (

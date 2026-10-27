@@ -105,8 +105,19 @@ const ActionItems: Array<{
   },
 ];
 
+const menuIcon = <DotsHorizontalIcon className="size-4" />;
+
+const preventDefault = (e: React.MouseEvent) => e.preventDefault();
+
 export const ImageActions: React.FC<ImageActionsProps> = React.memo(
-  ({ shouldMerge = false, isLink = false, ...actions }) => {
+  ({
+    shouldMerge = false,
+    isLink = false,
+    onView,
+    onDownload,
+    onCopy,
+    onCopyLink,
+  }) => {
     const [isOpen, setIsOpen] = React.useState(false);
 
     const handleAction = React.useCallback(
@@ -116,6 +127,18 @@ export const ImageActions: React.FC<ImageActionsProps> = React.memo(
         action?.();
       },
       [],
+    );
+
+    const actionHandlers = React.useMemo<
+      Record<ActionKey, (e: React.MouseEvent) => void>
+    >(
+      () => ({
+        onView: (e) => handleAction(e, onView),
+        onDownload: (e) => handleAction(e, onDownload),
+        onCopy: (e) => handleAction(e, onCopy),
+        onCopyLink: (e) => handleAction(e, onCopyLink),
+      }),
+      [handleAction, onView, onDownload, onCopy, onCopyLink],
     );
 
     const filteredActions = React.useMemo(
@@ -129,17 +152,14 @@ export const ImageActions: React.FC<ImageActionsProps> = React.memo(
           <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenuTrigger asChild>
               <ActionButton
-                icon={<DotsHorizontalIcon className="size-4" />}
+                icon={menuIcon}
                 tooltip="Open menu"
-                onClick={(e) => e.preventDefault()}
+                onClick={preventDefault}
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
               {filteredActions.map(({ key, icon, tooltip }) => (
-                <DropdownMenuItem
-                  key={key}
-                  onClick={(e) => handleAction(e, actions[key])}
-                >
+                <DropdownMenuItem key={key} onClick={actionHandlers[key]}>
                   <div className="flex flex-row items-center gap-2">
                     {icon}
                     <span>{tooltip}</span>
@@ -154,7 +174,7 @@ export const ImageActions: React.FC<ImageActionsProps> = React.memo(
               key={key}
               icon={icon}
               tooltip={tooltip}
-              onClick={(e) => handleAction(e, actions[key])}
+              onClick={actionHandlers[key]}
             />
           ))
         )}

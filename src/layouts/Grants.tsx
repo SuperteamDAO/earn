@@ -63,7 +63,7 @@ export function GrantPageLayout({
         isPublished: !!initialGrant?.isPublished,
       });
     }
-  }, [initialGrant]);
+  }, [initialGrant, setGrantSnackbar]);
 
   const ogImageUrl = `${getURL()}api/dynamic-og/grant/?title=${encodedTitle}&token=${initialGrant?.token}&sponsor=${initialGrant?.sponsor?.name}&logo=${initialGrant?.sponsor?.logo}&minReward=${initialGrant?.minReward}&maxReward=${initialGrant?.maxReward}&isSponsorVerified=${initialGrant?.sponsor?.isVerified}`;
 
