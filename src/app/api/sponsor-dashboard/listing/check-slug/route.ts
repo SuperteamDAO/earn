@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
       logger.info(`Generated unique slug: ${newSlug}`);
       return NextResponse.json({ slug: newSlug }, { status: 200 });
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Error in handler:', safeStringify(error));
     return NextResponse.json(
       { error: 'Internal server error' },

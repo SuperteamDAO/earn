@@ -5,6 +5,7 @@ import {
   SANCTIONED_LOCATION_MESSAGE,
 } from '@/constants/country';
 import { URL_REGEX } from '@/constants/URL_REGEX';
+import { type User } from '@/interface/user';
 
 import {
   telegramUsernameSchema,
@@ -110,7 +111,10 @@ export const transformFormToApiData = (data: SponsorFormValues) => {
 
 export const shouldUpdateUser = (
   formData: UserSponsorDetails,
-  currentUser: any,
+  currentUser:
+    | Pick<User, 'firstName' | 'lastName' | 'username' | 'photo' | 'telegram'>
+    | null
+    | undefined,
 ) => {
   return (
     formData.firstName !== currentUser?.firstName ||

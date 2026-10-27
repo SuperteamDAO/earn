@@ -5,17 +5,18 @@ import { useMemo } from 'react';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { LocalImage } from '@/components/ui/local-image';
+import { type BountyType } from '@/prisma/enums';
 import { timeAgoShort } from '@/utils/timeAgo';
 
 import { homeFeedQuery } from '@/features/feed/queries/home-feed';
 import { type FeedPostType } from '@/features/feed/types';
 
 interface ActivityCardProps {
-  firstName: string;
-  lastName: string;
-  username: string;
+  firstName: string | null;
+  lastName: string | null;
+  username: string | null;
   createdAt: string;
-  listingType: 'bounty' | 'hackathon' | 'project';
+  listingType: BountyType;
   isWinner: boolean;
   isWinnersAnnounced: boolean;
   type: FeedPostType;
@@ -119,14 +120,14 @@ export const RecentActivity = () => {
         </Link>
       </div>
       <div className="mt-4 flex w-full flex-col gap-4">
-        {data?.map((act, i) => (
+        {data?.map((act) => (
           <ActivityCard
-            key={i}
+            key={`${act.user.username}-${act.createdAt}`}
             firstName={act.user.firstName}
             lastName={act.user.lastName}
             username={act.user.username}
             createdAt={act.createdAt}
-            listingType={act.listing.type as 'bounty' | 'hackathon' | 'project'}
+            listingType={act.listing.type}
             isWinner={act.isWinner}
             isWinnersAnnounced={act.listing.isWinnersAnnounced}
             type={'submission'}

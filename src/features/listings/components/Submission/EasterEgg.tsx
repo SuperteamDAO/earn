@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useEffect } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 import Pride from 'react-canvas-confetti/dist/presets/pride';
 import type { TDecorateOptionsFn } from 'react-canvas-confetti/dist/types';
 
@@ -121,6 +121,7 @@ function MainContent({
           className="scale-150 md:scale-125"
         />
       </div>
+      {/* react-doctor-disable-next-line react-doctor/media-has-caption, react-doctor/no-autoplay-without-muted -- the hidden track is the celebration's background music, has no speech to caption, and playing it audibly is the point of the easter egg */}
       <audio
         src={'/assets/JohnCenaVibingToCupid.mp3'}
         style={{ display: 'none' }}
@@ -134,13 +135,17 @@ function MainContent({
 export const EasterEgg = ({ isOpen, onClose, isProject, isPro }: Props) => {
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
+  const closeAfterTimeout = useEffectEvent(() => {
+    onClose();
+  });
+
   useEffect(() => {
     if (!isOpen) return;
     const timeout = setTimeout(() => {
-      onClose();
+      closeAfterTimeout();
     }, 60000); // 60 seconds
     return () => clearTimeout(timeout);
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   if (isDesktop) {
     return (

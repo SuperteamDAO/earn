@@ -54,6 +54,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
     if (!currentImage) return;
     try {
       const response = await fetch(currentImage);
+      if (!response.ok) throw new Error(`Download failed: ${response.status}`);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -64,7 +65,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      window.open(currentImage, '_blank');
+      window.open(currentImage, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -91,7 +92,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
           const isPdf = isPdfUrl(imageUrl);
           return (
             <button
-              key={index}
+              key={imageUrl}
               onClick={() => openAtIndex(index)}
               className="group focus-visible:ring-brand-purple/40 relative h-20 w-20 cursor-pointer overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 focus:outline-none focus-visible:ring-2"
               aria-label={`Open ${label} ${index + 1}`}
@@ -153,6 +154,8 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
             )}
 
             {isPdfUrl(currentImage || '') ? (
+              // Chrome refuses to render PDFs inside a sandboxed iframe.
+              // react-doctor-disable-next-line react-doctor/iframe-missing-sandbox -- PDF viewer
               <iframe
                 src={currentImage}
                 className="h-full w-full"
@@ -183,7 +186,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
                 const isPdf = isPdfUrl(imageUrl);
                 return (
                   <button
-                    key={index}
+                    key={imageUrl}
                     onClick={() => setCurrentIndex(index)}
                     className={cn(
                       'h-12 w-12 overflow-hidden rounded-md border-2 transition-all',

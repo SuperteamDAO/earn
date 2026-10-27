@@ -40,10 +40,14 @@ const VideoPlayback = ({
     >
       <div className="relative flex w-[95vw] flex-col gap-5 overflow-hidden pt-[56.25%] lg:w-[60vw]">
         <iframe
+          title="Superteam Earn for sponsors video"
           width="100%"
           height="100%"
           className="absolute inset-0"
           src="https://www.youtube.com/embed/_OyQ_Bxz1xo?si=U12Uh2foC2Ma914e&autoplay=1&mute=1"
+          // YouTube is cross-origin, so allow-same-origin cannot reach our page; the player needs it for storage.
+          // react-doctor-disable-next-line react-doctor/iframe-missing-sandbox -- cross-origin embed
+          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
         />
       </div>
     </div>

@@ -29,6 +29,7 @@ export function InviteMembers({ isOpen, onClose }: Props) {
   const [email, setEmail] = useState<string>('');
   const [memberType, setMemberType] = useState<string>('MEMBER');
 
+  // react-doctor-disable-next-line react-doctor/query-mutation-missing-invalidation -- sending an invite changes no cached query; the invitee only appears in the members query after accepting
   const inviteMutation = useMutation({
     mutationFn: async () => {
       const response = await api.post('/api/member-invites/send/', {

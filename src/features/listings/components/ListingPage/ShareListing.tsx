@@ -142,41 +142,38 @@ function MainContent({ listing, grant, source }: SourceType) {
     onCopy();
   }
 
-  const shareLinks = React.useMemo(
-    () => [
-      {
-        name: 'X (Twitter)',
-        icon: X,
-        url: `https://twitter.com/intent/tweet?text=${shareMessage()}`,
-        posthog: 'x_share listing',
-      },
-      {
-        name: 'Telegram',
-        icon: Telegram,
-        url: `https://t.me/share/url?url=${encodeURIComponent(listingLink())}&text=${shareMessage('telegram')}`,
-        posthog: 'telegram_share listing',
-      },
-      {
-        name: 'Whatsapp',
-        icon: Whatsapp,
-        url: `https://api.whatsapp.com/send?text=${shareMessage()}`,
-        posthog: 'whatsapp_share listing',
-      },
-      {
-        name: 'LinkedIn',
-        icon: Linkedin,
-        url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(listingLink())}&summary=${shareMessage('linkedin')}`,
-        posthog: 'linkedin_share listing',
-      },
-      {
-        name: 'Facebook',
-        icon: Facebook,
-        url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(listingLink())}&t=${shareMessage('facebook')}`,
-        posthog: 'facebook_share listing',
-      },
-    ],
-    [shareMessage, listingLink],
-  );
+  const shareLinks = [
+    {
+      name: 'X (Twitter)',
+      icon: X,
+      url: `https://twitter.com/intent/tweet?text=${shareMessage()}`,
+      posthog: 'x_share listing',
+    },
+    {
+      name: 'Telegram',
+      icon: Telegram,
+      url: `https://t.me/share/url?url=${encodeURIComponent(listingLink())}&text=${shareMessage('telegram')}`,
+      posthog: 'telegram_share listing',
+    },
+    {
+      name: 'Whatsapp',
+      icon: Whatsapp,
+      url: `https://api.whatsapp.com/send?text=${shareMessage()}`,
+      posthog: 'whatsapp_share listing',
+    },
+    {
+      name: 'LinkedIn',
+      icon: Linkedin,
+      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(listingLink())}&summary=${shareMessage('linkedin')}`,
+      posthog: 'linkedin_share listing',
+    },
+    {
+      name: 'Facebook',
+      icon: Facebook,
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(listingLink())}&t=${shareMessage('facebook')}`,
+      posthog: 'facebook_share listing',
+    },
+  ];
 
   const handleShare = React.useCallback((url: string, phEvent: string) => {
     posthog.capture(phEvent);

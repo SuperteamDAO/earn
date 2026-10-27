@@ -24,7 +24,7 @@ interface Props {
   isOpen: boolean;
   totalWinners: number;
   totalPaymentsMade: number;
-  bounty: Listing | undefined;
+  bounty: Omit<Listing, 'Hackathon'> | undefined;
   remainings: { podiums: number; bonus: number } | null;
   submissionsLeft: number;
   showSurvey?: () => void;
@@ -144,13 +144,11 @@ export function PublishResults({
       router.push(
         `/earn/dashboard/listings/${bounty?.slug}/submissions?tab=payments`,
       );
-      setTimeout(() => {
-        showSurvey?.();
-      }, 500);
-
+      showSurvey?.();
       onClose();
     }, 1500);
     return () => clearTimeout(timer);
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- showSurvey is an inline arrow from the submissions page, so listing it would restart the 1.5s timer on every parent render; bounty.isWinnersAnnounced is left out so a refetch during the delay cannot cancel the redirect
   }, [
     isWinnersAnnounced,
     bounty?.slug,

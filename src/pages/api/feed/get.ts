@@ -542,7 +542,7 @@ export default async function handler(
     });
 
     res.status(200).json(results);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching submissions and PoWs: ${safeStringify(error)}`,
     );

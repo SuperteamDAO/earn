@@ -17,7 +17,12 @@ import { dayjs } from '@/utils/dayjs';
 
 import { CreditIcon } from '../icon/credit';
 import { canDispute } from '../utils/canDispute';
-import { CreditHistoryCard } from './CreditLog';
+import { type CreditEntry, CreditHistoryCard } from './CreditLog';
+
+// /api/user/credit/history also returns month-level rows without a submission.
+type CreditHistoryEntry = Omit<CreditEntry, 'submission'> & {
+  submission?: CreditEntry['submission'] | null;
+};
 
 export function CreditDrawer({
   isOpen,
@@ -35,7 +40,7 @@ export function CreditDrawer({
 
   const { data: creditHistory, isLoading } = useQuery({
     queryKey: ['creditHistory', user?.id],
-    queryFn: () => api.get('/api/user/credit/history'),
+    queryFn: () => api.get<CreditHistoryEntry[]>('/api/user/credit/history'),
     enabled: !!user?.id && isOpen,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
@@ -62,7 +67,8 @@ export function CreditDrawer({
                 entry.type === 'GRANT_SPAM_PENALTY'),
           );
 
-          const dispute = canDispute(entryToDispute, allEntries, true);
+          const dispute =
+            !!entryToDispute && canDispute(entryToDispute, allEntries, true);
 
           if (entryToDispute && dispute) {
             setDisputeSubmissionId(submissionId);
@@ -73,6 +79,7 @@ export function CreditDrawer({
           }
         }
       } else {
+        // react-doctor-disable-next-line react-doctor/no-adjust-state-on-prop-change -- the dispute id comes from window.location.hash, which is only readable after mount; this effect also redirects away from invalid dispute hashes
         setDisputeSubmissionId(null);
       }
     };
@@ -80,7 +87,7 @@ export function CreditDrawer({
     if (isOpen) {
       checkForDisputeHash();
     }
-  }, [isOpen, creditHistory?.data, router, canDispute]);
+  }, [isOpen, creditHistory?.data, router]);
 
   const handleClose = () => {
     const currentPath = window.location.hash;
@@ -98,10 +105,14 @@ export function CreditDrawer({
 
   const padding = 'px-6 sm:px-8';
 
-  const processEntries = (entries: any[] = []) => {
+  const processEntries = (
+    entries: CreditHistoryEntry[] = [],
+  ): CreditEntry[] => {
     return entries.map((entry) => ({
       ...entry,
+      // Month-level rows have no submission; they render as non-linkable entries.
       submission: entry.submission || {
+        id: '',
         listing: {
           title:
             entry.type === 'MONTHLY_CREDIT'
@@ -110,6 +121,7 @@ export function CreditDrawer({
                 ? 'Monthly Credit Expiration'
                 : '',
           type: '',
+          slug: '',
           sponsor: { logo: '' },
         },
       },
@@ -120,19 +132,19 @@ export function CreditDrawer({
   const nextMonthStart = currentMonthStart.add(1, 'month');
 
   const currentMonthEntries = processEntries(
-    creditHistory?.data?.filter((entry: any) =>
+    creditHistory?.data?.filter((entry: Pick<CreditEntry, 'effectiveMonth'>) =>
       dayjs(entry.effectiveMonth).utc().isSame(currentMonthStart, 'month'),
     ),
   );
 
   const upcomingMonthEntries = processEntries(
-    creditHistory?.data?.filter((entry: any) =>
+    creditHistory?.data?.filter((entry: Pick<CreditEntry, 'effectiveMonth'>) =>
       dayjs(entry.effectiveMonth).utc().isSame(nextMonthStart, 'month'),
     ),
   );
 
   const pastMonthEntries = processEntries(
-    creditHistory?.data?.filter((entry: any) =>
+    creditHistory?.data?.filter((entry: Pick<CreditEntry, 'effectiveMonth'>) =>
       dayjs(entry.effectiveMonth).utc().isBefore(currentMonthStart, 'month'),
     ),
   );
@@ -184,18 +196,7 @@ export function CreditDrawer({
                 </p>
                 <p className="mt-1.5 text-base font-medium text-slate-800 sm:text-lg">
                   <Countdown
-                    date={
-                      new Date(
-                        Date.UTC(
-                          new Date().getUTCFullYear(),
-                          new Date().getUTCMonth() + 1,
-                          0,
-                          23,
-                          59,
-                          59,
-                        ),
-                      )
-                    }
+                    date={nextMonthStart.subtract(1, 'second').toDate()}
                     renderer={CountDownRenderer}
                     zeroPadDays={1}
                   />
@@ -264,15 +265,14 @@ export function CreditDrawer({
 
           <div className="w-full border-t border-slate-50 bg-white py-1 shadow-[0_-2px_3px_rgba(0,0,0,0.05)]">
             <p className="mx-auto flex items-center justify-center text-xs text-slate-400 transition-colors sm:text-sm">
-              <span className="mr-1 cursor-pointer underline">
+              <span className="cursor-pointer underline">
                 <a
                   href="https://superteamdao.notion.site/submission-credits"
                   target="_blank"
                 >
-                  Click here
+                  Learn how submission credits work
                 </a>
               </span>
-              to learn more
             </p>
           </div>
         </div>

@@ -120,7 +120,15 @@ export async function GET(_request: NextRequest) {
       groupedByMonth.get(key)!.push(entry);
     }
 
-    const syntheticEntries: any[] = [];
+    // Month-level rows (credit grants and expiries) that have no ledger entry.
+    const syntheticEntries: {
+      id: string;
+      createdAt: Date;
+      type: 'CREDIT_EXPIRY' | 'MONTHLY_CREDIT';
+      effectiveMonth: Date;
+      change: number;
+      submission: { listing: { title: string; type: string } };
+    }[] = [];
     const startOfCurrentMonthISO = startOfCurrentMonth.toISOString();
 
     for (const monthStart of effectiveMonths) {
@@ -180,7 +188,7 @@ export async function GET(_request: NextRequest) {
     });
 
     return NextResponse.json(combinedEntries);
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       { error: 'Error occurred while processing the request.' },
       { status: 500 },

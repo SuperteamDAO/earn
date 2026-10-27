@@ -25,7 +25,7 @@ export async function GET(_request: NextRequest) {
         },
       },
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Error occurred while fetching user count', {
       error: safeStringify(error),
     });

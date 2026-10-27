@@ -4,7 +4,7 @@ import { Edit, Info, Loader2, Plus, Trash } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -90,10 +90,13 @@ export default function EditProfilePage({
   const skills = watch('skills');
 
   const userRef = useRef(user);
-  userRef.current = user;
+  // Layout effects run before the passive effects that read this ref.
+  useLayoutEffect(() => {
+    userRef.current = user;
+  });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
+  const uploadedPhotoUrlRef = useRef<string | null>(null);
 
   const router = useRouter();
 
@@ -249,9 +252,17 @@ export default function EditProfilePage({
       await toast
         .promise(
           async () => {
-            if (uploadedPhotoUrl) {
-              data.photo = uploadedPhotoUrl;
+            if (uploadedPhotoUrlRef.current) {
+              data.photo = uploadedPhotoUrlRef.current;
             }
+
+            // Generic over the key so acc[key] and data[key] share one type.
+            const copyField = <K extends keyof ProfileFormData>(
+              target: Partial<ProfileFormData>,
+              key: K,
+            ) => {
+              target[key] = data[key];
+            };
 
             const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
               const fieldKey = key as keyof ProfileFormData;
@@ -264,8 +275,8 @@ export default function EditProfilePage({
               if (newValue === null && oldValue === null) return acc;
 
               try {
-                let normalizedOldValue: any = oldValue;
-                const normalizedNewValue: any = newValue;
+                let normalizedOldValue: unknown = oldValue;
+                const normalizedNewValue: unknown = newValue;
 
                 if (
                   typeof oldValue === 'string' &&
@@ -290,11 +301,11 @@ export default function EditProfilePage({
                     : String(normalizedNewValue);
 
                 if (oldValueStr !== newValueStr) {
-                  acc[fieldKey] = newValue as any;
+                  copyField(acc, fieldKey);
                 }
               } catch (error) {
                 if (oldValue !== newValue) {
-                  acc[fieldKey] = newValue as any;
+                  copyField(acc, fieldKey);
                 }
               }
 
@@ -321,7 +332,7 @@ export default function EditProfilePage({
         )
         .unwrap();
       return true;
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error edit profile - ', error);
       toast.error('Failed to update profile.');
       return false;
@@ -332,13 +343,15 @@ export default function EditProfilePage({
 
   useEffect(() => {
     if (ready && !authenticated) {
+      // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- auth state comes from the client-side Privy session, which getServerSideProps cannot read
       router.push('/earn');
       return;
     }
     if (user && slug !== user?.username) {
+      // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- ownership is checked against the client-side user store, which getServerSideProps cannot read
       router.push(`/earn/t/${slug}`);
     }
-  }, [ready, authenticated, user?.username, slug]);
+  }, [ready, authenticated, user?.username, slug, router]);
 
   return (
     <Default
@@ -378,11 +391,11 @@ export default function EditProfilePage({
                         source="user"
                         defaultValue={field.value || undefined}
                         onChange={(result) => {
-                          setUploadedPhotoUrl(result.secureUrl);
+                          uploadedPhotoUrlRef.current = result.secureUrl;
                           field.onChange(result.secureUrl);
                         }}
                         onReset={() => {
-                          setUploadedPhotoUrl(null);
+                          uploadedPhotoUrlRef.current = null;
                           field.onChange('');
                         }}
                       />

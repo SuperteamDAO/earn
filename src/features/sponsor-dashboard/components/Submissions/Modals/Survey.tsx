@@ -1,7 +1,7 @@
 import { X } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import posthog, { type Survey } from 'posthog-js';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import BiCheck from '@/components/icons/BiCheck';
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
@@ -23,10 +23,11 @@ const surveyId =
 export function Survey({ open, setOpen }: Props) {
   const [score, setScore] = useState<number | null>(null);
   const [stage, setStage] = useState<'form' | 'final' | 'form_loading'>('form');
-  const [survey, setSurvey] = useState<Survey | null>(null);
+  const surveyRef = useRef<Survey | null>(null);
 
   const handleDone = async (selectedScore: number) => {
     setStage('form_loading');
+    const survey = surveyRef.current;
     if (survey) {
       const scoreKey = `$survey_response_${survey.questions[0]?.id}`;
 
@@ -53,10 +54,9 @@ export function Survey({ open, setOpen }: Props) {
 
   useEffect(() => {
     posthog.getActiveMatchingSurveys((surveys) => {
-      const survey = getMatchingSurvey(surveys, surveyId);
-      setSurvey(survey);
+      surveyRef.current = getMatchingSurvey(surveys, surveyId);
     }, true);
-  }, [posthog]);
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -70,7 +70,7 @@ export function Survey({ open, setOpen }: Props) {
         <AnimateChangeInHeight duration={0.3}>
           <AnimatePresence mode="popLayout">
             {stage.includes('form') && (
-              <motion.div
+              <m.div
                 key="form"
                 exit={{ y: 20, opacity: 0, filter: 'blur(4px)' }}
                 transition={{ type: 'spring', bounce: 0, duration: 0.5 }}
@@ -100,10 +100,10 @@ export function Survey({ open, setOpen }: Props) {
                     upperBoundLabel="Very Likely"
                   />
                 </div>
-              </motion.div>
+              </m.div>
             )}
             {stage === 'final' && (
-              <motion.div
+              <m.div
                 key="final"
                 initial={{ y: -50, opacity: 0, filter: 'blur(4px)' }}
                 animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
@@ -116,7 +116,7 @@ export function Survey({ open, setOpen }: Props) {
                 <p className="mb-4 text-lg font-medium text-slate-700">
                   Thank you for your feedback!
                 </p>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </AnimateChangeInHeight>

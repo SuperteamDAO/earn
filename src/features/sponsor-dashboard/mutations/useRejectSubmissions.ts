@@ -18,6 +18,7 @@ export const useRejectSubmissions = (slug: string) => {
       const batchSize = 50;
       for (let i = 0; i < submissionIds.length; i += batchSize) {
         const batch = submissionIds.slice(i, i + batchSize);
+        // react-doctor-disable-next-line react-doctor/async-await-in-loop -- batches go out one at a time on purpose so a large bulk reject never sends many concurrent requests to the reject endpoint
         await api.post(`/api/sponsor-dashboard/submission/reject`, {
           data: batch.map((a) => ({ id: a })),
         });

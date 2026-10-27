@@ -1,7 +1,7 @@
 import Autoplay from 'embla-carousel-autoplay';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -46,7 +46,7 @@ const features: Feature[] = [
 ];
 
 export function SponsorFeatures() {
-  const plugin = useRef(
+  const [plugin] = useState(() =>
     Autoplay({
       delay: 5000,
       stopOnInteraction: false,
@@ -56,7 +56,7 @@ export function SponsorFeatures() {
 
   return (
     <div className="w-full">
-      <Carousel opts={{ loop: true }} plugins={[plugin.current]}>
+      <Carousel opts={{ loop: true }} plugins={[plugin]}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-slate-400">NEW FEATURES</h2>
           <CarouselDots
@@ -67,8 +67,8 @@ export function SponsorFeatures() {
         </div>
 
         <CarouselContent>
-          {features.map((feature, index) => (
-            <CarouselItem key={index}>
+          {features.map((feature) => (
+            <CarouselItem key={feature.title}>
               <div className="rounded-lg border bg-white">
                 <div className="rounded-lg bg-slate-100">
                   <div className="relative aspect-16/6 w-full overflow-hidden rounded-lg rounded-b-none">
@@ -76,6 +76,7 @@ export function SponsorFeatures() {
                       src={feature.imageLink}
                       alt={feature.title}
                       fill
+                      sizes="360px"
                       className="object-cover"
                     />
                   </div>

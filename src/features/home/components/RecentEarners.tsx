@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { TokenIcon } from '@/components/ui/token-icon';
-import { type User } from '@/interface/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';
 
+import { type RecentEarner } from '@/features/listings/queries/recent-earners';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 interface EarnerProps {
@@ -64,26 +64,26 @@ const Earner = ({
   );
 };
 
-export const RecentEarners = ({ earners }: { earners?: User[] }) => {
+export const RecentEarners = ({ earners }: { earners?: RecentEarner[] }) => {
   const marqueeRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
 
   const multipliedEarners = earners ? [...earners, ...earners, ...earners] : [];
 
-  const animate = () => {
-    const marquee = marqueeRef.current;
-    if (marquee && !isPaused) {
-      if (marquee.scrollHeight - marquee.scrollTop <= marquee.clientHeight) {
-        marquee.scrollTop -= marquee.scrollHeight / 3;
-      } else {
-        marquee.scrollTop += 1;
-      }
-    }
-    animationFrameRef.current = requestAnimationFrame(animate);
-  };
-
   useEffect(() => {
+    const animate = () => {
+      const marquee = marqueeRef.current;
+      if (marquee && !isPaused) {
+        if (marquee.scrollHeight - marquee.scrollTop <= marquee.clientHeight) {
+          marquee.scrollTop -= marquee.scrollHeight / 3;
+        } else {
+          marquee.scrollTop += 1;
+        }
+      }
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
     animationFrameRef.current = requestAnimationFrame(animate);
     return () => {
       if (animationFrameRef.current) {
@@ -116,15 +116,16 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          {multipliedEarners.map((t: any, index: number) => (
+          {multipliedEarners.map((t, index: number) => (
             <Earner
+              // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- the marquee repeats the same earners three times, so ids collide by design; the index tells the copies apart and the list never reorders
               key={`${t.id}-${index}`}
               amount={t.reward ?? 0}
-              token={t.rewardToken}
+              token={t.rewardToken ?? undefined}
               name={`${t.firstName} ${t.lastName}`}
-              username={t.username}
-              avatar={t.photo}
-              bounty={t.title ?? ''}
+              username={t.username ?? ''}
+              avatar={t.photo ?? undefined}
+              bounty={t.title}
               id={t.id}
             />
           ))}

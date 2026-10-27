@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -36,7 +36,7 @@ import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
 
 interface Props {
   applications: SubmissionWithUser[] | undefined;
-  listing: Listing | undefined;
+  listing: Omit<Listing, 'Hackathon'> | undefined;
 }
 export default function AiReviewProjectApplicationsModal({
   applications,
@@ -123,6 +123,7 @@ export default function AiReviewProjectApplicationsModal({
       !!user?.currentSponsorId &&
       user?.currentSponsorId === listing?.sponsorId
     ) {
+      // react-doctor-disable-next-line react-doctor/query-no-query-in-effect -- the unreviewed list must follow the parent's `applications` prop, which is not part of this query's key, and refetchOnMount is off
       refetchUnreviewedApplications();
     }
   }, [
@@ -138,7 +139,6 @@ export default function AiReviewProjectApplicationsModal({
   );
 
   const nonAnalysedApplications = useMemo(() => {
-    console.log('unreviewedApplications', unreviewedApplications);
     return unreviewedApplications?.filter(
       (appl) => !(appl.ai as ProjectApplicationAi)?.review,
     );
@@ -164,9 +164,7 @@ export default function AiReviewProjectApplicationsModal({
     setTimeout(async () => {
       setProgress(100);
       try {
-        console.log('Commiting Reviewed applications');
         const data = await commitReviews();
-        console.log('commit data - ', data.data);
         setCompletedStats({
           totalReviewed: data.data.length,
           shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
@@ -178,7 +176,7 @@ export default function AiReviewProjectApplicationsModal({
         posthog.capture('complete_ai review project');
         setState('DONE');
         await refetchUnreviewedApplications();
-      } catch (error: any) {
+      } catch (error) {
         console.log(
           'error occured while commiting reviewed applications',
           error,
@@ -186,14 +184,7 @@ export default function AiReviewProjectApplicationsModal({
         setState('ERROR');
       }
     }, 10000);
-  }, [
-    applications,
-    unreviewedApplications,
-    nonAnalysedApplications,
-    posthog,
-    commitReviews,
-    refetchUnreviewedApplications,
-  ]);
+  }, [commitReviews, refetchUnreviewedApplications]);
   function onComplete() {
     setState('INIT');
     setProgress(0);
@@ -299,7 +290,7 @@ export default function AiReviewProjectApplicationsModal({
           <AnimateChangeInHeight>
             <AnimatePresence mode="popLayout">
               {state === 'INIT' && (
-                <motion.div
+                <m.div
                   key="init"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -359,10 +350,10 @@ export default function AiReviewProjectApplicationsModal({
                       approving or rejecting a project application.
                     </p>
                   </CardFooter>
-                </motion.div>
+                </m.div>
               )}
               {state === 'PROCESSING' && (
-                <motion.div
+                <m.div
                   key="processing"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -390,10 +381,10 @@ export default function AiReviewProjectApplicationsModal({
                       Approx. {estimatedTimeSingular} remaining
                     </p>
                   </CardFooter>
-                </motion.div>
+                </m.div>
               )}
               {state === 'DONE' && (
-                <motion.div
+                <m.div
                   key="done"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -450,10 +441,10 @@ export default function AiReviewProjectApplicationsModal({
                       Have a look
                     </Button>
                   </CardContent>
-                </motion.div>
+                </m.div>
               )}
               {state === 'ERROR' && (
-                <motion.div
+                <m.div
                   key="error"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -481,7 +472,7 @@ export default function AiReviewProjectApplicationsModal({
                       Try Again
                     </Button>
                   </CardContent>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </AnimateChangeInHeight>
@@ -518,7 +509,6 @@ function formatTime(milliseconds: number): string {
   return `${hours}h ${minutes}m`;
 }
 function estimateTime(totalApplications: number, singular = false): string {
-  console.log('total applications', totalApplications);
   const lowerBoundSeconds = totalApplications * 10;
   const upperBoundSeconds = totalApplications * 20;
 

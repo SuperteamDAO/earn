@@ -47,7 +47,7 @@ async function grant(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.info(`Grant with ID: ${id} updated successfully`);
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while updating grant with ID: ${id}: ${safeStringify(error)}`,
     );

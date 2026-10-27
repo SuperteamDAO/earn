@@ -5,6 +5,10 @@ import {
   type BountyType,
   type status,
   type SubmissionLabels,
+  type AgentAccess,
+  type CompensationType,
+  type Source,
+  type ApplicationType,
 } from '@/prisma/enums';
 
 import { type ListingContext } from '../hooks/useListings';
@@ -13,9 +17,9 @@ export interface Listing {
   id?: string;
   title?: string;
   slug?: string;
-  description?: string;
-  requirements?: string;
-  applicationLink?: string;
+  description?: string | null;
+  requirements?: string | null;
+  applicationLink?: string | null;
   skills?: Skills;
   deadline?: string;
   commitmentDate?: string;
@@ -25,40 +29,40 @@ export interface Listing {
   isArchived?: boolean;
   isPublished?: boolean;
   isFeatured?: boolean;
-  token?: string;
-  rewardAmount?: number;
+  token?: string | null;
+  rewardAmount?: number | null;
   rewards?: Rewards;
   maxBonusSpots?: number;
   sponsorId?: string;
   sponsor?: SponsorType;
-  pocSocials?: string;
+  pocSocials?: string | null;
   pocId?: string;
   poc?: User;
-  source?: string;
+  source?: Source;
   type?: BountyType | 'grant';
-  applicationType?: 'fixed';
+  applicationType?: ApplicationType;
   totalWinnersSelected?: number;
   region?: string;
   totalPaymentsMade?: number;
   isWinnersAnnounced?: boolean;
-  templateId?: string;
+  templateId?: string | null;
   hackathonprize?: boolean;
   publishedAt?: string;
   isPrivate?: boolean;
   isPro?: boolean;
-  agentAccess?: 'HUMAN_ONLY' | 'AGENT_ALLOWED' | 'AGENT_ONLY';
+  agentAccess?: AgentAccess;
   Hackathon?: ListingHackathon;
-  compensationType?: 'fixed' | 'range' | 'variable';
-  minRewardAsk?: number;
-  maxRewardAsk?: number;
+  compensationType?: CompensationType;
+  minRewardAsk?: number | null;
+  maxRewardAsk?: number | null;
   winnersAnnouncedAt?: string;
-  hackathonId?: string;
+  hackathonId?: string | null;
   _count?: {
     Comments?: number;
   };
   isFndnPaying?: boolean;
-  usdValue?: number;
-  referredBy?: string;
+  usdValue?: number | null;
+  referredBy?: string | null;
   ai?: ProjectAi | BountiesAi;
 }
 
@@ -123,11 +127,11 @@ export interface ListingHackathon {
   name: string;
   logo: string;
   description: string;
-  deadline: string;
-  startDate: string;
-  altLogo: string;
+  deadline: string | null;
+  startDate: string | null;
+  altLogo: string | null;
   slug: string;
-  announceDate: string;
+  announceDate: string | null;
   Sponsor: SponsorType;
 }
 

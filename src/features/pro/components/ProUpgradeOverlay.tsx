@@ -2,7 +2,7 @@
 
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useQuery } from '@tanstack/react-query';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import localFont from 'next/font/local';
 import { type CSSProperties, useEffect, useState } from 'react';
 
@@ -27,6 +27,12 @@ const celebratoryFont = localFont({
 });
 
 const CONFETTI_PIECE_COUNT = 300;
+
+const usdFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 0,
+});
 
 interface ProBenefitItemProps {
   text: string;
@@ -261,7 +267,7 @@ export const ProUpgradeOverlay = () => {
         }}
       >
         <AnimatePresence>
-          <motion.div
+          <m.div
             key="pro-upgrade-overlay"
             className={cn(
               'pointer-events-auto fixed top-0 left-0 z-10000 flex flex-col items-center justify-center overflow-hidden bg-black',
@@ -269,7 +275,7 @@ export const ProUpgradeOverlay = () => {
             style={{
               width: viewport.width,
               height: viewport.height,
-              willChange: 'transform',
+              willChange: flow.status === 'expanding' ? 'transform' : 'auto',
               transformOrigin: 'center center',
               contain: 'layout style paint',
               backfaceVisibility: 'hidden',
@@ -387,7 +393,6 @@ export const ProUpgradeOverlay = () => {
                       background:
                         'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
                       transform: 'translate3d(-50%, -50%, 0)',
-                      willChange: 'transform',
                     }}
                   />
                   <div
@@ -398,7 +403,6 @@ export const ProUpgradeOverlay = () => {
                       background:
                         'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
                       transform: 'translate3d(50%, -50%, 0)',
-                      willChange: 'transform',
                     }}
                   />
                   <div
@@ -409,7 +413,6 @@ export const ProUpgradeOverlay = () => {
                       background:
                         'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
                       transform: 'translate3d(-50%, 50%, 0)',
-                      willChange: 'transform',
                     }}
                   />
                   <div
@@ -420,7 +423,6 @@ export const ProUpgradeOverlay = () => {
                       background:
                         'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
                       transform: 'translate3d(50%, 50%, 0)',
-                      willChange: 'transform',
                     }}
                   />
                   <div
@@ -431,7 +433,6 @@ export const ProUpgradeOverlay = () => {
                       background:
                         'radial-gradient(circle, rgba(217, 217, 217, 0.08) 0%, rgba(217, 217, 217, 0.04) 30%, transparent 60%)',
                       transform: 'translate3d(-50%, -50%, 0)',
-                      willChange: 'transform',
                     }}
                   />
                   <LargeRandomArrow />
@@ -506,11 +507,7 @@ export const ProUpgradeOverlay = () => {
                     <div className="mt-8 flex justify-between gap-4 pt-10 pb-6 md:gap-6 md:pt-12">
                       <div>
                         <p className="text-lg font-medium text-white">
-                          {new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: 'USD',
-                            maximumFractionDigits: 0,
-                          }).format(stats.totalWinnings ?? 0)}
+                          {usdFormatter.format(stats.totalWinnings ?? 0)}
                         </p>
                         <p className="mt-0.5 text-sm text-zinc-400">
                           Total Earned
@@ -563,6 +560,7 @@ export const ProUpgradeOverlay = () => {
                   href="https://x.com/SuperteamEarn/status/1995480188411646253"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="Learn more about Superteam Earn Pro on X"
                   className="pointer-events-auto pr-8 text-sm text-zinc-400 underline transition-colors hover:text-white md:text-lg"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -573,13 +571,14 @@ export const ProUpgradeOverlay = () => {
               </div>
             </div>
             {isVisible ? (
+              // react-doctor-disable-next-line react-doctor/media-has-caption, react-doctor/no-autoplay-without-muted -- hidden entrance music for the upgrade celebration, it has no speech to caption and playing it audibly is the intended effect
               <audio
                 src={'/assets/JohnCenaEntry.mp3'}
                 style={{ display: 'none' }}
                 autoPlay
               />
             ) : null}
-          </motion.div>
+          </m.div>
         </AnimatePresence>
       </DialogContent>
       <style jsx global>{`

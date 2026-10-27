@@ -14,12 +14,12 @@ interface Grant {
   id: string;
   title: string;
   slug: string;
-  logo?: string;
-  description?: string;
-  shortDescription?: string;
+  logo?: string | null;
+  description?: string | null;
+  shortDescription?: string | null;
   skills?: Skills;
-  token?: string;
-  link?: string;
+  token?: string | null;
+  link?: string | null;
   sponsorId?: string;
   sponsor?: {
     id?: string;
@@ -41,19 +41,18 @@ interface Grant {
   isPaused?: boolean;
   createdAt?: string;
   updatedAt?: string;
-  minReward?: number;
-  maxReward?: number;
+  minReward?: number | null;
+  maxReward?: number | null;
   questions?: GrantQuestion[];
-  pocSocials?: string;
-  status: string;
+  pocSocials?: string | null;
+  status: GrantStatus;
   region: string;
   references: References[];
-  requirements?: string;
-  applicationStatus?: 'Pending' | 'Approved' | 'Rejected' | 'Completed';
+  applicationStatus?: GrantApplicationStatus;
   approvedAmountTotal: number;
   historicalApplications: number;
-  avgResponseTime?: string;
-  airtableId?: string;
+  avgResponseTime?: string | null;
+  airtableId?: string | null;
   emailSalutation?: string | null;
   isNative?: boolean;
   ai?: GrantsAi;
@@ -65,7 +64,11 @@ interface GrantWithApplicationCount extends Grant {
   totalApplications: number;
 }
 
-import { type SubmissionLabels } from '@/prisma/enums';
+import {
+  type SubmissionLabels,
+  type GrantApplicationStatus,
+  type GrantStatus,
+} from '@/prisma/enums';
 
 interface GrantsAiContxt {
   totalInputTokens: number;

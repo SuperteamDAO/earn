@@ -47,7 +47,7 @@ export default function PerksGrid({ perks }: PerksGridProps) {
       <div className="grid-cards-container flex flex-col gap-8 md:grid md:gap-0">
         {perks.map((perk, index) => (
           <PerkCard
-            key={index}
+            key={perk.fields['Name']}
             name={perk.fields['Name']}
             description={perk.fields['Notes'] || ''}
             projectLink={perk.fields['Link'] || '#'}

@@ -70,12 +70,12 @@ export const useHackathonState = () => {
       const newPath = `${window.location.pathname}${queryString ? `?${queryString}` : ''}`;
       void router.replace(newPath, undefined, { shallow: true, scroll: false });
     },
-    [searchParams, router, defaultName],
+    [searchParams, router],
   );
 
   const activeName = useMemo(
     (): string => searchParams.get('hackathon') ?? defaultName,
-    [searchParams, defaultName],
+    [searchParams],
   );
 
   const activeStatus = useMemo((): HackathonStatus => {

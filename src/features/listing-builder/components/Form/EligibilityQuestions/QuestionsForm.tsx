@@ -293,7 +293,7 @@ export function EligibilityQuestionsForm() {
       );
       scrollToBottom();
     },
-    [append, scrollToBottom, type, fields.length],
+    [append, scrollToBottom, fields.length],
   );
 
   const handleRemoveQuestion = useCallback(

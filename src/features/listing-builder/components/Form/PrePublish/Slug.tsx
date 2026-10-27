@@ -26,7 +26,6 @@ export function Slug() {
   const form = useListingForm();
   const isEditing = useAtomValue(isEditingAtom);
 
-  // const [isValidated, setIsValidated] = useState(false);
   const isSlugLoading = useIsFetching({ queryKey: ['slug'] }) > 0;
 
   const slug = useWatch({
@@ -90,7 +89,8 @@ export function Slug() {
       });
       form.setFocus('slug');
     }
-  }, [isSlugTaken]);
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- fires when the check flips to taken; re-running per slug keystroke would re-set the stale error while the user types
+  }, [isSlugTaken, form.setError, form.setFocus]);
 
   const prevDebouncedSlugRef = useRef<string | undefined>(undefined);
   useEffect(() => {
@@ -98,18 +98,13 @@ export function Slug() {
       await form.trigger('slug');
       form.setFocus('slug');
       // Only save if slug actually changed
-      console.log('[DRAFT_DEBUG] Slug.tsx useEffect', {
-        prevSlug: prevDebouncedSlugRef.current,
-        debouncedSlug,
-        willSave: prevDebouncedSlugRef.current !== debouncedSlug,
-      });
       if (prevDebouncedSlugRef.current !== debouncedSlug) {
         prevDebouncedSlugRef.current = debouncedSlug;
         form.saveDraft();
       }
     }
     validateSlug();
-  }, [debouncedSlug]);
+  }, [debouncedSlug, form.trigger, form.setFocus, form.saveDraft]);
 
   return (
     <FormField

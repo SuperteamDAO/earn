@@ -1,8 +1,10 @@
+import { type CSSProperties } from 'react';
+
 export const BreakoutLogo = ({
   styles,
   className,
 }: {
-  styles?: any;
+  styles?: CSSProperties;
   className?: string;
 }) => {
   return (

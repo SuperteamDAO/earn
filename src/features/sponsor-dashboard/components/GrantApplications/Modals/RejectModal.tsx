@@ -1,6 +1,6 @@
 import { ChevronDown, X } from 'lucide-react';
 import posthog from 'posthog-js';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -109,18 +109,11 @@ export const RejectGrantApplicationModal = ({
     } catch (e) {
       console.error(e);
     } finally {
+      // react-doctor-disable-next-line react-doctor/no-unowned-async-error-clear -- the submit button is disabled while `loading`, and the parent keys this modal by application id, so no other request can own this flag
       setLoading(false);
       closeWithoutGuard();
     }
   };
-
-  useEffect(() => {
-    setCustomNote('');
-    setIsCustomEmailOpen(false);
-    setSkipCooldown(false);
-    setEmailError(null);
-    setLoading(false);
-  }, [applicationId]);
 
   const rejectButtonText = isCustomEmailOpen
     ? 'Reject with Custom Note'

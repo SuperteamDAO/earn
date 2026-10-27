@@ -29,7 +29,7 @@ const ImageEditDialog = ({ editor, size, variant }: ImageEditDialogProps) => {
         <ToolbarButton
           isActive={editor.isActive('image')}
           tooltip="Image"
-          aria-label="Image"
+          aria-label="Insert image"
           size={size}
           variant={variant}
         >

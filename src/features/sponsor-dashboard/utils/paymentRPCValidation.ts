@@ -2,6 +2,7 @@ import { signature } from '@solana/kit';
 
 import { type Token } from '@/constants/tokenList';
 import logger from '@/lib/logger';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { getRpc } from '@/features/wallet/utils/getConnection';
 
@@ -21,6 +22,20 @@ export interface ValidationResult {
   error?: string;
   actualAmount?: number;
 }
+
+function fetchParsedTransaction(rpc: ReturnType<typeof getRpc>, txId: string) {
+  return rpc
+    .getTransaction(signature(txId), {
+      commitment: 'confirmed',
+      maxSupportedTransactionVersion: 0,
+      encoding: 'jsonParsed',
+    })
+    .send();
+}
+
+type ParsedTransaction = NonNullable<
+  Awaited<ReturnType<typeof fetchParsedTransaction>>
+>;
 
 async function wait(ms: number) {
   return await new Promise((resolve) => setTimeout(resolve, ms));
@@ -54,17 +69,11 @@ export async function validatePayment({
   try {
     logger.debug(`Getting Transaction Information from RPC for txId: ${txId}`);
 
-    let tx: any = null;
+    let tx: ParsedTransaction | null = null;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        tx = await rpc
-          .getTransaction(signature(txId), {
-            commitment: 'confirmed',
-            maxSupportedTransactionVersion: 0,
-            encoding: 'jsonParsed',
-          })
-          .send();
+        tx = await fetchParsedTransaction(rpc, txId);
         break;
       } catch (err) {
         if (attempt === maxRetries) {
@@ -189,12 +198,12 @@ export async function validatePayment({
     }
 
     return { isValid: true, actualAmount: actualTransferAmount };
-  } catch (error: any) {
-    return { isValid: false, error: error.message };
+  } catch (error) {
+    return { isValid: false, error: getErrorMessage(error) };
   }
 }
 
-function isNativeSolTransfer(tx: any) {
+function isNativeSolTransfer(tx: ParsedTransaction) {
   if (!tx.meta) return false;
   const hasTokenTransfers =
     (tx.meta?.preTokenBalances?.length || 0) > 0 ||

@@ -57,6 +57,7 @@ export function ListingPageLayout({
     } else if (initialListing?.type === 'project') {
       posthog.capture('open_project');
     }
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- page-open analytics event, captured once per mount so it is not double-counted
   }, []);
 
   useEffect(() => {
@@ -65,7 +66,7 @@ export function ListingPageLayout({
         isCaution: initialListing.sponsor?.isCaution,
         submissionCount: submissionNumber,
         deadline: initialListing.deadline,
-        rewardAmount: initialListing.rewardAmount,
+        rewardAmount: initialListing.rewardAmount ?? undefined,
         type: initialListing.type,
         isPublished: initialListing.isPublished,
         status: initialListing.status,

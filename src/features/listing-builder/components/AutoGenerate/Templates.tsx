@@ -28,11 +28,7 @@ export function Templates({ type, onSelectTemplate }: TemplatesProps) {
   const visibleTemplates = showDropdown ? templates.slice(0, 3) : templates;
   const hiddenTemplates = showDropdown ? templates.slice(3) : [];
 
-  const handleTemplateSelect = (template: {
-    name: string;
-    prompt: string;
-    icon: any;
-  }) => {
+  const handleTemplateSelect = (template: { name: string; prompt: string }) => {
     posthog.capture('select template_auto-generate');
     onSelectTemplate?.(template);
   };

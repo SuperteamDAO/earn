@@ -55,7 +55,12 @@ export default function PerkCard({
         </p>
       </div>
       <div className="flex gap-4">
-        <a href={projectLink} target="_blank" rel="noopener noreferrer">
+        <a
+          href={projectLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Visit ${name} website`}
+        >
           <Globe size={24} color="white" />
         </a>
       </div>

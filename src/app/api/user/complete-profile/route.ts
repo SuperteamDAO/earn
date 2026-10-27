@@ -160,7 +160,7 @@ export async function POST(request: NextRequest) {
         logger.info(
           `Photo verification successful for user ${userId}: ${filteredData.photo}`,
         );
-      } catch (error: any) {
+      } catch (error) {
         logger.warn(
           `Photo verification error for user ${userId}: ${safeStringify(error)}`,
         );
@@ -215,20 +215,15 @@ export async function POST(request: NextRequest) {
       'productAndNewsletter',
     ]);
 
-    for (const category of categories) {
-      await prisma.emailSettings.deleteMany({
-        where: {
-          userId,
-          category,
-        },
-      });
-      await prisma.emailSettings.create({
-        data: {
-          user: { connect: { id: userId } },
-          category,
-        },
-      });
-    }
+    await prisma.emailSettings.deleteMany({
+      where: {
+        userId,
+        category: { in: [...categories] },
+      },
+    });
+    await prisma.emailSettings.createMany({
+      data: [...categories].map((category) => ({ userId, category })),
+    });
 
     logger.info(
       `Completing user profile for user ID: ${userId}; fields: ${Object.keys(updatedData).join(', ')}`,
@@ -287,7 +282,7 @@ export async function POST(request: NextRequest) {
 
     logger.info(`User onboarded successfully for user ID: ${userId}`);
     return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     if (isZodValidationError(error)) {
       logger.warn(
         `Validation failed while onboarding user ${userId}: ${safeStringify(error.flatten())}`,

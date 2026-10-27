@@ -1,5 +1,5 @@
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -218,26 +218,10 @@ export const ApproveTrancheModal = ({
     } catch (e) {
       console.error(e);
     } finally {
+      // react-doctor-disable-next-line react-doctor/no-unowned-async-error-clear -- the submit button is disabled while `loading`, and the parent keys this modal by tranche id, so no other request can own this flag
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    setApprovedAmount(ask);
-    setCustomNote('');
-    setIsCustomEmailOpen(false);
-    setEmailError(null);
-    setWarningMessage(null);
-    setLoading(false);
-  }, [
-    trancheId,
-    ask,
-    granteeName,
-    projectTitle,
-    sponsorName,
-    salutation,
-    token,
-  ]);
 
   return (
     <>

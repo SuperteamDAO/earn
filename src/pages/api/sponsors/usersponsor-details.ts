@@ -32,7 +32,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       logger.info(
         `Photo verification successful for user ${userId}: ${rest.photo}`,
       );
-    } catch (error: any) {
+    } catch (error) {
       logger.warn(
         `Photo verification error for user ${userId}: ${safeStringify(error)}`,
       );
@@ -96,7 +96,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.info(`User onboarded successfully for user ID: ${userId}`);
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while onboarding user ${userId}: ${safeStringify(error)}`,
     );

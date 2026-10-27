@@ -11,6 +11,10 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { type SponsorStats } from '../types';
 import { HelpBanner } from './HelpBanner';
 
+const usdFormatter = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 0,
+});
+
 interface StatsTooltipProps {
   label: string;
   tooltipText: string;
@@ -44,12 +48,7 @@ const StatsTooltip = ({
       ) : (
         <p className="text-left text-lg font-semibold text-slate-900">
           {isMonetary ? (
-            <>
-              $
-              {new Intl.NumberFormat('en-US', {
-                maximumFractionDigits: 0,
-              }).format(Math.round(value || 0))}
-            </>
+            <>${usdFormatter.format(Math.round(value || 0))}</>
           ) : (
             value
           )}

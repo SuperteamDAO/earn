@@ -13,7 +13,7 @@ interface AgentNotificationParams {
   type: AgentActionType;
   id: string;
   userId?: string;
-  otherInfo?: any;
+  otherInfo?: unknown;
 }
 
 const redis = new Redis(process.env.AGENT_REDIS_URL!, {
@@ -45,9 +45,6 @@ export async function queueAgent({
       },
     );
 
-    console.log(
-      `Agent notification queued successfully: jobId=${job.id}, type=${type}, id=${id}`,
-    );
     logger.info(
       `Agent notification queued successfully: jobId=${job.id}, type=${type}, id=${id}`,
     );

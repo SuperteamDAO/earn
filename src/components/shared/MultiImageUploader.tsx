@@ -9,7 +9,7 @@ import {
   Loader2,
   X,
 } from 'lucide-react';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useId, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import RxUpload from '@/components/icons/RxUpload';
@@ -39,11 +39,12 @@ interface MultiImageUploaderProps {
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const PDF_TYPE = 'application/pdf';
+const NO_URLS: string[] = [];
 
 export function MultiImageUploader({
   source,
   onChange,
-  value = [],
+  value = NO_URLS,
   maxImages = 10,
   minImages = 1,
   label,
@@ -56,6 +57,7 @@ export function MultiImageUploader({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const labelId = useId();
 
   const { upload, uploading, progress, reset } = useImageUpload({
     source,
@@ -110,6 +112,7 @@ export function MultiImageUploader({
         }
 
         try {
+          // react-doctor-disable-next-line react-doctor/async-await-in-loop -- useImageUpload exposes a single uploading/progress state, so uploads must not overlap
           const result = await upload(file);
           nextValue = [...nextValue, result.secureUrl];
           onChange(nextValue);
@@ -228,6 +231,7 @@ export function MultiImageUploader({
     if (!currentPreviewUrl) return;
     try {
       const response = await fetch(currentPreviewUrl);
+      if (!response.ok) throw new Error(`Download failed: ${response.status}`);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -238,7 +242,7 @@ export function MultiImageUploader({
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch {
-      window.open(currentPreviewUrl, '_blank');
+      window.open(currentPreviewUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -246,17 +250,21 @@ export function MultiImageUploader({
     <div className="flex flex-col gap-2">
       {label && (
         <div>
-          <label className="text-sm font-medium text-slate-700">
+          <span id={labelId} className="text-sm font-medium text-slate-700">
             {label}
             {minImages > 0 && <span className="text-red-500">*</span>}
-          </label>
+          </span>
           {description && (
             <p className="text-sm text-slate-500">{description}</p>
           )}
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
+      <div
+        role="group"
+        aria-labelledby={label ? labelId : undefined}
+        className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5"
+      >
         {value.map((url, index) => {
           const isPdf = url.toLowerCase().endsWith('.pdf');
           return (
@@ -287,6 +295,7 @@ export function MultiImageUploader({
                 <button
                   type="button"
                   onClick={() => handleRemove(index)}
+                  aria-label={`Remove ${isPdf ? 'PDF' : 'image'} ${index + 1}`}
                   className="absolute top-1 right-1 rounded-full bg-white/90 p-1 shadow-sm hover:bg-white"
                 >
                   <X className="h-4 w-4 text-slate-600" />
@@ -393,6 +402,8 @@ export function MultiImageUploader({
             )}
 
             {isCurrentPreviewPdf ? (
+              // Chrome refuses to render PDFs inside a sandboxed iframe.
+              // react-doctor-disable-next-line react-doctor/iframe-missing-sandbox -- PDF viewer
               <iframe
                 src={currentPreviewUrl}
                 className="h-full w-full"

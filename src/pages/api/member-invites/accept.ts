@@ -8,9 +8,11 @@ import { handleInviteAcceptance } from '@/features/auth/utils/handleInvite';
 import { withAuth } from '@/features/auth/utils/withAuth';
 
 async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
+  // Copied only to redact the token in the debug log below.
   const sanitizedBody =
     req.body && typeof req.body === 'object'
       ? {
+          // react-doctor-disable-next-line react-doctor/request-body-mass-assignment -- log-only copy
           ...req.body,
           token:
             typeof req.body.token === 'string' && req.body.token.length > 0
@@ -44,7 +46,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       logger.warn(`Invite acceptance failed: ${result.message}`);
       res.status(400).json({ error: result.message });
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`Error in invite acceptance: ${safeStringify(error)}`);
     res.status(500).json({ error: 'Internal server error' });
   }

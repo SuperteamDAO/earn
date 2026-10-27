@@ -179,6 +179,7 @@ export const ApprovalStages = ({ application, grant }: Props) => {
         </div>
 
         {tranches.map((tranche, index) => (
+          // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- tranches are generated positionally from totalTranches (tranche N is index + 1) and never reorder
           <div key={index} className="relative flex items-start gap-4">
             <div className="relative z-10">
               {tranche.status === 'Paid' ? <CheckIcon /> : <PendingIcon />}

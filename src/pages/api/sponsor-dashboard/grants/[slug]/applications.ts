@@ -213,10 +213,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     };
 
     return res.status(200).json(responseData);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error fetching submissions with slug=${slug}: ${safeStringify(error)}`,
-      error.stack,
+      error instanceof Error ? error.stack : undefined,
     );
 
     return res.status(500).json({

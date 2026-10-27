@@ -79,7 +79,7 @@ export default function Modal({
           <div className="modal-points mr-[80px] ml-[36px] w-fit text-[14px] md:mr-[64px] md:ml-[64px] md:w-[250px] md:text-[18px]">
             {points.map((point, index) => (
               <div
-                key={index}
+                key={point}
                 className={`point${index + 1} mt-${index === 0 ? '[32px]' : '[12px]'} flex flex-row gap-4`}
               >
                 <span className="mt-2 self-center md:mt-2">

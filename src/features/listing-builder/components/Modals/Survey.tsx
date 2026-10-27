@@ -1,7 +1,7 @@
 import { Loader, X } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import posthog, { type Survey } from 'posthog-js';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import BiCheck from '@/components/icons/BiCheck';
 import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
@@ -32,11 +32,12 @@ export function Survey({ open, setOpen }: Props) {
   const [score, setScore] = useState<number | null>(null);
   const [feedback, setFeedback] = useState('');
   const [stage, setStage] = useState<'form' | 'final' | 'form_loading'>('form');
-  const [survey, setSurvey] = useState<Survey | null>(null);
+  const surveyRef = useRef<Survey | null>(null);
 
   const handleDone = async () => {
     setStage('form_loading');
     try {
+      const survey = surveyRef.current;
       if (survey) {
         const scoreKey = `$survey_response_${survey.questions[0]?.id}`;
         const feedbackKey = `$survey_response_${survey.questions[1]?.id}`;
@@ -62,18 +63,17 @@ export function Survey({ open, setOpen }: Props) {
     try {
       posthog.getActiveMatchingSurveys((surveys) => {
         try {
-          const survey = getMatchingSurvey(surveys, surveyId);
-          setSurvey(survey);
+          surveyRef.current = getMatchingSurvey(surveys, surveyId);
         } catch (err) {
           console.error('Error processing survey data:', err);
-          setSurvey(null);
+          surveyRef.current = null;
         }
       }, true);
     } catch (error) {
       console.error('Error fetching survey:', error);
-      setSurvey(null);
+      surveyRef.current = null;
     }
-  }, [posthog]);
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={setOpen} modal={false}>
@@ -89,7 +89,7 @@ export function Survey({ open, setOpen }: Props) {
         <AnimateChangeInHeight duration={0.3}>
           <AnimatePresence mode="popLayout">
             {stage.includes('form') && (
-              <motion.div
+              <m.div
                 key="form"
                 exit={{ y: 20, opacity: 0, filter: 'blur(4px)' }}
                 transition={{ type: 'spring', bounce: 0, duration: 0.5 }}
@@ -123,7 +123,7 @@ export function Survey({ open, setOpen }: Props) {
                   />
                   <AnimatePresence mode="popLayout">
                     {score && (
-                      <motion.div
+                      <m.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -150,7 +150,7 @@ export function Survey({ open, setOpen }: Props) {
                             onClick={handleDone}
                           >
                             <AnimatePresence mode="popLayout" initial={false}>
-                              <motion.span
+                              <m.span
                                 key={stage}
                                 initial={{ y: -25, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
@@ -166,18 +166,18 @@ export function Survey({ open, setOpen }: Props) {
                                 ) : (
                                   'Done'
                                 )}
-                              </motion.span>
+                              </m.span>
                             </AnimatePresence>
                           </Button>
                         </DialogFooter>
-                      </motion.div>
+                      </m.div>
                     )}
                   </AnimatePresence>
                 </div>
-              </motion.div>
+              </m.div>
             )}
             {stage === 'final' && (
-              <motion.div
+              <m.div
                 key="final"
                 initial={{ y: -50, opacity: 0, filter: 'blur(4px)' }}
                 animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
@@ -190,7 +190,7 @@ export function Survey({ open, setOpen }: Props) {
                 <p className="mb-4 text-lg font-medium text-slate-700">
                   Thank you for your feedback!
                 </p>
-              </motion.div>
+              </m.div>
             )}
           </AnimatePresence>
         </AnimateChangeInHeight>

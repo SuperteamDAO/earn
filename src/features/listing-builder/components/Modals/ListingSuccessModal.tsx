@@ -25,15 +25,11 @@ export const ListingSuccessModal = () => {
     control: form.control,
     name: 'slug',
   });
-  const type = useWatch({
-    control: form.control,
-    name: 'type',
-  });
 
   const listingLink = useCallback(
     (medium?: 'twitter' | 'telegram') =>
       `${getURL()}earn/listing/${slug}/${medium ? `?utm_source=superteamearn&utm_medium=${medium}&utm_campaign=sharelisting` : ``}`,
-    [type, slug],
+    [slug],
   );
 
   const tweetShareContent = `Check out my newly added @SuperteamEarn opportunity!\n\n${listingLink('twitter')}`;

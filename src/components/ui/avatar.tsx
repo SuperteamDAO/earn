@@ -63,15 +63,13 @@ function AvatarGroupProvider({
   limit?: number;
 }) {
   const [count, setCount] = React.useState<number>(0);
+  const contextValue = React.useMemo(
+    () => ({ count, setCount, limit }),
+    [count, limit],
+  );
 
   return (
-    <AvatarGroupContext.Provider
-      value={{
-        count,
-        setCount,
-        limit,
-      }}
-    >
+    <AvatarGroupContext.Provider value={contextValue}>
       {children}
     </AvatarGroupContext.Provider>
   );

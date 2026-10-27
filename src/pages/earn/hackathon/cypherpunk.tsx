@@ -179,7 +179,7 @@ function HeroMini({
   stats: Stats | undefined;
 }) {
   const isMd = useBreakpoint('md');
-  const [countdownDate, setCountdownDate] = useState<Date>(
+  const [countdownDate, setCountdownDate] = useState<Date>(() =>
     dayjs.utc(START_DATE).toDate(),
   );
   const [status, setStatus] = useState<'Start In' | 'Close In' | 'Closed'>(() =>
@@ -191,8 +191,6 @@ function HeroMini({
   );
 
   useEffect(() => {
-    console.log('start date', START_DATE);
-    console.log('close date', CLOSE_DATE);
     function updateStatus() {
       if (dayjs().isAfter(dayjs(CLOSE_DATE))) {
         setStatus('Closed');

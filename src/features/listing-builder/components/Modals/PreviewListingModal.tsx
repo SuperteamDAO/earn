@@ -66,6 +66,7 @@ export const PreviewListingModal = () => {
                     variant="ghost"
                     size="icon"
                     className="text-slate-300 hover:text-slate-400"
+                    aria-label="About preview links"
                   >
                     <Info className="h-4 w-4" />
                   </Button>
@@ -76,7 +77,7 @@ export const PreviewListingModal = () => {
                   className="ph-no-capture"
                   onClick={() => {
                     posthog.capture('new tab_preview');
-                    window.open(previewUrl, '_blank');
+                    window.open(previewUrl, '_blank', 'noopener,noreferrer');
                   }}
                 >
                   <span>Secret Draft Link</span>
@@ -109,6 +110,7 @@ export const PreviewListingModal = () => {
                 <Loader2 className="text-primary h-8 w-8 animate-spin" />
               </div>
             )}
+            {/* react-doctor-disable-next-line react-doctor/iframe-missing-sandbox -- our own page needs scripts and same-origin cookies, which would cancel a sandbox */}
             <iframe
               src={`${previewUrl}&nsb=1`}
               className="h-full w-full"

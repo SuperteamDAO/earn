@@ -113,20 +113,22 @@ export async function POST(
         },
       });
 
-      for (const submission of submissionsToReject) {
-        try {
-          await queueEmail({
-            type: 'submissionRejected',
-            id: submission.id,
-            userId: submission.userId,
-            triggeredBy: sessionResult.session.userId,
-          });
-        } catch (err) {
-          logger.warn(
-            `Failed to send email notification for submission rejection: ${submission.id}`,
-          );
-        }
-      }
+      await Promise.all(
+        submissionsToReject.map(async (submission) => {
+          try {
+            await queueEmail({
+              type: 'submissionRejected',
+              id: submission.id,
+              userId: submission.userId,
+              triggeredBy: sessionResult.session.userId,
+            });
+          } catch (err) {
+            logger.warn(
+              `Failed to send email notification for submission rejection: ${submission.id}`,
+            );
+          }
+        }),
+      );
     }
 
     await refundCredits(id);
@@ -150,7 +152,7 @@ export async function POST(
 
     logger.info(`Listing ${id} unpublished successfully`);
     return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`Error unpublishing listing ${id}: ${safeStringify(error)}`);
     return NextResponse.json(
       {

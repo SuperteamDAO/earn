@@ -234,7 +234,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
       await refetchUser();
       toast.success('Tranche request submitted successfully');
       onClose();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error submitting tranche request:', error);
       const serverMessage = axios.isAxiosError(error)
         ? error.response?.data?.message || error.response?.data?.error

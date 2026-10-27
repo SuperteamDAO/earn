@@ -2082,7 +2082,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     );
 
     return res.status(200).json({ userIds });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error resolving userIds from privyDids: ${safeStringify(error)}`,
     );

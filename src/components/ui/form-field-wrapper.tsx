@@ -14,6 +14,9 @@ import {
 } from './form';
 import { TokenInput } from './token-input';
 
+// Children are input-like elements that receive the field's props.
+type InputLikeProps = React.InputHTMLAttributes<HTMLInputElement>;
+
 interface FormFieldWrapperProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
@@ -23,10 +26,10 @@ interface FormFieldWrapperProps<T extends FieldValues> {
   children?: React.ReactNode;
   isRichEditor?: boolean;
   isTokenInput?: boolean;
-  token?: string;
+  token?: string | null;
   richEditorPlaceholder?: string;
   className?: string;
-  onChange?: (e: any) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isPro?: boolean;
 }
 
@@ -61,10 +64,7 @@ export function FormFieldWrapper<T extends FieldValues>({
                 <RichEditor
                   id={name}
                   value={field.value || ''}
-                  onChange={(e) => {
-                    field.onChange(e);
-                    onChange?.(e);
-                  }}
+                  onChange={(e) => field.onChange(e)}
                   error={false}
                   placeholder={richEditorPlaceholder}
                   isPro={isPro}
@@ -73,24 +73,25 @@ export function FormFieldWrapper<T extends FieldValues>({
                 <TokenInput
                   token={token}
                   value={field.value}
-                  onChange={(e) => {
-                    field.onChange(e);
-                    onChange?.(e);
-                  }}
+                  onChange={(e) => field.onChange(e)}
                   isPro={isPro}
                 />
               ) : (
-                React.cloneElement(children as React.ReactElement<any>, {
-                  ...field,
-                  onChange: (e: any) => {
-                    field.onChange(e);
-                    onChange?.(e);
+                React.cloneElement(
+                  children as React.ReactElement<InputLikeProps>,
+                  {
+                    ...field,
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                      field.onChange(e);
+                      onChange?.(e);
+                    },
+                    className: cn(
+                      (children as React.ReactElement<InputLikeProps>).props
+                        ?.className,
+                      isPro && 'focus-visible:ring-zinc-400',
+                    ),
                   },
-                  className: cn(
-                    (children as React.ReactElement<any>).props?.className,
-                    isPro && 'focus-visible:ring-zinc-400',
-                  ),
-                })
+                )
               )}
             </FormControl>
             <FormMessage className="pt-1" />

@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
 
 import {
@@ -89,6 +90,7 @@ export async function GET(request: Request) {
           >
             {category?.split(' ').map((word, i) => (
               <span
+                // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- rendered once by ImageResponse into a static image, so there is no reconciliation and repeated words would collide as keys
                 key={i}
                 style={{
                   fontSize: categoryFontSize,
@@ -208,8 +210,8 @@ export async function GET(request: Request) {
         ],
       },
     );
-  } catch (e: any) {
-    console.log(`${e.message}`);
+  } catch (e) {
+    console.log(getErrorMessage(e));
     return new Response(`Failed to generate the image`, {
       status: 500,
     });

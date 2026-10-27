@@ -29,7 +29,6 @@ import {
   type TransactionSigner,
 } from '@solana/kit';
 import { useWallet } from '@solana/wallet-adapter-react';
-import type { SolanaSignAndSendTransactionFeature } from '@solana/wallet-standard-features';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import bs58 from 'bs58';
 import { Loader2 } from 'lucide-react';
@@ -114,7 +113,13 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
   };
 
   const { mutateAsync: addPayment } = useMutation({
-    mutationFn: ({ id, paymentDetails }: { id: string; paymentDetails: any }) =>
+    mutationFn: ({
+      id,
+      paymentDetails,
+    }: {
+      id: string;
+      paymentDetails: NonNullable<SubmissionWithUser['paymentDetails']>;
+    }) =>
       api.post(`/api/sponsor-dashboard/submission/add-payment/`, {
         id,
         paymentDetails,
@@ -266,12 +271,9 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       const txEncoder = getTransactionEncoder();
       const txBytes = txEncoder.encode(compiledTx);
 
-      const standardWallet = (wallet.adapter as any)?.wallet as
-        | {
-            features: Record<string, unknown>;
-            accounts: Array<{ address: string; publicKey: Uint8Array }>;
-          }
-        | undefined;
+      // Wallet-standard adapters expose the underlying wallet as `.wallet`.
+      const standardWallet =
+        'wallet' in wallet.adapter ? wallet.adapter.wallet : undefined;
 
       if (!standardWallet) {
         throw new Error('Wallet not available');
@@ -286,11 +288,10 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
         throw new Error('Wallet not available');
       }
 
-      const signAndSend = standardWallet.features[
-        'solana:signAndSendTransaction'
-      ] as
-        | SolanaSignAndSendTransactionFeature['solana:signAndSendTransaction']
-        | undefined;
+      const signAndSend =
+        'solana:signAndSendTransaction' in standardWallet.features
+          ? standardWallet.features['solana:signAndSendTransaction']
+          : undefined;
 
       if (!signAndSend) {
         throw new Error('Wallet does not support signAndSendTransaction');
@@ -298,11 +299,11 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
 
       payoutStage = 'wallet-sign-and-send';
       const results = await signAndSend.signAndSendTransaction({
-        account: account as any,
+        account,
         transaction: txBytes as Uint8Array,
         chain: 'solana:mainnet',
         options: { skipPreflight: true },
-      } as any);
+      });
 
       const result = Array.isArray(results) ? results[0] : results;
       txSignature = bs58.encode(result.signature);
@@ -354,10 +355,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
       );
 
       const firstName: string = (() => {
-        const name =
-          (submission as any)?.user?.name ||
-          (submission as any)?.user?.firstName ||
-          'the winner';
+        const name = submission?.user?.firstName || 'the winner';
         return typeof name === 'string' && name.trim().length > 0
           ? (name.trim().split(' ')[0] ?? 'the winner')
           : 'the winner';

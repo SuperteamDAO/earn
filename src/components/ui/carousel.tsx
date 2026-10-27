@@ -6,6 +6,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
@@ -92,6 +93,7 @@ function Carousel({
 
   useEffect(() => {
     if (!api || !setApi) return;
+    // react-doctor-disable-next-line react-doctor/no-pass-data-to-parent, react-doctor/no-pass-live-state-to-parent, react-doctor/no-prop-callback-in-effect -- embla creates the api instance inside its own effect after mount, so there is no event to hand it over from; this fires once per instance
     setApi(api);
   }, [api, setApi]);
 
@@ -102,24 +104,37 @@ function Carousel({
     api.on('select', onSelect);
 
     return () => {
-      api?.off('select', onSelect);
+      api.off('reInit', onSelect);
+      api.off('select', onSelect);
     };
   }, [api, onSelect]);
 
+  const contextValue = useMemo(
+    () => ({
+      carouselRef,
+      api: api,
+      opts,
+      orientation:
+        orientation || (opts?.axis === 'y' ? 'vertical' : 'horizontal'),
+      scrollPrev,
+      scrollNext,
+      canScrollPrev,
+      canScrollNext,
+    }),
+    [
+      carouselRef,
+      api,
+      opts,
+      orientation,
+      scrollPrev,
+      scrollNext,
+      canScrollPrev,
+      canScrollNext,
+    ],
+  );
+
   return (
-    <CarouselContext.Provider
-      value={{
-        carouselRef,
-        api: api,
-        opts,
-        orientation:
-          orientation || (opts?.axis === 'y' ? 'vertical' : 'horizontal'),
-        scrollPrev,
-        scrollNext,
-        canScrollPrev,
-        canScrollNext,
-      }}
-    >
+    <CarouselContext.Provider value={contextValue}>
       <div
         onKeyDownCapture={handleKeyDown}
         className={cn('relative', className)}
@@ -195,17 +210,20 @@ function CarouselDots({
       setSelectedIndex(api.selectedScrollSnap());
     };
 
-    api.on('select', onSelect);
-    api.on('reInit', () => {
+    const onReInit = () => {
       setScrollSnaps(api.scrollSnapList());
       onSelect();
-    });
+    };
+
+    api.on('select', onSelect);
+    api.on('reInit', onReInit);
 
     // Initial selection
     onSelect();
 
     return () => {
       api.off('select', onSelect);
+      api.off('reInit', onReInit);
     };
   }, [api]);
 
@@ -227,6 +245,7 @@ function CarouselDots({
     >
       {scrollSnaps.map((_, index) => (
         <button
+          // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- scroll snaps are positions with no identity of their own; the index is the slide number
           key={index}
           type="button"
           className={cn(

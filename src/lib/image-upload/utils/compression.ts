@@ -28,6 +28,9 @@ export async function compressImage(
       return;
     }
 
+    // react-doctor-disable-next-line react-doctor/no-create-object-url-without-revoke -- both img.onload (in its finally) and img.onerror revoke this URL, and one of them always fires
+    const objectUrl = URL.createObjectURL(file);
+
     img.onload = () => {
       try {
         let { width, height } = img;
@@ -75,15 +78,15 @@ export async function compressImage(
       } catch (error) {
         reject(error);
       } finally {
-        URL.revokeObjectURL(img.src);
+        URL.revokeObjectURL(objectUrl);
       }
     };
 
     img.onerror = () => {
-      URL.revokeObjectURL(img.src);
+      URL.revokeObjectURL(objectUrl);
       reject(new Error('Failed to load image for compression'));
     };
 
-    img.src = URL.createObjectURL(file);
+    img.src = objectUrl;
   });
 }

@@ -8,14 +8,14 @@ interface IconTree {
   child?: IconTree[];
 }
 
-function Tree2Element(tree?: IconTree[]): React.ReactElement[] | undefined {
+function treeToElements(tree?: IconTree[]): React.ReactElement[] | undefined {
   return (
     tree &&
     tree.map((node, i) =>
       createElement(
         node.tag,
         { key: i, ...node.attr },
-        Tree2Element(node.child),
+        treeToElements(node.child),
       ),
     )
   );
@@ -25,7 +25,7 @@ export function GenIcon(data: IconTree) {
   return function IconComponent(props: IconBaseProps) {
     return (
       <IconBase attr={{ ...data.attr }} {...props}>
-        {Tree2Element(data.child)}
+        {treeToElements(data.child)}
       </IconBase>
     );
   };

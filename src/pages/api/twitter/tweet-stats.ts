@@ -147,7 +147,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     submission = foundSubmission;
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error querying submission ${submissionId}: ${safeStringify(error)}`,
     );
@@ -237,8 +237,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       data: buildStatsBySource(tweetIds, metricsByTweetId),
       message: 'Operation successful',
     });
-  } catch (error: any) {
-    if (error.name === 'AbortError') {
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
       logger.error('Twitter API request timed out after 5 seconds');
     } else {
       logger.error(

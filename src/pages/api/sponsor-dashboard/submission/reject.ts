@@ -2,6 +2,7 @@ import { type NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
@@ -94,26 +95,28 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
 
-    for (const submission of currentSubmissions) {
-      try {
-        await queueEmail({
-          type: 'submissionRejected',
-          id: submission.id,
-          userId: submission.userId,
-          triggeredBy: req.userId,
-        });
-      } catch (err) {
-        logger.warn(
-          'Failed to send email notification for submission rejection for submission: ',
-          submission.id,
-        );
-      }
-    }
+    await Promise.all(
+      currentSubmissions.map(async (submission) => {
+        try {
+          await queueEmail({
+            type: 'submissionRejected',
+            id: submission.id,
+            userId: submission.userId,
+            triggeredBy: req.userId,
+          });
+        } catch (err) {
+          logger.warn(
+            'Failed to send email notification for submission rejection for submission: ',
+            submission.id,
+          );
+        }
+      }),
+    );
 
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error occurred while rejecting listing submission ID: ${data.map((c) => c.id)}:  ${error.message}`,
+      `Error occurred while rejecting listing submission ID: ${data.map((c) => c.id)}:  ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

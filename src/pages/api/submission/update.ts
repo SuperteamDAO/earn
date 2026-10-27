@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { parseQuestionConfigs } from '@/utils/parseQuestionConfigs';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { queueAgent } from '@/features/agents/utils/queueAgent';
@@ -14,12 +15,13 @@ import {
 import { type SubmissionMutationResponse } from '@/features/listings/types';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
+import { getLinkedTwitterHandles } from '@/features/social/utils/linkedTwitter';
 
 export async function updateSubmission(
   userId: string,
   listingId: string,
-  data: any,
-  listing: any,
+  data: unknown,
+  listing: Awaited<ReturnType<typeof validateSubmissionRequest>>['listing'],
   options?: { isAgent?: boolean; agentId?: string },
 ) {
   const user = await prisma.user.findUniqueOrThrow({
@@ -27,10 +29,14 @@ export async function updateSubmission(
   });
 
   const validationResult = submissionSchema(
-    listing,
+    {
+      type: listing.type,
+      compensationType: listing.compensationType,
+      eligibility: parseQuestionConfigs(listing.eligibility),
+    },
     listing.minRewardAsk || 0,
     listing.maxRewardAsk || 0,
-    user as any,
+    { linkedTwitter: getLinkedTwitterHandles(user.linkedTwitter) },
     { isAgent: options?.isAgent },
   ).safeParse(data);
 
@@ -148,14 +154,14 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     };
 
     return res.status(200).json(response);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `User ${userId} unable to update submission: ${safeStringify(error)}`,
     );
 
     let statusCode = 403;
     try {
-      JSON.parse(error.message);
+      JSON.parse(error instanceof Error ? error.message : '');
       statusCode = 400;
     } catch {}
 

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
 
@@ -100,15 +100,15 @@ export const Header = () => {
     onSearchOpen();
   }
 
-  const openWalletWithEvent = () => {
+  const openWalletWithEvent = useCallback(() => {
     posthog.capture('open_wallet_drawer');
     onWalletOpen();
-  };
+  }, [onWalletOpen]);
 
-  const openCreditWithEvent = () => {
+  const openCreditWithEvent = useCallback(() => {
     posthog.capture('open_credits');
     onCreditOpen();
-  };
+  }, [onCreditOpen]);
 
   const openReferralWithEvent = () => {
     posthog.capture('open_referrals');
@@ -153,7 +153,7 @@ export const Header = () => {
     };
 
     checkHashAndOpenModal();
-  }, [isWalletOpen, onWalletOpen, authenticated, onCreditOpen]);
+  }, [isWalletOpen, authenticated, openWalletWithEvent, openCreditWithEvent]);
 
   const {
     data: tokens,

@@ -24,6 +24,7 @@ export function InviteButton({
   maxInvitesReached,
   invitesLeft,
 }: Props) {
+  // react-doctor-disable-next-line react-doctor/query-mutation-missing-invalidation -- setInvited is the cache write: the submissions page patches the ['scouts', bountyId] query with setQueryData
   const inviteMutation = useMutation({
     mutationFn: async () => {
       const response = await api.post(

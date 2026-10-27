@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Check, InfoIcon, ScanText, Wand2, XCircle } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -36,7 +36,7 @@ import { ReviewLoadingAnimation } from './ReviewLoadingAnimation';
 
 interface Props {
   submissions: SubmissionWithUser[] | undefined;
-  listing: Listing | undefined;
+  listing: Omit<Listing, 'Hackathon'> | undefined;
 }
 export default function AiReviewBountiesSubmissionsModal({
   submissions,
@@ -127,6 +127,7 @@ export default function AiReviewBountiesSubmissionsModal({
       user?.currentSponsorId === listing?.sponsorId &&
       (listing?.ai as unknown as BountiesAi)?.evaluationCompleted
     ) {
+      // react-doctor-disable-next-line react-doctor/query-no-query-in-effect -- the unreviewed list must follow the parent's `submissions` prop, which is not part of this query's key, and refetchOnMount is off
       refetchUnreviewedSubmissions();
     }
   }, [
@@ -142,7 +143,6 @@ export default function AiReviewBountiesSubmissionsModal({
   );
 
   const nonAnalysedSubmissions = useMemo(() => {
-    console.log('unreviewedSubmissions', unreviewedSubmissions);
     return unreviewedSubmissions?.filter(
       (appl) => !(appl.ai as BountySubmissionAi)?.evaluation,
     );
@@ -168,9 +168,7 @@ export default function AiReviewBountiesSubmissionsModal({
     setTimeout(async () => {
       setProgress(100);
       try {
-        console.log('Commiting Reviewed submissions');
         const data = await commitReviews();
-        console.log('commit data - ', data.data);
         setCompletedStats({
           totalReviewed: data.data.length,
           shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
@@ -186,7 +184,7 @@ export default function AiReviewBountiesSubmissionsModal({
         posthog.capture('complete_ai review bounties');
         setState('DONE');
         await refetchUnreviewedSubmissions();
-      } catch (error: any) {
+      } catch (error) {
         console.log(
           'error occured while commiting reviewed submissions',
           error,
@@ -194,14 +192,7 @@ export default function AiReviewBountiesSubmissionsModal({
         setState('ERROR');
       }
     }, 10000);
-  }, [
-    submissions,
-    unreviewedSubmissions,
-    nonAnalysedSubmissions,
-    posthog,
-    commitReviews,
-    refetchUnreviewedSubmissions,
-  ]);
+  }, [commitReviews, refetchUnreviewedSubmissions]);
   function onComplete() {
     setState('DISCLAIMER');
     setProgress(0);
@@ -270,7 +261,7 @@ export default function AiReviewBountiesSubmissionsModal({
           <AnimateChangeInHeight>
             <AnimatePresence mode="popLayout">
               {state === 'DISCLAIMER' && (
-                <motion.div
+                <m.div
                   key="disclaimer"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -326,10 +317,10 @@ export default function AiReviewBountiesSubmissionsModal({
                       Agree & Proceed
                     </Button>
                   </CardFooter>
-                </motion.div>
+                </m.div>
               )}
               {state === 'INIT' && (
-                <motion.div
+                <m.div
                   key="init"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -389,10 +380,10 @@ export default function AiReviewBountiesSubmissionsModal({
                       winners.
                     </p>
                   </CardFooter>
-                </motion.div>
+                </m.div>
               )}
               {state === 'PROCESSING' && (
-                <motion.div
+                <m.div
                   key="processing"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -423,10 +414,10 @@ export default function AiReviewBountiesSubmissionsModal({
                       Approx. {estimatedTimeSingular} remaining
                     </p>
                   </CardFooter>
-                </motion.div>
+                </m.div>
               )}
               {state === 'DONE' && (
-                <motion.div
+                <m.div
                   key="done"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -493,10 +484,10 @@ export default function AiReviewBountiesSubmissionsModal({
                       Have a look
                     </Button>
                   </CardContent>
-                </motion.div>
+                </m.div>
               )}
               {state === 'ERROR' && (
-                <motion.div
+                <m.div
                   key="error"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -524,7 +515,7 @@ export default function AiReviewBountiesSubmissionsModal({
                       Try Again
                     </Button>
                   </CardContent>
-                </motion.div>
+                </m.div>
               )}
             </AnimatePresence>
           </AnimateChangeInHeight>
@@ -561,7 +552,6 @@ function formatTime(milliseconds: number): string {
   return `${hours}h ${minutes}m`;
 }
 function estimateTime(totalSubmissions: number, singular = false): string {
-  console.log('total submissions', totalSubmissions);
   const lowerBoundSeconds = totalSubmissions * 10;
   const upperBoundSeconds = totalSubmissions * 20;
 

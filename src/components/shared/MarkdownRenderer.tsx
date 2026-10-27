@@ -1,8 +1,10 @@
-import parse, { type HTMLReactParserOptions } from 'html-react-parser';
+import parse, { Element, type HTMLReactParserOptions } from 'html-react-parser';
 import { marked } from 'marked';
 import { memo, useEffect, useState } from 'react';
 const options: HTMLReactParserOptions = {
-  replace: ({ name, children, attribs }: any) => {
+  replace: (domNode) => {
+    if (!(domNode instanceof Element)) return;
+    const { name, children, attribs } = domNode;
     if (name === 'p' && (!children || children.length === 0)) {
       return <br />;
     }
@@ -12,10 +14,15 @@ const options: HTMLReactParserOptions = {
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   const [rawHtml, setRawHtml] = useState('');
   useEffect(() => {
+    let cancelled = false;
     const awaitedParse = async () => {
-      setRawHtml(await marked.parse(children || '', { gfm: true }));
+      const html = await marked.parse(children || '', { gfm: true });
+      if (!cancelled) setRawHtml(html);
     };
     awaitedParse();
+    return () => {
+      cancelled = true;
+    };
   }, [children]);
 
   return (

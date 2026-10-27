@@ -1,6 +1,6 @@
 import { atom, useAtom } from 'jotai';
 import { CornerDownLeft, Search } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import { useState } from 'react';
 
 import { Input } from '@/components/ui/input';
@@ -50,7 +50,7 @@ export function SearchInput({ onSearch, isLoading, currSearch }: Props) {
       <div className="absolute right-2 flex h-5 w-5 items-center justify-center">
         <AnimatePresence mode="wait">
           {isLoading ? (
-            <motion.div
+            <m.div
               key="loading"
               initial={{ opacity: 0.5, filter: 'blur(2px)' }}
               animate={{ opacity: 1, filter: 'blur(0px)' }}
@@ -59,7 +59,7 @@ export function SearchInput({ onSearch, isLoading, currSearch }: Props) {
               className="h-3 w-3 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600"
             />
           ) : hasInput ? (
-            <motion.button
+            <m.button
               key="enter"
               initial={{ opacity: 0.5, filter: 'blur(2px)' }}
               animate={{ opacity: 1, filter: 'blur(0px)' }}
@@ -71,9 +71,9 @@ export function SearchInput({ onSearch, isLoading, currSearch }: Props) {
               aria-label="Search"
             >
               <CornerDownLeft className="h-3 w-3" />
-            </motion.button>
+            </m.button>
           ) : (
-            <motion.div
+            <m.div
               key="search"
               initial={{ opacity: 0.5, filter: 'blur(2px)' }}
               animate={{ opacity: 1, filter: 'blur(0px)' }}
@@ -81,7 +81,7 @@ export function SearchInput({ onSearch, isLoading, currSearch }: Props) {
               transition={{ duration: 0.1 }}
             >
               <Search className="h-3 w-3 text-slate-400" />
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>

@@ -1,4 +1,3 @@
-export const ABTG = 'https://t.me/abhwshek/';
 export const JTTG = 'https://t.me/jilltodkar/';
 
 const TELEGRAM_BOT_URL =

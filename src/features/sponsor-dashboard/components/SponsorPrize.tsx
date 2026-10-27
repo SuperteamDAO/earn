@@ -1,10 +1,11 @@
+import { type CompensationType } from '@/prisma/enums';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 interface CompensationAmountType {
-  compensationType?: 'fixed' | 'range' | 'variable';
-  rewardAmount?: number;
-  minRewardAsk?: number;
-  maxRewardAsk?: number;
+  compensationType?: CompensationType;
+  rewardAmount?: number | null;
+  minRewardAsk?: number | null;
+  maxRewardAsk?: number | null;
   className?: string;
 }
 

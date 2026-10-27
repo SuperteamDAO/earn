@@ -1,12 +1,12 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { type BountyType } from '@/generated/prisma/enums';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
 import Sparkle from '@/svg/sparkle';
 
+import { type BuilderHackathon } from '@/features/listing-builder/types';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
 import { Templates } from './Templates';
@@ -23,7 +23,7 @@ interface AutoGenerateFormProps {
   setInput: (input: string) => void;
   setHackathonSlug: (hackathon: string) => void;
   hackathonSlug: string;
-  hackathons?: HackathonModel[];
+  hackathons?: BuilderHackathon[];
 }
 
 export function AutoGenerateForm({
@@ -115,7 +115,7 @@ export function AutoGenerateForm({
         />
         <AnimatePresence>
           {input.length === 0 && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               exit={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
@@ -126,7 +126,7 @@ export function AutoGenerateForm({
                 type={type}
                 onSelectTemplate={({ prompt }) => setInput(prompt)}
               />
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
         <AnimatePresence>
@@ -136,7 +136,7 @@ export function AutoGenerateForm({
               const charsWithoutTrailingSpaces = input.trim().length;
               return charsWithoutTrailingSpaces < MIN_CHARACTERS;
             })() && (
-              <motion.div
+              <m.div
                 initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
@@ -147,7 +147,7 @@ export function AutoGenerateForm({
                   Write at least {MIN_CHARACTERS - input.trim().length}{' '}
                   characters more
                 </p>
-              </motion.div>
+              </m.div>
             )}
         </AnimatePresence>
       </div>

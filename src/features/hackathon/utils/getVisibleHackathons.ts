@@ -1,7 +1,11 @@
-import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
 
-export function getVisibleHackathons(hackathons?: HackathonModel[]) {
+export function getVisibleHackathons<
+  T extends {
+    startDate: Date | string | null;
+    deadline: Date | string | null;
+  },
+>(hackathons?: T[]): T[] {
   return (hackathons ?? [])
     .filter((hackathon) => {
       if (!hackathon.startDate || !hackathon.deadline) return false;

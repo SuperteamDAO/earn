@@ -133,11 +133,6 @@ export const ApplicationsTab = ({ slug }: Props) => {
   );
 
   const {
-    isOpen: isTogglerOpen,
-    onOpen: onTogglerOpen,
-    onClose: onTogglerClose,
-  } = useDisclosure();
-  const {
     isOpen: rejectedMultipleIsOpen,
     onOpen: rejectedMultipleOnOpen,
     onClose: rejectedMultipleOnClose,
@@ -269,14 +264,6 @@ export const ApplicationsTab = ({ slug }: Props) => {
   }, [applications, selectedApplicationIds]);
 
   useEffect(() => {
-    if (selectedApplicationIds.size > 0) {
-      onTogglerOpen();
-    } else {
-      onTogglerClose();
-    }
-  }, [selectedApplicationIds.size]); // Only depend on size, not the entire Set object
-
-  useEffect(() => {
     setIsToggledAll(isAllCurrentToggled());
   }, [isAllCurrentToggled]);
 
@@ -318,7 +305,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
         return applications[0];
       });
     }
-  }, [applications, searchText]);
+  }, [applications, searchText, setSelectedApplication]);
 
   const toggleApplication = (id: string) => {
     setSelectedApplicationIds((prev) => {
@@ -336,7 +323,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
     (id: string) => {
       return selectedApplicationIds.has(id);
     },
-    [selectedApplicationIds, applications],
+    [selectedApplicationIds],
   );
 
   const toggleAllApplications = () => {
@@ -447,7 +434,9 @@ export const ApplicationsTab = ({ slug }: Props) => {
         )}
       </div>
 
-      <Dialog modal={false} onOpenChange={onTogglerClose} open={isTogglerOpen}>
+      {/* Escape, outside clicks and the close icon are all disabled below, so the
+          toolbar is open exactly when something is selected. */}
+      <Dialog modal={false} open={selectedApplicationIds.size > 0}>
         <DialogContent
           onEscapeKeyDown={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
@@ -519,6 +508,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
       </Dialog>
 
       <RejectGrantApplicationModal
+        key={selectedApplication?.id}
         applicationId={selectedApplication?.id}
         rejectIsOpen={rejectedIsOpen}
         rejectOnClose={rejectedOnClose}
@@ -534,6 +524,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
 
       {!grant?.isPaused && (
         <ApproveModal
+          key={`${selectedApplication?.id}:${selectedApplication?.ask}`}
           applicationId={selectedApplication?.id}
           approveIsOpen={approveIsOpen}
           approveOnClose={approveOnClose}

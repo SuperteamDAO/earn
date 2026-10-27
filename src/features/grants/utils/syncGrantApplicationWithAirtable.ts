@@ -94,18 +94,27 @@ export async function syncGrantApplicationWithAirtable(
       { applicationId },
       `Successfully synced Application ID: ${applicationId} with Airtable`,
     );
-  } catch (error: any) {
+  } catch (error) {
+    const errorResponse = axios.isAxiosError(error)
+      ? error.response
+      : undefined;
     console.error('Failed to sync grant application with Airtable:', {
       applicationId,
-      error: error?.response?.data || error?.message || error,
-      errorStatus: error?.response?.status,
-      errorResponse: error?.response?.data,
+      error:
+        errorResponse?.data ||
+        (error instanceof Error && error.message) ||
+        error,
+      errorStatus: errorResponse?.status,
+      errorResponse: errorResponse?.data,
     });
     logger.error('Failed to sync grant application with Airtable:', {
       applicationId,
-      error: error?.response?.data || error?.message || error,
-      errorStatus: error?.response?.status,
-      errorResponse: error?.response?.data,
+      error:
+        errorResponse?.data ||
+        (error instanceof Error && error.message) ||
+        error,
+      errorStatus: errorResponse?.status,
+      errorResponse: errorResponse?.data,
     });
     throw error;
   }

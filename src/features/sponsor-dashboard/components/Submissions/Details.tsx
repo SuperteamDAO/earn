@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/utils/cn';
 import { getURLSanitized } from '@/utils/getURLSanitized';
+import { parseQuestionAnswers } from '@/utils/parseQuestionAnswers';
 
 import { type Listing } from '@/features/listings/types';
 
@@ -95,15 +96,16 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
           />
         )}
 
-        {selectedSubmission?.eligibilityAnswers &&
-          selectedSubmission.eligibilityAnswers.map((answer: any) => (
+        {parseQuestionAnswers(selectedSubmission?.eligibilityAnswers).map(
+          (answer) => (
             <InfoBox
               key={answer.question}
               label={answer.question}
               content={answer.answer}
               isHtml
             />
-          ))}
+          ),
+        )}
         <InfoBox
           label="Anything Else"
           content={selectedSubmission?.otherInfo}

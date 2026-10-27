@@ -1,6 +1,6 @@
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 import posthog from 'posthog-js';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -34,11 +34,12 @@ const CustomNumberInput = ({
   value: number;
   onChange: (value: number) => void;
   min: number;
-  max?: number;
+  max?: number | null;
   step?: number;
 }) => {
   const increment = () => {
-    if (max === undefined || value + step <= max) {
+    // A null max has always blocked increments (`<= null` compares as `<= 0`).
+    if (max === undefined || (max !== null && value + step <= max)) {
       onChange(value + step);
     }
   };
@@ -123,7 +124,7 @@ interface ApproveModalProps {
     approvedAmount: number,
     customNote?: string,
   ) => void;
-  max: number | undefined;
+  max: number | undefined | null;
 }
 
 export const ApproveModal = ({
@@ -209,26 +210,10 @@ export const ApproveModal = ({
     } catch (e) {
       console.error(e);
     } finally {
+      // react-doctor-disable-next-line react-doctor/no-unowned-async-error-clear -- the submit button is disabled while `loading`, and the parent keys this modal by application id, so no other request can own this flag
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    setApprovedAmount(ask);
-    setCustomNote('');
-    setIsCustomEmailOpen(false);
-    setEmailError(null);
-    setWarningMessage(null);
-    setLoading(false);
-  }, [
-    applicationId,
-    ask,
-    granteeName,
-    grantTitle,
-    projectTitle,
-    salutation,
-    token,
-  ]);
 
   return (
     <>

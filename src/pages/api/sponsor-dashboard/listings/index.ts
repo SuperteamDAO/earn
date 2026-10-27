@@ -3,9 +3,11 @@ import type { NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { GrantStatus, status } from '@/prisma/enums';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { type Rewards } from '@/features/listings/types';
 
 type BountyGrant = {
   type: 'bounty' | 'grant';
@@ -17,7 +19,7 @@ type BountyGrant = {
   deadline: Date | null;
   isPublished: boolean;
   publishedAt: Date | null;
-  rewards: any;
+  rewards: Rewards | null;
   rewardAmount: number | null;
   totalPaymentsMade: number;
   isWinnersAnnounced: boolean | null;
@@ -34,8 +36,7 @@ type BountyGrant = {
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userSponsorId = req.userSponsorId;
   try {
-    const data: BountyGrant[] = await prisma.$queryRawUnsafe(
-      `
+    const data = await prisma.$queryRaw<BountyGrant[]>`
       WITH combined_data AS (
         SELECT 
           b.type as type,
@@ -64,8 +65,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         FROM Bounties b
         WHERE b.isActive = true
         AND b.isArchived = false
-        AND b.sponsorId = ?
-        AND b.status <> ?
+        AND b.sponsorId = ${userSponsorId}
+        AND b.status <> ${status.CLOSED}
         
         UNION ALL
         
@@ -82,32 +83,27 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           NULL as rewards,
           NULL as rewardAmount,
           g.totalPaid as totalPaymentsMade,
+          NULL as maxBonusSpots,
           NULL as isWinnersAnnounced,
-          g.minReward as minRewardAsk,
           g.maxReward as maxRewardAsk,
+          g.minReward as minRewardAsk,
           NULL as compensationType,
           g.createdAt,
           NULL as isFndnPaying,
           NULL as usdValue,
           0 as isPro,
           g.airtableId,
-          NULL as maxBonusSpots,
           CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
         FROM Grants g
         WHERE g.isActive = true
         AND g.isArchived = false
-        AND g.sponsorId = ?
-        AND g.status = ?
+        AND g.sponsorId = ${userSponsorId}
+        AND g.status = ${GrantStatus.OPEN}
       )
       SELECT *
       FROM combined_data
       ORDER BY createdAt DESC
-    `,
-      userSponsorId,
-      status.CLOSED,
-      userSponsorId,
-      GrantStatus.OPEN,
-    );
+    `;
 
     const serializedData = data.map((item) => ({
       ...item,
@@ -120,9 +116,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Successfully fetched bounties and grants for sponsor ${userSponsorId}`,
     );
     res.status(200).json(serializedData);
-  } catch (err: any) {
+  } catch (err) {
     logger.error(
-      `Error fetching bounties and grants for sponsor ${userSponsorId}: ${err.message}`,
+      `Error fetching bounties and grants for sponsor ${userSponsorId}: ${getErrorMessage(err)}`,
     );
     res
       .status(400)

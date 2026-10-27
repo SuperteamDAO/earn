@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { plainTextFromHtmlTurndown } from '@/utils/plainTextFromHtml';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -70,9 +71,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.info(`Successfully updated application with ID: ${id} with notes`);
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error occurred while updating application with ID ${id} with notes: ${error.message}`,
+      `Error occurred while updating application with ID ${id} with notes: ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

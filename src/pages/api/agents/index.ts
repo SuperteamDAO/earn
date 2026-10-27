@@ -111,10 +111,14 @@ export default async function handler(
         });
 
         break;
-      } catch (error: any) {
-        const duplicateField = error.meta?.target;
+      } catch (error) {
+        const isKnownPrismaError =
+          error instanceof PrismaClientKnownRequestError;
+        const duplicateField = isKnownPrismaError
+          ? error.meta?.target
+          : undefined;
         const isUsernameCollision =
-          error instanceof PrismaClientKnownRequestError &&
+          isKnownPrismaError &&
           error.code === 'P2002' &&
           ((Array.isArray(duplicateField) &&
             duplicateField.includes('username')) ||
@@ -141,7 +145,7 @@ export default async function handler(
       apiKey,
       claimCode,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       '[AgentRegister] Failed to create agent',
       safeStringify(error),

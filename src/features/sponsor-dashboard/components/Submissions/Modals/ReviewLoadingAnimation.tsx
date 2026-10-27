@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import { useEffect, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
@@ -22,7 +22,7 @@ function SkeletonCard() {
 
 function ScannerLine() {
   return (
-    <motion.div
+    <m.div
       className="absolute inset-0"
       animate={{
         y: ['0%', '100%', '0%'],
@@ -39,7 +39,7 @@ function ScannerLine() {
         <div className="absolute top-2/4 left-0 h-2 w-2 -translate-y-2/4 rounded-full bg-indigo-500" />
         <div className="absolute top-2/4 right-0 h-2 w-2 -translate-y-2/4 rounded-full bg-indigo-500" />
       </div>
-      <motion.div
+      <m.div
         animate={{
           rotateX: [90, 180, 90, 0, 90],
         }}
@@ -53,7 +53,7 @@ function ScannerLine() {
         style={{ originX: 0.5, originY: 0 }}
         className="absolute inset-0 mx-auto h-2/4 w-[calc(100%-0.7rem)] bg-gradient-to-b from-indigo-500/20 to-indigo-500/0"
       />
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -76,7 +76,7 @@ function SkeletonCardsPresence() {
   return (
     <AnimatePresence mode="popLayout">
       {cards.map((card) => (
-        <motion.div
+        <m.div
           key={card}
           layout="position"
           initial={{ opacity: 0, y: -50, scale: 1, filter: 'blur(4px)' }}
@@ -86,7 +86,7 @@ function SkeletonCardsPresence() {
           data-card={card}
         >
           <SkeletonCard />
-        </motion.div>
+        </m.div>
       ))}
     </AnimatePresence>
   );

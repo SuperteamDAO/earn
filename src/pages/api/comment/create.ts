@@ -127,18 +127,20 @@ export async function createComment(
       logger.debug(
         `[${logPrefix}] Sending email notifications to tagged users`,
       );
-      for (const taggedUser of taggedUsers) {
-        await queueEmail({
-          type: 'commentTag',
-          id: refId,
-          userId: taggedUser.id,
-          otherInfo: {
-            personName: result.author.firstName,
-            type: refType,
-          },
-          triggeredBy: userId,
-        });
-      }
+      await Promise.all(
+        taggedUsers.map((taggedUser) =>
+          queueEmail({
+            type: 'commentTag',
+            id: refId,
+            userId: taggedUser.id,
+            otherInfo: {
+              personName: result.author.firstName,
+              type: refType,
+            },
+            triggeredBy: userId,
+          }),
+        ),
+      );
     }
 
     if (replyToUserId && replyToUserId !== userId) {
@@ -222,11 +224,11 @@ async function commentHandler(
       logPrefix: 'CommentCreateAPI',
     });
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `[CommentCreateAPI] Error adding comment for user ${userId}: ${safeStringify(error)}`,
     );
-    const errorMessage = error?.message ?? '';
+    const errorMessage = error instanceof Error ? error.message : '';
     if (
       errorMessage.includes('Only the listing POC can pin comments') ||
       errorMessage.includes('Pinning is only allowed for bounty comments')

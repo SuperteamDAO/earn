@@ -1,3 +1,4 @@
+import { type Skills } from '@/interface/skills';
 import type { SponsorType } from '@/interface/sponsor';
 import { AppConfig } from '@/utils/AppConfig';
 import { getURL } from '@/utils/validUrl';
@@ -14,8 +15,8 @@ interface BaseSchema {
 interface OrganizationSchema extends BaseSchema {
   readonly '@type': 'Organization';
   readonly name: string;
-  readonly url?: string;
-  readonly logo?: string | ImageObjectSchema;
+  readonly url?: string | null;
+  readonly logo?: string | ImageObjectSchema | null;
   readonly description?: string;
   readonly sameAs?: readonly string[];
   readonly email?: string;
@@ -317,7 +318,7 @@ export function generateJobPostingSchema(
   }
 
   // Strip HTML tags from description for plain text
-  const stripHtml = (html?: string) => {
+  const stripHtml = (html?: string | null) => {
     if (!html) return '';
     return html
       .replace(/<[^>]*>/g, ' ')
@@ -390,15 +391,15 @@ export function generateMonetaryGrantSchema(
       currency: grant.token,
       value: {
         '@type': 'QuantitativeValue',
-        minValue: grant.minReward,
-        maxValue: grant.maxReward,
+        minValue: grant.minReward ?? undefined,
+        maxValue: grant.maxReward ?? undefined,
         unitText: 'TOTAL',
       },
     };
   }
 
   // Strip HTML tags from description
-  const stripHtml = (html?: string) => {
+  const stripHtml = (html?: string | null) => {
     if (!html) return '';
     return html
       .replace(/<[^>]*>/g, ' ')
@@ -557,18 +558,18 @@ export function generateSuperteamChaptersSchema(
 }
 
 export function generatePersonSchema(person: {
-  readonly firstName?: string;
-  readonly lastName?: string;
-  readonly username?: string;
-  readonly photo?: string;
+  readonly firstName?: string | null;
+  readonly lastName?: string | null;
+  readonly username?: string | null;
+  readonly photo?: string | null;
   readonly workPreference?: string | null;
-  readonly currentEmployer?: string;
-  readonly location?: string;
-  readonly skills?: unknown;
-  readonly twitter?: string;
-  readonly linkedin?: string;
-  readonly github?: string;
-  readonly website?: string;
+  readonly currentEmployer?: string | null;
+  readonly location?: string | null;
+  readonly skills?: Skills;
+  readonly twitter?: string | null;
+  readonly linkedin?: string | null;
+  readonly github?: string | null;
+  readonly website?: string | null;
 }): PersonSchema {
   const baseUrl = getURL();
   const fullName = `${person.firstName || ''} ${person.lastName || ''}`.trim();
@@ -607,7 +608,7 @@ export function generatePersonSchema(person: {
   let knowsAbout: string[] | undefined;
   if (person.skills && Array.isArray(person.skills)) {
     const allSkills: string[] = [];
-    person.skills.forEach((skillItem: any) => {
+    person.skills.forEach((skillItem) => {
       if (skillItem?.skills) {
         allSkills.push(skillItem.skills);
       }

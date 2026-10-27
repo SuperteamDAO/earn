@@ -40,7 +40,6 @@ export function DescriptionAndTemplate() {
     const currentDescription = form.getValues('description');
     if (originalDescriptionRef.current === null) {
       originalDescriptionRef.current = currentDescription || '';
-      console.log('Saved original description for image cleanup');
     }
   }, [form]);
 
@@ -55,13 +54,11 @@ export function DescriptionAndTemplate() {
         submitMutation.isSuccess ||
         submitMutation.isError
       ) {
-        console.log('Skipping cleanup - submit mutation is active/completed');
         return;
       }
 
       if (typeof window !== 'undefined') {
         if (isEditing && window.__processOrphanedImageCleanup) {
-          console.log('Processing orphaned image cleanup (edit mode)');
           try {
             window.__processOrphanedImageCleanup(
               originalDescriptionRef.current || '',
@@ -70,7 +67,6 @@ export function DescriptionAndTemplate() {
             console.error('Failed to process orphaned image cleanup:', error);
           }
         } else if (!isEditing && window.__processImageCleanup) {
-          console.log('Processing image cleanup (draft mode)');
           try {
             window.__processImageCleanup();
           } catch (error) {

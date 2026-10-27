@@ -14,6 +14,7 @@ export function useAutoSwitchSponsor({ error }: UseAutoSwitchSponsorOptions) {
   const updateUser = useUpdateUser();
   const [isSwitching, setIsSwitching] = useState(false);
 
+  // react-doctor-disable-next-line react-doctor/no-set-state-after-await-in-effect -- only one switch can be in flight (re-runs bail while isSwitching is true), and the late setIsSwitching(false) must still land when updating the user re-runs this effect, which a cancel flag would block
   useEffect(() => {
     const handleAutoSwitch = async () => {
       // Check if error is a 403 with sponsorId

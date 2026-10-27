@@ -76,6 +76,7 @@ export const RecordPaymentModal = ({
     },
   });
 
+  // react-doctor-disable-next-line react-doctor/query-mutation-missing-invalidation -- the cache write is delegated: every caller's onPaymentRecorded patches its own query with setQueryData
   const addPaymentMutation = useMutation({
     mutationFn: async (data: PaymentFormInputs) => {
       const response = await api.post<GrantApplicationMutationResponse>(

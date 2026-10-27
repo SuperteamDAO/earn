@@ -217,6 +217,7 @@ export const ImageCrop = ({
     resetCrop,
   };
   return (
+    // react-doctor-disable-next-line react-doctor/context-provider-value-from-unmemoized-local-literal -- the value carries reactCropProps, a rest object rebuilt every render, so a memo here could never keep identity stable
     <ImageCropContext.Provider value={contextValue}>
       {children}
     </ImageCropContext.Provider>

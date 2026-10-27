@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { verifyImageExists } from '@/utils/cloudinary';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -26,7 +27,9 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.debug(`Request body: ${safeStringify(req.body)}`);
 
+    // The zod schema is the allowlist: unknown keys are stripped.
     const validationResult = sponsorBaseSchema.safeParse({
+      // react-doctor-disable-next-line react-doctor/request-body-mass-assignment -- validated by sponsorBaseSchema
       ...req.body,
       twitter:
         req.body.twitter !== undefined
@@ -62,7 +65,7 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
         logger.info(
           `Logo verification successful for sponsor creation by user ${userId}: ${logo}`,
         );
-      } catch (error: any) {
+      } catch (error) {
         logger.warn(
           `Logo verification error for sponsor creation by user ${userId}: ${safeStringify(error)}`,
         );
@@ -112,9 +115,9 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
         message: 'Error occurred while adding a new sponsor.',
       });
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error occurred while adding a new sponsor for user ${userId}: ${error.message}`,
+      `Error occurred while adding a new sponsor for user ${userId}: ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

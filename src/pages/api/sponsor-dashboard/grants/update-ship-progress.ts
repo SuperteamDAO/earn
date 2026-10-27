@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
@@ -84,9 +85,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error updating grant application with ID ${id}: ${error.message}`,
+      `Error updating grant application with ID ${id}: ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

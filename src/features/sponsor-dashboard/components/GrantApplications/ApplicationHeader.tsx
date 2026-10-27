@@ -139,7 +139,6 @@ export const ApplicationHeader = ({
 
   return (
     <div className="mb-2 flex items-center justify-between">
-      <button className="sr-only" />
       <div>
         <Breadcrumb className="text-slate-400">
           <BreadcrumbList>

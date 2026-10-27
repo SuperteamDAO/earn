@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -86,6 +87,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         `Updating application with ID: ${application.id} and label: ${label}`,
       );
 
+      // react-doctor-disable-next-line react-doctor/async-await-in-loop -- bulk relabels can cover hundreds of rows with two writes each, and there is no concurrency limiter here, so running them unbounded would starve the Prisma connection pool
       const result = await prisma.grantApplication.update({
         where: { id: application.id },
         data: { label },
@@ -110,9 +112,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       });
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error occurred while updating applications: ${error.message}`,
+      `Error occurred while updating applications: ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

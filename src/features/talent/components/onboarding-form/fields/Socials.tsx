@@ -45,7 +45,7 @@ export function SocialsField() {
       clearErrors('github');
       return 'twitter';
     }
-  }, [skills]);
+  }, [skills, clearErrors]);
 
   useEffect(() => {
     const twitter = getValues('twitter');
@@ -65,7 +65,7 @@ export function SocialsField() {
       );
       return newSocials;
     });
-  }, [requiredSocial]);
+  }, [requiredSocial, getValues]);
 
   const handleToggleSocial = (social: SocialType, checked: boolean) => {
     if (social === requiredSocial && !checked) {
@@ -172,6 +172,7 @@ export function SocialsField() {
                 variant="ghost"
                 size="icon"
                 onClick={() => handleToggleSocial(social, false)}
+                aria-label={`Remove ${social}`}
                 className="text-muted-foreground hover:text-destructive absolute top-0 right-0 flex"
               >
                 <Trash2 className="h-4 w-4" />

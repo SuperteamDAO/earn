@@ -35,6 +35,46 @@ interface ReferralLandingProps {
   redirectReason?: 'self_referral' | 'existing_user' | null;
 }
 
+function RedirectToast({
+  reason,
+}: {
+  reason: 'self_referral' | 'existing_user';
+}) {
+  const router = useRouter();
+
+  useEffect(() => {
+    const show = () => {
+      if (reason === 'self_referral') {
+        toast.warning('You cannot refer yourself.', {
+          id: 'toast-self-ref',
+          duration: 10000,
+        });
+      } else if (reason === 'existing_user') {
+        toast.warning(
+          'This referral is invalid since you have signed up on Earn before with this email ID.',
+          {
+            id: 'referral-invalid-existing-user',
+            duration: 10000,
+          },
+        );
+      }
+    };
+    const t1 = setTimeout(show, 50);
+    const t2 = setTimeout(() => router.replace('/earn'), 500);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [reason, router]);
+  return null;
+}
+
+const Tick = () => (
+  <div className="rounded-full bg-emerald-50 p-2">
+    <Check className="mt-0.5 h-5 w-5 text-emerald-500" />
+  </div>
+);
+
 export default function ReferralLandingPage({
   redirectReason,
 }: ReferralLandingProps) {
@@ -96,38 +136,6 @@ export default function ReferralLandingPage({
     router.push('/earn/new/talent?onboarding=true&referral=true&code=' + code);
   };
 
-  function RedirectToast({
-    reason,
-  }: {
-    reason: 'self_referral' | 'existing_user';
-  }) {
-    useEffect(() => {
-      const show = () => {
-        if (reason === 'self_referral') {
-          toast.warning('You cannot refer yourself.', {
-            id: 'toast-self-ref',
-            duration: 10000,
-          });
-        } else if (reason === 'existing_user') {
-          toast.warning(
-            'This referral is invalid since you have signed up on Earn before with this email ID.',
-            {
-              id: 'referral-invalid-existing-user',
-              duration: 10000,
-            },
-          );
-        }
-      };
-      const t1 = setTimeout(show, 50);
-      const t2 = setTimeout(() => router.replace('/earn'), 500);
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-      };
-    }, [reason, router]);
-    return null;
-  }
-
   const { data: liveOpportunities } = useQuery({
     ...liveOpportunitiesQuery,
   });
@@ -144,12 +152,6 @@ export default function ReferralLandingPage({
     if (data.reason === 'MISSING_CODE') return 'Missing referral code';
     return 'Something went wrong';
   }, [data, isLoading]);
-
-  const Tick = () => (
-    <div className="rounded-full bg-emerald-50 p-2">
-      <Check className="mt-0.5 h-5 w-5 text-emerald-500" />
-    </div>
-  );
 
   if (redirectReason)
     return (
@@ -239,9 +241,9 @@ export default function ReferralLandingPage({
 
             <div className="mt-5 flex items-center gap-2">
               <div className="flex -space-x-2">
-                {avatars.map((avatar, index) => (
+                {avatars.map((avatar) => (
                   <ExternalImage
-                    key={index}
+                    key={avatar.name}
                     className="relative size-7 rounded-full"
                     src={avatar.src}
                     alt={avatar.name}

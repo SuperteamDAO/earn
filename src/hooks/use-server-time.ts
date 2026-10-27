@@ -19,6 +19,16 @@ interface DriftCheckpoint {
   dateTime: number;
 }
 
+interface SyncResult {
+  syncData: SyncData;
+  checkpoint: DriftCheckpoint;
+}
+
+interface DetectedDrift {
+  amount: number;
+  checkpoint: DriftCheckpoint;
+}
+
 interface UseServerTimeSyncOptions {
   syncInterval?: number;
   autoSync?: boolean;
@@ -59,11 +69,7 @@ export const useServerTimeSync = (
     onDriftDetected,
   } = options;
 
-  const [serverOffset, setServerOffset] = useState<number>(0);
-  const [lastSyncData, setLastSyncData] = useState<SyncData | null>(null);
-  const [detectedDrift, setDetectedDrift] = useState<number | null>(null);
-  const [driftCheckpoint, setDriftCheckpoint] =
-    useState<DriftCheckpoint | null>(null);
+  const [drift, setDrift] = useState<DetectedDrift | null>(null);
 
   const onErrorRef = useRef(onError);
   const onSyncRef = useRef(onSync);
@@ -82,7 +88,7 @@ export const useServerTimeSync = (
     onDriftDetectedRef.current = onDriftDetected;
   }, [onDriftDetected]);
 
-  const fetchServerTime = useCallback(async (): Promise<SyncData> => {
+  const fetchServerTime = useCallback(async (): Promise<SyncResult> => {
     const clientTimeBeforeRequest = Date.now();
 
     const response = await fetch(endpoint, {
@@ -118,7 +124,14 @@ export const useServerTimeSync = (
       syncedAt: new Date().toISOString(),
     };
 
-    return syncData;
+    // Both clocks are read together so drift checks compare a matching pair.
+    return {
+      syncData,
+      checkpoint: {
+        performanceTime: performance.now(),
+        dateTime: Date.now(),
+      },
+    };
   }, [endpoint]);
 
   const {
@@ -140,20 +153,16 @@ export const useServerTimeSync = (
     refetchOnReconnect: true,
   });
 
+  const serverOffset = data?.syncData.offset ?? 0;
+  const lastSyncData = data?.syncData ?? null;
+  const driftCheckpoint = data?.checkpoint ?? null;
+  // A drift belongs to the sync it was measured against, so a new sync clears it.
+  const detectedDrift =
+    drift && drift.checkpoint === driftCheckpoint ? drift.amount : null;
+
   useEffect(() => {
-    if (data) {
-      setServerOffset(data.offset);
-      setLastSyncData(data);
-      setDetectedDrift(null);
-
-      setDriftCheckpoint({
-        performanceTime: performance.now(),
-        dateTime: Date.now(),
-      });
-
-      if (onSyncRef.current) {
-        onSyncRef.current(data);
-      }
+    if (data && onSyncRef.current) {
+      onSyncRef.current(data.syncData);
     }
   }, [data]);
 
@@ -178,7 +187,7 @@ export const useServerTimeSync = (
     const drift = Math.abs(currentDateTime - expectedDateTime);
 
     if (drift > driftThreshold) {
-      setDetectedDrift(drift);
+      setDrift({ amount: drift, checkpoint: driftCheckpoint });
 
       if (onDriftDetectedRef.current) {
         onDriftDetectedRef.current(drift);

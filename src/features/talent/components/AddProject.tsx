@@ -1,10 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type Dispatch, type SetStateAction, useEffect, useMemo } from 'react';
+import { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -35,6 +35,17 @@ const PowSchema = z.object({
 });
 type PowFormData = z.infer<typeof PowSchema>;
 
+const skillsOptions: Option[] = allSkills.map((i) => ({
+  value: i,
+  label: i,
+}));
+const subSkillsOptions: Option[] = allSubSkills
+  .map((i) => ({
+    value: i,
+    label: i,
+  }))
+  .filter((i) => i.value !== 'Other');
+
 type AddProjectProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -62,25 +73,6 @@ export const AddProject = ({
   const { handleSubmit, setValue, watch, control } = form;
 
   const { user } = useUser();
-
-  const skillsOptions = useMemo<Option[]>(
-    () =>
-      allSkills.map((i) => ({
-        value: i,
-        label: i,
-      })),
-    [allSkills],
-  );
-  const subSkillsOptions = useMemo<Option[]>(
-    () =>
-      allSubSkills
-        .map((i) => ({
-          value: i,
-          label: i,
-        }))
-        .filter((i) => i.value !== 'Other'),
-    [allSubSkills],
-  );
 
   const projectToEdit =
     selectedProject !== null && pow ? pow[selectedProject as number] : null;
@@ -165,6 +157,9 @@ export const AddProject = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-[607px] py-[1.4375rem]">
+        <DialogTitle className="sr-only">
+          {projectToEdit ? 'Edit Project' : 'Add Project'}
+        </DialogTitle>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-5">

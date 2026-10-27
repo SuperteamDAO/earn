@@ -25,7 +25,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Creating new email settings for categories: ${safeStringify(categories)}`,
     );
     await Promise.all(
-      categories.map((category: any) =>
+      categories.map((category: string) =>
         prisma.emailSettings.create({
           data: {
             userId: userId as string,
@@ -57,7 +57,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     res
       .status(200)
       .json({ message: 'Email preferences updated successfully!' });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Failed to update email preferences for user ID: ${userId} - ${safeStringify(
         error,

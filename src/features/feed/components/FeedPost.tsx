@@ -44,23 +44,31 @@ export const FeedPost = ({ type, id }: Props) => {
         <FeedCardContainerSkeleton />
       ) : (
         <>
-          {data.map((item, index) => {
+          {data.map((item) => {
             switch (item.type) {
               case 'submission':
                 return (
                   <SubmissionCard
-                    key={index}
-                    sub={item as any}
+                    key={`${item.type}-${item.id}`}
+                    sub={item}
                     type="activity"
                   />
                 );
               case 'pow':
                 return (
-                  <PowCard key={index} pow={item as any} type="activity" />
+                  <PowCard
+                    key={`${item.type}-${item.id}`}
+                    pow={item}
+                    type="activity"
+                  />
                 );
               case 'grant-application':
                 return (
-                  <GrantCard type="activity" grant={item as any} key={index} />
+                  <GrantCard
+                    type="activity"
+                    grant={item}
+                    key={`${item.type}-${item.id}`}
+                  />
                 );
               default:
                 return null;

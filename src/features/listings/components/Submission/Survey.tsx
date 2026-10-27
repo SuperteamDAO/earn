@@ -42,11 +42,14 @@ export const SurveyModal = ({
       $survey_id: surveyId,
       $survey_response: response,
     });
-    await api.post('/api/user/update-survey/', {
-      surveyId,
-    });
-    await refetchUser();
-    setIsSubmitting(false);
+    try {
+      await api.post('/api/user/update-survey/', {
+        surveyId,
+      });
+      await refetchUser();
+    } finally {
+      setIsSubmitting(false);
+    }
     onClose();
   };
 
@@ -55,7 +58,7 @@ export const SurveyModal = ({
       const surveyById = getMatchingSurvey(surveys, surveyId);
       setQuestion(surveyById?.questions[0]);
     }, true);
-  }, [posthog]);
+  }, [surveyId]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -118,7 +121,7 @@ export const SurveyModal = ({
                 >
                   {question.choices.map((choice, idx) => (
                     <div
-                      key={idx}
+                      key={choice}
                       className="flex items-center space-x-2 rounded-md p-2 hover:bg-slate-100"
                     >
                       <RadioGroupItem

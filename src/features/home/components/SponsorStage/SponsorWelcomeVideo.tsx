@@ -1,7 +1,7 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { useQuery } from '@tanstack/react-query';
 import { Play } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import { useEffect, useState } from 'react';
 
 import { useUser } from '@/store/user';
@@ -69,7 +69,7 @@ export const SponsorWelcomeVideo = () => {
             type="button"
             className="group focus-visible:ring-brand-purple relative w-full cursor-pointer rounded-lg focus:outline-none focus-visible:ring-0"
           >
-            <motion.div
+            <m.div
               layoutId={layoutId}
               className="relative aspect-video w-full overflow-hidden rounded-lg"
               initial={false}
@@ -89,7 +89,7 @@ export const SponsorWelcomeVideo = () => {
                 className="h-full w-full object-cover"
               />
               <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/20 transition-colors group-hover:bg-black/30">
-                <motion.div
+                <m.div
                   className="flex items-center justify-center"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
@@ -105,9 +105,9 @@ export const SponsorWelcomeVideo = () => {
                     fill="white"
                     stroke="white"
                   />
-                </motion.div>
+                </m.div>
               </div>
-            </motion.div>
+            </m.div>
           </button>
         </DialogPrimitive.Trigger>
       </div>
@@ -116,7 +116,7 @@ export const SponsorWelcomeVideo = () => {
         {isModalOpen && (
           <DialogPrimitive.Portal forceMount>
             <DialogPrimitive.Overlay asChild forceMount>
-              <motion.div
+              <m.div
                 className="fixed inset-0 z-60 bg-black/50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -125,7 +125,7 @@ export const SponsorWelcomeVideo = () => {
             </DialogPrimitive.Overlay>
             <div className="fixed inset-0 z-61 grid place-items-center outline-none">
               <DialogPrimitive.Content asChild forceMount>
-                <motion.div
+                <m.div
                   layoutId={layoutId}
                   className="relative aspect-video w-full max-w-5xl overflow-hidden rounded-lg"
                   initial={false}
@@ -136,7 +136,7 @@ export const SponsorWelcomeVideo = () => {
                     className="h-full w-full object-cover"
                   />
                   <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-black/20">
-                    <motion.div
+                    <m.div
                       className="flex items-center justify-center"
                       initial={{ scale: 1 }}
                       animate={{
@@ -151,9 +151,9 @@ export const SponsorWelcomeVideo = () => {
                         fill="white"
                         stroke="white"
                       />
-                    </motion.div>
+                    </m.div>
                   </div>
-                  <motion.div
+                  <m.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: showVideo ? 1 : 0 }}
                     transition={{ duration: 0.3 }}
@@ -168,8 +168,8 @@ export const SponsorWelcomeVideo = () => {
                       className="absolute inset-0 border-0"
                       title="Sponsor welcome video"
                     />
-                  </motion.div>
-                </motion.div>
+                  </m.div>
+                </m.div>
               </DialogPrimitive.Content>
             </div>
           </DialogPrimitive.Portal>

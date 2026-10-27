@@ -76,7 +76,7 @@ export const SkillsSelect = React.forwardRef<MultiSelectRef, SkillsSelectProps>(
     },
     ref,
   ) => {
-    const [uiSkills, setUiSkills] = React.useState<Option[]>(
+    const [uiSkills, setUiSkills] = React.useState<Option[]>(() =>
       convertSkillsToOptions(defaultValue),
     );
     const [logicSkills, setLogicSkills] = React.useState<Skills>(defaultValue);

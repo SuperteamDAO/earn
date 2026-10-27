@@ -10,11 +10,10 @@ export async function fetchWalletActivity(
   rpc: SolanaRpc,
   walletAddress: Address,
 ): Promise<TokenActivity[]> {
-  const tokenList = await getTokenList();
-  const signaturesResponse = await rpc
-    .getSignaturesForAddress(walletAddress, { limit: 50 })
-    .send();
-  const signatures = signaturesResponse;
+  const [tokenList, signatures] = await Promise.all([
+    getTokenList(),
+    rpc.getSignaturesForAddress(walletAddress, { limit: 50 }).send(),
+  ]);
 
   const activities: TokenActivity[] = [];
   const batchSize = 5;
@@ -51,7 +50,7 @@ export async function fetchWalletActivity(
       if (!tx?.meta) continue;
 
       const walletIndex = tx.transaction.message.accountKeys.findIndex(
-        (acc: any) => acc.pubkey === walletAddress || acc === walletAddress,
+        (acc) => acc.pubkey === walletAddress,
       );
 
       if (walletIndex !== -1) {
@@ -158,7 +157,7 @@ export async function fetchWalletActivity(
                 return (
                   (parsed.type === 'transfer' ||
                     parsed.type === 'transferChecked') &&
-                  (instruction as any).program === 'spl-token'
+                  instruction.program === 'spl-token'
                 );
               });
 

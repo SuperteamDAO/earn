@@ -78,9 +78,9 @@ export default function Scribes() {
           <div className="mx-auto max-w-7xl py-6">
             <p className="mb-4 text-xl font-semibold text-slate-900">Tracks</p>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {trackData?.map((track, index) => (
+              {trackData?.map((track) => (
                 <TrackBox
-                  key={index}
+                  key={track.slug}
                   title={track.title}
                   sponsor={track.sponsor}
                   token={track.token}

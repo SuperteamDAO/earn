@@ -124,33 +124,24 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
     : 0;
 
   useEffect(() => {
-    console.log('[DRAFT_DEBUG] ProOnly isPrivate effect', { isPrivate });
     if (isPrivate) {
       form.setValue('isPro', false);
       form.saveDraft();
       setShowCallout(false);
     }
-  }, [isPrivate]);
+  }, [isPrivate, form.setValue, form.saveDraft]);
+
+  if (!isUnderMinimum && showCallout) {
+    setShowCallout(false);
+  }
 
   useEffect(() => {
-    if (!isUnderMinimum && showCallout) {
-      setShowCallout(false);
-    }
-  }, [isUnderMinimum, showCallout]);
-
-  useEffect(() => {
-    console.log('[DRAFT_DEBUG] ProOnly isPro/isUnderMinimum effect', {
-      isPro,
-      isUnderMinimum,
-      isShaking,
-      willSave: isPro && isUnderMinimum && !isShaking,
-    });
     if (isPro && isUnderMinimum && !isShaking) {
       form.setValue('isPro', false, { shouldValidate: false });
       form.saveDraft();
       setShowCallout(true);
     }
-  }, [isPro, isUnderMinimum, isShaking]);
+  }, [isPro, isUnderMinimum, isShaking, form.setValue, form.saveDraft]);
 
   const handleUpdateRewards = () => {
     if (!tokenUsdValue || estimatedUsdValue === null) return;
@@ -193,38 +184,18 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
   };
 
   const handleProToggle = (checked: boolean) => {
-    console.log('[ProOnly] handleProToggle called', {
-      checked,
-      isUnderMinimum,
-      showCallout,
-      isShaking,
-      currentIsPro: isPro,
-      timestamp: new Date().toISOString(),
-    });
-
     if (checked && isUnderMinimum) {
-      console.log('[ProOnly] Entering shake animation flow');
       setIsShaking(true);
       form.setValue('isPro', true, { shouldValidate: false });
-      console.log('[ProOnly] Set isShaking=true, isPro=true');
 
       setTimeout(() => {
-        console.log('[ProOnly] Timeout callback executing', {
-          isShaking,
-          showCallout,
-          isPro,
-        });
         setIsShaking(false);
         setShowCallout(true);
         form.setValue('isPro', false, { shouldValidate: false });
-        console.log(
-          '[ProOnly] Timeout complete: isShaking=false, showCallout=true, isPro=false',
-        );
       }, 500);
       return;
     }
 
-    console.log('[ProOnly] Normal toggle (not under minimum)');
     form.setValue('isPro', checked, { shouldValidate: false });
     form.saveDraft();
   };
@@ -232,57 +203,13 @@ export function ProOnly({ onShowNudgesChange, onSwitchRef }: ProOnlyProps) {
   const showNudges = !showCallout && !isPro;
 
   useEffect(() => {
+    // react-doctor-disable-next-line react-doctor/no-pass-data-to-parent, react-doctor/no-pass-live-state-to-parent, react-doctor/no-prop-callback-in-effect -- the callout state is driven by this component's handlers and resets when the dialog content remounts; lifting it would keep it across reopen
     onShowNudgesChange?.(showNudges);
   }, [showNudges, onShowNudgesChange]);
 
   useEffect(() => {
     onSwitchRef?.(switchRef.current ?? null);
   }, [onSwitchRef]);
-
-  // Debug useEffect to track all state changes
-  useEffect(() => {
-    console.log('[ProOnly] State change detected', {
-      isPro,
-      isUnderMinimum,
-      isShaking,
-      showCallout,
-      estimatedUsdValue,
-      minProUsd,
-      difference,
-      hasDevelopmentSkills,
-      timestamp: new Date().toISOString(),
-      stackTrace: new Error().stack,
-    });
-  }, [
-    isPro,
-    isUnderMinimum,
-    isShaking,
-    showCallout,
-    estimatedUsdValue,
-    minProUsd,
-    difference,
-    hasDevelopmentSkills,
-  ]);
-
-  // Debug useEffect specifically for the problematic useEffect at line 137-143
-  useEffect(() => {
-    const shouldTrigger = isPro && isUnderMinimum && !isShaking;
-    console.log('[ProOnly] Auto-reset useEffect check', {
-      isPro,
-      isUnderMinimum,
-      isShaking,
-      shouldTrigger,
-      showCallout,
-      timestamp: new Date().toISOString(),
-    });
-
-    if (shouldTrigger) {
-      console.log(
-        '[ProOnly] Auto-reset useEffect TRIGGERED - this might be interfering!',
-      );
-      console.log('[ProOnly] About to set isPro=false and showCallout=true');
-    }
-  }, [isPro, isUnderMinimum, isShaking, showCallout]);
 
   if (!form) return null;
 

@@ -7,18 +7,21 @@ import { userCountQuery } from '@/features/home/queries/user-count';
 
 import { maxW } from '../utils/styles';
 
+const numberFormatter = new Intl.NumberFormat('en-US');
+const usdFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 0,
+});
+
 const formatNumber = (value: number | undefined): string => {
-  if (typeof value !== 'number') return '—';
-  return new Intl.NumberFormat('en-US').format(value);
+  if (typeof value !== 'number') return '\u2014';
+  return numberFormatter.format(value);
 };
 
 const formatUSD = (value: number | undefined): string => {
-  if (typeof value !== 'number') return '$—';
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(value);
+  if (typeof value !== 'number') return '$\u2014';
+  return usdFormatter.format(value);
 };
 
 export function Stats() {

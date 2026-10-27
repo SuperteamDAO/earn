@@ -11,6 +11,49 @@ import { loginEventAtom } from '@/features/auth/atoms';
 
 const forcedRedirectedAtom = atom(false);
 
+// useUser mounts this hook once per caller, so every eligible instance shares
+// one pending redirect: the first to subscribe schedules it and the last to
+// clean up cancels it. Keeping it outside React state means scheduling it does
+// not re-run, and so cancel, the effect that scheduled it.
+let subscribers = 0;
+let cancelPendingRedirect: (() => void) | undefined;
+
+const scheduleRedirect = (redirect: () => void, wait: number) => {
+  // a fresh login is a user action, so we can redirect immediately.
+  if (wait === 0) {
+    const redirectTimeout = setTimeout(redirect, 0);
+    return () => clearTimeout(redirectTimeout);
+  }
+
+  let deferTimeout: NodeJS.Timeout | undefined;
+  let redirectTimeout: NodeJS.Timeout | undefined;
+  let toastId: string | number | undefined;
+
+  const deferredCheck = () => {
+    toastId = toast.info('Finish your profile to continue browsing.', {
+      description: `You will be redirected in ~${Math.floor(
+        wait / 1000,
+      ).toFixed(0)} seconds.`,
+      duration: wait,
+    });
+    redirectTimeout = setTimeout(redirect, wait);
+  };
+
+  // for returning users, defer the check to protect core web vitals.
+  if (document.readyState === 'complete') {
+    deferTimeout = setTimeout(deferredCheck, 100);
+  } else {
+    window.addEventListener('load', deferredCheck, { once: true });
+  }
+
+  return () => {
+    clearTimeout(deferTimeout);
+    clearTimeout(redirectTimeout);
+    window.removeEventListener('load', deferredCheck);
+    if (toastId !== undefined) toast.dismiss(toastId);
+  };
+};
+
 type User = ReturnType<typeof useUser>['user'];
 
 interface UseForcedProfileRedirectProps {
@@ -28,8 +71,6 @@ export const useForcedProfileRedirect = ({
   const [loginEvent, setLoginEvent] = useAtom(loginEventAtom);
 
   useEffect(() => {
-    let redirectTimeout: NodeJS.Timeout | undefined;
-
     const isExcludedPath =
       pathname.startsWith('/earn/new') ||
       pathname.startsWith('/earn/sponsor') ||
@@ -48,51 +89,31 @@ export const useForcedProfileRedirect = ({
       return;
     }
 
-    const performRedirect = (wait: number) => {
-      if (forcedRedirected) return;
-
+    // flip the state only once the redirect fires: flipping it earlier
+    // re-runs this effect, whose cleanup would cancel the redirect.
+    const redirect = () => {
       setForcedRedirected(true);
       setLoginEvent('idle');
-
-      const redirectAction = () => {
-        router.push({
-          pathname: '/earn/new',
-          query: { type: 'forced', originUrl: asPath },
-        });
-      };
-
-      if (wait > 0) {
-        toast.info('Finish your profile to continue browsing.', {
-          description: `You will be redirected in ~${Math.floor(
-            wait / 1000,
-          ).toFixed(0)} seconds.`,
-          duration: wait,
-        });
-      }
-
-      redirectTimeout = setTimeout(redirectAction, wait);
+      router.push({
+        pathname: '/earn/new',
+        query: { type: 'forced', originUrl: asPath },
+      });
     };
 
-    // a fresh login is a user action, so we can redirect immediately.
-    if (loginEvent === 'fresh_login') {
-      performRedirect(0);
-      return;
-    }
-
-    // for returning users, defer the check to protect core web vitals.
-    const deferredCheck = () => performRedirect(5000);
-
-    if (document.readyState === 'complete') {
-      setTimeout(deferredCheck, 100);
-    } else {
-      window.addEventListener('load', deferredCheck, { once: true });
+    subscribers += 1;
+    if (subscribers === 1) {
+      cancelPendingRedirect = scheduleRedirect(
+        redirect,
+        loginEvent === 'fresh_login' ? 0 : 5000,
+      );
     }
 
     return () => {
-      if (redirectTimeout) {
-        clearTimeout(redirectTimeout);
+      subscribers -= 1;
+      if (subscribers === 0) {
+        cancelPendingRedirect?.();
+        cancelPendingRedirect = undefined;
       }
-      window.removeEventListener('load', deferredCheck);
     };
   }, [
     user,
