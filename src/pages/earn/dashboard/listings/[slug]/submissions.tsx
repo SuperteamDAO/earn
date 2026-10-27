@@ -352,7 +352,7 @@ export default function BountySubmissions({ slug }: Props) {
       setRemainings({
         podiums: rewardsLength - (podiumWinnersSelected || 0),
         bonus:
-          (!!bounty?.rewards?.[BONUS_REWARD_POSITION]
+          (bounty?.rewards?.[BONUS_REWARD_POSITION]
             ? bounty.maxBonusSpots || 0
             : 0) - (bonusWinnerSelected || 0),
       });

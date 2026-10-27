@@ -209,7 +209,7 @@ export default function EditProfilePage({
       return false;
     }
     if (isInvalid) {
-      if (!!validationErrorMessage) {
+      if (validationErrorMessage) {
         setError('username', {
           message: validationErrorMessage,
         });

@@ -260,7 +260,7 @@ export function RewardsSheet() {
           <FormField
             control={form.control}
             name="rewards"
-            render={({}) => {
+            render={() => {
               return (
                 <FormItem className="group items-start gap-1.5">
                   <FormLabel isRequired className="">

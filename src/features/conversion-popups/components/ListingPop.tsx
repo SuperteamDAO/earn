@@ -52,7 +52,7 @@ const getVariantInfoMap = (
   return {
     0: {
       title: `Don’t miss out on this ${rewardLabel} ${type}`,
-      description: `Apply to ${sponsorName}’s ${type} and win from ${!!rewardLabel ? `a ${rewardLabel} pool` : 'an amazing pool'}. Takes 2 minutes to get started!`,
+      description: `Apply to ${sponsorName}’s ${type} and win from ${rewardLabel ? `a ${rewardLabel} pool` : 'an amazing pool'}. Takes 2 minutes to get started!`,
       sponsorName: listing?.sponsor?.name,
       sponsorLogo: listing?.sponsor?.logo,
     },

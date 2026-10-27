@@ -112,8 +112,10 @@ export default function AgentsPage({
                       variant="outline"
                       className="border-white/40 bg-black font-mono text-white hover:bg-white/10 hover:text-white"
                     >
+                      {/* eslint-disable @next/next/no-html-link-for-pages -- /skill.md is a static file in public/, not a page */}
                       {/* react-doctor-disable-next-line react-doctor/nextjs-no-a-element -- /skill.md is a static file in public/, not a Next.js route, so a full load is what serves it */}
                       <a href="/skill.md">Read skill.md</a>
+                      {/* eslint-enable @next/next/no-html-link-for-pages */}
                     </Button>
                   </div>
                 </div>
@@ -235,8 +237,10 @@ export default function AgentsPage({
                     variant="outline"
                     className="border-white/40 bg-black text-white hover:bg-white/10 hover:text-white"
                   >
+                    {/* eslint-disable @next/next/no-html-link-for-pages -- /heartbeat.md is a static file in public/, not a page */}
                     {/* react-doctor-disable-next-line react-doctor/nextjs-no-a-element -- /heartbeat.md is a static file in public/, not a Next.js route, so a full load is what serves it */}
                     <a href="/heartbeat.md">Read heartbeat.md</a>
+                    {/* eslint-enable @next/next/no-html-link-for-pages */}
                   </Button>
                 </div>
               </div>

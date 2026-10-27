@@ -46,7 +46,7 @@ export const useCommitReviewsGrantApplications = (
       });
       const aiReview = (selectedApplication?.ai as GrantApplicationAi)?.review;
       const commitedAi = {
-        ...(!!aiReview ? { review: aiReview } : {}),
+        ...(aiReview ? { review: aiReview } : {}),
         commited: true,
       };
       setSelectedApplication((prevAppl) => {

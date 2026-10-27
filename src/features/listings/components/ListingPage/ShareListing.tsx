@@ -121,7 +121,7 @@ function MainContent({ listing, grant, source }: SourceType) {
       copy = `Just came across this massive grant opportunity by ${grant?.sponsor?.name} on Superteam Earn`;
     } else {
       if (listing?.type !== 'project') {
-        copy = `Just came across this banger${!!listing?.usdValue ? ` $${listing?.usdValue}` : ''} bounty by ${listing?.sponsor?.name} on Superteam Earn`;
+        copy = `Just came across this banger${listing?.usdValue ? ` $${listing?.usdValue}` : ''} bounty by ${listing?.sponsor?.name} on Superteam Earn`;
       } else {
         copy = `Just came across this gig by ${listing?.sponsor?.name} on Superteam Earn`;
       }

@@ -17,7 +17,7 @@ interface PerksGridProps {
 
 export default function PerksGrid({ perks }: PerksGridProps) {
   // Calculate offset array for staggered layout
-  const offsetArray = new Array(perks?.length ?? 0).fill(false);
+  const offsetArray = Array.from({ length: perks?.length ?? 0 }, () => false);
   if (offsetArray.length > 1) {
     offsetArray[1] = true;
   }

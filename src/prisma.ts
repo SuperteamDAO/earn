@@ -56,6 +56,7 @@ if (isPlanetScale) {
   } as any);
 }
 
+// eslint-disable-next-line no-shadow-restricted-names -- Prisma's documented singleton typing, which keeps one client across hot reloads
 declare const globalThis: { prismaGlobal: typeof prismaClient } & typeof global;
 
 export const prisma = globalThis.prismaGlobal ?? prismaClient;

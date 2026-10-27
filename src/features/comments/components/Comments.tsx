@@ -31,8 +31,6 @@ interface Props {
   refType: CommentRefType;
   sponsorId: string | undefined;
   poc: User | undefined;
-  listingType: string;
-  listingSlug: string;
   isAnnounced: boolean;
   isVerified?: boolean;
   count: number;
@@ -48,8 +46,6 @@ export const Comments = ({
   refType,
   sponsorId,
   poc,
-  listingType,
-  listingSlug,
   isAnnounced,
   isVerified = false,
   isTemplate = false,
@@ -212,8 +208,6 @@ export const Comments = ({
           return (
             <CommentUI
               isAnnounced={isAnnounced}
-              listingSlug={listingSlug}
-              listingType={listingType}
               defaultSuggestions={defaultSuggestions}
               key={comment.id}
               comment={comment}

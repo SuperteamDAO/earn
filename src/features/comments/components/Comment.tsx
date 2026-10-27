@@ -51,8 +51,6 @@ interface Props {
   defaultSuggestions: Map<string, User>;
   deleteComment: (commentId: string) => Promise<void>;
   pinComment?: (commentId: string, isPinned: boolean) => Promise<void>;
-  listingSlug: string;
-  listingType: string;
   isAnnounced: boolean;
   isReply?: boolean;
   addNewReply?: (msg: string) => Promise<void>;
@@ -72,8 +70,6 @@ export const Comment = ({
   pinComment,
   defaultSuggestions,
   addNewReply,
-  listingType,
-  listingSlug,
   isReply = false,
   isAnnounced,
   isVerified = false,
@@ -413,8 +409,6 @@ export const Comment = ({
                 <Comment
                   poc={poc}
                   isAnnounced={isAnnounced}
-                  listingSlug={listingSlug}
-                  listingType={listingType}
                   defaultSuggestions={defaultSuggestions}
                   deleteComment={deleteReplyLvl1}
                   addNewReply={addNewReplyLvl1}

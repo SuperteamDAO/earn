@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { cn } from '@/utils/cn';
 
+// eslint-disable-next-line import/namespace -- TooltipProps is a type-only export of the namespace, which this rule does not resolve
 export interface TooltipProps extends TooltipPrimitive.TooltipProps {
   content: React.ReactNode;
   children: React.ReactNode;

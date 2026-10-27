@@ -250,8 +250,6 @@ export function ListingPageLayout({
                   <Comments
                     isTemplate={isTemplate}
                     isAnnounced={initialListing?.isWinnersAnnounced ?? false}
-                    listingSlug={initialListing?.slug ?? ''}
-                    listingType={initialListing?.type ?? ''}
                     poc={initialListing?.poc as User}
                     sponsorId={initialListing?.sponsorId}
                     isVerified={initialListing?.sponsor?.isVerified}

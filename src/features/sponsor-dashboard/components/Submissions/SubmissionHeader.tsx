@@ -417,7 +417,7 @@ export const SubmissionHeader = ({
                 !bounty?.isWinnersAnnounced &&
                 !isHackathonPage && (
                   <div className="flex w-full py-1 text-xs">
-                    {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
+                    {remainings.bonus > 0 || remainings.podiums > 0 ? (
                       <p className="flex w-full items-center justify-center rounded-md bg-red-100 px-2 py-1 text-[#f55151]">
                         <AlertTriangle className="mr-1 inline-block h-3 w-3" />
                         {remainings.podiums > 0 && (

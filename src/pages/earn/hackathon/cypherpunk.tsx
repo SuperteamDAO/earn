@@ -299,7 +299,7 @@ const faqs: { question: string; answer: string }[] = [
   },
 ];
 
-export const getServerSideProps: GetServerSideProps = async ({}) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const hackathon = await prisma.hackathon.findUnique({
     where: {
       slug: 'cypherpunk',

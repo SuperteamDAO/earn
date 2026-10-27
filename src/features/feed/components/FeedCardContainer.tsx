@@ -227,8 +227,6 @@ export const FeedCardContainer = ({
               >
                 <Comments
                   isAnnounced={false}
-                  listingSlug={''}
-                  listingType={''}
                   poc={undefined}
                   sponsorId={undefined}
                   isVerified={false}
