@@ -9,15 +9,15 @@ export default function SigninPage() {
   );
 
   useEffect(() => {
-    const savedPath = window.localStorage.getItem('loginRedirectPath');
-    if (savedPath) {
-      setTimeout(() => {
-        setRedirectPath(savedPath);
-        window.localStorage.removeItem('loginRedirectPath');
-      }, 0);
-    }
-
     toast.error('There was an error. You need to sign in again.');
+
+    const savedPath = window.localStorage.getItem('loginRedirectPath');
+    if (!savedPath) return;
+    const timer = setTimeout(() => {
+      setRedirectPath(savedPath);
+      window.localStorage.removeItem('loginRedirectPath');
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   return <Login isOpen={true} onClose={() => {}} redirectTo={redirectPath} />;

@@ -13,9 +13,10 @@ export default function Blocked() {
 
   useEffect(() => {
     if (user && !user?.isBlocked) {
+      // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- the blocked flag comes from the client-side user store; this page has no server data fetching that could read the session
       router.push('/earn');
     }
-  }, [user]);
+  }, [user, router]);
 
   return (
     <Default

@@ -88,6 +88,13 @@ const CreateSponsor = () => {
     },
   });
 
+  const {
+    setUsername,
+    isInvalid: isUsernameInvalid,
+    validationErrorMessage: validationUsernameErrorMessage,
+    username,
+  } = useUsernameValidation(user?.username);
+
   useEffect(() => {
     if (user) {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -104,7 +111,7 @@ const CreateSponsor = () => {
         },
       });
     }
-  }, [user]);
+  }, [user, setUsername, form.reset]);
 
   const {
     setSponsorName,
@@ -125,11 +132,14 @@ const CreateSponsor = () => {
         message: sponsorNameValidationErrorMessage,
       });
     }
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- touchedFields is only a guard read when the validation result changes; re-running on blur would call clearErrors and wipe the zod onBlur error for this field
   }, [
     sponsorNameValidationErrorMessage,
     isSponsorNameInvalid,
     form.formState.errors.sponsor?.name?.message,
     sponsorName,
+    form.setError,
+    form.clearErrors,
   ]);
 
   const {
@@ -151,19 +161,16 @@ const CreateSponsor = () => {
         message: validationSlugErrorMessage,
       });
     }
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- touchedFields is only a guard read when the validation result changes; re-running on blur would call clearErrors and wipe the zod onBlur error for this field
   }, [
     validationSlugErrorMessage,
     isSlugInvalid,
     form.formState.errors.sponsor?.slug?.message,
     slug,
+    form.setError,
+    form.clearErrors,
   ]);
 
-  const {
-    setUsername,
-    isInvalid: isUsernameInvalid,
-    validationErrorMessage: validationUsernameErrorMessage,
-    username,
-  } = useUsernameValidation(user?.username);
   useEffect(() => {
     if (form.formState.touchedFields.user?.username && username === '') {
       form.setError('user.username', {
@@ -177,18 +184,22 @@ const CreateSponsor = () => {
         message: validationUsernameErrorMessage,
       });
     }
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- touchedFields is only a guard read when the validation result changes; re-running on blur would call clearErrors and wipe the zod onBlur error for this field
   }, [
     validationUsernameErrorMessage,
     isUsernameInvalid,
     form.formState.errors.user?.username?.message,
     username,
+    form.setError,
+    form.clearErrors,
   ]);
 
   useEffect(() => {
     if (user?.currentSponsorId && user?.role !== 'GOD') {
+      // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- sponsor membership comes from the client-side user store behind the Privy session, which this page has no server data fetching to read
       router.push('/earn/dashboard/listings?open=1');
     }
-  }, [user?.currentSponsorId, router]);
+  }, [user?.currentSponsorId, user?.role, router]);
 
   const {
     mutateAsync: createSponsor,

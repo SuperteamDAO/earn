@@ -19,7 +19,12 @@ import {
 } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
-import { Dialog, DialogContent, DialogPortal } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogPortal,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useDisclosure } from '@/hooks/use-disclosure';
@@ -232,7 +237,7 @@ function Hero({
   const isSM = useMediaQuery('(min-width: 640px)');
   const isMD = useMediaQuery('(min-width: 768px)');
 
-  const [countdownDate, setCountdownDate] = useState<Date>(
+  const [countdownDate, setCountdownDate] = useState<Date>(() =>
     dayjs.utc(START_DATE).toDate(),
   );
   const [status, setStatus] = useState<'Open In' | 'Close In' | 'Closed'>(
@@ -252,7 +257,7 @@ function Hero({
     const intervalId = setInterval(updateStatus, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [START_DATE, CLOSE_DATE]);
 
   return (
     <div
@@ -559,6 +564,7 @@ function GetHiredBy() {
           {multipliedHiredBy.map((h, index) => (
             <ExternalImage
               className="mx-4 inline-block h-8"
+              // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- the logo list is repeated on purpose to fill the marquee, so names collide and the copy index is part of the identity; the list is static
               key={`${h.name}-${index}`}
               alt={h.name}
               src={h.src}
@@ -939,17 +945,21 @@ const SubscribeHackathon = () => {
   };
 
   useEffect(() => {
+    let ignore = false;
     const fetchSubscriptions = async () => {
       try {
         const { data } = await api.post('/api/hackathon/subscribe/get', {
           slug: SLUG,
         });
-        setSub(data);
+        if (!ignore) setSub(data);
       } catch (error) {
         console.error('Error fetching subscription data:', error);
       }
     };
     fetchSubscriptions();
+    return () => {
+      ignore = true;
+    };
   }, [update]);
 
   const isSubscribed = sub.find((e) => e.userId === user?.id);
@@ -1014,11 +1024,16 @@ function KashModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogPortal>
         <DialogContent className="max-w-7xl border-none p-0">
+          <DialogTitle className="sr-only">Message from Kash</DialogTitle>
           <div className="aspect-video w-[100vw]">
             <iframe
+              title="Message from Kash"
               width="100%"
               height="100%"
               src="https://www.youtube.com/embed/QSw-xf54PT0?autoplay=1"
+              // YouTube is cross-origin, so allow-same-origin cannot reach our page; the player needs it for storage.
+              // react-doctor-disable-next-line react-doctor/iframe-missing-sandbox -- cross-origin embed
+              sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
               className="border-none"
             />
           </div>
@@ -1097,6 +1112,7 @@ const TextStyler: React.FC<TextStylerProps> = ({ text }) => {
         if (word?.toLowerCase() === '<redacted>') {
           return (
             <span
+              // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- words come from splitting a fixed string, repeat freely, and never reorder
               key={index}
               className="mx-1 inline-block rounded-md bg-gray-200 px-2 text-transparent blur-xs select-none"
               style={{ textShadow: '0 0 32px white' }}
@@ -1106,6 +1122,7 @@ const TextStyler: React.FC<TextStylerProps> = ({ text }) => {
             </span>
           );
         }
+        // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- words come from splitting a fixed string, repeat freely, and never reorder
         return <span key={index}>{word} </span>;
       })}
     </p>

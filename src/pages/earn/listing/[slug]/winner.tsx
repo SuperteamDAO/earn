@@ -29,6 +29,7 @@ function WinnerBounty({
 
   useEffect(() => {
     if (bounty?.slug) {
+      // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- this page exists to serve winner OG tags to link-preview crawlers, which a server redirect would skip; only real browsers run this and move on
       router.push(`${getURL()}earn/listing/${bounty.slug}/`);
     }
   }, [bounty?.slug, router]);

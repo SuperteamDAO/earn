@@ -61,20 +61,6 @@ function TalentLeaderboard({
   const [, startTransition] = useTransition();
   const router = useRouter();
 
-  const handleStart = (url: string) => {
-    if (url !== router.asPath) {
-      setLoading(true);
-      setIsSearchLoading(true);
-    }
-  };
-
-  const handleComplete = (url: string) => {
-    if (url === router.asPath) {
-      setLoading(false);
-      setIsSearchLoading(false);
-    }
-  };
-
   useEffect(() => {
     return () => {
       setLoading(false);
@@ -83,6 +69,20 @@ function TalentLeaderboard({
   }, []);
 
   useEffect(() => {
+    const handleStart = (url: string) => {
+      if (url !== router.asPath) {
+        setLoading(true);
+        setIsSearchLoading(true);
+      }
+    };
+
+    const handleComplete = (url: string) => {
+      if (url === router.asPath) {
+        setLoading(false);
+        setIsSearchLoading(false);
+      }
+    };
+
     router.events.on('routeChangeStart', handleStart);
     router.events.on('routeChangeComplete', handleComplete);
     router.events.on('routeChangeError', handleComplete);
@@ -114,6 +114,7 @@ function TalentLeaderboard({
         scroll: false,
       });
     });
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- the Pages Router hands out a new router (and replace) after every navigation, including the one this effect starts, so depending on it would loop
   }, [skill, timeframe, page, search]);
 
   return (

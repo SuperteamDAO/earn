@@ -105,7 +105,7 @@ function Hero({
   const [status, setStatus] = useState<HackathonStatus>('Open');
   const [countdownMode, setCountdownMode] = useState<CountdownMode>('Left');
   const [isCountdownReady, setIsCountdownReady] = useState(false);
-  const [countdownDate, setCountdownDate] = useState<Date>(
+  const [countdownDate, setCountdownDate] = useState<Date>(() =>
     dayjs.utc(CLOSE_DATE).toDate(),
   );
 

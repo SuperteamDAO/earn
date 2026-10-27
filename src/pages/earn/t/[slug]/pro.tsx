@@ -24,9 +24,10 @@ export default function ProSharePage({
 
   useEffect(() => {
     if (talent?.username) {
+      // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- this share page exists to serve OG tags to crawlers; a server redirect would make crawlers follow it and lose the Pro preview
       router.push(`${getURL()}earn/t/${talent.username}/`);
     }
-  }, []);
+  }, [talent?.username, router]);
 
   const ogImagePath = `${getURL()}api/dynamic-og/pro-x/`;
   const canonicalUrl = talent?.username

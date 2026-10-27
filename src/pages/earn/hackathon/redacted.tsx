@@ -42,7 +42,7 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
   const START_DATE = hackathon.startDate;
   const CLOSE_DATE = hackathon.deadline;
 
-  const [countdownDate, setCountdownDate] = useState<Date>(
+  const [countdownDate, setCountdownDate] = useState<Date>(() =>
     dayjs.utc(START_DATE).toDate(),
   );
   const [status, setStatus] = useState<'Start In' | 'Close In' | 'Closed'>(

@@ -20,10 +20,10 @@ function Grants({ grant }: GrantsDetailsProps) {
               References
             </p>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {grant?.references?.map((reference, i) => (
+              {grant?.references?.map((reference) => (
                 <ReferenceCard
                   link={reference.link}
-                  key={i}
+                  key={reference.order}
                   title={reference.title}
                 />
               ))}
