@@ -98,8 +98,10 @@ export default function Hackathon() {
         setTotalBounties(hackathonData.total);
         setStartDate(hackathonData.startDate);
         setBounties(hackathonData.listings);
-        setIsBountiesLoading(false);
-      } catch (error) {
+      } catch {
+        // A failed load keeps the previous rows; the table has no error state.
+      } finally {
+        // react-doctor-disable-next-line react-doctor/no-loading-flag-reset-outside-finally -- guarded so a superseded request cannot hide the newer request's spinner
         if (!ignore) setIsBountiesLoading(false);
       }
     };
@@ -115,15 +117,20 @@ export default function Hackathon() {
   useEffect(() => {
     let ignore = false;
     const getSponsorStats = async () => {
-      const sponsorData = await api.get('/api/hackathon/stats');
-      if (ignore) return;
-      setSponsorStats({
-        ...sponsorData.data,
-        totalHackathonRewards: sponsorData.data.totalRewardAmount,
-        totalHackathonTracks: sponsorData.data.totalListings,
-        totalHackathonSubmissions: sponsorData.data.totalSubmissions,
-      });
-      setIsStatsLoading(false);
+      try {
+        const sponsorData = await api.get('/api/hackathon/stats');
+        if (ignore) return;
+        setSponsorStats({
+          ...sponsorData.data,
+          totalHackathonRewards: sponsorData.data.totalRewardAmount,
+          totalHackathonTracks: sponsorData.data.totalListings,
+          totalHackathonSubmissions: sponsorData.data.totalSubmissions,
+        });
+      } catch {
+        // The banner falls back to its empty stats rather than loading forever.
+      } finally {
+        if (!ignore) setIsStatsLoading(false);
+      }
     };
     getSponsorStats();
     return () => {
