@@ -10,7 +10,10 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
-import { getPaymentAmount } from '@/features/listings/utils/paymentDetails';
+import {
+  getPaymentAmount,
+  readPaymentHistory,
+} from '@/features/listings/utils/paymentDetails';
 import { addSubmissionPaymentRequestSchema } from '@/features/sponsor-dashboard/types';
 import {
   findUsedPaymentTxIds,
@@ -103,6 +106,20 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const isProject = listing.type === 'project';
+    const existingPayments = readPaymentHistory(
+      currentSubmission.paymentDetails,
+    );
+    // Projects append to the stored history, so refuse a shape we cannot read
+    // instead of replacing it.
+    if (isProject && !existingPayments) {
+      logger.error(
+        `Submission ${id} has payment history in an unexpected format`,
+      );
+      return res.status(400).json({
+        error: 'Stored payment history has an unexpected format',
+        message: 'Stored payment history has an unexpected format',
+      });
+    }
     if (!isProject) {
       if (paymentDetails.length > 1 || paymentDetail.tranche !== 1) {
         logger.warn('Bounties only support single payment with tranche 1');
@@ -112,11 +129,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         });
       }
     } else {
-      const existingPaymentCount = Array.isArray(
-        currentSubmission.paymentDetails,
-      )
-        ? currentSubmission.paymentDetails.length
-        : 0;
+      const existingPaymentCount = existingPayments?.length ?? 0;
       const newTranche = paymentDetail.tranche;
       const expectedNextTranche = existingPaymentCount + 1;
 
@@ -185,12 +198,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const finalPaymentDetails = isProject
-      ? [
-          ...(Array.isArray(currentSubmission.paymentDetails)
-            ? currentSubmission.paymentDetails
-            : []),
-          ...paymentDetails,
-        ]
+      ? [...(existingPayments ?? []), ...paymentDetails]
       : paymentDetails;
 
     const totalAllPayments = finalPaymentDetails.reduce<number>(
