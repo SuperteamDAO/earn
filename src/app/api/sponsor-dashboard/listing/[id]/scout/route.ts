@@ -153,6 +153,16 @@ export async function GET(
       }
     }
 
+    // An empty match set would build an invalid query after the delete below,
+    // leaving the listing with no scouts.
+    if (subskills.length === 0 && devSkills.length === 0) {
+      logger.warn('Bounty has no skills that scouts can match');
+      return NextResponse.json(
+        { error: 'Bounty has No skills' },
+        { status: 404 },
+      );
+    }
+
     if (prevScouts.length > 0) {
       logger.debug('Deleting previous scouts');
       await prisma.scouts.deleteMany({

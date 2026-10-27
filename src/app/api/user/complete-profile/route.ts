@@ -215,15 +215,18 @@ export async function POST(request: NextRequest) {
       'productAndNewsletter',
     ]);
 
-    await prisma.emailSettings.deleteMany({
-      where: {
-        userId,
-        category: { in: [...categories] },
-      },
-    });
-    await prisma.emailSettings.createMany({
-      data: [...categories].map((category) => ({ userId, category })),
-    });
+    // One transaction, so a failed insert cannot leave the categories deleted.
+    await prisma.$transaction([
+      prisma.emailSettings.deleteMany({
+        where: {
+          userId,
+          category: { in: [...categories] },
+        },
+      }),
+      prisma.emailSettings.createMany({
+        data: [...categories].map((category) => ({ userId, category })),
+      }),
+    ]);
 
     logger.info(
       `Completing user profile for user ID: ${userId}; fields: ${Object.keys(updatedData).join(', ')}`,

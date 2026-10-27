@@ -8,13 +8,16 @@ export async function createSponsorEmailSettings(userId: string) {
     'replyOrTagComment',
   ];
 
-  await prisma.emailSettings.deleteMany({
-    where: {
-      userId,
-      category: { in: categories },
-    },
-  });
-  await prisma.emailSettings.createMany({
-    data: categories.map((category) => ({ userId, category })),
-  });
+  // One transaction, so a failed insert cannot leave the categories deleted.
+  await prisma.$transaction([
+    prisma.emailSettings.deleteMany({
+      where: {
+        userId,
+        category: { in: categories },
+      },
+    }),
+    prisma.emailSettings.createMany({
+      data: categories.map((category) => ({ userId, category })),
+    }),
+  ]);
 }
