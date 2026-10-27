@@ -110,8 +110,7 @@ export const PreviewListingModal = () => {
                 <Loader2 className="text-primary h-8 w-8 animate-spin" />
               </div>
             )}
-            {/* Our own page: it needs scripts and same-origin cookies, which would cancel a sandbox. */}
-            {/* react-doctor-disable-next-line react-doctor/iframe-missing-sandbox */}
+            {/* react-doctor-disable-next-line react-doctor/iframe-missing-sandbox -- our own page needs scripts and same-origin cookies, which would cancel a sandbox */}
             <iframe
               src={`${previewUrl}&nsb=1`}
               className="h-full w-full"
