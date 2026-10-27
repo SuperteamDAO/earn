@@ -119,8 +119,10 @@ const skillSchema = z
     ),
   })
   .refine((data) => {
-    const validSubskills = skillSubSkillMap[data.skills].map((s) => s.value);
-    return data.subskills.every((ss) => validSubskills.includes(ss));
+    const validSubskillSet = new Set(
+      skillSubSkillMap[data.skills].map((s) => s.value),
+    );
+    return data.subskills.every((ss) => validSubskillSet.has(ss));
   }, 'Invalid subskills for selected skill');
 
 export const skillsArraySchema = z

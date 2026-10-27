@@ -55,12 +55,14 @@ export function PillsFilter({
     [localActiveSkills, activeSkills, debouncedSkillsChange, disabled],
   );
 
+  const localActiveSkillSet = new Set(localActiveSkills);
+
   return (
     <div className="flex flex-wrap gap-2">
       {skillsData.map((skill) => (
         <div key={skill.value}>
           <CategoryPill
-            isActive={localActiveSkills.includes(skill.value)}
+            isActive={localActiveSkillSet.has(skill.value)}
             onClick={() => handleSkillToggle(skill.value)}
             disabled={disabled}
           >

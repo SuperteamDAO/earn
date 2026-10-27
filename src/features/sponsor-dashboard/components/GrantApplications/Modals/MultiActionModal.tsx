@@ -93,6 +93,7 @@ export const MultiActionModal = ({
   };
 
   const handleAction = async () => {
+    const applicationIdSet = new Set(applicationIds);
     setLoading(true);
     try {
       switch (actionType) {
@@ -114,7 +115,7 @@ export const MultiActionModal = ({
               return {
                 ...old,
                 data: old.data.map((application) => {
-                  if (applicationIds.includes(application.id)) {
+                  if (applicationIdSet.has(application.id)) {
                     return { ...application, label: 'Spam' };
                   }
                   return application;
@@ -124,7 +125,7 @@ export const MultiActionModal = ({
           );
 
           setSelectedApplication((prev) => {
-            if (prev && applicationIds.includes(prev.id)) {
+            if (prev && applicationIdSet.has(prev.id)) {
               return { ...prev, label: 'Spam' };
             }
             return prev;

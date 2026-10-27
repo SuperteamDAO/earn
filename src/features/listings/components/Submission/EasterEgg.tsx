@@ -47,20 +47,18 @@ const createDecorateOptions = (isPro: boolean): TDecorateOptionsFn => {
           '#FF2400',
           '#FFC0CB',
         ];
-    const selectedColors: string[] = [];
+    const selectedColorSet = new Set<string>();
 
-    while (selectedColors.length < 5) {
+    while (selectedColorSet.size < 5) {
       const randomIndex = Math.floor(Math.random() * colors.length);
       const color = colors[randomIndex];
-      if (!selectedColors.includes(color!)) {
-        selectedColors.push(color!);
-      }
+      selectedColorSet.add(color!);
     }
 
     return {
       ...options,
       particleCount: 20,
-      colors: selectedColors,
+      colors: [...selectedColorSet],
     };
   };
 };

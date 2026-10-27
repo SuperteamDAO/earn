@@ -165,16 +165,18 @@ function getChapterRegionsContainingCountries(
   countryNames: string[],
   chapterRegions: ChapterRegion[],
 ): string[] {
+  const countryNameSet = new Set(countryNames);
+
   return chapterRegions
     .filter((chapter) => {
       const isSingleCountryChapter = chapter.country.length === 1;
       if (isSingleCountryChapter) {
         const singleCountry = chapter.country[0];
-        return singleCountry ? countryNames.includes(singleCountry) : false;
+        return singleCountry ? countryNameSet.has(singleCountry) : false;
       }
 
       return chapter.country.every((countryName) =>
-        countryNames.includes(countryName),
+        countryNameSet.has(countryName),
       );
     })
     .map((chapter) => chapter.region);

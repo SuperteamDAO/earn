@@ -110,7 +110,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     if (currentSubmissions.length !== requestSubmissions.length) {
       const foundIds = currentSubmissions.map((c) => c.id);
-      const missingIds = submissionIds.filter((id) => !foundIds.includes(id));
+      const foundIdSet = new Set(foundIds);
+      const missingIds = submissionIds.filter((id) => !foundIdSet.has(id));
       logger.warn(
         `User ${userId} requested update for non-existent submissions. Provided: ${submissionIds.length}, Found: ${foundIds.length}. Missing IDs: ${missingIds.join(', ')}`,
       );

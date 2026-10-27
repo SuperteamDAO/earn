@@ -50,12 +50,13 @@ export const useRejectGrantApplications = (slug: string) => {
     );
     if (currentIndex === -1) return;
 
+    const rejectedApplicationIdSet = new Set(rejectedApplicationIds);
     const nextPendingApplication = updatedApplications
       .slice(currentIndex + 1)
       .find(
         (app) =>
           app.applicationStatus === GrantApplicationStatus.Pending &&
-          !rejectedApplicationIds.includes(app.id),
+          !rejectedApplicationIdSet.has(app.id),
       );
 
     if (nextPendingApplication) {
@@ -64,7 +65,7 @@ export const useRejectGrantApplications = (slug: string) => {
       const firstPendingApplication = updatedApplications.find(
         (app) =>
           app.applicationStatus === GrantApplicationStatus.Pending &&
-          !rejectedApplicationIds.includes(app.id),
+          !rejectedApplicationIdSet.has(app.id),
       );
       if (firstPendingApplication) {
         setSelectedApplication(firstPendingApplication);
@@ -96,6 +97,7 @@ export const useRejectGrantApplications = (slug: string) => {
     onMutate: async (input) => {
       const { applicationIds, skipCooldown } =
         parseRejectGrantApplicationsInput(input);
+      const applicationIdSet = new Set(applicationIds);
 
       await queryClient.cancelQueries({
         queryKey: ['sponsor-applications', slug],
@@ -113,7 +115,7 @@ export const useRejectGrantApplications = (slug: string) => {
           if (!oldData) return oldData;
 
           const updatedData = oldData.data.map((application) =>
-            applicationIds.includes(application.id)
+            applicationIdSet.has(application.id)
               ? {
                   ...application,
                   applicationStatus: GrantApplicationStatus.Rejected,
@@ -129,7 +131,7 @@ export const useRejectGrantApplications = (slug: string) => {
 
           if (
             selectedApplication?.id &&
-            applicationIds.includes(selectedApplication.id)
+            applicationIdSet.has(selectedApplication.id)
           ) {
             const updatedSelectedApplication = updatedData.find(
               (application) => application.id === selectedApplication.id,

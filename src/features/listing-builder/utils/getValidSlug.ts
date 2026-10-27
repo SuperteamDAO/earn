@@ -37,7 +37,7 @@ export const generateUniqueSlug = async (
     strict: true,
   });
 
-  const existingSlugs = await prisma.bounties
+  const existingSlugSet = await prisma.bounties
     .findMany({
       where: {
         slug: {
@@ -47,9 +47,9 @@ export const generateUniqueSlug = async (
       },
       select: { slug: true },
     })
-    .then((bounties) => bounties.map((bounty) => bounty.slug));
+    .then((bounties) => new Set(bounties.map((bounty) => bounty.slug)));
 
-  if (!existingSlugs.includes(baseSlug)) {
+  if (!existingSlugSet.has(baseSlug)) {
     return baseSlug;
   }
 
@@ -59,7 +59,7 @@ export const generateUniqueSlug = async (
   do {
     newSlug = `${baseSlug}-${i}`;
     i++;
-  } while (existingSlugs.includes(newSlug));
+  } while (existingSlugSet.has(newSlug));
 
   return newSlug;
 };

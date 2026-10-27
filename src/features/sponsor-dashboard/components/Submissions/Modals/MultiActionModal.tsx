@@ -117,6 +117,7 @@ export const MultiActionModal = ({
   };
 
   const handleAction = async () => {
+    const submissionIdSet = new Set(submissionIds);
     setLoading(true);
     try {
       switch (actionType) {
@@ -145,7 +146,7 @@ export const MultiActionModal = ({
             (old) => {
               if (!old) return old;
               return old.map((submission) => {
-                if (submissionIds.includes(submission.id)) {
+                if (submissionIdSet.has(submission.id)) {
                   return { ...submission, label: 'Spam' };
                 }
                 return submission;
@@ -154,7 +155,7 @@ export const MultiActionModal = ({
           );
 
           setSelectedSubmission((prev) => {
-            if (prev && submissionIds.includes(prev.id)) {
+            if (prev && submissionIdSet.has(prev.id)) {
               return { ...prev, label: 'Spam' };
             }
             return prev;
@@ -173,7 +174,7 @@ export const MultiActionModal = ({
             (old) => {
               if (!old) return old;
               return old.map((submission) => {
-                if (submissionIds.includes(submission.id)) {
+                if (submissionIdSet.has(submission.id)) {
                   return { ...submission, label: 'Shortlisted' };
                 }
                 return submission;
@@ -182,7 +183,7 @@ export const MultiActionModal = ({
           );
 
           setSelectedSubmission((prev) => {
-            if (prev && submissionIds.includes(prev.id)) {
+            if (prev && submissionIdSet.has(prev.id)) {
               return { ...prev, label: 'Shortlisted' };
             }
             return prev;

@@ -36,7 +36,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 
   try {
-    const incomingIds = pows.map((pow) => pow.id).filter(Boolean) as string[];
+    const incomingIdSet = new Set(
+      pows.map((pow) => pow.id).filter(Boolean) as string[],
+    );
 
     const existingPoWs = await prisma.poW.findMany({
       where: {
@@ -46,7 +48,8 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
 
     const existingIds = existingPoWs.map((pow) => pow.id);
-    const idsToDelete = existingIds.filter((id) => !incomingIds.includes(id));
+    const existingIdSet = new Set(existingIds);
+    const idsToDelete = existingIds.filter((id) => !incomingIdSet.has(id));
 
     const createData: PoWCreateManyInput[] = [];
     const updateData: {
@@ -64,7 +67,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         pow;
 
       if (id) {
-        if (existingIds.includes(id)) {
+        if (existingIdSet.has(id)) {
           updateData.push({
             where: { id },
             data: {

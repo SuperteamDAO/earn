@@ -138,12 +138,12 @@ export function RegionCombobox({
     if (global)
       regions.push({ value: 'Global', label: 'Global', code: 'Global' });
     if (superteams) {
-      const chapterCountries = chapters.flatMap((chapter) =>
-        chapter.code.toLowerCase(),
+      const chapterCountrySet = new Set(
+        chapters.flatMap((chapter) => chapter.code.toLowerCase()),
       );
 
       const nonSuperteamCountries = isoCountries.filter(
-        (country) => !chapterCountries.includes(country.code.toLowerCase()),
+        (country) => !chapterCountrySet.has(country.code.toLowerCase()),
       );
       regions.push({
         label: 'Chapter Regions',

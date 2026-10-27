@@ -101,14 +101,14 @@ export const useSearchState = ({
 
   useEffect(() => {
     const statusFromUrl = getStatusFromParams(searchParams);
+    const statusFromUrlSet = new Set(statusFromUrl);
 
     setInternalActiveStatus((currentInternalStatus) => {
+      const currentInternalStatusSet = new Set(currentInternalStatus);
       const statusChanged =
         statusFromUrl.length !== currentInternalStatus.length ||
-        statusFromUrl.some(
-          (status) => !currentInternalStatus.includes(status),
-        ) ||
-        currentInternalStatus.some((status) => !statusFromUrl.includes(status));
+        statusFromUrl.some((status) => !currentInternalStatusSet.has(status)) ||
+        currentInternalStatus.some((status) => !statusFromUrlSet.has(status));
 
       if (statusChanged) {
         return statusFromUrl;

@@ -39,6 +39,8 @@ export const SocialInputAll = <T extends FieldValues>({
   control,
   required,
 }: SocialInputAllProps<T>) => {
+  const requiredSet = required && new Set(required);
+
   return (
     <>
       {socials.map(({ name, placeholder }) => {
@@ -49,7 +51,7 @@ export const SocialInputAll = <T extends FieldValues>({
               name={name as Path<T>}
               socialName={name}
               placeholder={placeholder}
-              required={required?.includes(name)}
+              required={requiredSet?.has(name)}
               control={control}
             />
           </div>

@@ -78,8 +78,8 @@ export function MultiImageUploader({
     [effectiveMaxSize],
   );
 
-  const allowedTypes = useMemo(() => {
-    return allowPdf ? [...IMAGE_TYPES, PDF_TYPE] : IMAGE_TYPES;
+  const allowedTypeSet = useMemo(() => {
+    return new Set(allowPdf ? [...IMAGE_TYPES, PDF_TYPE] : IMAGE_TYPES);
   }, [allowPdf]);
 
   const canAddMore = value.length < maxImages;
@@ -101,7 +101,7 @@ export function MultiImageUploader({
           continue;
         }
 
-        if (!allowedTypes.includes(file.type)) {
+        if (!allowedTypeSet.has(file.type)) {
           const formatList = allowPdf
             ? 'JPEG, PNG, WebP, or PDF'
             : 'JPEG, PNG, or WebP';
@@ -127,7 +127,7 @@ export function MultiImageUploader({
       value,
       effectiveMaxSize,
       maxSizeMB,
-      allowedTypes,
+      allowedTypeSet,
       allowPdf,
       upload,
       onChange,

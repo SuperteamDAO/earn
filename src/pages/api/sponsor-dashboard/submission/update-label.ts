@@ -44,9 +44,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     if (currentSubmissions.length !== submissionIds.length) {
-      const foundIds = currentSubmissions.map((s) => s.id);
+      const foundIdSet = new Set(currentSubmissions.map((s) => s.id));
       const missingIds = submissionIds.filter(
-        (id: string) => !foundIds.includes(id),
+        (id: string) => !foundIdSet.has(id),
       );
       logger.warn(`Submissions not found: ${missingIds.join(', ')}`);
       return res.status(404).json({

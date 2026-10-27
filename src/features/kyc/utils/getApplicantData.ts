@@ -200,11 +200,12 @@ export const getApplicantData = async (
     if (Array.isArray(info.idDocs) && info.idDocs.length > 0) {
       let bestMatchDoc: SumsubIdDoc | null = null;
       let bestMatchCount = -1;
+      const acceptedImageIdSet = new Set(acceptedImageIds);
       for (const doc of info.idDocs) {
         const docImageIds = extractDocImageIds(doc);
         if (docImageIds.length === 0) continue;
         const matchCount = docImageIds.filter((idNum) =>
-          acceptedImageIds.includes(idNum),
+          acceptedImageIdSet.has(idNum),
         ).length;
         if (matchCount > bestMatchCount) {
           bestMatchCount = matchCount;

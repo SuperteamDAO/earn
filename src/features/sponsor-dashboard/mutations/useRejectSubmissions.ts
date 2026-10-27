@@ -38,8 +38,9 @@ export const useRejectSubmissions = (slug: string) => {
         ['sponsor-submissions', slug],
         (old: SubmissionWithUser[] | undefined) => {
           if (!old) return old;
+          const submissionIdSet = new Set(submissionIds);
           return old.map((submission) =>
-            submissionIds.includes(submission.id)
+            submissionIdSet.has(submission.id)
               ? {
                   ...submission,
                   status: SubmissionStatus.Rejected,

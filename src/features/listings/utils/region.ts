@@ -233,12 +233,12 @@ function getChapterCodes(chapters: ChapterRegionData[]): readonly string[] {
 }
 
 function getEligibleCountries(chapters: ChapterRegionData[]) {
-  const chapterCodes = getChapterCodes(chapters);
+  const chapterCodeSet = new Set(getChapterCodes(chapters));
 
   return countries.filter((country) => {
     if (country.iso === true) {
       const countryCodeUpper = country.code.toUpperCase();
-      return !chapterCodes.includes(countryCodeUpper);
+      return !chapterCodeSet.has(countryCodeUpper);
     }
 
     if (country.region === true) {

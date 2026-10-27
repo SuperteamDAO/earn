@@ -42,9 +42,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     if (currentApplications.length !== applicationIds.length) {
-      const foundIds = currentApplications.map((a) => a.id);
+      const foundIdSet = new Set(currentApplications.map((a) => a.id));
       const missingIds = applicationIds.filter(
-        (id: string) => !foundIds.includes(id),
+        (id: string) => !foundIdSet.has(id),
       );
       logger.warn(`Applications not found: ${missingIds.join(', ')}`);
       return res.status(404).json({

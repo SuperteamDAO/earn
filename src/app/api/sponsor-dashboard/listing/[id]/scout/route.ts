@@ -570,8 +570,9 @@ END)
     scouts.forEach((scout) => {
       if (Array.isArray(scout.skills)) {
         const devSkills = filterInDevSkills(scout.skills as string[]);
+        const devSkillSet = new Set(devSkills);
         const subskills = (scout.skills as string[]).filter(
-          (s) => !devSkills.includes(s),
+          (s) => !devSkillSet.has(s),
         );
         scout.skills = [...new Set(devSkills.concat(subskills))];
       }

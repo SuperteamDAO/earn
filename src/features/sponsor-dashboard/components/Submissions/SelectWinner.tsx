@@ -38,6 +38,7 @@ export const SelectWinner = ({
   isMultiSelectOn,
 }: Props) => {
   const rewards = sortRank(cleanRewards(bounty?.rewards));
+  const usedPositionSet = new Set(usedPositions);
 
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
 
@@ -141,7 +142,7 @@ export const SelectWinner = ({
                   className="w-full min-w-[180px] divide-y divide-slate-100 rounded-t-none p-0"
                 >
                   {rewards.map((reward) => {
-                    let isRewardUsed = usedPositions.includes(reward);
+                    let isRewardUsed = usedPositionSet.has(reward);
                     if (reward === BONUS_REWARD_POSITION) {
                       if (
                         usedPositions.filter((u) => u === BONUS_REWARD_POSITION)

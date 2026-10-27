@@ -33,10 +33,11 @@ export const CommentParser = ({
 
   function parseComment(comment: string) {
     const tokens = comment.split(/(\s+|@\w+[\w-]*|[^\s@]+)/g).filter(Boolean);
+    const validUsernameSet = new Set(validUsernames);
 
     return tokens.map((token) => {
       const mentionMatch = token.match(/^@(\w+[\w-]*)/);
-      if (mentionMatch && validUsernames.includes(mentionMatch[1] || '')) {
+      if (mentionMatch && validUsernameSet.has(mentionMatch[1] || '')) {
         return { type: 'mention', value: mentionMatch[0] };
       }
 
