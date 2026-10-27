@@ -66,6 +66,8 @@ export const CustomNoteEditor = ({
               <div className="mx-auto rounded-md border border-slate-200 bg-white px-5 py-4 shadow-sm">
                 <div
                   className="prose prose-sm max-w-none text-slate-600"
+                  // Built by grantEmailCopy: values are escaped and the note goes through sanitizeCustomEmailBody.
+                  // react-doctor-disable-next-line react-doctor/dangerous-html-sink -- sanitized upstream
                   dangerouslySetInnerHTML={{ __html: previewHtml }}
                 />
               </div>

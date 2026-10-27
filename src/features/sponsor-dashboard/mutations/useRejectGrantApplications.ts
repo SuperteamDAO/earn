@@ -80,6 +80,7 @@ export const useRejectGrantApplications = (slug: string) => {
       const batchSize = 10;
       for (let i = 0; i < applicationIds.length; i += batchSize) {
         const batch = applicationIds.slice(i, i + batchSize);
+        // react-doctor-disable-next-line react-doctor/async-await-in-loop -- batches go out one at a time on purpose so a large bulk reject never sends many concurrent requests to the status endpoint
         await api.post<GrantApplicationStatusMutationResponse>(
           '/api/sponsor-dashboard/grants/update-application-status',
           {

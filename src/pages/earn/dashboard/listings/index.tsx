@@ -13,6 +13,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, {
   useCallback,
   useEffect,
+  useEffectEvent,
   useMemo,
   useRef,
   useState,
@@ -75,6 +76,11 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
     column: string;
     direction: 'asc' | 'desc' | null;
   }>({ column: '', direction: null });
+  const handleSort = useCallback(
+    (column: string, direction: 'asc' | 'desc' | null) =>
+      setCurrentSort({ column, direction }),
+    [],
+  );
   const listingsPerPage = 15;
   const { data: hackathons } = useQuery({
     ...activeHackathonsQuery(),
@@ -161,12 +167,12 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
   }, []);
 
   useEffect(() => {
-    if (user?.currentSponsorId) {
-      setTimeout(() => {
-        setSearchText('');
-        setCurrentPage(0);
-      }, 0);
-    }
+    if (!user?.currentSponsorId) return;
+    const timer = setTimeout(() => {
+      setSearchText('');
+      setCurrentPage(0);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [user?.currentSponsorId]);
 
   const {
@@ -265,13 +271,17 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
     [updateQueryParams],
   );
 
+  const syncTabFromQuery = useEffectEvent((tab: string) => {
+    handleTabChange(tab);
+  });
+
   useEffect(() => {
-    if (queryTab && queryTab !== activeTab) {
-      setTimeout(() => {
-        handleTabChange(queryTab);
-      }, 0);
-    }
-  }, [queryTab, activeTab, handleTabChange]);
+    if (!queryTab || queryTab === activeTab) return;
+    const timer = setTimeout(() => {
+      syncTabFromQuery(queryTab);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [queryTab, activeTab]);
 
   return (
     <SponsorLayout>
@@ -389,27 +399,21 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
               <MemoizedListingTable
                 listings={paginatedListings}
                 currentSort={currentSort}
-                onSort={(column, direction) =>
-                  setCurrentSort({ column, direction })
-                }
+                onSort={handleSort}
               />
             </TabsContent>
             <TabsContent value="bounties" className="px-0">
               <MemoizedListingTable
                 listings={paginatedListings}
                 currentSort={currentSort}
-                onSort={(column, direction) =>
-                  setCurrentSort({ column, direction })
-                }
+                onSort={handleSort}
               />
             </TabsContent>
             <TabsContent value="projects" className="px-0">
               <MemoizedListingTable
                 listings={paginatedListings}
                 currentSort={currentSort}
-                onSort={(column, direction) =>
-                  setCurrentSort({ column, direction })
-                }
+                onSort={handleSort}
               />
             </TabsContent>
             {hasGrants && (
@@ -417,9 +421,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
                 <MemoizedListingTable
                   listings={paginatedListings}
                   currentSort={currentSort}
-                  onSort={(column, direction) =>
-                    setCurrentSort({ column, direction })
-                  }
+                  onSort={handleSort}
                 />
               </TabsContent>
             )}
@@ -428,9 +430,7 @@ export default function SponsorListings({ tab: queryTab }: { tab: string }) {
                 <MemoizedListingTable
                   listings={paginatedListings}
                   currentSort={currentSort}
-                  onSort={(column, direction) =>
-                    setCurrentSort({ column, direction })
-                  }
+                  onSort={handleSort}
                 />
               </TabsContent>
             )}

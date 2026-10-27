@@ -259,6 +259,7 @@ export const SelectWinner = ({
                     }}
                     disabled={isMultiSelectOn}
                     type="button"
+                    aria-label="Remove winner"
                   >
                     <X className="size-3" />
                   </button>

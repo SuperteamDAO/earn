@@ -52,7 +52,7 @@ export function SelectSponsor({
         sponsor: user?.currentSponsor,
       });
     }
-  }, [user]);
+  }, [type, user]);
 
   const loadSponsors = (
     inputValue: string,

@@ -47,8 +47,11 @@ const PaymentDetailsRow = ({
   return (
     <>
       <TableCell>
-        {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+        {paymentDetails.map((payment) => (
+          <div
+            className="my-2 flex items-center justify-between"
+            key={payment.tranche}
+          >
             <div className="flex items-center gap-1">
               <TokenIcon
                 className="h-4 w-4 rounded-full"
@@ -63,8 +66,11 @@ const PaymentDetailsRow = ({
         ))}
       </TableCell>
       <TableCell>
-        {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+        {paymentDetails.map((payment) => (
+          <div
+            className="my-2 flex items-center justify-between"
+            key={payment.tranche}
+          >
             <p className="text-sm font-medium text-slate-500">
               Milestone {payment.tranche}
             </p>
@@ -74,9 +80,9 @@ const PaymentDetailsRow = ({
       {paymentDetails.some((payment) => payment.txId) && (
         <TableCell colSpan={2}>
           {paymentDetails.map(
-            (payment, index) =>
+            (payment) =>
               payment.txId && (
-                <div key={index} className="my-2">
+                <div key={payment.tranche} className="my-2">
                   <a
                     className="flex items-center gap-1"
                     href={payment.txId}
@@ -107,8 +113,11 @@ const GrantTrancheRow = ({
   return (
     <>
       <TableCell>
-        {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+        {paymentDetails.map((payment) => (
+          <div
+            className="my-2 flex items-center justify-between"
+            key={payment.id}
+          >
             <div className="flex items-center gap-1">
               <TokenIcon
                 className="h-4 w-4 rounded-full"
@@ -124,8 +133,11 @@ const GrantTrancheRow = ({
         ))}
       </TableCell>
       <TableCell>
-        {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+        {paymentDetails.map((payment) => (
+          <div
+            className="my-2 flex items-center justify-between"
+            key={payment.id}
+          >
             <p className="text-sm font-medium text-slate-500">
               Milestone {payment.trancheNumber}
             </p>

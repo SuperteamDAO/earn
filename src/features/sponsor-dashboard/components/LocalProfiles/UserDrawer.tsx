@@ -16,6 +16,14 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { type LocalProfile } from '../../queries/local-profiles';
 
+const DBadge = ({ children }: { children: ReactNode }) => {
+  return (
+    <Badge className="rounded bg-[#EFF1F5] px-3 py-1 text-xs font-medium text-[#64739C]">
+      {children}
+    </Badge>
+  );
+};
+
 export const UserDrawer = ({
   isOpen,
   onClose,
@@ -28,20 +36,12 @@ export const UserDrawer = ({
   const parentSkills = (user.skills ?? []).map((skill) => skill.skills);
   const subSkills = (user.skills ?? []).flatMap((skill) => skill.subskills);
   const socialLinks = [
-    { Component: Telegram, link: user.telegram },
-    { Component: Twitter, link: user.twitter },
-    { Component: Website, link: user?.website },
+    { platform: 'telegram', Component: Telegram, link: user.telegram },
+    { platform: 'twitter', Component: Twitter, link: user.twitter },
+    { platform: 'website', Component: Website, link: user?.website },
   ];
 
   const formattedCreatedAt = dayjs(user.createdAt).format('DD MMM YYYY');
-
-  const DBadge = ({ children }: { children: ReactNode }) => {
-    return (
-      <Badge className="rounded bg-[#EFF1F5] px-3 py-1 text-xs font-medium text-[#64739C]">
-        {children}
-      </Badge>
-    );
-  };
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -106,8 +106,8 @@ export const UserDrawer = ({
           <div>
             <p className="mb-2 font-medium text-slate-400">Socials</p>
             <div className="flex gap-2">
-              {socialLinks.map(({ Component, link }, index) => (
-                <div key={index}>
+              {socialLinks.map(({ platform, Component, link }) => (
+                <div key={platform}>
                   <Component link={link} className="h-5 w-5 text-slate-600" />
                 </div>
               ))}

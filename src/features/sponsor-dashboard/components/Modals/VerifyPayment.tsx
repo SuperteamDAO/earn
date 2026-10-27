@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Check, CopyIcon, ExternalLink, Trash2, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -13,6 +13,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -45,7 +46,21 @@ interface VerifyPaymentModalProps {
   isHackathonPage?: boolean;
 }
 
-export const VerifyPaymentModal = ({
+const resetFormOptions = {
+  keepErrors: false,
+  keepDirty: false,
+  keepIsSubmitted: false,
+  keepTouched: false,
+  keepIsValid: false,
+  keepSubmitCount: false,
+} as const;
+
+export const VerifyPaymentModal = (props: VerifyPaymentModalProps) => {
+  // Keyed by listing so switching listings starts from a fresh status and form.
+  return <VerifyPaymentModalContent key={props.listing?.slug} {...props} />;
+};
+
+const VerifyPaymentModalContent = ({
   listing,
   isOpen,
   onClose,
@@ -69,11 +84,6 @@ export const VerifyPaymentModal = ({
     listing?.rewards ?? {},
     listing?.maxBonusSpots || 0,
   );
-
-  useEffect(() => {
-    setStatus('idle');
-    setShowMultiplePayments(false);
-  }, [listing?.slug]);
 
   const refetchQueries = async () => {
     await queryClient.invalidateQueries({
@@ -110,57 +120,49 @@ export const VerifyPaymentModal = ({
     watch,
   } = form;
 
-  const resetFormOptions = {
-    keepErrors: false,
-    keepDirty: false,
-    keepIsSubmitted: false,
-    keepTouched: false,
-    keepIsValid: false,
-    keepSubmitCount: false,
-  } as const;
+  const syncPaymentLinks = useCallback(
+    (listingSubmissionData: SubmissionWithUser[] | undefined = data) => {
+      if (!listingSubmissionData || !listing) {
+        return;
+      }
 
-  const syncPaymentLinks = (
-    listingSubmissionData: SubmissionWithUser[] | undefined = data,
-  ) => {
-    if (!listingSubmissionData || !listing) {
-      return;
-    }
+      const isProject = listing?.type === 'project';
 
-    const isProject = listing?.type === 'project';
-
-    if (isProject) {
-      reset(
-        {
-          paymentLinks: [
-            {
-              submissionId:
-                listingSubmissionData.find((sub) => sub.winnerPosition === 1)
-                  ?.id || '',
-              link: '',
-              isVerified: false,
-              txId: '',
-            },
-          ],
-        },
-        resetFormOptions,
-      );
-    } else {
-      reset(
-        {
-          paymentLinks: listingSubmissionData
-            .filter((sub) => sub.winnerPosition !== null)
-            .sort((a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0))
-            .map((submission) => ({
-              submissionId: submission.id,
-              link: '',
-              isVerified: submission.isPaid,
-              txId: submission.paymentDetails?.[0]?.txId || '',
-            })),
-        },
-        resetFormOptions,
-      );
-    }
-  };
+      if (isProject) {
+        reset(
+          {
+            paymentLinks: [
+              {
+                submissionId:
+                  listingSubmissionData.find((sub) => sub.winnerPosition === 1)
+                    ?.id || '',
+                link: '',
+                isVerified: false,
+                txId: '',
+              },
+            ],
+          },
+          resetFormOptions,
+        );
+      } else {
+        reset(
+          {
+            paymentLinks: listingSubmissionData
+              .filter((sub) => sub.winnerPosition !== null)
+              .sort((a, b) => (a.winnerPosition || 0) - (b.winnerPosition || 0))
+              .map((submission) => ({
+                submissionId: submission.id,
+                link: '',
+                isVerified: submission.isPaid,
+                txId: submission.paymentDetails?.[0]?.txId || '',
+              })),
+          },
+          resetFormOptions,
+        );
+      }
+    },
+    [data, listing, reset],
+  );
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const paymentLinks = watch('paymentLinks');
@@ -169,12 +171,7 @@ export const VerifyPaymentModal = ({
     if (isOpen) {
       syncPaymentLinks();
     }
-  }, [data, isOpen, listing]);
-
-  useEffect(() => {
-    reset({});
-    setShowMultiplePayments(false);
-  }, [listing?.slug]);
+  }, [isOpen, syncPaymentLinks]);
 
   const verifyPaymentMutation = async (body: VerifyPaymentsFormData) => {
     return await api.post<{ validationResults: ValidatePaymentResult[] }>(
@@ -186,70 +183,64 @@ export const VerifyPaymentModal = ({
     );
   };
 
-  const { mutate: verifyPayment, isPending: verifyPaymentPending } =
-    useMutation({
-      mutationFn: (body: VerifyPaymentsFormData) => verifyPaymentMutation(body),
-      onSuccess: async (data, variables) => {
-        const { validationResults } = data.data;
-        const failedResults = validationResults.filter(
-          (v) => v.status === 'FAIL',
-        );
-        if (failedResults.length > 0) {
-          clearErrors();
-          failedResults.forEach((result) => {
-            const fieldIndex = variables.paymentLinks.findIndex(
-              (link) => link.submissionId === result.submissionId,
-            );
-
-            if (fieldIndex !== -1) {
-              setError(`paymentLinks.${fieldIndex}.link`, {
-                type: 'manual',
-                message: result.message || 'Verification failed',
-              });
-            }
-          });
-          setStatus('retry');
-        } else {
-          setStatus('success');
-        }
-        const nonFailResults = validationResults.filter(
-          (v) => v.status !== 'FAIL',
-        );
-
-        nonFailResults.forEach((result) => {
+  const { mutate: verifyPayment } = useMutation({
+    mutationFn: (body: VerifyPaymentsFormData) => verifyPaymentMutation(body),
+    onSuccess: async (data, variables) => {
+      const { validationResults } = data.data;
+      const failedResults = validationResults.filter(
+        (v) => v.status === 'FAIL',
+      );
+      if (failedResults.length > 0) {
+        clearErrors();
+        failedResults.forEach((result) => {
           const fieldIndex = variables.paymentLinks.findIndex(
             (link) => link.submissionId === result.submissionId,
           );
+
           if (fieldIndex !== -1) {
-            setValue(`paymentLinks.${fieldIndex}.isVerified`, true, {
-              shouldValidate: true,
-              shouldDirty: true,
+            setError(`paymentLinks.${fieldIndex}.link`, {
+              type: 'manual',
+              message: result.message || 'Verification failed',
             });
-            setValue(`paymentLinks.${fieldIndex}.txId`, result.txId);
           }
         });
+        setStatus('retry');
+      } else {
+        setStatus('success');
+      }
+      const nonFailResults = validationResults.filter(
+        (v) => v.status !== 'FAIL',
+      );
 
-        const successfulResults = validationResults.filter(
-          (v) => v.status === 'SUCCESS',
+      nonFailResults.forEach((result) => {
+        const fieldIndex = variables.paymentLinks.findIndex(
+          (link) => link.submissionId === result.submissionId,
         );
-
-        if (successfulResults.length > 0) {
-          await refetchQueries();
+        if (fieldIndex !== -1) {
+          setValue(`paymentLinks.${fieldIndex}.isVerified`, true, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+          setValue(`paymentLinks.${fieldIndex}.txId`, result.txId);
         }
-      },
-      onError: () => {
-        setStatus('error');
-        toast.error('Error occurred while verifying payment');
-      },
-    });
+      });
 
-  useEffect(() => {
-    if (verifyPaymentPending) {
-      setStatus('loading');
-    }
-  }, [verifyPaymentPending]);
+      const successfulResults = validationResults.filter(
+        (v) => v.status === 'SUCCESS',
+      );
+
+      if (successfulResults.length > 0) {
+        await refetchQueries();
+      }
+    },
+    onError: () => {
+      setStatus('error');
+      toast.error('Error occurred while verifying payment');
+    },
+  });
 
   const onSubmit = async (data: VerifyPaymentsFormData) => {
+    setStatus('loading');
     verifyPayment({ paymentLinks: data.paymentLinks });
   };
 
@@ -710,9 +701,9 @@ export const VerifyPaymentModal = ({
                                       </p>
                                       <div className="space-y-2">
                                         {winnerSubmission.paymentDetails.map(
-                                          (payment, index) => (
+                                          (payment) => (
                                             <div
-                                              key={index}
+                                              key={payment.tranche}
                                               className="flex items-center justify-between rounded bg-white p-3 text-sm"
                                             >
                                               <div className="flex items-center gap-2">
@@ -744,6 +735,7 @@ export const VerifyPaymentModal = ({
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="text-blue-600 hover:text-blue-800"
+                                                aria-label={`View tranche ${payment.tranche} transaction on Solscan`}
                                               >
                                                 <ExternalLink className="h-4 w-4" />
                                               </a>
@@ -766,12 +758,16 @@ export const VerifyPaymentModal = ({
                       </p>
 
                       {paymentLinks?.map((_, index) => (
+                        // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- rows have no id (several can share a submissionId) and each controlled input is bound to the `paymentLinks.${index}` form path, so the index is the row's identity
                         <div key={index} className="flex items-start gap-2">
                           <FormField
                             control={control}
                             name={`paymentLinks.${index}.link`}
                             render={({ field }) => (
                               <FormItem className="flex-1">
+                                <FormLabel className="sr-only">
+                                  Transaction link {index + 1}
+                                </FormLabel>
                                 <FormControl>
                                   <Input
                                     {...field}
