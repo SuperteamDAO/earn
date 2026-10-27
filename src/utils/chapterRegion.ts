@@ -253,6 +253,7 @@ export async function getRegionsForUserLocationUsingChapters(
   if (!userLocation) return ['Global'];
 
   const chapterRegions = await getChapterRegions();
+  // react-doctor-disable-next-line react-doctor/server-sequential-independent-await -- findChapterByLocation reads through the same getChapterRegions cache, so awaiting in order lets the first call fill it; in parallel a cold cache would run the chapters query twice
   const chapter = await findChapterByLocation(userLocation);
   if (!chapter) return ['Global'];
 

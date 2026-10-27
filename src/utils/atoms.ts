@@ -22,7 +22,10 @@ export const useInitAtom = <T>(atom: PrimitiveAtom<T>, initialValue: T) => {
 
   useEffect(() => {
     setValue(initialValue);
-  }, [initialValue]);
+  }, [initialValue, setValue]);
 
-  return useMemo(() => [value ?? initialValue, setValue], [value, setValue]);
+  return useMemo(
+    () => [value ?? initialValue, setValue],
+    [value, initialValue, setValue],
+  );
 };

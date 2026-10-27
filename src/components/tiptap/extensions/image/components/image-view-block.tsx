@@ -179,17 +179,8 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({
     [initiateResize],
   );
 
-  const handleResizeEnd = React.useCallback(() => {
-    setActiveResizeHandle(null);
-  }, []);
-
   React.useEffect(() => {
-    if (!isResizing) {
-      handleResizeEnd();
-    }
-  }, [isResizing, handleResizeEnd]);
-
-  React.useEffect(() => {
+    let cancelled = false;
     const handleImage = async () => {
       const imageExtension = editor.options.extensions.find(
         (ext) => ext.name === 'image',
@@ -200,16 +191,19 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({
         if (!uploadFn) {
           try {
             const base64 = await blobUrlToBase64(initSrc);
-            setImageState((prev) => ({ ...prev, src: base64 }));
+            if (!cancelled) setImageState((prev) => ({ ...prev, src: base64 }));
+            // The document still needs the converted src even if this view was torn down meanwhile.
             updateAttributes({ src: base64 });
           } catch {
-            setImageState((prev) => ({ ...prev, error: true }));
+            if (!cancelled) setImageState((prev) => ({ ...prev, error: true }));
           }
         } else {
           try {
             setImageState((prev) => ({ ...prev, isServerUploading: true }));
 
+            // react-doctor-disable-next-line react-doctor/no-fetch-in-effect -- reads a local blob: URL this editor created so it can be uploaded once; not remote data fetching
             const response = await fetch(initSrc);
+            if (!response.ok) throw new Error(`Failed to read ${initSrc}`);
             const blob = await response.blob();
 
             const file = new File([blob], fileName || 'image', {
@@ -219,25 +213,33 @@ export const ImageViewBlock: React.FC<NodeViewProps> = ({
             const url: UploadReturnType = await uploadFn(file, editor);
             const normalizedData = normalizeUploadResponse(url);
 
-            setImageState((prev) => ({
-              ...prev,
-              ...normalizedData,
-              isServerUploading: false,
-            }));
+            if (!cancelled) {
+              setImageState((prev) => ({
+                ...prev,
+                ...normalizedData,
+                isServerUploading: false,
+              }));
+            }
 
+            // The document still needs the uploaded src even if this view was torn down meanwhile.
             updateAttributes(normalizedData);
           } catch {
-            setImageState((prev) => ({
-              ...prev,
-              error: true,
-              isServerUploading: false,
-            }));
+            if (!cancelled) {
+              setImageState((prev) => ({
+                ...prev,
+                error: true,
+                isServerUploading: false,
+              }));
+            }
           }
         }
       }
     };
 
     handleImage();
+    return () => {
+      cancelled = true;
+    };
   }, [editor, fileName, fileType, initSrc, updateAttributes]);
 
   return (

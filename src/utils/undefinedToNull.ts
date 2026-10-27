@@ -26,12 +26,9 @@ const convert = (input: unknown): unknown => {
   }
 
   if (input !== null && typeof input === 'object') {
-    return Object.entries(input).reduce((acc, [key, value]) => {
-      return {
-        ...acc,
-        [key]: convert(value),
-      };
-    }, {});
+    return Object.fromEntries(
+      Object.entries(input).map(([key, value]) => [key, convert(value)]),
+    );
   }
 
   return input;

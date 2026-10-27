@@ -106,6 +106,7 @@ export function useTokenList(): Token[] {
     getTokenListSnapshot,
   );
 
+  // react-doctor-disable-next-line react-doctor/no-fetch-in-effect -- loadTokenList dedupes through a module-level promise and writes to the external store read above, so repeat mounts cannot race or double-fetch
   useEffect(() => {
     void loadTokenList();
   }, []);

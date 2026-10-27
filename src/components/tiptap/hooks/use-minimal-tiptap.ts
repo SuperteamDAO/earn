@@ -391,32 +391,36 @@ export const useMinimalTiptapEditor = ({
         allowedMimeTypes: ['image/*'],
         maxFileSize: 5 * 1024 * 1024,
         onDrop: (editor, files, pos) => {
-          files.forEach(async (file) => {
-            const src = await uploadImageToCloudinary(
-              file,
-              imageSetting.source,
-            );
-            trackedImagesRef.current.add(src);
-            pendingDeletionsRef.current.delete(src);
-            editor.commands.insertContentAt(pos, {
-              type: 'image',
-              attrs: { src },
-            });
-          });
+          void Promise.all(
+            files.map(async (file) => {
+              const src = await uploadImageToCloudinary(
+                file,
+                imageSetting.source,
+              );
+              trackedImagesRef.current.add(src);
+              pendingDeletionsRef.current.delete(src);
+              editor.commands.insertContentAt(pos, {
+                type: 'image',
+                attrs: { src },
+              });
+            }),
+          );
         },
         onPaste: (editor, files) => {
-          files.forEach(async (file) => {
-            const src = await uploadImageToCloudinary(
-              file,
-              imageSetting.source,
-            );
-            trackedImagesRef.current.add(src);
-            pendingDeletionsRef.current.delete(src);
-            editor.commands.insertContent({
-              type: 'image',
-              attrs: { src },
-            });
-          });
+          void Promise.all(
+            files.map(async (file) => {
+              const src = await uploadImageToCloudinary(
+                file,
+                imageSetting.source,
+              );
+              trackedImagesRef.current.add(src);
+              pendingDeletionsRef.current.delete(src);
+              editor.commands.insertContent({
+                type: 'image',
+                attrs: { src },
+              });
+            }),
+          );
         },
         onValidationError: (errors) => {
           errors.forEach((error) => {

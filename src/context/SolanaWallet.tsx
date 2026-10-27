@@ -1,6 +1,5 @@
 import '@solana/wallet-adapter-react-ui/styles.css';
 
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 import {
   ConnectionProvider,
@@ -15,11 +14,7 @@ export function SolanaWalletProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const network = WalletAdapterNetwork.Mainnet;
-
-  const rpc = `https://${process.env.NEXT_PUBLIC_RPC_URL}`;
-
-  const endpoint = useMemo(() => rpc, [network]);
+  const endpoint = `https://${process.env.NEXT_PUBLIC_RPC_URL}`;
 
   const wallets = useMemo(
     () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],

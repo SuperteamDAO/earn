@@ -82,13 +82,15 @@ export const useForcedProfileRedirect = ({
     // for returning users, defer the check to protect core web vitals.
     const deferredCheck = () => performRedirect(5000);
 
+    let deferTimeout: NodeJS.Timeout | undefined;
     if (document.readyState === 'complete') {
-      setTimeout(deferredCheck, 100);
+      deferTimeout = setTimeout(deferredCheck, 100);
     } else {
       window.addEventListener('load', deferredCheck, { once: true });
     }
 
     return () => {
+      clearTimeout(deferTimeout);
       if (redirectTimeout) {
         clearTimeout(redirectTimeout);
       }
