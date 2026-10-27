@@ -121,6 +121,7 @@ export const SubmissionPanel = ({
                   selectedSubmission?.winnerPosition &&
                   selectedSubmission?.isPaid &&
                   !isProject &&
+                  bounty?.rewardType !== 'IN_KIND' &&
                   !shouldHideTxLinks &&
                   paymentTxId && (
                     <Button

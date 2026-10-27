@@ -165,7 +165,17 @@ export default async function handler(
           type: true,
           slug: true,
           isWinnersAnnounced: true,
+          rewardType: true,
           token: true,
+          inKindReward: {
+            select: {
+              id: true,
+              slug: true,
+              name: true,
+              pluralName: true,
+              icon: true,
+            },
+          },
           sponsor: {
             select: {
               name: true,
@@ -451,7 +461,10 @@ export default async function handler(
         listingSlug:
           isOwnerProfile || !sub.listing.isPrivate ? sub.listing.slug : null,
         isWinnersAnnounced: sub.listing.isWinnersAnnounced,
+        rewardType: sub.listing.rewardType,
         token: sub.listing.token,
+        //@ts-expect-error prisma include typing does not retain nested relation selection
+        inKindReward: sub.listing.inKindReward,
         sponsorName:
           isOwnerProfile || !sub.listing.isPrivate //@ts-expect-error prisma ts error, this exists based on above include
             ? sub.listing.sponsor.name

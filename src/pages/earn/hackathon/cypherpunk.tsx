@@ -300,7 +300,9 @@ function Tracks({ tracks }: { tracks: TrackProps[] | undefined }) {
               key={track.slug}
               title={track.title}
               sponsor={track.sponsor}
+              rewardType={track.rewardType}
               token={track.token}
+              inKindReward={track.inKindReward}
               rewardAmount={track.rewardAmount}
               slug={track.slug}
             />
@@ -377,7 +379,7 @@ function FAQs() {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({}) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const hackathon = await prisma.hackathon.findUnique({
     where: {
       slug: 'cypherpunk',

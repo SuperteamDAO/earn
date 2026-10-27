@@ -25,6 +25,10 @@ export function Fixed() {
     control: form.control,
     name: 'type',
   });
+  const rewardType = useWatch({
+    control: form.control,
+    name: 'rewardType',
+  });
   useEffect(() => {
     if (type === 'project') form.setValue('rewardAmount', rewards?.[1]);
   }, [type]);
@@ -37,13 +41,17 @@ export function Fixed() {
       name={'rewardAmount'}
       render={({ field }) => (
         <FormItem className="gap-2">
-          <FormLabel isRequired>Fixed Prize</FormLabel>
+          <FormLabel isRequired>
+            {rewardType === 'IN_KIND' ? 'Fixed Quantity' : 'Fixed Prize'}
+          </FormLabel>
           <FormControl>
             <TokenNumberInput
               {...field}
-              placeholder="10,000"
+              placeholder={rewardType === 'IN_KIND' ? '1' : '10,000'}
               className="pr-6"
               max={MAX_REWARD}
+              maxDecimals={rewardType === 'IN_KIND' ? 0 : 4}
+              hideToken={rewardType === 'IN_KIND'}
               onChange={(e) => {
                 field.onChange(e);
                 if (e) form.setValue(`rewards`, { 1: e });

@@ -40,6 +40,13 @@ export function SponsorStageBanner() {
 
   const { stage, listing } = data;
 
+  if (
+    listing?.rewardType === 'IN_KIND' &&
+    (stage === SponsorStage.BOOST || stage === SponsorStage.BOOSTED)
+  ) {
+    return null;
+  }
+
   switch (stage) {
     case SponsorStage.NEW_SPONSOR:
       return <NewSponsorBanner />;

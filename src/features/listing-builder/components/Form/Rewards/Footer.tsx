@@ -71,6 +71,10 @@ function RewardsFooter({
     control: form.control,
     name: 'token',
   });
+  const rewardType = useWatch({
+    control: form.control,
+    name: 'rewardType',
+  });
   const compensationType = useWatch({
     control: form.control,
     name: 'compensationType',
@@ -104,7 +108,9 @@ function RewardsFooter({
   const submitListingMutation = useAtomValue(submitListingMutationAtom);
 
   const { data: tokenUsdValueData } = useQuery(
-    tokenUsdValueQuery(token as string | undefined),
+    tokenUsdValueQuery(
+      rewardType === 'TOKEN' ? (token as string | undefined) : undefined,
+    ),
   );
   const tokenUsdValue =
     typeof tokenUsdValueData === 'number' ? tokenUsdValueData : 1;
@@ -184,11 +190,14 @@ function RewardsFooter({
           </p>
         </div>
       )}
-      {!!tokenUsdValue && totalUsdPrize <= 100 && panel === 'rewards' && (
-        <p className="text-[0.8rem] text-yellow-600">
-          {`Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability.`}
-        </p>
-      )}
+      {rewardType === 'TOKEN' &&
+        !!tokenUsdValue &&
+        totalUsdPrize <= 100 &&
+        panel === 'rewards' && (
+          <p className="text-[0.8rem] text-yellow-600">
+            {`Note: This listing will not show up on Earn's Landing Page since it is ≤$100 in value. Increase the total compensation for better discoverability.`}
+          </p>
+        )}
       <div className="flex items-center justify-between text-sm font-medium">
         {type !== 'project' ? (
           <span className="flex gap-2">
@@ -316,6 +325,7 @@ function RewardsFooter({
                 return;
               }
               if (
+                rewardType === 'TOKEN' &&
                 compensationType === 'fixed' &&
                 deadlineMoreThan72HoursLeft &&
                 type !== 'hackathon' &&

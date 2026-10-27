@@ -150,7 +150,9 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
     >
       {sub?.isWinner && sub?.isWinnersAnnounced ? (
         <WinnerFeedImage
+          rewardType={sub?.rewardType}
           token={sub?.token}
+          inKindReward={sub?.inKindReward}
           rewards={sub?.rewards}
           winnerPosition={sub?.winnerPosition}
         />

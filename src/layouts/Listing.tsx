@@ -90,6 +90,19 @@ export function ListingPageLayout({
     initialListing?.rewardAmount?.toString() || '',
   );
   ogImage.searchParams.set('token', initialListing?.token || '');
+  ogImage.searchParams.set('rewardType', initialListing?.rewardType || 'TOKEN');
+  ogImage.searchParams.set(
+    'inKindRewardName',
+    initialListing?.inKindReward?.name || '',
+  );
+  ogImage.searchParams.set(
+    'inKindRewardPluralName',
+    initialListing?.inKindReward?.pluralName || '',
+  );
+  ogImage.searchParams.set(
+    'inKindRewardIcon',
+    initialListing?.inKindReward?.icon || '',
+  );
   ogImage.searchParams.set('sponsor', initialListing?.sponsor?.name || '');
   ogImage.searchParams.set('logo', initialListing?.sponsor?.logo || '');
   ogImage.searchParams.set('type', initialListing?.type || '');

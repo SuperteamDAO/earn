@@ -145,7 +145,9 @@ async function findRelatedListings(
       b.deadline,
       b.type,
       b.title,
+      b.rewardType,
       b.token,
+      b.inKindRewardId,
       b.winnersAnnouncedAt,
       b.slug,
       b.isWinnersAnnounced,
@@ -169,6 +171,17 @@ async function findRelatedListings(
         'logo', s.logo,
         'isVerified', s.isVerified
       ) as sponsor,
+      IF(
+        ikr.id IS NULL,
+        NULL,
+        JSON_OBJECT(
+          'id', ikr.id,
+          'slug', ikr.slug,
+          'name', ikr.name,
+          'pluralName', ikr.pluralName,
+          'icon', ikr.icon
+        )
+      ) as inKindReward,
       SUM(
         CASE
           WHEN ${skillQuery} THEN 1
@@ -177,6 +190,7 @@ async function findRelatedListings(
       ) as ${raw(matchingField)}
     FROM Bounties b
     LEFT JOIN Sponsors s ON b.sponsorId = s.id
+    LEFT JOIN InKindReward ikr ON b.inKindRewardId = ikr.id
     WHERE b.id != ${listingId}
       AND b.isPrivate = false
       AND b.isPublished = true
