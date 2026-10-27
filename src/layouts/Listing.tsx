@@ -24,7 +24,7 @@ import { SubmissionActionButton } from '@/features/listings/components/Submissio
 import { submissionCountQuery } from '@/features/listings/queries/submission-count';
 import { type PublicListing } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
-import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
+import { bountySnackbarAtom } from '@/features/navbar/atoms';
 
 interface ListingPageProps {
   listing: PublicListing | null;

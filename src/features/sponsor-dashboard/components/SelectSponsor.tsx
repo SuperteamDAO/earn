@@ -1,4 +1,4 @@
-import { atom, useSetAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import {
@@ -15,6 +15,8 @@ import { useUpdateUser, useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
+import { hackathonSponsorAtom } from '../atoms';
+
 interface SponsorOptionType extends SponsorType {
   role?: string;
 }
@@ -24,8 +26,6 @@ interface SponsorOption {
   label: string;
   sponsor: SponsorOptionType;
 }
-
-export const hackathonSponsorAtom = atom<string | null>(null);
 
 export function SelectSponsor({
   type,

@@ -13,7 +13,7 @@ import { useUpdateUser, useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { hackathonSponsorAtom } from './SelectSponsor';
+import { hackathonSponsorAtom } from '../atoms';
 
 interface HackathonOptionType extends SponsorType {
   role?: string;

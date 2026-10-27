@@ -39,7 +39,8 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DayPicker, type Matcher, TZDate } from 'react-day-picker';
 
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button.variants';
 import {
   Popover,
   PopoverContent,

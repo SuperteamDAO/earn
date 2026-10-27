@@ -1,25 +1,12 @@
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { Pencil } from 'lucide-react';
 import { useRouter } from 'next/router';
 
-import { type status } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
-type BountySnackbarType = {
-  isCaution: boolean | undefined;
-  submissionCount: number;
-  deadline: string | undefined;
-  rewardAmount: number | undefined;
-  type: string | undefined;
-  isPublished: boolean | undefined;
-  status?: status;
-  sponsorId: string | undefined;
-  slug: string | undefined;
-};
-
-export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
+import { bountySnackbarAtom } from '../atoms';
 
 export const BountySnackbar = () => {
   const router = useRouter();

@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { toggleVariants } from '@/components/ui/toggle';
+import type { toggleVariants } from '@/components/ui/toggle.variants';
 import { cn } from '@/utils/cn';
 
 import type { FormatAction } from '../../types';

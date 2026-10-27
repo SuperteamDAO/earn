@@ -92,3 +92,5 @@ export const selectedGrantTrancheAtom = atom(
 export const applicationsAtom = atom<GrantApplicationWithUser[]>([]);
 
 export const tranchesAtom = atom<GrantTrancheWithApplication[]>([]);
+
+export const hackathonSponsorAtom = atom<string | null>(null);

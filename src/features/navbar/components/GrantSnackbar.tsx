@@ -1,13 +1,9 @@
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { useRouter } from 'next/router';
 
 import { cn } from '@/utils/cn';
 
-type GrantSnackbarType = {
-  isPublished: boolean;
-};
-
-export const grantSnackbarAtom = atom<GrantSnackbarType | null>(null);
+import { grantSnackbarAtom } from '../atoms';
 
 export const GrantSnackbar = () => {
   const router = useRouter();

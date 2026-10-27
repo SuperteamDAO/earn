@@ -23,7 +23,7 @@ import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
 import { LiveGrants } from '@/features/home/components/LiveGrants';
 import { ExtraInfoSection } from '@/features/listings/components/ListingPage/ExtraInfoSection';
-import { grantSnackbarAtom } from '@/features/navbar/components/GrantSnackbar';
+import { grantSnackbarAtom } from '@/features/navbar/atoms';
 
 import { Default } from './Default';
 

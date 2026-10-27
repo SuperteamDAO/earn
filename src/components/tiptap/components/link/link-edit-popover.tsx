@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import type { toggleVariants } from '@/components/ui/toggle';
+import type { toggleVariants } from '@/components/ui/toggle.variants';
 
 import { ToolbarButton } from '../toolbar-button';
 import { LinkEditBlock } from './link-edit-block';

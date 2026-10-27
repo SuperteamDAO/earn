@@ -8,8 +8,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import type { toggleVariants } from '@/components/ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import type { toggleVariants } from '@/components/ui/toggle.variants';
 import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@/utils/cn';
 

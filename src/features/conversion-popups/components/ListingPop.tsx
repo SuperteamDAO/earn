@@ -27,7 +27,7 @@ import { roundToNearestTenth } from '@/utils/number';
 
 import { type Listing } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
-import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
+import { bountySnackbarAtom } from '@/features/navbar/atoms';
 
 import { popupOpenAtom, popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
