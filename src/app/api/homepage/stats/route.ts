@@ -6,21 +6,23 @@ import { getErrorMessage } from '@/utils/getErrorMessage';
 
 export async function GET(_request: NextRequest) {
   try {
-    const bountiesCount = await prisma.bounties.count({
-      where: { isPublished: true },
-    });
-
-    const totalRewardAmountResult = await prisma.bounties.aggregate({
-      _sum: { usdValue: true },
-      where: {
-        isWinnersAnnounced: true,
-        isPublished: true,
-        status: 'OPEN',
-      },
-    });
-
-    const totalApprovedGrantAmountResult =
-      await prisma.grantApplication.aggregate({
+    const [
+      bountiesCount,
+      totalRewardAmountResult,
+      totalApprovedGrantAmountResult,
+    ] = await Promise.all([
+      prisma.bounties.count({
+        where: { isPublished: true },
+      }),
+      prisma.bounties.aggregate({
+        _sum: { usdValue: true },
+        where: {
+          isWinnersAnnounced: true,
+          isPublished: true,
+          status: 'OPEN',
+        },
+      }),
+      prisma.grantApplication.aggregate({
         _sum: { approvedAmountInUSD: true },
         where: {
           OR: [
@@ -28,7 +30,8 @@ export async function GET(_request: NextRequest) {
             { applicationStatus: 'Completed' },
           ],
         },
-      });
+      }),
+    ]);
 
     const totalListingRewardAmount = totalRewardAmountResult._sum.usdValue || 0;
     const totalApprovedGrantAmount =

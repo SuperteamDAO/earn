@@ -78,6 +78,7 @@ export async function GET(request: Request) {
           >
             {skill?.split(' ').map((word, i) => (
               <span
+                // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- rendered once by ImageResponse into a static image, so there is no reconciliation and repeated words would collide as keys
                 key={i}
                 style={{
                   fontSize: skillFontSize,

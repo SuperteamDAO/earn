@@ -27,7 +27,9 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.debug(`Request body: ${safeStringify(req.body)}`);
 
+    // The zod schema is the allowlist: unknown keys are stripped.
     const validationResult = sponsorBaseSchema.safeParse({
+      // react-doctor-disable-next-line react-doctor/request-body-mass-assignment -- validated by sponsorBaseSchema
       ...req.body,
       twitter:
         req.body.twitter !== undefined

@@ -95,21 +95,23 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       },
     });
 
-    for (const submission of currentSubmissions) {
-      try {
-        await queueEmail({
-          type: 'submissionRejected',
-          id: submission.id,
-          userId: submission.userId,
-          triggeredBy: req.userId,
-        });
-      } catch (err) {
-        logger.warn(
-          'Failed to send email notification for submission rejection for submission: ',
-          submission.id,
-        );
-      }
-    }
+    await Promise.all(
+      currentSubmissions.map(async (submission) => {
+        try {
+          await queueEmail({
+            type: 'submissionRejected',
+            id: submission.id,
+            userId: submission.userId,
+            triggeredBy: req.userId,
+          });
+        } catch (err) {
+          logger.warn(
+            'Failed to send email notification for submission rejection for submission: ',
+            submission.id,
+          );
+        }
+      }),
+    );
 
     return res.status(200).json(result);
   } catch (error) {

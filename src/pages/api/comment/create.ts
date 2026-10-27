@@ -127,18 +127,20 @@ export async function createComment(
       logger.debug(
         `[${logPrefix}] Sending email notifications to tagged users`,
       );
-      for (const taggedUser of taggedUsers) {
-        await queueEmail({
-          type: 'commentTag',
-          id: refId,
-          userId: taggedUser.id,
-          otherInfo: {
-            personName: result.author.firstName,
-            type: refType,
-          },
-          triggeredBy: userId,
-        });
-      }
+      await Promise.all(
+        taggedUsers.map((taggedUser) =>
+          queueEmail({
+            type: 'commentTag',
+            id: refId,
+            userId: taggedUser.id,
+            otherInfo: {
+              personName: result.author.firstName,
+              type: refType,
+            },
+            triggeredBy: userId,
+          }),
+        ),
+      );
     }
 
     if (replyToUserId && replyToUserId !== userId) {

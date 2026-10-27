@@ -112,6 +112,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         `Updating submission with ID: ${submission.id} and label: ${label}`,
       );
 
+      // react-doctor-disable-next-line react-doctor/async-await-in-loop -- bulk relabels can cover hundreds of rows with up to three writes each, and there is no concurrency limiter here, so running them unbounded would starve the Prisma connection pool
       const result = await prisma.submission.update({
         where: { id: submission.id },
         data: updateData,

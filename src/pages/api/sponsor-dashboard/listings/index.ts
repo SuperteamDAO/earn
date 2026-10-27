@@ -36,8 +36,7 @@ type BountyGrant = {
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userSponsorId = req.userSponsorId;
   try {
-    const data: BountyGrant[] = await prisma.$queryRawUnsafe(
-      `
+    const data = await prisma.$queryRaw<BountyGrant[]>`
       WITH combined_data AS (
         SELECT 
           b.type as type,
@@ -66,8 +65,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         FROM Bounties b
         WHERE b.isActive = true
         AND b.isArchived = false
-        AND b.sponsorId = ?
-        AND b.status <> ?
+        AND b.sponsorId = ${userSponsorId}
+        AND b.status <> ${status.CLOSED}
         
         UNION ALL
         
@@ -98,18 +97,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         FROM Grants g
         WHERE g.isActive = true
         AND g.isArchived = false
-        AND g.sponsorId = ?
-        AND g.status = ?
+        AND g.sponsorId = ${userSponsorId}
+        AND g.status = ${GrantStatus.OPEN}
       )
       SELECT *
       FROM combined_data
       ORDER BY createdAt DESC
-    `,
-      userSponsorId,
-      status.CLOSED,
-      userSponsorId,
-      GrantStatus.OPEN,
-    );
+    `;
 
     const serializedData = data.map((item) => ({
       ...item,
