@@ -76,7 +76,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.info(`User updated successfully for user ID: ${userId}`);
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while updating user ${userId}: ${safeStringify(error)}`,
     );

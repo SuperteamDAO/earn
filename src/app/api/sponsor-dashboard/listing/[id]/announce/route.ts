@@ -193,8 +193,8 @@ export async function POST(
 
           if (recalculateUsd && listing.token) {
             try {
-              const tokenUsdValue: number | undefined = (listing as any)
-                .tokenUsdAtPublish as number | undefined;
+              const tokenUsdValue: number | undefined =
+                listing.tokenUsdAtPublish as number | undefined;
               if (typeof tokenUsdValue === 'number') {
                 updatedUsdValue = updatedRewardAmount * tokenUsdValue;
               }
@@ -260,10 +260,7 @@ export async function POST(
             where: { id: { in: winnerUserIds } },
           });
           const userIdToInviterId = new Map<string, string | null>(
-            referralMappings.map((u) => [
-              u.id,
-              (u as any).referredById ?? null,
-            ]),
+            referralMappings.map((u) => [u.id, u.referredById ?? null]),
           );
 
           const baseRewardAmount = updatedListing.rewardAmount ?? 0;
@@ -480,7 +477,7 @@ export async function POST(
       }
       throw lockError;
     }
-  } catch (error: any) {
+  } catch (error) {
     console.log(
       `Error announcing winners for bounty ID: ${params.id}: ${safeStringify(error)}`,
     );

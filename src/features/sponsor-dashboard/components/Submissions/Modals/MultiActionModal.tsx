@@ -34,7 +34,7 @@ interface MultiActionModalProps {
   setSelectedSubmissionIds: (ids: Set<string>) => void;
   allSubmissionsLength: number;
   actionType: ActionType;
-  listing: Listing | undefined;
+  listing: Omit<Listing, 'Hackathon'> | undefined;
 }
 
 export const MultiActionModal = ({
@@ -146,7 +146,7 @@ export const MultiActionModal = ({
               if (!old) return old;
               return old.map((submission) => {
                 if (submissionIds.includes(submission.id)) {
-                  return { ...submission, label: 'Spam' as any };
+                  return { ...submission, label: 'Spam' };
                 }
                 return submission;
               });
@@ -155,7 +155,7 @@ export const MultiActionModal = ({
 
           setSelectedSubmission((prev) => {
             if (prev && submissionIds.includes(prev.id)) {
-              return { ...prev, label: 'Spam' as any };
+              return { ...prev, label: 'Spam' };
             }
             return prev;
           });
@@ -174,7 +174,7 @@ export const MultiActionModal = ({
               if (!old) return old;
               return old.map((submission) => {
                 if (submissionIds.includes(submission.id)) {
-                  return { ...submission, label: 'Shortlisted' as any };
+                  return { ...submission, label: 'Shortlisted' };
                 }
                 return submission;
               });
@@ -183,7 +183,7 @@ export const MultiActionModal = ({
 
           setSelectedSubmission((prev) => {
             if (prev && submissionIds.includes(prev.id)) {
-              return { ...prev, label: 'Shortlisted' as any };
+              return { ...prev, label: 'Shortlisted' };
             }
             return prev;
           });

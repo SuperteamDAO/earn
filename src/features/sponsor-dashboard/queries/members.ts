@@ -6,7 +6,7 @@ interface MembersQueryParams {
   searchText: string;
   skip: number;
   length: number;
-  currentSponsorId: string | undefined;
+  currentSponsorId: string | undefined | null;
 }
 
 const fetchMembersQueryFn = async ({

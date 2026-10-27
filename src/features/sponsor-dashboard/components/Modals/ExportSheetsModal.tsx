@@ -12,7 +12,7 @@ interface ExportSheetsModalProps {
   isOpen: boolean;
   onClose: () => void;
   apiEndpoint: string;
-  queryParams: Record<string, any>;
+  queryParams: Record<string, string | undefined>;
   entityName?: string;
 }
 

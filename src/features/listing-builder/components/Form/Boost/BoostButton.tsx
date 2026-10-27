@@ -36,7 +36,7 @@ export const BoostButton = ({
   listing,
   showDate = true,
 }: {
-  listing?: Listing;
+  listing?: Omit<Listing, 'Hackathon'>;
   showDate?: boolean;
 }) => {
   const { data: featuredData } = useQuery({

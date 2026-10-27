@@ -124,7 +124,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       data: applications,
       count: totalCount,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error fetching submissions with slug=${slug}: ${safeStringify(error)}`,
     );

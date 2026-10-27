@@ -75,7 +75,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Comment ${commentId} ${isPinned ? 'pinned' : 'unpinned'} by user ID: ${userId}`,
     );
     return res.status(200).json(updatedComment);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while pinning/unpinning comment: ${safeStringify(error)}`,
     );

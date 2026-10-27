@@ -2,6 +2,8 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type SubmissionUpdateInput } from '@/prisma/models/Submission';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
@@ -263,7 +265,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
       const finalWinnerPosition = isWinner ? winnerPosition : null;
 
-      const updateData: any = {
+      const updateData: SubmissionUpdateInput = {
         isWinner,
         winnerPosition: finalWinnerPosition,
       };
@@ -305,8 +307,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           logger.debug(
             `Fetching token USD value for variable or range compensation for submission ${id}`,
           );
-          const tokenUSDValue: number | undefined = (firstListing as any)
-            .tokenUsdAtPublish as number | undefined;
+          const tokenUSDValue: number | undefined =
+            firstListing.tokenUsdAtPublish as number | undefined;
           const usdValue = (tokenUSDValue ?? 0) * ask;
 
           await prisma.bounties.update({
@@ -332,9 +334,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       autoFixed: autoFixedSubmissions.length > 0,
       autoFixedSubmissions,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `User ${userId} unable to toggle winners for batch: ${error.message}`,
+      `User ${userId} unable to toggle winners for batch: ${getErrorMessage(error)}`,
       { error, submissionIds },
     );
     return res.status(400).json({

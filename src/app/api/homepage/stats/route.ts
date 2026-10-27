@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 export async function GET(_request: NextRequest) {
   try {
@@ -51,9 +52,9 @@ export async function GET(_request: NextRequest) {
         },
       },
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Error occurred while fetching totals and counts', {
-      error: error.message,
+      error: getErrorMessage(error),
     });
 
     return NextResponse.json(

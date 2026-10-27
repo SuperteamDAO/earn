@@ -3,9 +3,11 @@ import type { NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { GrantStatus, status } from '@/prisma/enums';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import { type Rewards } from '@/features/listings/types';
 
 type BountyGrant = {
   type: 'bounty' | 'grant';
@@ -17,7 +19,7 @@ type BountyGrant = {
   deadline: Date | null;
   isPublished: boolean;
   publishedAt: Date | null;
-  rewards: any;
+  rewards: Rewards | null;
   rewardAmount: number | null;
   totalPaymentsMade: number;
   isWinnersAnnounced: boolean | null;
@@ -120,9 +122,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Successfully fetched bounties and grants for sponsor ${userSponsorId}`,
     );
     res.status(200).json(serializedData);
-  } catch (err: any) {
+  } catch (err) {
     logger.error(
-      `Error fetching bounties and grants for sponsor ${userSponsorId}: ${err.message}`,
+      `Error fetching bounties and grants for sponsor ${userSponsorId}: ${getErrorMessage(err)}`,
     );
     res
       .status(400)

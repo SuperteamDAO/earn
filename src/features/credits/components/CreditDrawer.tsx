@@ -17,7 +17,12 @@ import { dayjs } from '@/utils/dayjs';
 
 import { CreditIcon } from '../icon/credit';
 import { canDispute } from '../utils/canDispute';
-import { CreditHistoryCard } from './CreditLog';
+import { type CreditEntry, CreditHistoryCard } from './CreditLog';
+
+// /api/user/credit/history also returns month-level rows without a submission.
+type CreditHistoryEntry = Omit<CreditEntry, 'submission'> & {
+  submission?: CreditEntry['submission'] | null;
+};
 
 export function CreditDrawer({
   isOpen,
@@ -35,7 +40,7 @@ export function CreditDrawer({
 
   const { data: creditHistory, isLoading } = useQuery({
     queryKey: ['creditHistory', user?.id],
-    queryFn: () => api.get('/api/user/credit/history'),
+    queryFn: () => api.get<CreditHistoryEntry[]>('/api/user/credit/history'),
     enabled: !!user?.id && isOpen,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
@@ -62,7 +67,8 @@ export function CreditDrawer({
                 entry.type === 'GRANT_SPAM_PENALTY'),
           );
 
-          const dispute = canDispute(entryToDispute, allEntries, true);
+          const dispute =
+            !!entryToDispute && canDispute(entryToDispute, allEntries, true);
 
           if (entryToDispute && dispute) {
             setDisputeSubmissionId(submissionId);
@@ -98,10 +104,14 @@ export function CreditDrawer({
 
   const padding = 'px-6 sm:px-8';
 
-  const processEntries = (entries: any[] = []) => {
+  const processEntries = (
+    entries: CreditHistoryEntry[] = [],
+  ): CreditEntry[] => {
     return entries.map((entry) => ({
       ...entry,
+      // Month-level rows have no submission; they render as non-linkable entries.
       submission: entry.submission || {
+        id: '',
         listing: {
           title:
             entry.type === 'MONTHLY_CREDIT'
@@ -110,6 +120,7 @@ export function CreditDrawer({
                 ? 'Monthly Credit Expiration'
                 : '',
           type: '',
+          slug: '',
           sponsor: { logo: '' },
         },
       },
@@ -120,19 +131,19 @@ export function CreditDrawer({
   const nextMonthStart = currentMonthStart.add(1, 'month');
 
   const currentMonthEntries = processEntries(
-    creditHistory?.data?.filter((entry: any) =>
+    creditHistory?.data?.filter((entry: Pick<CreditEntry, 'effectiveMonth'>) =>
       dayjs(entry.effectiveMonth).utc().isSame(currentMonthStart, 'month'),
     ),
   );
 
   const upcomingMonthEntries = processEntries(
-    creditHistory?.data?.filter((entry: any) =>
+    creditHistory?.data?.filter((entry: Pick<CreditEntry, 'effectiveMonth'>) =>
       dayjs(entry.effectiveMonth).utc().isSame(nextMonthStart, 'month'),
     ),
   );
 
   const pastMonthEntries = processEntries(
-    creditHistory?.data?.filter((entry: any) =>
+    creditHistory?.data?.filter((entry: Pick<CreditEntry, 'effectiveMonth'>) =>
       dayjs(entry.effectiveMonth).utc().isBefore(currentMonthStart, 'month'),
     ),
   );

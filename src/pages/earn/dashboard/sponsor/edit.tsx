@@ -131,14 +131,14 @@ export default function UpdateSponsor() {
       form.reset({
         name,
         slug,
-        bio,
-        logo,
+        bio: bio ?? undefined,
+        logo: logo ?? undefined,
         industry,
-        url,
+        url: url ?? undefined,
         twitter: twitter
           ? extractSocialUsername('twitter', twitter) || undefined
           : undefined,
-        entityName,
+        entityName: entityName ?? undefined,
         location: location ?? '',
       });
     }
@@ -328,9 +328,9 @@ export default function UpdateSponsor() {
                               value: value,
                             }))
                             .filter(Boolean)}
-                          onChange={(selected: any) => {
+                          onChange={(selected) => {
                             const values =
-                              selected?.map((item: any) => item.value) || [];
+                              selected?.map((item) => item.value) || [];
                             field.onChange(values.join(', '));
                           }}
                           className="mt-2"

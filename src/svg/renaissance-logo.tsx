@@ -1,4 +1,6 @@
-export const RenaissanceLogo = ({ styles }: { styles?: any }) => {
+import { type CSSProperties } from 'react';
+
+export const RenaissanceLogo = ({ styles }: { styles?: CSSProperties }) => {
   return (
     <svg
       width="251"

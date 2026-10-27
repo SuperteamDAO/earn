@@ -120,7 +120,7 @@ export const useToggleWinner = (bounty: Listing | undefined) => {
 
       return { previousSubmissions };
     },
-    onError: (error: any) => {
+    onError: (error) => {
       queryClient.invalidateQueries({
         queryKey: ['sponsor-submissions', bounty?.slug],
       });

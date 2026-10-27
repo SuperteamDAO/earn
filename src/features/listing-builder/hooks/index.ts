@@ -6,8 +6,9 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useForm, useFormContext, type UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
-import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
+
+import { type BuilderHackathon } from '@/features/listing-builder/types';
 
 import {
   descriptionKeyAtom,
@@ -63,7 +64,7 @@ function getDraftPayloadKey(payload: ListingFormData): string {
 
 export const useListingForm = (
   defaultValues?: ListingFormData,
-  hackathons?: HackathonModel[],
+  hackathons?: BuilderHackathon[],
 ): UseListingFormReturn => {
   let formMethods: UseFormReturn<ListingFormData> | null = null;
   let isNewFormInitialized = false;
@@ -88,7 +89,7 @@ export const useListingForm = (
     isGod,
     isEditing,
     isST,
-    pastListing: defaultValues as any,
+    pastListing: defaultValues,
     hackathons: hackathons,
   });
   if (!formMethods || !Object.keys(formMethods).length) {
@@ -281,7 +282,7 @@ export const useListingForm = (
       const partialSchema = innerSchema
         .pick(fields)
         .superRefine((data, ctx) => {
-          createListingRefinements(data as any, ctx, hackathons, fields);
+          createListingRefinements(data, ctx, hackathons, fields);
         });
 
       try {

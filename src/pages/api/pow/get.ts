@@ -36,7 +36,7 @@ export default async function handler(
 
     logger.info(`Successfully fetched PoWs for userId: ${userId}`);
     return res.status(200).json(pows);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error fetching PoWs for userId ${userId}:`,
       safeStringify(error),

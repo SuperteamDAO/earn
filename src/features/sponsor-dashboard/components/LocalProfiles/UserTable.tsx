@@ -119,7 +119,7 @@ export const UserTable = ({
 const MemberRow = ({ user }: { user: LocalProfile }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const skills = user.skills.flatMap((skills: any) => skills.skills);
+  const skills = (user.skills ?? []).flatMap((skills) => skills.skills);
   return (
     <TableRow
       className="hover:bg-brand-slate-50 cursor-pointer"

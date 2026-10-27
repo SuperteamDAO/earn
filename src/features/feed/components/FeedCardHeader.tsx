@@ -7,7 +7,7 @@ interface FeedCardHeaderProps {
   username?: string;
   action: string;
   description?: string;
-  photo: string | undefined;
+  photo: string | undefined | null;
   createdAt: string;
   type: 'activity' | 'profile';
 }

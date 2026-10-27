@@ -2,6 +2,7 @@ import { type NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
@@ -111,9 +112,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error occurred while rejecting listing submission ID: ${data.map((c) => c.id)}:  ${error.message}`,
+      `Error occurred while rejecting listing submission ID: ${data.map((c) => c.id)}:  ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

@@ -53,7 +53,7 @@ export default async function handler(
 
     logger.info('Welcome sponsor email sent successfully');
     return res.status(200).json({ message: 'Ok' });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while sending welcome sponsor email: ${safeStringify(error)}`,
     );

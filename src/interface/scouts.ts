@@ -5,10 +5,11 @@ interface Scouts {
   userId: string;
   listingId: string;
   dollarsEarned: number;
-  score: number;
+  // Prisma Decimal, which serializes to a string such as "8.53".
+  score: string;
   invited: boolean;
   skills: string[];
-  createdAt: Date;
+  createdAt: string;
   user: ScoutUserResponse;
 }
 

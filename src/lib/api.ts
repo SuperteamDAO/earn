@@ -7,7 +7,7 @@ const api = axios.create();
 api.interceptors.request.use(
   async (config) => {
     const isPrivyInitializing =
-      typeof window !== 'undefined' && (window as any).__privyInitializing;
+      typeof window !== 'undefined' && window.__privyInitializing;
 
     let authToken = await getAccessToken();
     if (!authToken && isPrivyInitializing) {

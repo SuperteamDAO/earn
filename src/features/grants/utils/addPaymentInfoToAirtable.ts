@@ -315,15 +315,15 @@ export async function addPaymentInfoToAirtable(
     }
 
     return response.data;
-  } catch (error: any) {
-    const baseMessage = `Error in addPaymentInfoToAirtable for Tranche ID ${validatedTrancheId || trancheIdForLogging}: ${error.message || 'Unknown error'}`; // Use validated ID if available
+  } catch (error) {
+    const baseMessage = `Error in addPaymentInfoToAirtable for Tranche ID ${validatedTrancheId || trancheIdForLogging}: ${(error instanceof Error && error.message) || 'Unknown error'}`; // Use validated ID if available
 
     logger.error(baseMessage);
 
-    if (error.response) {
+    if (axios.isAxiosError(error) && error.response) {
       logger.error('Airtable API Error Response received');
       logger.error(`Airtable API Error Status: ${error.response.status}`);
-    } else if (error.request) {
+    } else if (axios.isAxiosError(error) && error.request) {
       logger.error(
         `Airtable API No Response Received (Network Error?): ${safeStringify(error.request)}`,
       );
@@ -333,7 +333,7 @@ export async function addPaymentInfoToAirtable(
       );
     } else {
       logger.error(`Non-API Error Details: ${safeStringify(error)}`);
-      if (error.stack) {
+      if (error instanceof Error && error.stack) {
         logger.error(`Stack trace: ${error.stack}`);
       }
     }

@@ -111,9 +111,9 @@ export const TalentForm = () => {
       ).data;
 
       reset({
-        username: user?.username,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
+        username: user?.username ?? undefined,
+        firstName: user?.firstName ?? undefined,
+        lastName: user?.lastName ?? undefined,
         skills: newTalentSchema.shape.skills.safeParse(user?.skills).data,
         photo: user?.photo,
         location: userLocation || currentLocation,

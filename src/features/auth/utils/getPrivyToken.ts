@@ -1,17 +1,12 @@
-import { type IncomingMessage } from 'http';
-import { type NextApiRequest } from 'next';
-import { type NextApiRequestCookies } from 'next/dist/server/api-utils';
-
 import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';
 
-export async function getPrivyToken(
-  req:
-    | NextApiRequest
-    | (IncomingMessage & {
-        cookies: NextApiRequestCookies;
-      }),
-): Promise<string | null> {
+// Only the auth header and the privy-token cookie are read, so App Router
+// routes can pass a plain object built from next/headers.
+export async function getPrivyToken(req: {
+  headers?: { authorization?: string | null };
+  cookies: Partial<Record<string, string>>;
+}): Promise<string | null> {
   try {
     let accessToken = req.headers?.authorization?.replace('Bearer ', '');
     if (accessToken) {

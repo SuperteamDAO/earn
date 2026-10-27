@@ -5,6 +5,7 @@ import TwitterProvider from 'next-auth/providers/twitter';
 import { prisma } from '@/prisma';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
+import { getLinkedTwitterHandles } from '@/features/social/utils/linkedTwitter';
 import { normalizeXHandle } from '@/features/social/utils/x-verification';
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
@@ -31,17 +32,23 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             return true;
           }
 
+          // X returns one of these shapes depending on the API version.
+          const xProfile = profile as {
+            username?: string;
+            screen_name?: string;
+            data?: { username?: string };
+          };
           const rawHandle =
-            (profile as any)?.username ||
-            (profile as any)?.data?.username ||
-            (profile as any)?.screen_name ||
+            xProfile.username ||
+            xProfile.data?.username ||
+            xProfile.screen_name ||
             '';
 
           if (rawHandle) {
             const handle = normalizeXHandle(rawHandle);
             console.log(`[NextAuth] Extracted X handle: ${handle}`);
 
-            (user as any).twitterHandle = handle;
+            user.twitterHandle = handle;
           } else {
             console.warn('[NextAuth] No X username found in profile');
           }
@@ -51,8 +58,8 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       },
 
       async jwt({ token, user }) {
-        if ((user as any)?.twitterHandle) {
-          token.twitterHandle = (user as any).twitterHandle;
+        if (user?.twitterHandle) {
+          token.twitterHandle = user.twitterHandle;
         }
 
         if (token.twitterHandle) {
@@ -123,8 +130,10 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
           });
 
           if (user) {
-            (session.user as any).linkedTwitter = user.linkedTwitter || [];
-            (session.user as any).id = user.id;
+            session.user.linkedTwitter = getLinkedTwitterHandles(
+              user.linkedTwitter,
+            );
+            session.user.id = user.id;
           }
         } catch (err) {
           console.error(

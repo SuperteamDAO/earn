@@ -211,14 +211,14 @@ export function BoostContent({
         const v = document.createElement('video');
         v.src = src;
         v.preload = 'auto';
-        v.muted = true as any;
-        v.playsInline = true as any;
+        v.muted = true;
+        v.playsInline = true;
         v.load();
         created.push(v);
       });
     };
     if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(preload);
+      window.requestIdleCallback(preload);
     } else {
       setTimeout(preload, 0);
     }

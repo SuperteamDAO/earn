@@ -61,8 +61,8 @@ export default function LocalProfiles() {
     const selectedSkills = Object.keys(checkedItems).filter(
       (skill) => checkedItems[skill],
     );
-    const userSkills = user.skills.flatMap(
-      (skillGroup: any) => skillGroup.skills,
+    const userSkills: string[] = (user.skills ?? []).flatMap(
+      (skillGroup) => skillGroup.skills,
     );
     const skillsMatch =
       selectedSkills.length === 0 ||

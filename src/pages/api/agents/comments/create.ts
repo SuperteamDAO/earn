@@ -36,11 +36,11 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       logPrefix: 'AgentComment',
     });
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `[AgentComment] Agent ${agentId} unable to comment: ${safeStringify(error)}`,
     );
-    const errorMessage = error?.message ?? '';
+    const errorMessage = error instanceof Error ? error.message : '';
     if (
       errorMessage.includes('Only the listing POC can pin comments') ||
       errorMessage.includes('Pinning is only allowed for bounty comments')

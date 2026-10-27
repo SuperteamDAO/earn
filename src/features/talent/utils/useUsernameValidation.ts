@@ -7,8 +7,8 @@ import { useUser } from '@/store/user';
 
 import { USERNAME_PATTERN } from '../constants';
 
-export const useUsernameValidation = (initialValue = '') => {
-  const [username, setUsername] = useState(initialValue);
+export const useUsernameValidation = (initialValue: string | null = '') => {
+  const [username, setUsername] = useState(initialValue ?? '');
   const [isInvalid, setIsInvalid] = useState(false);
   const [validationErrorMessage, setValidationErrorMessage] = useState('');
   const [validating, setValidating] = useState(false);

@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       {
         error: 'Internal Server Error',

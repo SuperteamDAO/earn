@@ -7,23 +7,7 @@ import { FeedCardContainer } from './FeedCardContainer';
 import { FeedCardLink } from './FeedCardLink';
 
 interface PowCardProps {
-  pow: {
-    createdAt: string;
-    description: string;
-    firstName: string;
-    lastName: string;
-    link: string;
-    photo: string;
-    title: string;
-    username: string;
-    id: string;
-    like: any;
-    userId: string;
-    likeCount: number;
-    ogImage: string;
-    commentCount?: number;
-    recentCommenters?: FeedDataProps['recentCommenters'];
-  };
+  pow: FeedDataProps;
   type: 'profile' | 'activity';
   commentCount?: number;
 }

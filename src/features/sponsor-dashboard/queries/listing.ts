@@ -2,9 +2,25 @@ import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
 
-import { type Listing } from '@/features/listings/types';
+import { type Listing, type ListingHackathon } from '@/features/listings/types';
 
-const fetchListing = async (slug: string): Promise<Listing> => {
+// /api/sponsor-dashboard/[slug]/listing selects a different Hackathon subset
+// than the public listing APIs: it adds id and eligibility, and omits logo and
+// Sponsor.
+export type SponsorDashboardListing = Omit<Listing, 'Hackathon'> & {
+  Hackathon?: Pick<
+    ListingHackathon,
+    | 'altLogo'
+    | 'startDate'
+    | 'name'
+    | 'description'
+    | 'slug'
+    | 'announceDate'
+    | 'deadline'
+  > & { id: string; eligibility: unknown };
+};
+
+const fetchListing = async (slug: string): Promise<SponsorDashboardListing> => {
   const response = await api.get(`/api/sponsor-dashboard/${slug}/listing/`);
   return response.data;
 };

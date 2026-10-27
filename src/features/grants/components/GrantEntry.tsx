@@ -6,9 +6,9 @@ import { TokenIcon } from '@/components/ui/token-icon';
 import { grantAmount } from '../utils/grantAmount';
 
 interface GrantAmountProps {
-  token?: string;
-  minReward?: number;
-  maxReward?: number;
+  token?: string | null;
+  minReward?: number | null;
+  maxReward?: number | null;
 }
 
 const GrantAmount = ({ token, minReward, maxReward }: GrantAmountProps) => {
@@ -42,11 +42,11 @@ export const GrantEntry = ({
 }: {
   title: string;
   rewardAmount?: number;
-  token?: string;
+  token?: string | null;
   slug: string;
-  logo?: string;
-  minReward?: number;
-  maxReward?: number;
+  logo?: string | null;
+  minReward?: number | null;
+  maxReward?: number | null;
 }) => {
   return (
     <Link

@@ -13,7 +13,7 @@ interface AgentNotificationParams {
   type: AgentActionType;
   id: string;
   userId?: string;
-  otherInfo?: any;
+  otherInfo?: unknown;
 }
 
 const redis = new Redis(process.env.AGENT_REDIS_URL!, {

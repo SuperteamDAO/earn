@@ -36,7 +36,7 @@ interface VariantInfo {
   title: string;
   description: string;
   sponsorName: string | undefined;
-  sponsorLogo: string | undefined;
+  sponsorLogo: string | undefined | null;
 }
 const getVariantInfoMap = (
   listing: Listing | null,

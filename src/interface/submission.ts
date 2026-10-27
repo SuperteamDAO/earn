@@ -1,5 +1,7 @@
 import { type SubmissionLabels, type SubmissionStatus } from '@/prisma/enums';
+import { type QuestionAnswer } from '@/utils/parseQuestionAnswers';
 
+import { type FeedDataProps } from '@/features/feed/types';
 import type {
   Listing,
   ProjectApplicationAi,
@@ -11,15 +13,15 @@ import { type User } from './user';
 interface SubmissionWithUser {
   id: string;
   status: SubmissionStatus;
-  link?: string;
-  tweet?: string;
-  otherInfo?: string;
-  eligibilityAnswers?: any;
+  link?: string | null;
+  tweet?: string | null;
+  otherInfo?: string | null;
+  eligibilityAnswers?: QuestionAnswer[];
   userId: string;
   agentId?: string | null;
   listingId: string;
   isWinner: boolean;
-  winnerPosition?: keyof Rewards;
+  winnerPosition?: keyof Rewards | null;
   isPaid: boolean;
   paymentDetails?: Array<{
     txId: string;
@@ -31,13 +33,13 @@ interface SubmissionWithUser {
   isArchived: boolean;
   createdAt: string;
   updatedAt: string;
-  like?: any;
+  like?: FeedDataProps['like'];
   user: User;
   listing?: Listing;
-  ask?: number;
+  ask?: number | null;
   telegram?: string | null;
   label: SubmissionLabels;
-  notes?: string;
+  notes?: string | null;
   totalEarnings?: number;
   ai?: ProjectApplicationAi;
 }

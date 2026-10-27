@@ -8,15 +8,21 @@ import HeroContainer from '@/features/stfun/components/common/HeroContainer';
 import { getStLayout } from '@/features/stfun/components/common/StLayout';
 import PerksGrid from '@/features/stfun/components/grids/PerksGrid';
 
-interface MemberPerksProps {
-  liveNow: any[];
-  completed: any[];
-  comingSoon: any[];
-}
-
 interface AirtablePerkRecord {
   createdTime?: string;
-  fields: Record<string, any>;
+  fields: {
+    Name: string;
+    Notes?: string;
+    Link?: string;
+    Logo?: Array<{ url: string }>;
+    Status?: string;
+  };
+}
+
+interface MemberPerksProps {
+  liveNow: AirtablePerkRecord[];
+  completed: AirtablePerkRecord[];
+  comingSoon: AirtablePerkRecord[];
 }
 
 export default function MemberPerks({
@@ -114,13 +120,13 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
         }) ?? [];
 
     const liveNow = records.filter(
-      (item: any) => item.fields['Status'] === 'Live now',
+      (item) => item.fields['Status'] === 'Live now',
     );
     const completed = records.filter(
-      (item: any) => item.fields['Status'] === 'Completed',
+      (item) => item.fields['Status'] === 'Completed',
     );
     const comingSoon = records.filter(
-      (item: any) => item.fields['Status'] === 'Coming Soon',
+      (item) => item.fields['Status'] === 'Coming Soon',
     );
 
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');

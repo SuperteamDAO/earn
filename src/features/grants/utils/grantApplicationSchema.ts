@@ -81,7 +81,7 @@ export const grantApplicationSchema = (
   maxReward: number,
   token: string,
   questions?: GrantQuestion[],
-  user?: User | null,
+  user?: Pick<User, 'linkedTwitter'> | null,
   isST = false,
   isAgenticEngineering = false,
 ) => {

@@ -42,7 +42,7 @@ import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
-import { type Listing } from '@/features/listings/types';
+import { type Listing, type ListingHackathon } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
@@ -56,7 +56,12 @@ import AiReviewBountiesSubmissionsModal from './Modals/AiReviewBounties';
 import AiReviewProjectApplicationsModal from './Modals/AiReviewProjects';
 
 interface Props {
-  bounty: Listing | undefined;
+  // Only the hackathon's announceDate is read; listing endpoints differ in the rest.
+  bounty:
+    | (Omit<Listing, 'Hackathon'> & {
+        Hackathon?: Pick<ListingHackathon, 'announceDate'>;
+      })
+    | undefined;
   isHackathonPage?: boolean;
   remainings: { podiums: number; bonus: number } | null;
   submissions: SubmissionWithUser[];

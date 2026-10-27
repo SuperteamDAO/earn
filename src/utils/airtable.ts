@@ -20,14 +20,14 @@ function airtableConfig(apiToken: string) {
   };
 }
 
-function airtableInsert(data: any[], typecast?: boolean) {
+function airtableInsert(data: { fields: object }[], typecast?: boolean) {
   return {
     records: data,
     ...(typecast ? { typecast: true } : {}),
   };
 }
 
-function airtableUpsert(mergeOn: string, data: any[]) {
+function airtableUpsert(mergeOn: string, data: { fields: object }[]) {
   return {
     performUpsert: {
       fieldsToMergeOn: [mergeOn],
@@ -38,7 +38,7 @@ function airtableUpsert(mergeOn: string, data: any[]) {
 
 interface AirtableRecord {
   id: string;
-  fields: Record<string, any>;
+  fields: Record<string, unknown>;
 }
 
 interface AirtableResponse {
