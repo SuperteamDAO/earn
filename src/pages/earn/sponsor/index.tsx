@@ -1,5 +1,6 @@
+import { X } from 'lucide-react';
 import localFont from 'next/font/local';
-import { useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -33,12 +34,33 @@ const VideoPlayback = ({
 }: {
   setVideoPopup: (value: boolean) => void;
 }) => {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const handleKeyDown = useEffectEvent((event: KeyboardEvent) => {
+    if (event.key === 'Escape') setVideoPopup(false);
+  });
+
+  useEffect(() => {
+    // The popup opens from a click, so move focus to its close button.
+    closeButtonRef.current?.focus();
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
-    // react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- click-outside backdrop that closes the video popup; there is no Escape handler or close button yet
+    // react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- click-outside backdrop that closes the video popup; keyboard users close it with Escape or the close button
     <div
       className="fixed z-50 grid h-screen w-screen place-content-center bg-[rgba(191,203,220,0.67)]"
       onClick={() => setVideoPopup(false)}
     >
+      <button
+        type="button"
+        onClick={() => setVideoPopup(false)}
+        aria-label="Close video"
+        ref={closeButtonRef}
+        className="focus-visible:ring-brand-purple/40 absolute top-4 right-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-[background-color,box-shadow] hover:bg-white focus:outline-none focus-visible:ring-2"
+      >
+        <X className="h-6 w-6" />
+      </button>
       <div className="relative flex w-[95vw] flex-col gap-5 overflow-hidden pt-[56.25%] lg:w-[60vw]">
         <iframe
           title="Superteam Earn for sponsors video"

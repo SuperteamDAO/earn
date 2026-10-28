@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useEffectEvent, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { cn } from '@/utils/cn';
@@ -23,13 +23,25 @@ export function SideDrawer({
     return () => setMounted(false);
   }, []);
 
+  const handleKeyDown = useEffectEvent((event: KeyboardEvent) => {
+    // A Radix dialog opened inside the drawer handles Escape first and calls
+    // preventDefault, so only that dialog closes.
+    if (event.key === 'Escape' && !event.defaultPrevented) onClose();
+  });
+
+  useEffect(() => {
+    if (!isOpen) return;
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
   if (!mounted || !isOpen) {
     return null;
   }
 
   return createPortal(
     <>
-      {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- click-outside backdrop for the drawer; the drawer's own close controls are the keyboard path (there is no Escape handler yet) */}
+      {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- click-outside backdrop for the drawer; keyboard users close it with Escape or the drawer's own close controls */}
       <div
         className={cn(
           'fixed inset-0 z-60 bg-black/80 transition-all',
