@@ -24,6 +24,7 @@ import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { type GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
 import { approvedGranteesQuery } from '../../queries/approved-grantees';
 import { type GrantApplicationWithUser } from '../../types';
+import { PaymentAmountsCell } from '../PaymentAmountsCell';
 import { RecordPaymentButton } from './RecordPaymentButton';
 
 interface GrantPaymentDetailProps {
@@ -46,25 +47,13 @@ const PaymentDetailsRow = ({
 }) => {
   return (
     <>
+      <PaymentAmountsCell payments={paymentDetails} token={token} />
       <TableCell>
-        {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
-            <div className="flex items-center gap-1">
-              <TokenIcon
-                className="h-4 w-4 rounded-full"
-                alt={`${token}`}
-                symbol={token}
-              />
-              <p className="text-sm font-medium text-slate-700">
-                {payment.amount} <span className="text-slate-400">{token}</span>
-              </p>
-            </div>
-          </div>
-        ))}
-      </TableCell>
-      <TableCell>
-        {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+        {paymentDetails.map((payment) => (
+          <div
+            className="my-2 flex items-center justify-between"
+            key={payment.tranche}
+          >
             <p className="text-sm font-medium text-slate-500">
               Milestone {payment.tranche}
             </p>
@@ -74,9 +63,9 @@ const PaymentDetailsRow = ({
       {paymentDetails.some((payment) => payment.txId) && (
         <TableCell colSpan={2}>
           {paymentDetails.map(
-            (payment, index) =>
+            (payment) =>
               payment.txId && (
-                <div key={index} className="my-2">
+                <div key={payment.tranche} className="my-2">
                   <a
                     className="flex items-center gap-1"
                     href={payment.txId}
@@ -107,8 +96,11 @@ const GrantTrancheRow = ({
   return (
     <>
       <TableCell>
-        {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+        {paymentDetails.map((payment) => (
+          <div
+            className="my-2 flex items-center justify-between"
+            key={payment.id}
+          >
             <div className="flex items-center gap-1">
               <TokenIcon
                 className="h-4 w-4 rounded-full"
@@ -124,8 +116,11 @@ const GrantTrancheRow = ({
         ))}
       </TableCell>
       <TableCell>
-        {paymentDetails.map((payment, index) => (
-          <div className="my-2 flex items-center justify-between" key={index}>
+        {paymentDetails.map((payment) => (
+          <div
+            className="my-2 flex items-center justify-between"
+            key={payment.id}
+          >
             <p className="text-sm font-medium text-slate-500">
               Milestone {payment.trancheNumber}
             </p>
@@ -141,6 +136,31 @@ const GrantTh = ({ children }: { children?: string }) => {
     <TableHead className="text-xs font-medium tracking-tight text-slate-500 uppercase">
       {children}
     </TableHead>
+  );
+};
+
+const ExpandToggle = ({
+  label,
+  isExpanded,
+  onToggle,
+}: {
+  label: string;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) => {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      aria-expanded={isExpanded}
+      className={cn(
+        'cursor-pointer text-slate-500 transition-transform duration-300',
+        isExpanded ? 'rotate-0' : 'rotate-180',
+      )}
+      onClick={onToggle}
+    >
+      <ChevronUp className="h-4 w-4 text-slate-400" />
+    </button>
   );
 };
 
@@ -297,15 +317,11 @@ export const PaymentsHistoryTab = ({
                             />
                           )}
                           {isNativeAndNonST && grantee.paymentDetails && (
-                            <span
-                              className={cn(
-                                'cursor-pointer text-slate-500 transition-transform duration-300',
-                                isExpanded ? 'rotate-0' : 'rotate-180',
-                              )}
-                              onClick={() => toggleExpandRow(grantee.id)}
-                            >
-                              <ChevronUp className="h-4 w-4 text-slate-400" />
-                            </span>
+                            <ExpandToggle
+                              label="Toggle payment details"
+                              isExpanded={isExpanded}
+                              onToggle={() => toggleExpandRow(grantee.id)}
+                            />
                           )}
                         </div>
                       </TableCell>
@@ -398,15 +414,11 @@ export const PaymentsHistoryTab = ({
                         {grantee.GrantTranche &&
                           grantee.GrantTranche.length > 0 && (
                             <div className="flex items-center gap-2">
-                              <span
-                                className={cn(
-                                  'cursor-pointer text-slate-500 transition-transform duration-300',
-                                  isExpanded ? 'rotate-0' : 'rotate-180',
-                                )}
-                                onClick={() => toggleExpandRow(grantee.id)}
-                              >
-                                <ChevronUp className="h-4 w-4 text-slate-400" />
-                              </span>
+                              <ExpandToggle
+                                label="Toggle tranche details"
+                                isExpanded={isExpanded}
+                                onToggle={() => toggleExpandRow(grantee.id)}
+                              />
                             </div>
                           )}
                       </TableCell>

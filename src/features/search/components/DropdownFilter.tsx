@@ -38,10 +38,12 @@ function ActiveStatusPills({
   onStatusToggle: (value: SearchStatus) => void;
   disabled?: boolean;
 }) {
+  const activeStatusSet = new Set(activeStatus);
+
   return (
     <div className="flex flex-wrap gap-2">
       {statusData
-        .filter((f) => activeStatus.includes(f.value))
+        .filter((f) => activeStatusSet.has(f.value))
         .map((filter) => (
           <CategoryPill
             key={filter.value}
@@ -68,6 +70,8 @@ function StatusFilterList({
   onStatusToggle: (value: SearchStatus) => void;
   disabled?: boolean;
 }) {
+  const activeStatusSet = new Set(activeStatus);
+
   return (
     <>
       {statusData.map((filter) => (
@@ -77,12 +81,12 @@ function StatusFilterList({
           className={cn(
             'mb-1 flex items-center gap-2 text-sm text-slate-600 last:mb-0',
             disabled && 'pointer-events-none opacity-50',
-            activeStatus.includes(filter.value) &&
+            activeStatusSet.has(filter.value) &&
               'bg-indigo-50 font-normal text-indigo-600',
           )}
         >
           <Checkbox
-            checked={activeStatus.includes(filter.value)}
+            checked={activeStatusSet.has(filter.value)}
             disabled={disabled}
             className="data-[state=checked]:border-indigo-600 data-[state=checked]:bg-transparent"
             classNames={{
@@ -105,6 +109,8 @@ function SkillFilterList({
   onSkillToggle: (value: SearchSkills) => void;
   disabled?: boolean;
 }) {
+  const activeSkillSet = new Set(activeSkills);
+
   return (
     <>
       {skillsData.map((filter) => (
@@ -114,7 +120,7 @@ function SkillFilterList({
           className={cn(
             'mb-1 flex items-center gap-2 text-slate-600 last:mb-0',
             disabled && 'pointer-events-none opacity-50',
-            activeSkills.includes(filter.value) &&
+            activeSkillSet.has(filter.value) &&
               'bg-slate-100 font-medium text-indigo-600',
           )}
         >
@@ -134,11 +140,13 @@ export function DropdownFilter({
 }: DropdownFilterProps) {
   const isMd = useBreakpoint('md');
 
+  const activeStatusSet = new Set(activeStatus);
+  const activeSkillSet = new Set(activeSkills);
   const activeStatusWithLabels = statusData.filter((f) =>
-    activeStatus.includes(f.value),
+    activeStatusSet.has(f.value),
   );
   const activeSkillsWithLabels = skillsData.filter((f) =>
-    activeSkills.includes(f.value),
+    activeSkillSet.has(f.value),
   );
 
   const hasActiveFilters =

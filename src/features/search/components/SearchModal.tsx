@@ -42,9 +42,11 @@ export function SearchModal({ isOpen, onClose }: Props) {
 
   const searchParams = useSearchParams();
 
-  const [inputValue, setInputValue] = useState(searchParams?.get('q') ?? '');
+  const [inputValue, setInputValue] = useState(
+    () => searchParams?.get('q') ?? '',
+  );
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(
-    searchParams?.get('q') ?? '',
+    () => searchParams?.get('q') ?? '',
   );
 
   const debouncedSetSearchTerm = useMemo(
@@ -56,11 +58,10 @@ export function SearchModal({ isOpen, onClose }: Props) {
   );
 
   useEffect(() => {
-    debouncedSetSearchTerm(inputValue);
     return () => {
       debouncedSetSearchTerm.cancel();
     };
-  }, [inputValue, debouncedSetSearchTerm]);
+  }, [debouncedSetSearchTerm]);
 
   const { data, isFetching } = useSearchListings({
     query: debouncedSearchTerm,
@@ -135,7 +136,10 @@ export function SearchModal({ isOpen, onClose }: Props) {
               'text-sm md:text-base',
               'focus-visible:ring-0 focus-visible:ring-offset-0',
             )}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              debouncedSetSearchTerm(e.target.value);
+            }}
             placeholder="Search for Listings"
             value={inputValue}
             autoComplete="off"
@@ -145,6 +149,7 @@ export function SearchModal({ isOpen, onClose }: Props) {
           />
           <button
             type="submit"
+            aria-label="Search"
             className="absolute top-1/2 right-3 -translate-y-1/2 text-slate-400"
           >
             {isFetching ? (

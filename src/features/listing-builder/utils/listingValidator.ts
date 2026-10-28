@@ -29,7 +29,7 @@ interface ListingValidatorParams {
   user: UserModel;
   hackathon: HackathonModel | undefined;
   isEditing: boolean;
-  formData: any;
+  formData: Record<string, unknown>;
 }
 export const validateListing = async ({
   listing,
@@ -54,7 +54,7 @@ export const validateListing = async ({
       isEditing,
       isST,
       hackathons: hackathon ? [hackathon] : [],
-      pastListing: isEditing ? (listing as any) : undefined,
+      pastListing: isEditing ? listing : undefined,
     });
     const innerSchema = listingSchema._def.schema.omit({
       isPublished: true,

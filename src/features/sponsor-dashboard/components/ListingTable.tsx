@@ -388,6 +388,7 @@ export const ListingTable = ({
                           className="hover:bg-slate-100"
                           size="icon"
                           variant="ghost"
+                          aria-label="Listing actions"
                         >
                           <MoreVertical className="h-4 w-4" />
                         </Button>
@@ -432,6 +433,7 @@ export const ListingTable = ({
                               window.open(
                                 `${router.basePath}/earn/dashboard/listings/${listing.slug}/duplicate`,
                                 '_blank',
+                                'noopener,noreferrer',
                               );
                             }}
                           >

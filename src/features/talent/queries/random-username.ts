@@ -9,7 +9,7 @@ interface UsernameRandomType {
 }
 
 const fetchUsernameRandom = async (
-  firstName?: string,
+  firstName?: string | null,
 ): Promise<UsernameRandomType> => {
   const params = firstName ? { firstName } : {};
   const { data } = await api.get<UsernameRandomType>(
@@ -19,7 +19,7 @@ const fetchUsernameRandom = async (
   return data;
 };
 
-export const usernameRandomQuery = (firstName?: string) =>
+export const usernameRandomQuery = (firstName?: string | null) =>
   queryOptions({
     queryKey: ['usernameRandom', firstName],
     queryFn: () => fetchUsernameRandom(firstName),

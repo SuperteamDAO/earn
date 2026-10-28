@@ -46,7 +46,7 @@ const ProPerkCard = ({ perk }: ProPerkCardProps) => {
         <p className="text-sm text-zinc-600">{perk.description}</p>
         {shouldShowCta && (
           <Button
-            className="mt-2 w-full rounded-lg bg-zinc-800 font-semibold text-white shadow transition-all hover:bg-zinc-900 hover:shadow-lg"
+            className="mt-2 w-full rounded-lg bg-zinc-800 font-semibold text-white shadow transition-[background-color,box-shadow] hover:bg-zinc-900 hover:shadow-lg"
             onClick={() => {
               posthog.capture('clicked pro_perk');
               if (perk.ctaLink) {

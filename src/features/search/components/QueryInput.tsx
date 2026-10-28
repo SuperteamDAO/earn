@@ -1,5 +1,5 @@
 import { Loader2, Search, Undo2 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, m } from 'motion/react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -72,16 +72,17 @@ export function QueryInput({
   loading = false,
   onQueryEmptyChange,
 }: QueryInputProps) {
-  const [localQuery, setLocalQuery] = useState(query);
-
-  useEffect(() => {
-    setLocalQuery(query);
-  }, [query]);
+  // The draft remembers which query it was typed against, so a new query from
+  // the parent (submit or URL change) replaces it without an effect.
+  const [draft, setDraft] = useState<{ base: string; value: string }>();
+  const localQuery = draft?.base === query ? draft.value : query;
+  const setLocalQuery = (value: string) => setDraft({ base: query, value });
 
   useEffect(() => {
     const isQueryEmpty = localQuery.trim() === '';
+    // react-doctor-disable-next-line react-doctor/no-pass-live-state-to-parent, react-doctor/no-prop-callback-in-effect -- the parent keeps its own isQueryEmpty state, which must also follow URL-driven query changes; deriving it there needs a change to src/pages/earn/search/index.tsx
     onQueryEmptyChange?.(isQueryEmpty);
-  }, [query, localQuery, onQueryEmptyChange]);
+  }, [localQuery, onQueryEmptyChange]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -114,7 +115,7 @@ export function QueryInput({
             />
             <div className="absolute top-1/2 right-1 hidden h-[calc(80%-0.125rem)] -translate-y-1/2 place-items-center md:grid">
               <AnimatePresence mode="wait">
-                <motion.div
+                <m.div
                   className="flex h-full items-center justify-end"
                   key={
                     resultCount && !loading && !resultsStale
@@ -137,7 +138,7 @@ export function QueryInput({
                     resultsStale={resultsStale}
                     disabled={localQuery.trim() === ''}
                   />
-                </motion.div>
+                </m.div>
               </AnimatePresence>
             </div>
           </div>

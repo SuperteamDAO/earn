@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { Check, InfoIcon, ScanText, Wand2, XCircle } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { Check, ScanText } from 'lucide-react';
+import { AnimatePresence, m } from 'motion/react';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -29,14 +29,16 @@ import {
   type BountySubmissionAi,
   type Listing,
 } from '@/features/listings/types';
+import { AiReviewErrorContent } from '@/features/sponsor-dashboard/components/Modals/AiReviewErrorContent';
 import { useCommitReviewsSubmissions } from '@/features/sponsor-dashboard/mutations/useCommitReviewsSubmissions';
 import { unreviewedSubmissionsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-submissions';
 
+import { AiReviewInitContent } from './AiReviewInitContent';
 import { ReviewLoadingAnimation } from './ReviewLoadingAnimation';
 
 interface Props {
   submissions: SubmissionWithUser[] | undefined;
-  listing: Listing | undefined;
+  listing: Omit<Listing, 'Hackathon'> | undefined;
 }
 export default function AiReviewBountiesSubmissionsModal({
   submissions,
@@ -127,6 +129,7 @@ export default function AiReviewBountiesSubmissionsModal({
       user?.currentSponsorId === listing?.sponsorId &&
       (listing?.ai as unknown as BountiesAi)?.evaluationCompleted
     ) {
+      // react-doctor-disable-next-line react-doctor/query-no-query-in-effect -- the unreviewed list must follow the parent's `submissions` prop, which is not part of this query's key, and refetchOnMount is off
       refetchUnreviewedSubmissions();
     }
   }, [
@@ -142,7 +145,6 @@ export default function AiReviewBountiesSubmissionsModal({
   );
 
   const nonAnalysedSubmissions = useMemo(() => {
-    console.log('unreviewedSubmissions', unreviewedSubmissions);
     return unreviewedSubmissions?.filter(
       (appl) => !(appl.ai as BountySubmissionAi)?.evaluation,
     );
@@ -168,9 +170,7 @@ export default function AiReviewBountiesSubmissionsModal({
     setTimeout(async () => {
       setProgress(100);
       try {
-        console.log('Commiting Reviewed submissions');
         const data = await commitReviews();
-        console.log('commit data - ', data.data);
         setCompletedStats({
           totalReviewed: data.data.length,
           shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
@@ -186,7 +186,7 @@ export default function AiReviewBountiesSubmissionsModal({
         posthog.capture('complete_ai review bounties');
         setState('DONE');
         await refetchUnreviewedSubmissions();
-      } catch (error: any) {
+      } catch (error) {
         console.log(
           'error occured while commiting reviewed submissions',
           error,
@@ -194,14 +194,7 @@ export default function AiReviewBountiesSubmissionsModal({
         setState('ERROR');
       }
     }, 10000);
-  }, [
-    submissions,
-    unreviewedSubmissions,
-    nonAnalysedSubmissions,
-    posthog,
-    commitReviews,
-    refetchUnreviewedSubmissions,
-  ]);
+  }, [commitReviews, refetchUnreviewedSubmissions]);
   function onComplete() {
     setState('DISCLAIMER');
     setProgress(0);
@@ -270,7 +263,7 @@ export default function AiReviewBountiesSubmissionsModal({
           <AnimateChangeInHeight>
             <AnimatePresence mode="popLayout">
               {state === 'DISCLAIMER' && (
-                <motion.div
+                <m.div
                   key="disclaimer"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -326,73 +319,27 @@ export default function AiReviewBountiesSubmissionsModal({
                       Agree & Proceed
                     </Button>
                   </CardFooter>
-                </motion.div>
+                </m.div>
               )}
               {state === 'INIT' && (
-                <motion.div
+                <m.div
                   key="init"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className="px-6 py-4">
-                    <div className="space-y-2 font-medium">
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-2 text-base text-slate-500">
-                          Unreviewed Submissions
-                          <Tooltip
-                            content="We will only review unreviewed submissions. If you've already reviewed some submissions, those will remain untouched."
-                            contentProps={{
-                              style: {
-                                zIndex: '100',
-                              },
-                            }}
-                          >
-                            <InfoIcon className="h-4 w-4 text-slate-400" />
-                          </Tooltip>
-                        </span>
-                        <span className="text-xl font-semibold">
-                          {totalSubmissions}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-base text-slate-500">
-                          Credits Used
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="rounded-full bg-green-100 px-2 py-0 text-sm text-green-700">
-                            Free
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between text-slate-500">
-                        <span className="text-base">Estimated Time</span>
-                        <span className="text-lg">{estimatedTime}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex flex-col px-6">
-                    <Button
-                      className="ph-no-capture mt-4 w-full"
-                      size="lg"
-                      onClick={() => {
-                        onReviewClick?.();
-                      }}
-                    >
-                      <Wand2 className="mr-2 h-5 w-5" />
-                      Proceed
-                    </Button>
-
-                    <p className="text-muted-foreground mt-2 text-center text-sm">
-                      AI can make mistakes. Check important info before choosing
-                      winners.
-                    </p>
-                  </CardFooter>
-                </motion.div>
+                  <AiReviewInitContent
+                    unreviewedLabel="Unreviewed Submissions"
+                    unreviewedCount={totalSubmissions}
+                    estimatedTime={estimatedTime}
+                    disclaimer="AI can make mistakes. Check important info before choosing winners."
+                    onProceed={onReviewClick}
+                  />
+                </m.div>
               )}
               {state === 'PROCESSING' && (
-                <motion.div
+                <m.div
                   key="processing"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -423,10 +370,10 @@ export default function AiReviewBountiesSubmissionsModal({
                       Approx. {estimatedTimeSingular} remaining
                     </p>
                   </CardFooter>
-                </motion.div>
+                </m.div>
               )}
               {state === 'DONE' && (
-                <motion.div
+                <m.div
                   key="done"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -493,38 +440,21 @@ export default function AiReviewBountiesSubmissionsModal({
                       Have a look
                     </Button>
                   </CardContent>
-                </motion.div>
+                </m.div>
               )}
               {state === 'ERROR' && (
-                <motion.div
+                <m.div
                   key="error"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
-                      <XCircle className="h-8 w-8 stroke-[2.5] text-red-600" />
-                    </div>
-
-                    <div className="space-y-2">
-                      <h2 className="text-xl font-semibold">Review Failed</h2>
-                      <p className="mx-auto w-4/5 text-sm text-slate-500">
-                        Something went wrong while reviewing the submissions.
-                        Please try again.
-                      </p>
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      className="w-full border-[#e2e8f0] text-[#62748e]"
-                      onClick={() => setState('INIT')}
-                    >
-                      Try Again
-                    </Button>
-                  </CardContent>
-                </motion.div>
+                  <AiReviewErrorContent
+                    subject="submissions"
+                    onRetry={() => setState('INIT')}
+                  />
+                </m.div>
               )}
             </AnimatePresence>
           </AnimateChangeInHeight>
@@ -561,7 +491,6 @@ function formatTime(milliseconds: number): string {
   return `${hours}h ${minutes}m`;
 }
 function estimateTime(totalSubmissions: number, singular = false): string {
-  console.log('total submissions', totalSubmissions);
   const lowerBoundSeconds = totalSubmissions * 10;
   const upperBoundSeconds = totalSubmissions * 20;
 

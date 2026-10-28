@@ -41,6 +41,7 @@ import { hackathonsAtom, isEditingAtom, isSTAtom } from '../../atoms';
 import { getDefaultListingToken } from '../../constants';
 import { useListingForm } from '../../hooks';
 import { slugCheckQuery } from '../../queries/slug-check';
+import { toFormEligibility } from '../../utils/form';
 import { calculateTotalRewardsForPodium } from '../../utils/rewards';
 import { getSuggestions } from '../../utils/suggestions';
 
@@ -108,12 +109,6 @@ export function TitleAndType() {
   useEffect(() => {
     const newSlug = generatedSlugValidated?.data.slug;
     const currentSlug = form.getValues('slug');
-    console.log('[DRAFT_DEBUG] TitleAndType slug useEffect', {
-      newSlug,
-      currentSlug,
-      isTitleDirty,
-      willSave: !!(newSlug && isTitleDirty && newSlug !== currentSlug),
-    });
     if (newSlug && isTitleDirty && newSlug !== currentSlug) {
       form.setValue('slug', newSlug, {
         shouldValidate: true,
@@ -121,7 +116,13 @@ export function TitleAndType() {
       });
       form.saveDraft();
     }
-  }, [generatedSlugValidated, isTitleDirty]);
+  }, [
+    generatedSlugValidated,
+    isTitleDirty,
+    form.getValues,
+    form.setValue,
+    form.saveDraft,
+  ]);
 
   return (
     <FormField
@@ -230,7 +231,7 @@ function Type() {
       const hackathon = hackathons?.find((s) => s.slug === newType);
       if (hackathon) {
         form.setValue('hackathonId', hackathon.id);
-        form.setValue('eligibility', hackathon?.eligibility as any);
+        form.setValue('eligibility', toFormEligibility(hackathon?.eligibility));
         form.setValue('token', getDefaultListingToken(isST, hackathon.slug));
       }
     } else {
@@ -263,7 +264,6 @@ function Type() {
         form.setValue('rewardAmount', values.rewards?.[1]);
       } else {
         form.setValue('rewardAmount', undefined);
-        console.log('pre type change ', values.rewards);
         if (
           values.rewards &&
           Object.values(values.rewards).some(

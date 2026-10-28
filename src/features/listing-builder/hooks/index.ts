@@ -6,8 +6,9 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useForm, useFormContext, type UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
-import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
+
+import { type BuilderHackathon } from '@/features/listing-builder/types';
 
 import {
   descriptionKeyAtom,
@@ -63,7 +64,7 @@ function getDraftPayloadKey(payload: ListingFormData): string {
 
 export const useListingForm = (
   defaultValues?: ListingFormData,
-  hackathons?: HackathonModel[],
+  hackathons?: BuilderHackathon[],
 ): UseListingFormReturn => {
   let formMethods: UseFormReturn<ListingFormData> | null = null;
   let isNewFormInitialized = false;
@@ -88,7 +89,7 @@ export const useListingForm = (
     isGod,
     isEditing,
     isST,
-    pastListing: defaultValues as any,
+    pastListing: defaultValues,
     hackathons: hackathons,
   });
   if (!formMethods || !Object.keys(formMethods).length) {
@@ -121,15 +122,7 @@ export const useListingForm = (
 
   // queue ensures each call for auto save is sent synchronously
   const processSaveQueue = useCallback(async () => {
-    console.log('[DRAFT_DEBUG] processSaveQueue called', {
-      isEditing,
-      isProcessing: queueRefRef.current.isProcessing,
-      shouldProcessNext: queueRefRef.current.shouldProcessNext,
-      stack: new Error().stack?.split('\n').slice(1, 5).join('\n'),
-    });
-
     if (isEditing) {
-      console.log('[DRAFT_DEBUG] Skipping - isEditing=true');
       return;
     }
 
@@ -137,7 +130,6 @@ export const useListingForm = (
     const payloadKey = getDraftPayloadKey(dataToSave);
 
     if (queueRefRef.current.isProcessing) {
-      console.log('[DRAFT_DEBUG] Already processing, queuing next');
       setQueueRef((q) => ({
         ...q,
         shouldProcessNext: true,
@@ -146,12 +138,10 @@ export const useListingForm = (
     }
 
     if (payloadKey === lastSavedPayloadKeyRef.current) {
-      console.log('[DRAFT_DEBUG] Skipping save for unchanged payload');
       setHideAutoSave(false);
       return;
     }
 
-    console.log('[DRAFT_DEBUG] Starting save...');
     setDraftSaving(true);
     setQueueRef((q) => ({
       ...q,
@@ -159,19 +149,7 @@ export const useListingForm = (
       isProcessing: true,
     }));
     try {
-      console.log(
-        '[DRAFT_DEBUG] Calling API with id:',
-        dataToSave.id,
-        'slug:',
-        dataToSave.slug,
-      );
       const data = await saveDraftMutation.mutateAsync(dataToSave);
-      console.log(
-        '[DRAFT_DEBUG] API success, returned id:',
-        data.id,
-        'slug:',
-        data.slug,
-      );
       lastSavedPayloadKeyRef.current = getDraftPayloadKey({
         ...dataToSave,
         id: data.id,
@@ -195,10 +173,6 @@ export const useListingForm = (
     } catch (error) {
       console.log('[DRAFT_DEBUG] Error:', error);
     } finally {
-      console.log(
-        '[DRAFT_DEBUG] Finally block, shouldProcessNext:',
-        queueRefRef.current.shouldProcessNext,
-      );
       setDraftSaving(false);
       setQueueRef((q) => ({
         ...q,
@@ -206,14 +180,23 @@ export const useListingForm = (
       }));
       // Check if we need to process another save
       if (queueRefRef.current.shouldProcessNext) {
-        console.log('[DRAFT_DEBUG] Processing queued save via setTimeout');
         // Use setTimeout to break the call stack and ensure queue state is updated
         setTimeout(() => {
           void processSaveQueue();
         }, 0);
       }
     }
-  }, [queueRefRef, isEditing]);
+  }, [
+    queueRefRef,
+    isEditing,
+    getValues,
+    setQueueRef,
+    setHideAutoSave,
+    setDraftSaving,
+    saveDraftMutation.mutateAsync,
+    formMethods.getValues,
+    formMethods.setValue,
+  ]);
 
   const debouncedSaveRef = useRef<ReturnType<typeof debounce>>(undefined);
 
@@ -224,10 +207,6 @@ export const useListingForm = (
   }, [processSaveQueue]);
 
   const onChange = useCallback(() => {
-    console.log('[DRAFT_DEBUG] saveDraft() called', {
-      isEditing,
-      stack: new Error().stack?.split('\n').slice(1, 4).join('\n'),
-    });
     if (isEditing || isHydratingSavedFieldsRef.current) return;
 
     const payloadKey = getDraftPayloadKey(normalizeDraftPayload(getValues()));
@@ -237,7 +216,7 @@ export const useListingForm = (
 
     setHideAutoSave(true);
     debouncedSaveRef.current?.();
-  }, [isEditing, getValues]);
+  }, [isEditing, getValues, setHideAutoSave]);
 
   const submitListing = useCallback(async () => {
     const formData = refineReadyListing(getValues());
@@ -288,7 +267,16 @@ export const useListingForm = (
       if (typeof s === 'number') return s + 1;
       else return 1;
     });
-  }, [reset]);
+  }, [
+    reset,
+    isGod,
+    isEditing,
+    isST,
+    hackathons,
+    getValues,
+    setDescriptionKey,
+    setSkillsKey,
+  ]);
 
   const validateFields = useCallback(
     async (fields: ValidationFields) => {
@@ -313,7 +301,7 @@ export const useListingForm = (
       const partialSchema = innerSchema
         .pick(fields)
         .superRefine((data, ctx) => {
-          createListingRefinements(data as any, ctx, hackathons, fields);
+          createListingRefinements(data, ctx, hackathons, fields);
         });
 
       try {
@@ -335,7 +323,7 @@ export const useListingForm = (
         return false;
       }
     },
-    [formMethods, formSchema, isGod, isEditing, isST],
+    [formMethods, formSchema, hackathons],
   );
 
   const validateEligibilityQuestions = () =>

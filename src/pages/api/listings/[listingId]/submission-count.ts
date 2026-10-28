@@ -34,7 +34,7 @@ export default async function submission(
   try {
     const submissionCount = await getSubmissionCount(listingId);
     res.status(200).json(submissionCount);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching submission count for listing ID=${listingId}: ${safeStringify(error)}`,
     );

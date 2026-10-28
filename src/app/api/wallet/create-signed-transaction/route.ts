@@ -94,10 +94,10 @@ async function calculateAtaCreationCost(
   tokenAddress: string,
   decimals: number,
 ): Promise<number> {
-  const tokenUSDValue = await fetchTokenUSDValue(tokenAddress);
-  const solUSDValue = await fetchTokenUSDValue(
-    'So11111111111111111111111111111111111111112',
-  );
+  const [tokenUSDValue, solUSDValue] = await Promise.all([
+    fetchTokenUSDValue(tokenAddress),
+    fetchTokenUSDValue('So11111111111111111111111111111111111111112'),
+  ]);
   const ataCreationCostInUSD = solUSDValue * 0.0021;
   const tokenAmountToCharge = ataCreationCostInUSD / tokenUSDValue;
   return Math.ceil(tokenAmountToCharge * 10 ** decimals);

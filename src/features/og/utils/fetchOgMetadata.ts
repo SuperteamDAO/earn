@@ -5,9 +5,7 @@ import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { isSafeRemoteUrl, safeRemoteFetch } from '@/utils/safeRemoteFetch';
 import { safeStringify } from '@/utils/safeStringify';
 
-export type OgMetadata = NonNullable<
-  Awaited<ReturnType<typeof unfurl>>['open_graph']
->;
+type OgMetadata = NonNullable<Awaited<ReturnType<typeof unfurl>>['open_graph']>;
 export type OgMetadataResult = OgMetadata | 'error';
 
 const OG_FETCH_HEADERS = {

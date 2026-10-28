@@ -19,7 +19,7 @@ const fetchApprovedGrantees = async (
 
 export const approvedGranteesQuery = (
   grantId: string | undefined,
-  currentSponsorId: string | undefined,
+  currentSponsorId: string | undefined | null,
   searchTerm: string = '',
 ) =>
   queryOptions({

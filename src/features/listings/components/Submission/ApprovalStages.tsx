@@ -2,6 +2,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 
 import FaCheck from '@/components/icons/FaCheck';
+import { ApprovalStageConnectingLine } from '@/components/shared/ApprovalStageConnectingLine';
 import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getPayoutCopy } from '@/utils/payout-date';
@@ -30,27 +31,6 @@ const Heading = ({ children }: { children: React.ReactNode }) => (
 
 const Subheading = ({ children }: { children: React.ReactNode }) => (
   <p className="text-[0.8rem] text-slate-500">{children}</p>
-);
-
-const ConnectingLine = ({
-  isStartComplete,
-  isEndComplete,
-}: {
-  isStartComplete: boolean;
-  isEndComplete: boolean;
-}) => (
-  <div className="absolute top-9 left-4 h-12 w-1">
-    {isStartComplete && isEndComplete ? (
-      <div className="h-full bg-green-600" />
-    ) : isStartComplete ? (
-      <>
-        <div className="h-1/3 bg-green-600" />
-        <div className="h-2/3 bg-slate-200" />
-      </>
-    ) : (
-      <div className="h-full bg-slate-200" />
-    )}
-  </div>
 );
 
 export const ApprovalStages = ({ listing }: Props) => {
@@ -85,7 +65,7 @@ export const ApprovalStages = ({ listing }: Props) => {
           <div className="relative z-10">
             <CheckIcon />
           </div>
-          <ConnectingLine
+          <ApprovalStageConnectingLine
             isStartComplete={true}
             isEndComplete={isKycVerified}
           />
@@ -101,7 +81,7 @@ export const ApprovalStages = ({ listing }: Props) => {
           <div className="relative z-10">
             {isKycVerified ? <CheckIcon /> : <PendingIcon />}
           </div>
-          <ConnectingLine
+          <ApprovalStageConnectingLine
             isStartComplete={isKycVerified}
             isEndComplete={isPaymentSynced}
           />
@@ -115,7 +95,7 @@ export const ApprovalStages = ({ listing }: Props) => {
           <div className="relative z-10">
             {isPaymentSynced ? <CheckIcon /> : <PendingIcon />}
           </div>
-          <ConnectingLine
+          <ApprovalStageConnectingLine
             isStartComplete={isPaymentSynced}
             isEndComplete={isPaid}
           />

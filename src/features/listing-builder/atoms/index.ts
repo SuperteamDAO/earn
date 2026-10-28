@@ -7,8 +7,9 @@ import { type TTokenGenerateResponse } from '@/app/api/sponsor-dashboard/ai-gene
 import { type BountyType } from '@/generated/prisma/enums';
 import { type Skills } from '@/interface/skills';
 import { api } from '@/lib/api';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { convertUndefinedToNull } from '@/utils/undefinedToNull';
+
+import { type BuilderHackathon } from '@/features/listing-builder/types';
 
 import {
   type ListingFormData,
@@ -34,7 +35,7 @@ const isSTAtom = atom<boolean>(false);
 const isEditingAtom = atom<boolean>(false);
 const listingStatusAtom = atom<ListingStatus | undefined>(undefined);
 const isDraftSavingAtom = atom(false);
-const hackathonsAtom = atom<HackathonModel[] | undefined>(undefined);
+const hackathonsAtom = atom<BuilderHackathon[] | undefined>(undefined);
 const hideAutoSaveAtom = atom<boolean>(true);
 const descriptionKeyAtom = atom<string | number>(1);
 const skillsKeyAtom = atom<string | number>(1);
@@ -75,7 +76,6 @@ const submitListingMutationAtom = atomWithMutation((get) => ({
     if (!data.id) throw new Error('Missing ID');
 
     if (typeof window !== 'undefined' && window.__processImageCleanup) {
-      console.log('Processing image cleanup before submission');
       try {
         await window.__processImageCleanup();
       } catch (error) {

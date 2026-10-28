@@ -110,7 +110,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       logger.info(
         `Photo verification successful for user ${userId}: ${updatedData.photo}`,
       );
-    } catch (error: any) {
+    } catch (error) {
       logger.warn(
         `Photo verification error for user ${userId}: ${safeStringify(error)}`,
       );
@@ -152,7 +152,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.info(`User profile updated successfully for user ID: ${userId}`);
     return res.json(updatedUser);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`Error updating user profile: ${safeStringify(error)}`);
     return res.status(500).json({ error: 'Error updating user profile.' });
   }

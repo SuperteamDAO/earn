@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -119,12 +120,15 @@ export function DisputeModal({ isOpen, onClose, entry }: DisputeModalProps) {
           description: 'text-xs',
         },
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error submitting dispute:', error);
 
       let errorMessage = 'Failed to submit dispute. Please try again.';
 
-      if (error.response?.data?.error) {
+      if (
+        isAxiosError<{ error?: string }>(error) &&
+        error.response?.data?.error
+      ) {
         errorMessage = error.response.data.error;
       }
 

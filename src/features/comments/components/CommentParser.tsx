@@ -15,7 +15,7 @@ interface Props {
   value: string;
   type: CommentType;
   isAnnounced: boolean;
-  submissionId?: string;
+  submissionId?: string | null;
   isListingAndUserPro?: boolean;
 }
 
@@ -33,10 +33,11 @@ export const CommentParser = ({
 
   function parseComment(comment: string) {
     const tokens = comment.split(/(\s+|@\w+[\w-]*|[^\s@]+)/g).filter(Boolean);
+    const validUsernameSet = new Set(validUsernames);
 
     return tokens.map((token) => {
       const mentionMatch = token.match(/^@(\w+[\w-]*)/);
-      if (mentionMatch && validUsernames.includes(mentionMatch[1] || '')) {
+      if (mentionMatch && validUsernameSet.has(mentionMatch[1] || '')) {
         return { type: 'mention', value: mentionMatch[0] };
       }
 
@@ -53,6 +54,7 @@ export const CommentParser = ({
       if (part.type === 'mention') {
         return (
           <Link
+            // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- tokens are positional slices of an immutable comment string and may repeat, so position is their only identity
             key={index}
             href={`/earn/t/${part.value.substring(1)}`}
             className={cn(
@@ -70,6 +72,7 @@ export const CommentParser = ({
         }
         return (
           <a
+            // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- tokens are positional slices of an immutable comment string and may repeat, so position is their only identity
             key={index}
             href={href}
             className="text-blue-600 hover:text-blue-700 hover:underline"

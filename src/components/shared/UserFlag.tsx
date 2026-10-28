@@ -31,24 +31,18 @@ export function UserFlag({ location, size = '16px', isCode = false }: Props) {
   const [isCustomFlag, setIsCustomFlag] = useState<boolean>(false);
 
   useEffect(() => {
-    if (isCode) {
-      const lowerCaseCode = location.toLowerCase();
-      setTimeout(() => {
-        setCode(lowerCaseCode);
-        setIsCustomFlag(!!CUSTOM_FLAGS[lowerCaseCode]);
-      }, 0);
-    } else {
-      const country = countries.find(
-        (c) => c.name.toLowerCase() === location.toLowerCase(),
-      );
-      if (country) {
-        const lowerCaseCode = country.code.toLowerCase();
-        setTimeout(() => {
-          setCode(lowerCaseCode);
-          setIsCustomFlag(!!CUSTOM_FLAGS[lowerCaseCode]);
-        }, 0);
-      }
-    }
+    const lowerCaseCode = isCode
+      ? location.toLowerCase()
+      : countries
+          .find((c) => c.name.toLowerCase() === location.toLowerCase())
+          ?.code.toLowerCase();
+    if (!lowerCaseCode) return;
+
+    const timer = setTimeout(() => {
+      setCode(lowerCaseCode);
+      setIsCustomFlag(!!CUSTOM_FLAGS[lowerCaseCode]);
+    }, 0);
+    return () => clearTimeout(timer);
   }, [location, isCode]);
 
   const flagStyles = {

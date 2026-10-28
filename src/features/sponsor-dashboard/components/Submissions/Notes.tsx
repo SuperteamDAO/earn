@@ -1,18 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAtom, useSetAtom } from 'jotai';
 import debounce from 'lodash.debounce';
-import { Loader2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { type SubmissionWithUser } from '@/interface/submission';
 import { api } from '@/lib/api';
-import { Wand } from '@/svg/wand';
-import { cn } from '@/utils/cn';
 
 import { type ProjectApplicationAi } from '@/features/listings/types';
 
 import { isStateUpdatingAtom, selectedSubmissionAtom } from '../../atoms';
 import { getTextCharacterCount } from '../../utils/convertTextToNotesHTML';
+import { NotesHeader } from '../NotesHeader';
 import { NotesRichEditor } from '../NotesRichEditor';
 
 const MAX_CHARACTERS = 1000;
@@ -139,22 +137,7 @@ export const Notes = ({ slug }: Props) => {
 
   return (
     <div className="flex w-full flex-col items-start rounded-xl border border-slate-200 py-5 pr-1 pl-4">
-      <div
-        className={cn(
-          'mb-2 flex w-full items-center justify-between pr-3 text-slate-400',
-          isAiCommited && 'text-slate-600',
-        )}
-      >
-        <div className="flex items-center gap-1">
-          {isAiCommited && <Wand />}
-          <span className="font-extrabold">Notes</span>
-        </div>
-        {isSaving ? (
-          <Loader2 className="h-3 w-3 animate-spin" />
-        ) : (
-          <span className="text-[10px]">Auto-saved</span>
-        )}
-      </div>
+      <NotesHeader isAiCommited={isAiCommited} isSaving={isSaving} />
       <div
         key={submissionId + (selectedSubmission?.label || 'label')}
         className="h-full w-full"

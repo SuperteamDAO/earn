@@ -28,8 +28,14 @@ import { ProIntro } from '@/features/pro/components/ProIntro';
 
 import styles from '@/styles/listing-description.module.css';
 
+const usdFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 0,
+});
+
 interface Props {
-  description?: string;
+  description?: string | null;
   type: BountyType | 'grant';
   sponsorId: string;
   isPro?: boolean;
@@ -187,11 +193,7 @@ export function DescriptionUI({
                   {stats ? (
                     <p className="text-md text-slate-500">
                       Earn{' '}
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: 'USD',
-                        maximumFractionDigits: 0,
-                      }).format(1000 - (stats.totalWinnings ?? 0))}{' '}
+                      {usdFormatter.format(1000 - (stats.totalWinnings ?? 0))}{' '}
                       more, or
                     </p>
                   ) : (
@@ -233,6 +235,7 @@ export function DescriptionUI({
             !showMore && 'h-[50vh] overflow-hidden',
           )}
         >
+          {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- delegated handler that only reacts to clicks on the <a> links inside the rendered HTML; keyboard activation of those links bubbles here too */}
           <div
             className={`${styles.content} mt-4 w-full overflow-visible pb-7`}
             onClick={handleDescriptionClick}

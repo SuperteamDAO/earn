@@ -325,12 +325,6 @@ export async function buildListingQuery(
     where.sponsor = {
       slug: sponsorKey,
     };
-
-    // if (!!sponsorInfo?.showPrivates) {
-    //   delete where.isPrivate;
-    // } else {
-    //   where.isPrivate = false;
-    // }
   }
 
   if (context === 'bookmarks') {

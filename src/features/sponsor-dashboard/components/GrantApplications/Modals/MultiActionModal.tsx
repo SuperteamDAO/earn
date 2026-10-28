@@ -1,28 +1,19 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { AlertTriangle, Flag, X } from 'lucide-react';
-import React, { useState } from 'react';
+import { Flag, X } from 'lucide-react';
+import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { Separator } from '@/components/ui/separator';
 import { api } from '@/lib/api';
 
 import { selectedGrantApplicationAtom } from '../../../atoms';
 import { useRejectGrantApplications } from '../../../mutations/useRejectGrantApplications';
 import type { GrantApplicationsReturn } from '../../../queries/applications';
+import {
+  type ActionConfig,
+  MultiActionDialog,
+} from '../../Modals/MultiActionDialog';
 
 type ActionType = 'reject' | 'spam';
-
-interface ActionConfig {
-  title: string;
-  description: string;
-  buttonText: string;
-  buttonClass: string;
-  icon?: React.ReactNode;
-  loadingText: string;
-  hasWarning?: boolean;
-}
 
 interface MultiActionModalProps {
   isOpen: boolean;
@@ -93,6 +84,7 @@ export const MultiActionModal = ({
   };
 
   const handleAction = async () => {
+    const applicationIdSet = new Set(applicationIds);
     setLoading(true);
     try {
       switch (actionType) {
@@ -114,8 +106,8 @@ export const MultiActionModal = ({
               return {
                 ...old,
                 data: old.data.map((application) => {
-                  if (applicationIds.includes(application.id)) {
-                    return { ...application, label: 'Spam' as any };
+                  if (applicationIdSet.has(application.id)) {
+                    return { ...application, label: 'Spam' };
                   }
                   return application;
                 }),
@@ -123,9 +115,9 @@ export const MultiActionModal = ({
             },
           );
 
-          setSelectedApplication((prev: any) => {
-            if (prev && applicationIds.includes(prev.id)) {
-              return { ...prev, label: 'Spam' as any };
+          setSelectedApplication((prev) => {
+            if (prev && applicationIdSet.has(prev.id)) {
+              return { ...prev, label: 'Spam' };
             }
             return prev;
           });
@@ -144,48 +136,12 @@ export const MultiActionModal = ({
   const config = getActionConfig();
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="m-0 p-0" hideCloseIcon>
-        <DialogTitle className="text-md -mb-1 px-6 pt-4 font-semibold text-slate-900">
-          {config.title}
-        </DialogTitle>
-        <Separator />
-        <div className="px-6 pb-6 text-[0.95rem]">
-          <p className="mb-4 text-slate-500">{config.description}</p>
-
-          {config.hasWarning && (
-            <div className="mb-4 flex items-center gap-1">
-              <AlertTriangle className="h-4 w-4 text-red-600" />
-              <span className="text-sm font-medium text-slate-800">
-                This action cannot be undone!
-              </span>
-            </div>
-          )}
-          <div className="flex gap-3">
-            <div className="w-1/2" />
-            <Button variant="ghost" onClick={onClose} disabled={loading}>
-              Close
-            </Button>
-            <Button
-              className={`flex-1 ${config.buttonClass}`}
-              disabled={loading}
-              onClick={handleAction}
-            >
-              {loading ? (
-                <>
-                  <span className="loading loading-spinner mr-2" />
-                  <span>{config.loadingText}</span>
-                </>
-              ) : (
-                <>
-                  {config.icon}
-                  {config.buttonText}
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <MultiActionDialog
+      isOpen={isOpen}
+      onClose={onClose}
+      config={config}
+      loading={loading}
+      onAction={handleAction}
+    />
   );
 };

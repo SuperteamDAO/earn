@@ -1,5 +1,5 @@
 import debounce from 'lodash.debounce';
-import { type KeyboardEvent, useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { type User } from '@/interface/user';
@@ -19,13 +19,12 @@ const MAX_COMMENT_SUGGESTIONS = 5;
 export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
   const [suggestions, setSuggestions] =
     useState<Map<string, User>>(defaultSuggestions);
-  const [searchSuggestions, setSearchSuggestions] =
-    useState<Map<string, User>>(defaultSuggestions);
+  const searchSuggestionsRef = useRef<Map<string, User>>(defaultSuggestions);
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
   async function filterSuggestions(text: string) {
     if (text === '') {
-      setSuggestions(searchSuggestions);
+      setSuggestions(searchSuggestionsRef.current);
     } else {
       if (suggestions.size < MAX_COMMENT_SUGGESTIONS) {
         const searchResp = await api.get('/api/user/search', {
@@ -36,12 +35,11 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
         });
         const users = searchResp.data.users as User[];
         users.forEach((user) => {
-          if (user.id) searchSuggestions.set(user.id, user);
+          if (user.id) searchSuggestionsRef.current.set(user.id, user);
         });
-        setSearchSuggestions(searchSuggestions);
       }
       const filteredSuggestions = new Map<string, User>();
-      searchSuggestions.forEach((value, key) => {
+      searchSuggestionsRef.current.forEach((value, key) => {
         if (
           value.username?.toLowerCase().includes(text.toLowerCase()) ||
           value.firstName?.toLowerCase().includes(text.toLowerCase()) ||
@@ -62,28 +60,29 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
     return () => {
       debouncedFilterSuggestions.cancel();
     };
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- search runs once per input change; filterSuggestions is recreated every render and sets suggestions, so depending on it would refetch in a loop
   }, [input]);
+
+  const selectSuggestion = useEffectEvent((tag: string) => onSelect(tag));
 
   useEffect(() => {
     const handleKeyPress = (event: globalThis.KeyboardEvent) => {
       switch (event.key) {
         case 'Enter':
-          onSelect([...suggestions.values()][activeIndex]?.username ?? '');
+          selectSuggestion(
+            [...suggestions.values()][activeIndex]?.username ?? '',
+          );
           break;
         case 'ArrowUp':
-          if (activeIndex === 0) {
-            setActiveIndex(suggestions.size - 1);
-          } else {
-            setActiveIndex(activeIndex - 1);
-          }
+          setActiveIndex((index) =>
+            index === 0 ? suggestions.size - 1 : index - 1,
+          );
           break;
         case 'Tab':
         case 'ArrowDown':
-          if (activeIndex === suggestions.size - 1) {
-            setActiveIndex(0);
-          } else {
-            setActiveIndex(activeIndex + 1);
-          }
+          setActiveIndex((index) =>
+            index === suggestions.size - 1 ? 0 : index + 1,
+          );
           break;
         default:
           break;
@@ -135,54 +134,4 @@ export const Suggestions = ({ defaultSuggestions, input, onSelect }: Props) => {
 function getLastWord(str: string): string {
   const lastAtIndex = str.lastIndexOf('@');
   return str.slice(lastAtIndex + 1);
-}
-
-function replaceLastAtWord(str: string, replacement: string): string {
-  const lastAtIndex = str.lastIndexOf('@');
-  const removeLastWord = str.slice(0, lastAtIndex);
-  return `${removeLastWord}${replacement}`;
-}
-
-export function addMention(str: string, username: string): string {
-  return replaceLastAtWord(str, `@${username} `);
-}
-
-export function userSuggestionOverrider(
-  event: KeyboardEvent<HTMLTextAreaElement>,
-  lastInput: string,
-  hideSuggestions: () => void,
-) {
-  switch (event.key) {
-    case 'Enter':
-      event.preventDefault();
-      break;
-    case 'ArrowUp':
-      event.preventDefault();
-      break;
-    case 'ArrowDown':
-      event.preventDefault();
-      break;
-    case 'ArrowLeft':
-      event.preventDefault();
-      break;
-    case 'ArrowRight':
-      event.preventDefault();
-      break;
-    case 'Tab':
-      event.preventDefault();
-      break;
-    case 'Escape':
-      hideSuggestions();
-      break;
-    case 'Backspace':
-      if (lastInput[lastInput.length - 1] === '@') {
-        hideSuggestions();
-      }
-      break;
-    case ' ':
-      hideSuggestions();
-      break;
-    default:
-      break;
-  }
 }

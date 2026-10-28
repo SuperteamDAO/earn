@@ -42,7 +42,7 @@ export const EmailSettingsModal = ({
   const { user, refetchUser } = useUser();
 
   const emailSettings = user?.emailSettings || [];
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() =>
     emailSettings.map((setting) => setting.category),
   );
   const [isUpdating, setIsUpdating] = useState(false);
@@ -64,12 +64,12 @@ export const EmailSettingsModal = ({
       });
 
       await refetchUser();
-      setIsUpdating(false);
       onClose();
       toast.success('Email preferences updated');
     } catch (error) {
       console.error('Error updating email preferences:', error);
       toast.error('Failed to update email preferences.');
+    } finally {
       setIsUpdating(false);
     }
   };

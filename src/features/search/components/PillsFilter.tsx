@@ -16,12 +16,15 @@ export function PillsFilter({
   onSkillsChange,
   disabled = false,
 }: PillsFilterProps) {
-  const [localActiveSkills, setLocalActiveSkills] =
-    useState<SearchSkills[]>(activeSkills);
-
-  useEffect(() => {
-    setLocalActiveSkills(activeSkills);
-  }, [activeSkills]);
+  // The draft remembers which activeSkills it was picked against, so a new
+  // value from the parent (debounced commit or the dropdown filter) replaces it
+  // without an effect.
+  const [draft, setDraft] = useState<{
+    base: SearchSkills[];
+    skills: SearchSkills[];
+  }>();
+  const localActiveSkills =
+    draft?.base === activeSkills ? draft.skills : activeSkills;
 
   const debouncedSkillsChange = useMemo(
     () =>
@@ -45,19 +48,21 @@ export function PillsFilter({
         ? localActiveSkills.filter((s) => s !== skill)
         : [...localActiveSkills, skill];
 
-      setLocalActiveSkills(newSkills);
+      setDraft({ base: activeSkills, skills: newSkills });
 
       debouncedSkillsChange(newSkills);
     },
-    [localActiveSkills, debouncedSkillsChange, disabled],
+    [localActiveSkills, activeSkills, debouncedSkillsChange, disabled],
   );
+
+  const localActiveSkillSet = new Set(localActiveSkills);
 
   return (
     <div className="flex flex-wrap gap-2">
       {skillsData.map((skill) => (
         <div key={skill.value}>
           <CategoryPill
-            isActive={localActiveSkills.includes(skill.value)}
+            isActive={localActiveSkillSet.has(skill.value)}
             onClick={() => handleSkillToggle(skill.value)}
             disabled={disabled}
           >

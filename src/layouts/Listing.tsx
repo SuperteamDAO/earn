@@ -24,7 +24,7 @@ import { SubmissionActionButton } from '@/features/listings/components/Submissio
 import { submissionCountQuery } from '@/features/listings/queries/submission-count';
 import { type PublicListing } from '@/features/listings/types';
 import { getListingTypeLabel } from '@/features/listings/utils/status';
-import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
+import { bountySnackbarAtom } from '@/features/navbar/atoms';
 
 interface ListingPageProps {
   listing: PublicListing | null;
@@ -57,6 +57,7 @@ export function ListingPageLayout({
     } else if (initialListing?.type === 'project') {
       posthog.capture('open_project');
     }
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- page-open analytics event, captured once per mount so it is not double-counted
   }, []);
 
   useEffect(() => {
@@ -65,7 +66,7 @@ export function ListingPageLayout({
         isCaution: initialListing.sponsor?.isCaution,
         submissionCount: submissionNumber,
         deadline: initialListing.deadline,
-        rewardAmount: initialListing.rewardAmount,
+        rewardAmount: initialListing.rewardAmount ?? undefined,
         type: initialListing.type,
         isPublished: initialListing.isPublished,
         status: initialListing.status,
@@ -249,8 +250,6 @@ export function ListingPageLayout({
                   <Comments
                     isTemplate={isTemplate}
                     isAnnounced={initialListing?.isWinnersAnnounced ?? false}
-                    listingSlug={initialListing?.slug ?? ''}
-                    listingType={initialListing?.type ?? ''}
                     poc={initialListing?.poc as User}
                     sponsorId={initialListing?.sponsorId}
                     isVerified={initialListing?.sponsor?.isVerified}

@@ -2,6 +2,7 @@ import SumsubWebSdk from '@sumsub/websdk-react';
 import {
   type AnyEventPayload,
   type MessageHandler,
+  type SnsError,
 } from '@sumsub/websdk/types/types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
@@ -74,8 +75,8 @@ export const KYCModal = ({
     theme: 'light',
   };
 
-  const errorHandler = (error: any) => {
-    toast.error(`KYC failed: ${error.message}`);
+  const errorHandler = (error: SnsError) => {
+    toast.error(`KYC failed: ${error.reason ?? error.error}`);
   };
 
   async function onMessage(type: MessageType, payload: AnyEventPayload) {

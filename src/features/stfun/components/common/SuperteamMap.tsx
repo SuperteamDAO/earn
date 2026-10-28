@@ -2,7 +2,7 @@
 
 import lookup from 'country-code-lookup';
 import * as d3 from 'd3';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useEffectEvent, useMemo, useRef } from 'react';
 
 import type { ChapterRegionData } from '@/interface/chapter';
 
@@ -73,6 +73,17 @@ const COUNTRY_MARKER_OVERRIDES = new Map<string, readonly [number, number]>([
   ['SGP', [103.8198, 1.3521] as const],
 ]);
 
+// Features in /api/geo/world.geojson are keyed by ISO3 code.
+type CountryFeature = d3.ExtendedFeature & { id: string };
+type WorldData = d3.ExtendedFeatureCollection<CountryFeature>;
+
+// Countries too small to see get a dot instead: positioned from the country
+// shape when the geojson has one, otherwise from a fixed coordinate.
+type MarkerCandidate =
+  | { iso3: string; feature: CountryFeature }
+  | { iso3: string; coordinates: readonly [number, number] };
+type PositionedMarker = MarkerCandidate & { position: [number, number] };
+
 interface SuperteamMapProps {
   chapters: ChapterRegionData[];
   hoveredSuperteam: string | null;
@@ -95,33 +106,27 @@ export default function SuperteamMap({
     [chapters],
   );
 
-  const handleCountryHover = useCallback(
-    (iso3Code: string | null) => {
-      if (!iso3Code) {
-        onHoverChange(null);
-        return;
-      }
+  const handleCountryHover = useEffectEvent((iso3Code: string | null) => {
+    if (!iso3Code) {
+      onHoverChange(null);
+      return;
+    }
 
-      const superteamCode = iso3ToSuperteamMap.get(iso3Code);
-      if (superteamCode) {
-        onHoverChange(superteamCode);
-      }
-    },
-    [iso3ToSuperteamMap, onHoverChange],
-  );
+    const superteamCode = iso3ToSuperteamMap.get(iso3Code);
+    if (superteamCode) {
+      onHoverChange(superteamCode);
+    }
+  });
 
-  const handleCountryClick = useCallback(
-    (iso3Code: string) => {
-      const superteamCode = iso3ToSuperteamMap.get(iso3Code);
-      if (!superteamCode) return;
+  const handleCountryClick = useEffectEvent((iso3Code: string) => {
+    const superteamCode = iso3ToSuperteamMap.get(iso3Code);
+    if (!superteamCode) return;
 
-      const superteam = chapters.find((st) => st.code === superteamCode);
-      if (superteam?.link) {
-        window.open(superteam.link, '_blank', 'noopener,noreferrer');
-      }
-    },
-    [chapters, iso3ToSuperteamMap],
-  );
+    const superteam = chapters.find((st) => st.code === superteamCode);
+    if (superteam?.link) {
+      window.open(superteam.link, '_blank', 'noopener,noreferrer');
+    }
+  });
 
   // Effect to update map colors when hoveredSuperteam changes
   useEffect(() => {
@@ -140,66 +145,72 @@ export default function SuperteamMap({
       ? superteamCodeMap.get(hoveredSuperteam) || []
       : [];
 
-    svg.selectAll('.countries path').each(function (d: any) {
-      const element = d3.select(this);
-      const isSuperteam = superteamCodes.includes(d.id);
-      const isHovered = hoveredIso3Codes.includes(d.id);
+    svg
+      .selectAll<SVGPathElement, CountryFeature>('.countries path')
+      .each(function (d) {
+        const element = d3.select(this);
+        const isSuperteam = superteamCodes.includes(d.id);
+        const isHovered = hoveredIso3Codes.includes(d.id);
 
-      if (hoveredSuperteam) {
-        if (isHovered) {
-          // Hovered country - brighter
-          element
-            .attr('fill', hoverHighlightColor)
-            .attr('stroke', hoverHighlightColor)
-            .attr('stroke-width', 1);
-        } else if (isSuperteam) {
-          // Other superteam countries - dimmed
-          element
-            .attr('fill', dimmedColor)
-            .attr('stroke', dimmedColor)
-            .attr('stroke-width', 0.5);
+        if (hoveredSuperteam) {
+          if (isHovered) {
+            // Hovered country - brighter
+            element
+              .attr('fill', hoverHighlightColor)
+              .attr('stroke', hoverHighlightColor)
+              .attr('stroke-width', 1);
+          } else if (isSuperteam) {
+            // Other superteam countries - dimmed
+            element
+              .attr('fill', dimmedColor)
+              .attr('stroke', dimmedColor)
+              .attr('stroke-width', 0.5);
+          } else {
+            // Non-superteam countries - default
+            element.attr('fill', defaultColor);
+          }
         } else {
-          // Non-superteam countries - default
-          element.attr('fill', defaultColor);
+          // No hover - reset to default state
+          if (isSuperteam) {
+            element
+              .attr('fill', highlightColor)
+              .attr('stroke', highlightColor)
+              .attr('stroke-width', 0.5);
+          } else {
+            element.attr('fill', defaultColor);
+          }
         }
-      } else {
-        // No hover - reset to default state
-        if (isSuperteam) {
+      });
+
+    svg
+      .selectAll<SVGCircleElement, PositionedMarker>('.country-markers circle')
+      .each(function (d) {
+        const element = d3.select(this);
+        const isHovered = hoveredIso3Codes.includes(d.iso3);
+
+        if (hoveredSuperteam) {
+          if (isHovered) {
+            element
+              .attr('fill', hoverHighlightColor)
+              .attr('stroke', hoverHighlightColor)
+              .attr('stroke-width', 1);
+          } else {
+            element
+              .attr('fill', dimmedColor)
+              .attr('stroke', dimmedColor)
+              .attr('stroke-width', 0.5);
+          }
+        } else {
           element
             .attr('fill', highlightColor)
             .attr('stroke', highlightColor)
             .attr('stroke-width', 0.5);
-        } else {
-          element.attr('fill', defaultColor);
         }
-      }
-    });
-
-    svg.selectAll('.country-markers circle').each(function (d: any) {
-      const element = d3.select(this);
-      const isHovered = hoveredIso3Codes.includes(d.iso3);
-
-      if (hoveredSuperteam) {
-        if (isHovered) {
-          element
-            .attr('fill', hoverHighlightColor)
-            .attr('stroke', hoverHighlightColor)
-            .attr('stroke-width', 1);
-        } else {
-          element
-            .attr('fill', dimmedColor)
-            .attr('stroke', dimmedColor)
-            .attr('stroke-width', 0.5);
-        }
-      } else {
-        element
-          .attr('fill', highlightColor)
-          .attr('stroke', highlightColor)
-          .attr('stroke-width', 0.5);
-      }
-    });
+      });
   }, [chapters, hoveredSuperteam, superteamCodeMap]);
 
+  // react-doctor-disable-next-line react-doctor/effect-needs-cleanup -- the d3 `.on` listeners live on nodes the cleanup removes with the svg
+  // react-doctor-disable-next-line react-doctor/no-fetch-in-effect -- the geojson only feeds the imperative d3 render built in this effect, and the cancelled flag drops a response that lands after cleanup
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -215,8 +226,10 @@ export default function SuperteamMap({
 
     const projection = d3.geoNaturalEarth1();
     const path = d3.geoPath().projection(projection);
-    const getMarkerPosition = (marker: any): [number, number] | null => {
-      if (marker.feature) {
+    const getMarkerPosition = (
+      marker: MarkerCandidate,
+    ): [number, number] | null => {
+      if ('feature' in marker) {
         const [cx, cy] = path.centroid(marker.feature);
         if (Number.isFinite(cx) && Number.isFinite(cy)) {
           return [cx, cy];
@@ -225,15 +238,13 @@ export default function SuperteamMap({
         return null;
       }
 
-      if (marker.coordinates) {
-        const projected = projection(marker.coordinates);
-        if (
-          projected &&
-          Number.isFinite(projected[0]) &&
-          Number.isFinite(projected[1])
-        ) {
-          return [projected[0], projected[1]];
-        }
+      const projected = projection([...marker.coordinates]);
+      if (
+        projected &&
+        Number.isFinite(projected[0]) &&
+        Number.isFinite(projected[1])
+      ) {
+        return [projected[0], projected[1]];
       }
 
       return null;
@@ -289,33 +300,43 @@ export default function SuperteamMap({
       .attr('operator', 'in');
 
     let resizeHandler: (() => void) | null = null;
-    let worldData: any = null;
-    let markerGroup: any = null;
-    let normalizedMarkers: any[] = [];
+    let worldData: WorldData | null = null;
+    let markerGroup: d3.Selection<
+      SVGGElement,
+      unknown,
+      null,
+      undefined
+    > | null = null;
+    let normalizedMarkers: PositionedMarker[] = [];
+    let cancelled = false;
 
     const initMap = async () => {
       const response = await fetch('/api/geo/world.geojson');
-      const rawWorldData = await response.json();
+      if (!response.ok) return;
+      const rawWorldData: WorldData = await response.json();
+      // The effect may have been cleaned up while the fetch was in flight.
+      if (cancelled) return;
 
       // Filter out Antarctica
-      worldData = {
+      const world: WorldData = {
         ...rawWorldData,
         features: rawWorldData.features.filter(
-          (feature: any) => feature.id !== 'ATA' && feature.id !== 'AQ',
+          (feature) => feature.id !== 'ATA' && feature.id !== 'AQ',
         ),
       };
+      worldData = world;
 
       // Fit the entire globe to the viewport
-      projection.fitSize([width, height], worldData);
+      projection.fitSize([width, height], world);
 
-      const featureById = new Map<string, any>();
-      for (const feature of worldData.features) {
+      const featureById = new Map<string, CountryFeature>();
+      for (const feature of world.features) {
         if (feature?.id) {
           featureById.set(feature.id, feature);
         }
       }
 
-      const markerCandidates: any[] = [];
+      const markerCandidates: MarkerCandidate[] = [];
       for (const iso3 of superteamCodes) {
         const feature = featureById.get(iso3);
         if (feature) {
@@ -350,28 +371,28 @@ export default function SuperteamMap({
       const countriesGroup = svg.append('g').attr('class', 'countries');
 
       countriesGroup
-        .selectAll('path')
-        .data(worldData.features)
+        .selectAll<SVGPathElement, CountryFeature>('path')
+        .data(world.features)
         .enter()
         .append('path')
-        .attr('d', path as any)
-        .attr('fill', (d: any) =>
+        .attr('d', (d) => path(d))
+        .attr('fill', (d) =>
           superteamCodes.includes(d.id) ? highlightColor : defaultColor,
         )
-        .attr('stroke', (d: any) =>
+        .attr('stroke', (d) =>
           superteamCodes.includes(d.id) ? highlightColor : defaultStroke,
         )
-        .attr('stroke-width', (d: any) =>
+        .attr('stroke-width', (d) =>
           superteamCodes.includes(d.id) ? 0.5 : 0.25,
         )
-        .attr('filter', (d: any) =>
+        .attr('filter', (d) =>
           superteamCodes.includes(d.id) ? 'url(#countryNoise)' : 'none',
         )
-        .style('cursor', (d: any) =>
+        .style('cursor', (d) =>
           superteamCodes.includes(d.id) ? 'pointer' : 'default',
         )
         .style('transition', 'fill 0.2s ease, stroke 0.2s ease')
-        .on('mouseenter', function (_event: any, d: any) {
+        .on('mouseenter', function (_event: MouseEvent, d) {
           if (superteamCodes.includes(d.id)) {
             handleCountryHover(d.id);
           }
@@ -379,7 +400,7 @@ export default function SuperteamMap({
         .on('mouseleave', function () {
           handleCountryHover(null);
         })
-        .on('click', function (_event: any, d: any) {
+        .on('click', function (_event: MouseEvent, d) {
           if (superteamCodes.includes(d.id)) {
             handleCountryClick(d.id);
           }
@@ -387,26 +408,26 @@ export default function SuperteamMap({
 
       markerGroup = svg.append('g').attr('class', 'country-markers');
       markerGroup
-        .selectAll('circle')
+        .selectAll<SVGCircleElement, PositionedMarker>('circle')
         .data(normalizedMarkers)
         .enter()
         .append('circle')
-        .attr('data-iso3', (d: any) => d.iso3)
+        .attr('data-iso3', (d) => d.iso3)
         .attr('r', NORMALIZED_MARKER_RADIUS_PX)
-        .attr('cx', (d: any) => d.position[0])
-        .attr('cy', (d: any) => d.position[1])
+        .attr('cx', (d) => d.position[0])
+        .attr('cy', (d) => d.position[1])
         .attr('fill', highlightColor)
         .attr('stroke', highlightColor)
         .attr('stroke-width', 0.5)
         .style('cursor', 'pointer')
         .style('transition', 'fill 0.2s ease, stroke 0.2s ease')
-        .on('mouseenter', function (_event: any, d: any) {
+        .on('mouseenter', function (_event: MouseEvent, d) {
           handleCountryHover(d.iso3);
         })
         .on('mouseleave', function () {
           handleCountryHover(null);
         })
-        .on('click', function (_event: any, d: any) {
+        .on('click', function (_event: MouseEvent, d) {
           handleCountryClick(d.iso3);
         });
 
@@ -419,13 +440,15 @@ export default function SuperteamMap({
         projection.fitSize([width, height], worldData);
 
         svg.attr('width', width).attr('height', height);
-        svg.selectAll('.countries path').attr('d', path as any);
+        svg
+          .selectAll<SVGPathElement, CountryFeature>('.countries path')
+          .attr('d', (d) => path(d));
 
         if (markerGroup) {
           markerGroup
-            .selectAll('circle')
-            .attr('cx', (d: any) => getMarkerPosition(d)?.[0] ?? 0)
-            .attr('cy', (d: any) => getMarkerPosition(d)?.[1] ?? 0);
+            .selectAll<SVGCircleElement, PositionedMarker>('circle')
+            .attr('cx', (d) => getMarkerPosition(d)?.[0] ?? 0)
+            .attr('cy', (d) => getMarkerPosition(d)?.[1] ?? 0);
         }
       };
 
@@ -435,6 +458,7 @@ export default function SuperteamMap({
     initMap();
 
     return () => {
+      cancelled = true;
       if (svgRef.current) {
         svgRef.current.remove();
       }
@@ -442,7 +466,7 @@ export default function SuperteamMap({
         window.removeEventListener('resize', resizeHandler);
       }
     };
-  }, [chapters, handleCountryHover, handleCountryClick]);
+  }, [chapters]);
 
   return (
     <div

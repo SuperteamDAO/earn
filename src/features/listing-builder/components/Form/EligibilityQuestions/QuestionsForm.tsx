@@ -192,7 +192,7 @@ function EligibilityQuestionItem({
                           placeholder="Enter your question"
                           minRows={isFocused ? 2 : 1}
                           rows={1}
-                          className="min-h-8 resize-none overflow-hidden border-none py-2 pl-2 text-sm transition-all duration-200 ease-in-out placeholder:text-sm placeholder:text-slate-400 focus:ring-0 focus:outline-hidden focus-visible:ring-0"
+                          className="min-h-8 resize-none overflow-hidden border-none py-2 pl-2 text-sm transition-[height] duration-200 ease-in-out placeholder:text-sm placeholder:text-slate-400 focus:ring-0 focus:outline-hidden focus-visible:ring-0"
                           onChange={(e) => {
                             questionField.onChange(e);
                             form.saveDraft();
@@ -293,7 +293,7 @@ export function EligibilityQuestionsForm() {
       );
       scrollToBottom();
     },
-    [append, scrollToBottom, type, fields.length],
+    [append, scrollToBottom, fields.length],
   );
 
   const handleRemoveQuestion = useCallback(

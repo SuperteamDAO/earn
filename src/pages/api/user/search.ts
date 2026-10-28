@@ -99,7 +99,7 @@ export default async function searchUser(
 
     logger.info(`Users found: ${users.length}`);
     return res.status(200).json({ users });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while searching for users: ${safeStringify(error)}`,
     );

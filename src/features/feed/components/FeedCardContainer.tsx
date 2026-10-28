@@ -31,12 +31,12 @@ interface FeedCardContainerProps {
   actionLinks: ReactNode;
   children: ReactNode;
   type: 'activity' | 'profile';
-  firstName: string;
-  lastName: string;
-  photo: string | undefined;
+  firstName: string | null;
+  lastName: string | null;
+  photo: string | undefined | null;
   username?: string;
   id: string;
-  like: any;
+  like?: FeedDataProps['like'];
   commentLink?: string;
   commentCount?: number;
   cardType: 'submission' | 'pow' | 'grant-application';
@@ -67,7 +67,7 @@ export const FeedCardContainer = ({
   const { user } = useUser();
 
   const [isLiked, setIsLiked] = useState<boolean>(
-    !!like?.find((e: any) => e.id === user?.id),
+    !!like?.find((e) => e.id === user?.id),
   );
   const [totalLikes, setTotalLikes] = useState<number>(like?.length ?? 0);
   const {
@@ -91,7 +91,7 @@ export const FeedCardContainer = ({
   const sanitizedLink = getURLSanitized(link);
 
   useEffect(() => {
-    setIsLiked(!!like?.find((e: any) => e.id === user?.id));
+    setIsLiked(!!like?.find((e) => e.id === user?.id));
   }, [like, user?.id]);
 
   const handleLike = async () => {
@@ -166,7 +166,10 @@ export const FeedCardContainer = ({
               )}
               id="feed-actions"
             >
-              <div
+              <button
+                type="button"
+                aria-label={`${totalLikes} likes`}
+                aria-pressed={isLiked}
                 className="ph-no-capture z-10 mr-2 flex items-center gap-1"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -186,8 +189,11 @@ export const FeedCardContainer = ({
                 <p className="cursor-pointer text-sm font-medium text-slate-500 sm:text-base">
                   {totalLikes}
                 </p>
-              </div>
-              <div
+              </button>
+              <button
+                type="button"
+                aria-label={`${commentCount} comments`}
+                aria-expanded={isCommentOpen}
                 className="ph-no-capture z-10 mr-2 flex items-center gap-1"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -206,12 +212,13 @@ export const FeedCardContainer = ({
                     <EarnAvatar
                       avatar={comment.author.photo!}
                       id={comment.author.name!}
+                      // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- commenters carry no id and the same author can appear twice; the avatars hold no state, so position is the identity
                       key={index}
                       className="h-6 w-6 border border-white"
                     />
                   ))}
                 </div>
-              </div>
+              </button>
             </div>
           )}
           <Collapsible open={isCommentOpen}>
@@ -226,8 +233,6 @@ export const FeedCardContainer = ({
               >
                 <Comments
                   isAnnounced={false}
-                  listingSlug={''}
-                  listingType={''}
                   poc={undefined}
                   sponsorId={undefined}
                   isVerified={false}

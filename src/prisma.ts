@@ -52,9 +52,11 @@ if (isPlanetScale) {
   prismaClient = new PrismaClient({
     omit: omitConfig,
     transactionOptions: { maxWait: 5000, timeout: 15000 },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma 7's client engine requires an adapter, so this options object is not a valid type and the branch throws at runtime unless the MariaDB adapter above is enabled
   } as any);
 }
 
+// eslint-disable-next-line no-shadow-restricted-names -- Prisma's documented singleton typing, which keeps one client across hot reloads
 declare const globalThis: { prismaGlobal: typeof prismaClient } & typeof global;
 
 export const prisma = globalThis.prismaGlobal ?? prismaClient;

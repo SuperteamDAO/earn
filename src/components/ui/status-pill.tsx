@@ -27,6 +27,20 @@ export function StatusPill({
         className,
       )}
       onClick={onClick}
+      // Not a <button>: that renders inline-block and would start honoring the
+      // w-full above, which this inline span ignores, stretching the pill.
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
     >
       {children}
     </span>

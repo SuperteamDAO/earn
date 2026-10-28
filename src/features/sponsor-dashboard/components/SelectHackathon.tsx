@@ -1,6 +1,10 @@
 import { useSetAtom } from 'jotai';
 import { useEffect, useState } from 'react';
-import { components } from 'react-select';
+import {
+  components,
+  type OptionProps,
+  type SingleValueProps,
+} from 'react-select';
 import AsyncSelect from 'react-select/async';
 
 import type { SponsorType } from '@/interface/sponsor';
@@ -9,10 +13,11 @@ import { useUpdateUser, useUser } from '@/store/user';
 
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
-import { hackathonSponsorAtom } from './SelectSponsor';
+import { hackathonSponsorAtom } from '../atoms';
 
 interface HackathonOptionType extends SponsorType {
   role?: string;
+  altLogo?: string | null;
 }
 
 interface HackathonOption {
@@ -43,7 +48,7 @@ export function SelectHackathon({
         hackathon: user?.Hackathon,
       });
     }
-  }, [user]);
+  }, [type, user]);
 
   const loadHackathons = (
     inputValue: string,
@@ -69,7 +74,8 @@ export function SelectHackathon({
     }
   };
 
-  const handleChange = async (option?: any) => {
+  const handleChange = async (option: HackathonOption | null) => {
+    if (!option?.value) return;
     if (type === 'hackathon') {
       setHackathonSponsor(option.value);
       setSelectedHackathon(option);
@@ -78,11 +84,11 @@ export function SelectHackathon({
     }
   };
 
-  const SingleValue = ({ children, ...props }: any) => {
+  const SingleValue = (props: SingleValueProps<HackathonOption, false>) => {
     const { data, selectProps } = props;
 
     if (selectProps.menuIsOpen) {
-      return <components.SingleValue {...props}></components.SingleValue>;
+      return <components.SingleValue {...props}>{null}</components.SingleValue>;
     }
 
     return (
@@ -90,7 +96,7 @@ export function SelectHackathon({
         <div className="flex items-center py-1">
           <EarnAvatar
             id={data?.hackathon?.name}
-            avatar={data?.hackathon?.altLogo}
+            avatar={data?.hackathon?.altLogo ?? undefined}
             className="h-6 w-6 rounded-sm"
           />
           <div className="ml-2 hidden md:block">
@@ -102,7 +108,7 @@ export function SelectHackathon({
     );
   };
 
-  const Option = (props: any) => {
+  const Option = (props: OptionProps<HackathonOption, false>) => {
     const { data } = props;
     return (
       <components.Option {...props}>
@@ -110,7 +116,7 @@ export function SelectHackathon({
           <EarnAvatar
             className="rounded-sm"
             id={data?.hackathon?.name}
-            avatar={data?.hackathon?.altLogo}
+            avatar={data?.hackathon?.altLogo ?? undefined}
           />
           <div className="ml-2 hidden md:block">
             <p className="text-sm text-slate-800">{data?.hackathon?.name}</p>

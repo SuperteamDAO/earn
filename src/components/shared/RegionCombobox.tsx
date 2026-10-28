@@ -138,12 +138,12 @@ export function RegionCombobox({
     if (global)
       regions.push({ value: 'Global', label: 'Global', code: 'Global' });
     if (superteams) {
-      const chapterCountries = chapters.flatMap((chapter) =>
-        chapter.code.toLowerCase(),
+      const chapterCountrySet = new Set(
+        chapters.flatMap((chapter) => chapter.code.toLowerCase()),
       );
 
       const nonSuperteamCountries = isoCountries.filter(
-        (country) => !chapterCountries.includes(country.code.toLowerCase()),
+        (country) => !chapterCountrySet.has(country.code.toLowerCase()),
       );
       regions.push({
         label: 'Chapter Regions',
@@ -291,11 +291,11 @@ export function RegionCombobox({
                 </CommandItem>
               )}
             </CommandGroup>
-            {filteredOptions?.map((option, idx) => {
+            {filteredOptions?.map((option) => {
               if (isGroupedOption(option)) {
                 return (
                   <CommandGroup
-                    key={`${option.label}-${idx}`}
+                    key={`group-${option.label}`}
                     heading={option.label}
                   >
                     {option.options.map((item) => (

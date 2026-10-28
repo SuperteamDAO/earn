@@ -145,15 +145,15 @@ function TokenSearchLabel({
           triggerClassName="block w-fit cursor-pointer"
           disableOnClickClose
         >
-          <p
-            className="truncate text-xs text-slate-500 hover:underline"
-            onClick={(event) => {
-              event.stopPropagation();
-              openJupiterTokenPage(mintAddress);
-            }}
+          <a
+            href={getJupiterTokenUrl(mintAddress)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block truncate text-xs text-slate-500 hover:underline"
+            onClick={(event) => event.stopPropagation()}
           >
             {truncatePublicKey(mintAddress, 6)}
-          </p>
+          </a>
         </Tooltip>
       </div>
     </div>

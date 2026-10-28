@@ -26,12 +26,14 @@ export default function Talent() {
     if (authenticated && user && user?.isTalentFilled) {
       const originUrl = params?.get('originUrl');
       if (!!originUrl && typeof originUrl === 'string') {
+        // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- whether the talent profile is filled comes from the client-side user store behind the Privy session, which this page has no server data fetching to read
         router.push(originUrl);
       } else {
+        // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- whether the talent profile is filled comes from the client-side user store behind the Privy session, which this page has no server data fetching to read
         router.push('/earn');
       }
     }
-  }, [user, authenticated, router]);
+  }, [user, authenticated, router, params]);
 
   return (
     <Default

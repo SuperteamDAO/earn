@@ -1,11 +1,13 @@
 import { drive } from '@googleapis/drive';
-import { sheets } from '@googleapis/sheets';
+import { sheets, type sheets_v4 } from '@googleapis/sheets';
 import { OAuth2Client } from 'google-auth-library';
 import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { dayjs } from '@/utils/dayjs';
+import { getErrorMessage } from '@/utils/getErrorMessage';
+import { parseQuestionAnswers } from '@/utils/parseQuestionAnswers';
 import { plainTextFromHtmlTurndown } from '@/utils/plainTextFromHtml';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -35,10 +37,10 @@ function getGoogleAuthClient() {
   return oauth2Client;
 }
 
-function jsonToSheetRows(data: any[]): string[][] {
+function jsonToSheetRows(data: Record<string, unknown>[]): string[][] {
   if (data.length === 0) return [];
 
-  const headers = Object.keys(data[0]);
+  const headers = Object.keys(data[0] ?? {});
 
   const rows = [
     ['Please go to File -> Make a Copy to duplicate and edit this document'],
@@ -63,7 +65,11 @@ function chunkArray<T>(array: T[], chunkSize: number): T[][] {
   return chunks;
 }
 
-function getSocialMediaLink(user: any): string {
+function getSocialMediaLink(user: {
+  telegram: string | null;
+  twitter: string | null;
+  discord: string | null;
+}): string {
   if (user.telegram) return user.telegram;
   if (user.twitter) return user.twitter;
   if (user.discord) return user.discord;
@@ -120,8 +126,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       );
       const customGrantAnswers: { [key: string]: string } = {};
       questionSet.forEach((question) => {
-        const answer = (application as any).answers?.find(
-          (a: any) => a.question === question,
+        const answer = parseQuestionAnswers(application.answers).find(
+          (a) => a.question === question,
         );
         customGrantAnswers[question] = answer
           ? plainTextFromHtmlTurndown.turndown(answer.answer)
@@ -166,10 +172,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     try {
       await auth.getAccessToken();
       logger.debug('Successfully authenticated with Google APIs');
-    } catch (authError: any) {
-      logger.error(`Authentication failed: ${authError.message}`);
+    } catch (authError) {
+      logger.error(`Authentication failed: ${getErrorMessage(authError)}`);
       throw new Error(
-        `Failed to authenticate with Google: ${authError.message}`,
+        `Failed to authenticate with Google: ${getErrorMessage(authError)}`,
       );
     }
 
@@ -311,7 +317,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             if (finalJson.length === 0) return [];
 
             const headers = Object.keys(finalJson[0] || {});
-            const columnWidthRequests: any[] = [];
+            const columnWidthRequests: sheets_v4.Schema$Request[] = [];
 
             headers.forEach((header, colIndex) => {
               const lengths: number[] = [];
@@ -405,7 +411,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     return res.status(200).json({
       url: spreadsheetUrl,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     logger.error(
       `User ${userId} unable to export to Google Sheets: ${safeStringify(error)}`,

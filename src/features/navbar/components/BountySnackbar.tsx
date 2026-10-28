@@ -1,25 +1,13 @@
-import { atom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { Pencil } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { type status } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
 
-type BountySnackbarType = {
-  isCaution: boolean | undefined;
-  submissionCount: number;
-  deadline: string | undefined;
-  rewardAmount: number | undefined;
-  type: string | undefined;
-  isPublished: boolean | undefined;
-  status?: status;
-  sponsorId: string | undefined;
-  slug: string | undefined;
-};
-
-export const bountySnackbarAtom = atom<BountySnackbarType | null>(null);
+import { bountySnackbarAtom } from '../atoms';
 
 export const BountySnackbar = () => {
   const router = useRouter();
@@ -108,24 +96,29 @@ export const BountySnackbar = () => {
   const bgColorClass = getBackgroundColor();
 
   if (showSnackbar && bountySnackbar && message) {
-    return (
-      <div
-        className={cn(
-          'flex w-full items-center justify-center gap-1 text-white',
-          bgColorClass,
-          isPreviewSponsor ? 'cursor-pointer' : 'cursor-default',
-        )}
-        onClick={() => {
-          if (!isPreviewSponsor) return;
-          router.push(`/earn/dashboard/listings/${slug}/edit`);
-        }}
-      >
-        {isPreviewSponsor && <Pencil className="h-4 w-4" />}
-        <p className="p-3 text-center text-xs font-medium md:text-sm">
-          {message}
-        </p>
-      </div>
+    const className = cn(
+      'flex w-full items-center justify-center gap-1 text-white',
+      bgColorClass,
+      isPreviewSponsor ? 'cursor-pointer' : 'cursor-default',
     );
+    const messageText = (
+      <p className="p-3 text-center text-xs font-medium md:text-sm">
+        {message}
+      </p>
+    );
+
+    if (isPreviewSponsor) {
+      return (
+        <Link
+          href={`/earn/dashboard/listings/${slug}/edit`}
+          className={className}
+        >
+          <Pencil className="h-4 w-4" />
+          {messageText}
+        </Link>
+      );
+    }
+    return <div className={className}>{messageText}</div>;
   }
   return null;
 };

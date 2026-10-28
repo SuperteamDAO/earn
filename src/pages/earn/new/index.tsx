@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
-import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
@@ -36,19 +35,17 @@ export default function NewProfilePage({
   const { data: totals } = useQuery(userCountQuery);
 
   const router = useRouter();
-  const params = useSearchParams();
   const { user } = useUser();
   const [isTalentLoading, setIsTalentLoading] = useState(false);
   const [isSponsorLoading, setIsSponsorLoading] = useState(false);
 
   const checkTalent = async () => {
-    // localStorage.setItem(ONBOARDING_KEY, 'talent');
     if (!user) return;
     try {
-      // localStorage.removeItem(ONBOARDING_KEY);
       if (!user?.isTalentFilled) {
-        const originUrl = params?.get('originUrl');
-        const type = params?.get('type');
+        const params = new URLSearchParams(window.location.search);
+        const originUrl = params.get('originUrl');
+        const type = params.get('type');
         const query: Record<string, string> = {};
         if (originUrl) query['originUrl'] = originUrl;
         if (type) query['type'] = type;
@@ -65,16 +62,16 @@ export default function NewProfilePage({
   };
 
   const checkSponsor = async () => {
-    // localStorage.setItem(ONBOARDING_KEY, 'sponsor');
     if (!user) return;
     try {
-      // localStorage.removeItem(ONBOARDING_KEY);
       const { data } =
         await api.get<UserSponsorsResponse>('/api/user-sponsors');
       if (data.hasSponsorMembership && user.currentSponsorId) {
         router.push('/earn/dashboard/listings?open=1');
       } else {
-        const originUrl = params?.get('originUrl');
+        const originUrl = new URLSearchParams(window.location.search).get(
+          'originUrl',
+        );
         router.push({
           pathname: '/earn/new/sponsor',
           query: originUrl ? { originUrl } : undefined,
@@ -110,6 +107,7 @@ export default function NewProfilePage({
               </div>
 
               <AuthWrapper className="w-full" onClick={checkTalent}>
+                {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions -- pointer convenience that widens the hit area of the TalentButton inside this card, which runs the same checkTalent and is the keyboard path */}
                 <div
                   className="flex w-full cursor-pointer flex-col gap-4 overflow-hidden rounded-md bg-white"
                   onClick={checkTalent}
@@ -144,8 +142,11 @@ export default function NewProfilePage({
               </AuthWrapper>
               <div className="mx-auto -mt-3 flex items-center gap-3">
                 <div className="flex -space-x-2">
-                  {avatars.slice(0, 3).map((avatar, index) => (
-                    <Avatar className="relative h-6 w-6 border-0" key={index}>
+                  {avatars.slice(0, 3).map((avatar) => (
+                    <Avatar
+                      className="relative h-6 w-6 border-0"
+                      key={avatar.name}
+                    >
                       <AvatarImage src={avatar.src} alt={avatar.name} />
                       <AvatarFallback>{avatar.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
@@ -175,6 +176,7 @@ export default function NewProfilePage({
               </p>
             </div>
             <AuthWrapper className="w-full" onClick={checkSponsor}>
+              {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions -- pointer convenience that widens the hit area of the SponsorButton inside this card, which runs the same checkSponsor and is the keyboard path */}
               <div
                 className="flex w-full cursor-pointer flex-col gap-4 overflow-hidden rounded-md bg-white"
                 onClick={checkSponsor}

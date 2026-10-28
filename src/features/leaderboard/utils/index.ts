@@ -6,7 +6,8 @@ export function getSubskills(
 ) {
   if (!skillsArray) return [];
   if (skillType && skillType.length !== 0) {
-    const skill = skillsArray.find((item) => skillType.includes(item.skills));
+    const skillTypeSet = new Set(skillType);
+    const skill = skillsArray.find((item) => skillTypeSet.has(item.skills));
     return skill ? skill.subskills : [];
   } else {
     return skillsArray.reduce((allSubskills: string[], item) => {

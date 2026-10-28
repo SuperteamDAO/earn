@@ -9,6 +9,7 @@ import {
   fetchAirtableRecordId,
 } from '@/utils/airtable';
 import { verifyImageExists } from '@/utils/cloudinary';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -31,7 +32,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.debug(`Request body: ${safeStringify(req.body)}`);
 
+    // The zod schema is the allowlist: unknown keys are stripped.
     const validationResult = sponsorBaseSchema.safeParse({
+      // react-doctor-disable-next-line react-doctor/request-body-mass-assignment -- validated by sponsorBaseSchema
       ...req.body,
       twitter:
         req.body.twitter !== undefined
@@ -76,7 +79,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         logger.info(
           `Logo verification successful for sponsor ${userSponsorId}: ${logo}`,
         );
-      } catch (error: any) {
+      } catch (error) {
         logger.warn(
           `Logo verification error for sponsor ${userSponsorId}: ${safeStringify(error)}`,
         );
@@ -153,9 +156,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
     logger.info(`Sponsor updated successfully for user: ${userId}`);
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error occurred while updating sponsor for user ${userId}: ${error.message}`,
+      `Error occurred while updating sponsor for user ${userId}: ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

@@ -26,7 +26,7 @@ import { MultiSelectFilter } from './MultiSelectFilter';
 import { SelectLabel } from './SelectLabel';
 
 interface Props {
-  listing?: Listing;
+  listing?: Omit<Listing, 'Hackathon'>;
   submissions: SubmissionWithUser[];
   setSearchText: Dispatch<SetStateAction<string>>;
   type?: string;
@@ -182,8 +182,18 @@ export const SubmissionList = ({
                   ? 'bg-slate-100'
                   : 'bg-transparent',
               )}
+              role="button"
+              tabIndex={0}
               onClick={() => {
                 setSelectedSubmission(submission);
+              }}
+              onKeyDown={(e) => {
+                // Keys pressed on the nested checkbox or label select bubble up here too.
+                if (e.target !== e.currentTarget) return;
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedSubmission(submission);
+                }
               }}
             >
               <div className="flex items-center">

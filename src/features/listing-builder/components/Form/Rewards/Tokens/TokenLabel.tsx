@@ -25,11 +25,12 @@ interface Props {
   formatter?: (amount: number) => string;
 }
 
-const defaultFormatter = (amount: number) =>
-  new Intl.NumberFormat('en-US', {
-    currency: 'USD',
-    maximumFractionDigits: 2,
-  }).format(amount);
+const amountFormat = new Intl.NumberFormat('en-US', {
+  currency: 'USD',
+  maximumFractionDigits: 2,
+});
+
+const defaultFormatter = (amount: number) => amountFormat.format(amount);
 
 export function TokenLabel({
   symbol,

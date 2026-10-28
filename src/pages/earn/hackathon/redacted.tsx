@@ -6,21 +6,16 @@ import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { domPurify } from '@/lib/domPurify';
 import { prisma } from '@/prisma';
 import { type HackathonGetPayload } from '@/prisma/models/Hackathon';
 import { statsDataQuery, trackDataQuery } from '@/queries/hackathon';
 import { RedactedLogo } from '@/svg/redacted';
 import { dayjs } from '@/utils/dayjs';
+
+import { HackathonFAQs } from '@/features/hackathon/components/HackathonFAQs';
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -42,7 +37,7 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
   const START_DATE = hackathon.startDate;
   const CLOSE_DATE = hackathon.deadline;
 
-  const [countdownDate, setCountdownDate] = useState<Date>(
+  const [countdownDate, setCountdownDate] = useState<Date>(() =>
     dayjs.utc(START_DATE).toDate(),
   );
   const [status, setStatus] = useState<'Start In' | 'Close In' | 'Closed'>(
@@ -155,7 +150,7 @@ export default function Redacted({ hackathon }: { hackathon: Hackathon }) {
           </div>
         </div>
         <div>
-          <FAQs />
+          <HackathonFAQs faqs={faqs} />
         </div>
       </div>
     </Default>
@@ -226,35 +221,3 @@ const faqs: { question: string; answer: string }[] = [
       'For general questions, join this public <a href="https://t.me/redacted_hackathon" target="_blank">Telegram group</a>. If your question is specific to a particular bounty, please use the "Reach Out" link of the bounty listing page or reach out to the bounty’s sponsor directly through other channels. All sponsors should have a public Discord, Telegram, or X account where you can ask questions. If you’re unable to get in touch with the bounty’s sponsor, please ask <a href="https://t.me/bradyowen" target="_blank">@bradyowen</a> in the public Telegram group for help.',
   },
 ];
-
-function FAQs() {
-  return (
-    <div className="mt-4 flex flex-col items-center px-1 py-8 md:mt-8">
-      <h2 className="pb-2 text-4xl font-bold md:text-5xl">FAQ</h2>
-      <div className="w-full max-w-[35rem]">
-        <Accordion type="single" collapsible>
-          {faqs.map((f) => (
-            <AccordionItem
-              key={f.question}
-              value={f.question}
-              className="my-4 rounded-lg border shadow-md"
-            >
-              <AccordionTrigger className="rounded px-4 py-3 text-left font-normal text-slate-500 hover:bg-black/5 hover:no-underline focus:no-underline data-[state=open]:bg-black/5">
-                <span className="flex-1 text-left text-sm sm:text-base">
-                  {f.question}
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="px-4 pt-3 text-sm text-slate-700 sm:text-base [&_a]:text-blue-700">
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: domPurify(f.answer),
-                  }}
-                />
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
-    </div>
-  );
-}

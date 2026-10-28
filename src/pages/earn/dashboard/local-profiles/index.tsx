@@ -45,8 +45,6 @@ export default function LocalProfiles() {
     };
   }, [setSearchText]);
 
-  console.log(allUsers?.[0]);
-
   useEffect(() => {
     posthog.capture('members tab_sponsor');
   }, []);
@@ -63,12 +61,12 @@ export default function LocalProfiles() {
     const selectedSkills = Object.keys(checkedItems).filter(
       (skill) => checkedItems[skill],
     );
-    const userSkills = user.skills.flatMap(
-      (skillGroup: any) => skillGroup.skills,
+    const userSkillSet = new Set<string>(
+      (user.skills ?? []).flatMap((skillGroup) => skillGroup.skills),
     );
     const skillsMatch =
       selectedSkills.length === 0 ||
-      selectedSkills.some((skill) => userSkills.includes(skill));
+      selectedSkills.some((skill) => userSkillSet.has(skill));
 
     return searchMatch && skillsMatch;
   });

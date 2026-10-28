@@ -20,7 +20,7 @@ export const scoutsQuery = ({ bountyId }: { bountyId: string }) =>
         userId: scout.userId,
         skills: [...new Set(scout.skills)],
         dollarsEarned: scout.dollarsEarned,
-        score: scout.score,
+        score: Number(scout.score),
         recommended: scout.user.stRecommended ?? false,
         invited: scout.invited,
         pfp: scout.user.photo ?? null,

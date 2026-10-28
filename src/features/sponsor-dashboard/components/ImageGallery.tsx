@@ -54,6 +54,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
     if (!currentImage) return;
     try {
       const response = await fetch(currentImage);
+      if (!response.ok) throw new Error(`Download failed: ${response.status}`);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -64,7 +65,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      window.open(currentImage, '_blank');
+      window.open(currentImage, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -91,9 +92,9 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
           const isPdf = isPdfUrl(imageUrl);
           return (
             <button
-              key={index}
+              key={imageUrl}
               onClick={() => openAtIndex(index)}
-              className="group focus-visible:ring-brand-purple/40 relative h-20 w-20 cursor-pointer overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 focus:outline-none focus-visible:ring-2"
+              className="group focus-visible:ring-brand-purple/40 relative h-20 w-20 cursor-pointer overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-[border-color,box-shadow] hover:border-slate-300 focus:outline-none focus-visible:ring-2"
               aria-label={`Open ${label} ${index + 1}`}
             >
               {isPdf ? (
@@ -145,7 +146,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
             {images.length > 1 && (
               <button
                 onClick={goToPrevious}
-                className="focus-visible:ring-brand-purple/40 absolute left-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-all hover:bg-white focus:outline-none focus-visible:ring-2"
+                className="focus-visible:ring-brand-purple/40 absolute left-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-[background-color,box-shadow] hover:bg-white focus:outline-none focus-visible:ring-2"
                 aria-label="Previous file"
               >
                 <ChevronLeft className="h-6 w-6" />
@@ -153,6 +154,8 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
             )}
 
             {isPdfUrl(currentImage || '') ? (
+              // Chrome refuses to render PDFs inside a sandboxed iframe.
+              // react-doctor-disable-next-line react-doctor/iframe-missing-sandbox -- PDF viewer
               <iframe
                 src={currentImage}
                 className="h-full w-full"
@@ -169,7 +172,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
             {images.length > 1 && (
               <button
                 onClick={goToNext}
-                className="focus-visible:ring-brand-purple/40 absolute right-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-all focus:outline-none focus-visible:ring-2"
+                className="focus-visible:ring-brand-purple/40 absolute right-4 z-10 rounded-full bg-white/90 p-2 text-slate-500 shadow-md backdrop-blur-sm transition-shadow focus:outline-none focus-visible:ring-2"
                 aria-label="Next file"
               >
                 <ChevronRight className="h-6 w-6" />
@@ -183,7 +186,7 @@ export const ImageGallery = ({ label, images }: ImageGalleryProps) => {
                 const isPdf = isPdfUrl(imageUrl);
                 return (
                   <button
-                    key={index}
+                    key={imageUrl}
                     onClick={() => setCurrentIndex(index)}
                     className={cn(
                       'h-12 w-12 overflow-hidden rounded-md border-2 transition-all',

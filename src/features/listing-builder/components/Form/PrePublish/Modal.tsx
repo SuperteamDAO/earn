@@ -83,8 +83,9 @@ export function PrePublish() {
   } = useQuery(isCreateListingAllowedQuery);
 
   useEffect(() => {
+    // react-doctor-disable-next-line react-doctor/query-no-query-in-effect -- forces a fresh check on mount and on user change; the shared query key has no user part and a 30s staleTime
     isCreateListingAllowedRefetch();
-  }, [user]);
+  }, [user, isCreateListingAllowedRefetch]);
 
   const isDisabledHard = useMemo(
     () =>
@@ -94,7 +95,7 @@ export function PrePublish() {
         !isEditing) ||
       status === 'verification failed' ||
       status === 'blocked',
-    [isCreateListingAllowed, isEditing, status],
+    [isCreateListingAllowed, isEditing, status, user?.role],
   );
 
   const [isDisabledSoft, setIsDisabledSoft] = useState(true);
@@ -107,7 +108,7 @@ export function PrePublish() {
         form.setValue('isFndnPaying', false);
       }
     }
-  }, [isST, router.pathname]);
+  }, [isST, router.pathname, form.setValue]);
 
   useEffect(() => {
     const shouldBeDisabled =

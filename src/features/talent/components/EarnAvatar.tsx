@@ -5,7 +5,7 @@ import { cn } from '@/utils/cn';
 
 interface EarnAvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   id: string | undefined;
-  avatar?: string;
+  avatar?: string | null;
   className?: string;
   imgLoading?: 'lazy' | 'eager';
   imgDecoding?: 'async' | 'sync';
@@ -47,7 +47,7 @@ export const EarnAvatar = ({
           loading={imgLoading}
           decoding={imgDecoding}
           // fetchPriority is relatively new; cast for TS compatibility
-          fetchPriority={imgFetchPriority as any}
+          fetchPriority={imgFetchPriority}
         />
       ) : (
         <div className={cn(commonClassName, className)}>

@@ -1,4 +1,4 @@
-import { createHmac } from 'crypto';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { prisma } from '@/prisma';
@@ -24,6 +24,10 @@ export default async function handler(
   if (!email || !signature) {
     return res.status(400).json({ message: 'Missing required parameters' });
   }
+  // A POST body can carry any JSON here; only a string can be a signature.
+  if (typeof signature !== 'string') {
+    return res.status(403).json({ message: 'Invalid signature' });
+  }
 
   // Convert email to lowercase to ensure consistency
   const normalizedEmail = email.toLowerCase();
@@ -31,8 +35,14 @@ export default async function handler(
   const expectedSignature = createHmac('sha256', process.env.UNSUB_SECRET!)
     .update(normalizedEmail)
     .digest('hex');
+  const expected = Buffer.from(expectedSignature);
+  const provided = Buffer.from(signature);
 
-  if (signature !== expectedSignature) {
+  // timingSafeEqual throws on unequal lengths, so check that first.
+  if (
+    provided.length !== expected.length ||
+    !timingSafeEqual(provided, expected)
+  ) {
     return res.status(403).json({ message: 'Invalid signature' });
   }
 

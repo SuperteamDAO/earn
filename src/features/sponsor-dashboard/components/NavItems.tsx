@@ -36,6 +36,7 @@ export const NavItem = ({
       target={isExternalLink ? '_blank' : undefined}
       rel={isExternalLink ? 'noopener noreferrer' : undefined}
       className="no-underline focus:outline-hidden"
+      onClick={onClick}
     >
       <div
         className={cn(
@@ -47,7 +48,6 @@ export const NavItem = ({
           'hover:bg-blue-50 hover:text-indigo-700',
           className,
         )}
-        onClick={onClick}
       >
         {Icon && (
           <Icon

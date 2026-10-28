@@ -42,7 +42,7 @@ import { cn } from '@/utils/cn';
 import { getURL } from '@/utils/validUrl';
 
 import { BoostButton } from '@/features/listing-builder/components/Form/Boost/BoostButton';
-import { type Listing } from '@/features/listings/types';
+import { type Listing, type ListingHackathon } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
@@ -56,7 +56,12 @@ import AiReviewBountiesSubmissionsModal from './Modals/AiReviewBounties';
 import AiReviewProjectApplicationsModal from './Modals/AiReviewProjects';
 
 interface Props {
-  bounty: Listing | undefined;
+  // Only the hackathon's announceDate is read; listing endpoints differ in the rest.
+  bounty:
+    | (Omit<Listing, 'Hackathon'> & {
+        Hackathon?: Pick<ListingHackathon, 'announceDate'>;
+      })
+    | undefined;
   isHackathonPage?: boolean;
   remainings: { podiums: number; bonus: number } | null;
   submissions: SubmissionWithUser[];
@@ -244,7 +249,7 @@ export const SubmissionHeader = ({
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="cursor-pointer rounded-md p-2 text-slate-400 transition-all hover:bg-slate-100 hover:text-slate-500">
+              <div className="cursor-pointer rounded-md p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-500">
                 <MoreVertical className="h-4 w-4" />
               </div>
             </DropdownMenuTrigger>
@@ -412,7 +417,7 @@ export const SubmissionHeader = ({
                 !bounty?.isWinnersAnnounced &&
                 !isHackathonPage && (
                   <div className="flex w-full py-1 text-xs">
-                    {!!(remainings.bonus > 0 || remainings.podiums > 0) ? (
+                    {remainings.bonus > 0 || remainings.podiums > 0 ? (
                       <p className="flex w-full items-center justify-center rounded-md bg-red-100 px-2 py-1 text-[#f55151]">
                         <AlertTriangle className="mr-1 inline-block h-3 w-3" />
                         {remainings.podiums > 0 && (
@@ -445,12 +450,13 @@ export const SubmissionHeader = ({
         <div className="flex flex-row-reverse items-center gap-8">
           <p className="text-slate-800">
             {`Didn't find a suitable candidate? `}
-            <span
+            <button
+              type="button"
               className="cursor-pointer text-blue-500 underline"
               onClick={unpublishOnOpen}
             >
               Click here
-            </span>
+            </button>
           </p>
         </div>
       )}

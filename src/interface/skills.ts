@@ -119,8 +119,10 @@ const skillSchema = z
     ),
   })
   .refine((data) => {
-    const validSubskills = skillSubSkillMap[data.skills].map((s) => s.value);
-    return data.subskills.every((ss) => validSubskills.includes(ss));
+    const validSubskillSet = new Set(
+      skillSubSkillMap[data.skills].map((s) => s.value),
+    );
+    return data.subskills.every((ss) => validSubskillSet.has(ss));
   }, 'Invalid subskills for selected skill');
 
 export const skillsArraySchema = z
@@ -137,3 +139,27 @@ export const skillsArraySchema = z
 
 export type { ParentSkills, SkillMap, Skills, SubSkillsType };
 export { skillSubSkillMap };
+
+// `skills` JSON columns as read on the server; entries are kept loose because
+// older rows predate skillsArraySchema.
+export interface SkillEntry {
+  skills: string;
+  subskills: string[];
+}
+
+export function parseSkillEntries(value: unknown): SkillEntry[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((entry: unknown) => {
+    if (typeof entry !== 'object' || entry === null) return [];
+    const { skills, subskills } = entry as Record<string, unknown>;
+    if (typeof skills !== 'string') return [];
+    return [
+      {
+        skills,
+        subskills: Array.isArray(subskills)
+          ? subskills.filter((s): s is string => typeof s === 'string')
+          : [],
+      },
+    ];
+  });
+}

@@ -165,16 +165,18 @@ function getChapterRegionsContainingCountries(
   countryNames: string[],
   chapterRegions: ChapterRegion[],
 ): string[] {
+  const countryNameSet = new Set(countryNames);
+
   return chapterRegions
     .filter((chapter) => {
       const isSingleCountryChapter = chapter.country.length === 1;
       if (isSingleCountryChapter) {
         const singleCountry = chapter.country[0];
-        return singleCountry ? countryNames.includes(singleCountry) : false;
+        return singleCountry ? countryNameSet.has(singleCountry) : false;
       }
 
       return chapter.country.every((countryName) =>
-        countryNames.includes(countryName),
+        countryNameSet.has(countryName),
       );
     })
     .map((chapter) => chapter.region);
@@ -253,6 +255,7 @@ export async function getRegionsForUserLocationUsingChapters(
   if (!userLocation) return ['Global'];
 
   const chapterRegions = await getChapterRegions();
+  // react-doctor-disable-next-line react-doctor/server-sequential-independent-await -- findChapterByLocation reads through the same getChapterRegions cache, so awaiting in order lets the first call fill it; in parallel a cold cache would run the chapters query twice
   const chapter = await findChapterByLocation(userLocation);
   if (!chapter) return ['Global'];
 

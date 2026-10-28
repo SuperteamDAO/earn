@@ -1,5 +1,5 @@
 import { type ClassNameValue } from 'cn';
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
@@ -34,37 +34,35 @@ export const AnimateChangeInHeight = ({
     [shouldAnimate, hasHadNonZeroHeight],
   );
 
+  // shouldAnimate is always true once the height is non-zero, so this is the
+  // 0 -> non-zero transition: nudge listeners that measure on resize.
+  const isVisible = bounds.height > 0;
   useLayoutEffect(() => {
-    if (shouldAnimate && prevHeight.current === 0 && bounds.height > 0) {
+    if (!isVisible) return;
+    const timers = [0, 50, 100, 250].map((delay) =>
       setTimeout(() => {
         window.dispatchEvent(new Event('resize'));
-      }, 0);
-      setTimeout(() => {
-        window.dispatchEvent(new Event('resize'));
-      }, 50);
-      setTimeout(() => {
-        window.dispatchEvent(new Event('resize'));
-      }, 100);
-      setTimeout(() => {
-        window.dispatchEvent(new Event('resize'));
-      }, 250);
-    }
+      }, delay),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, [isVisible]);
+
+  useLayoutEffect(() => {
     const prev = prevHeight.current;
     prevHeight.current = bounds.height;
 
-    if (bounds.height !== 0 && !hasHadNonZeroHeight) {
-      setTimeout(() => {
-        setHasHadNonZeroHeight(true);
-      }, 0);
-    } else if (prev === 0 && bounds.height === 0 && hasHadNonZeroHeight) {
-      setTimeout(() => {
-        setHasHadNonZeroHeight(false);
-      }, 0);
-    }
-  }, [bounds.height, shouldAnimate, hasHadNonZeroHeight]);
+    const shouldSetTrue = bounds.height !== 0 && !hasHadNonZeroHeight;
+    const shouldSetFalse =
+      prev === 0 && bounds.height === 0 && hasHadNonZeroHeight;
+    const timer = setTimeout(() => {
+      if (shouldSetTrue) setHasHadNonZeroHeight(true);
+      else if (shouldSetFalse) setHasHadNonZeroHeight(false);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [bounds.height, hasHadNonZeroHeight]);
 
   return (
-    <motion.div
+    <m.div
       className={cn(className)}
       initial={false}
       {...(shouldAnimateThisRender
@@ -81,6 +79,6 @@ export const AnimateChangeInHeight = ({
         : {})}
     >
       <div ref={elementRef}>{children}</div>
-    </motion.div>
+    </m.div>
   );
 };

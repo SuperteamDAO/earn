@@ -4,7 +4,7 @@ export type BoundedIntegerResult =
   | { ok: true; value: number }
   | { ok: false; error: string };
 
-export function getSingleQueryParam(value: QueryParamValue) {
+function getSingleQueryParam(value: QueryParamValue) {
   return Array.isArray(value) ? value[0] : value;
 }
 

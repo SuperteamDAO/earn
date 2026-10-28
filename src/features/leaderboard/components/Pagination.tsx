@@ -1,6 +1,6 @@
 import debounce from 'lodash.debounce';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,16 +17,18 @@ export function Pagination({ page, setPage, count }: Props) {
   const [inputValue, setInputValue] = useState(String(page));
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Outside editing, the inputs show the current page again whenever the page
+  // or editing state changes (Prev/Next, Escape, commit).
+  const [syncedFrom, setSyncedFrom] = useState({ page, isEditing });
+  if (syncedFrom.page !== page || syncedFrom.isEditing !== isEditing) {
+    setSyncedFrom({ page, isEditing });
+    if (!isEditing) setInputValue(String(page));
+  }
+
   const debouncedHandleClick = useMemo(
     () => debounce((newPage: number) => setPage(newPage), 500),
     [setPage],
   );
-
-  useEffect(() => {
-    if (!isEditing) {
-      setInputValue(String(page));
-    }
-  }, [page, isEditing]);
 
   if (count === 0) return <></>;
   const totalPages = Math.ceil(count / 10);
@@ -90,6 +92,7 @@ export function Pagination({ page, setPage, count }: Props) {
               )}
               onClick={() => {
                 if (i === page) {
+                  setInputValue(String(page));
                   setIsEditing(true);
                   // focus after render
                   setTimeout(() => inputRef.current?.focus(), 0);

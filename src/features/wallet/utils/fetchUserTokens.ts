@@ -12,25 +12,29 @@ export async function fetchUserTokens(
   rpc: SolanaRpc,
   walletAddress: Address,
 ): Promise<TokenAsset[]> {
-  const tokenList = await getTokenList();
-  const [solBalanceResponse, tokenAccountsResponse, token2022AccountsResponse] =
-    await Promise.all([
-      rpc.getBalance(walletAddress).send(),
-      rpc
-        .getTokenAccountsByOwner(
-          walletAddress,
-          { programId: TOKEN_PROGRAM_ADDRESS },
-          { encoding: 'jsonParsed', commitment: 'confirmed' },
-        )
-        .send(),
-      rpc
-        .getTokenAccountsByOwner(
-          walletAddress,
-          { programId: TOKEN_2022_PROGRAM_ADDRESS },
-          { encoding: 'jsonParsed', commitment: 'confirmed' },
-        )
-        .send(),
-    ]);
+  const [
+    tokenList,
+    solBalanceResponse,
+    tokenAccountsResponse,
+    token2022AccountsResponse,
+  ] = await Promise.all([
+    getTokenList(),
+    rpc.getBalance(walletAddress).send(),
+    rpc
+      .getTokenAccountsByOwner(
+        walletAddress,
+        { programId: TOKEN_PROGRAM_ADDRESS },
+        { encoding: 'jsonParsed', commitment: 'confirmed' },
+      )
+      .send(),
+    rpc
+      .getTokenAccountsByOwner(
+        walletAddress,
+        { programId: TOKEN_2022_PROGRAM_ADDRESS },
+        { encoding: 'jsonParsed', commitment: 'confirmed' },
+      )
+      .send(),
+  ]);
 
   const solBalance = solBalanceResponse.value;
   const allTokenAccounts = [

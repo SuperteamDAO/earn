@@ -33,7 +33,8 @@ export const SortableTH = ({
 
   return (
     <TableHead className={cn(className)} {...props}>
-      <div
+      <button
+        type="button"
         className="inline-flex cursor-pointer items-center"
         onClick={handleSort}
       >
@@ -56,7 +57,7 @@ export const SortableTH = ({
             )}
           />
         </div>
-      </div>
+      </button>
     </TableHead>
   );
 };

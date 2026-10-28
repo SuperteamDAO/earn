@@ -66,7 +66,6 @@ export function Hero() {
               variant="default"
             >
               Post for Free 🙌
-              {/* <LucideChevronRight className="absolute top-2/4 right-4 !size-4 -translate-y-2/4" /> */}
             </Button>
           </Link>
           <p className="text-base font-medium text-slate-500 md:text-xl">

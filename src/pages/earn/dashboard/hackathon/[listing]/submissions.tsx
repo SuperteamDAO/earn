@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useSetAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -73,12 +74,15 @@ export default function BountySubmissions({ listing }: Props) {
   useEffect(() => {
     // Don't show error toast if we're switching sponsors or if user is GOD mode
     if (bountyError && !isSwitchingSponsor && user?.role !== 'GOD') {
-      const error = bountyError as any;
+      const error = isAxiosError<{ sponsorId?: string }>(bountyError)
+        ? bountyError
+        : undefined;
       if (error?.response?.status === 403) {
         // Don't show error if it's a sponsor mismatch that will be auto-switched
         const hasSponsorId = error?.response?.data?.sponsorId;
         if (!hasSponsorId) {
           toast.error('This listing does not belong to you');
+          // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- ownership is known only from the client query's 403 after useAutoSwitchSponsor has tried switching sponsors, so the server cannot decide this up front
           router.push('/earn/dashboard/listings');
         }
       }
@@ -142,7 +146,7 @@ export default function BountySubmissions({ listing }: Props) {
     if (filteredSubmissions && filteredSubmissions.length > 0) {
       setSelectedSubmission(filteredSubmissions[0]);
     }
-  }, [filteredSubmissions]);
+  }, [filteredSubmissions, setSelectedSubmission]);
 
   useEffect(() => {
     if (bounty && user?.currentSponsorId) {
@@ -169,11 +173,12 @@ export default function BountySubmissions({ listing }: Props) {
 
   useEffect(() => {
     if (searchParams?.has('scout')) posthog.capture('scout tab_scout');
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- page-view analytics: capture once on landing, not again whenever the query string changes
   }, []);
 
   const usedPositions = submissions
-    ?.filter((s: any) => s.isWinner)
-    .map((s: any) => Number(s.winnerPosition))
+    ?.filter((s) => s.isWinner)
+    .map((s) => Number(s.winnerPosition))
     .filter((key: number) => !isNaN(key));
 
   const totalWinners = submissions?.filter((sub) => sub.isWinner).length;

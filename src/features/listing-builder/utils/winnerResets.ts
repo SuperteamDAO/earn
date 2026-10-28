@@ -40,27 +40,24 @@ async function resetExcessWinners(
     },
   );
 
-  for (
-    let position = newRewardsCount + 1;
-    position <= currentTotalWinners;
-    position++
-  ) {
-    logger.debug(
-      `Resetting winner position: ${position} for listing ID: ${listingId}`,
-    );
+  logger.debug(
+    `Resetting winner positions ${newRewardsCount + 1} to ${currentTotalWinners} for listing ID: ${listingId}`,
+  );
 
-    await prisma.submission.updateMany({
-      where: {
-        listingId,
-        isWinner: true,
-        winnerPosition: position,
+  await prisma.submission.updateMany({
+    where: {
+      listingId,
+      isWinner: true,
+      winnerPosition: {
+        gt: newRewardsCount,
+        lte: currentTotalWinners,
       },
-      data: {
-        isWinner: false,
-        winnerPosition: null,
-      },
-    });
-  }
+    },
+    data: {
+      isWinner: false,
+      winnerPosition: null,
+    },
+  });
 }
 
 async function resetExcessBonusWinners(

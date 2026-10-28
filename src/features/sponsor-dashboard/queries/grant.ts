@@ -6,7 +6,7 @@ import { type SponsorGrantDetailsResponse } from '../constants/sponsorGrantDetai
 
 export const sponsorGrantQuery = (
   slug: string,
-  currentSponsorId: string | undefined,
+  currentSponsorId: string | undefined | null,
 ) =>
   queryOptions({
     queryKey: ['grant', slug],

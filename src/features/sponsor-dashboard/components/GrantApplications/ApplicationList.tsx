@@ -144,8 +144,18 @@ export const ApplicationList = ({
                   ? 'bg-[#F5F3FF80]'
                   : 'bg-transparent',
               )}
+              role="button"
+              tabIndex={0}
               onClick={() => {
                 setSelectedApplication(application);
+              }}
+              onKeyDown={(e) => {
+                // Keys pressed on the nested checkbox or label select bubble up here too.
+                if (e.target !== e.currentTarget) return;
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedApplication(application);
+                }
               }}
             >
               <div className="flex items-center">

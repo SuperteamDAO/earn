@@ -68,20 +68,23 @@ export const RegionPop = ({ st }: { st: ChapterDisplay }) => {
 
   const initated = useRef(false); // only run use effect once
   useEffect(() => {
-    if (
+    const shouldStart =
       !initated.current &&
       ready &&
       !authenticated &&
       popupsShowed < 1 &&
       !open &&
-      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
-    ) {
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+    if (!shouldStart) return;
+
+    // Marked inside the timer so a cancelled run can schedule again.
+    const timer = setTimeout(() => {
       initated.current = true;
-      setTimeout(() => {
-        timeoutHandle.start();
-        setPopupTimeout(timeoutHandle);
-      }, 0);
-    }
+      timeoutHandle.start();
+      setPopupTimeout(timeoutHandle);
+    }, 0);
+    return () => clearTimeout(timer);
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- schedules once when auth resolves; the rest is a snapshot read at that moment, and useTimeout returns a new handle object every render
   }, [ready, authenticated]);
 
   const setPopupOpen = (e: boolean) => {

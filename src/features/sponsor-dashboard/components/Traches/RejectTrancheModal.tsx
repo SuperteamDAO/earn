@@ -1,5 +1,5 @@
 import { ChevronDown, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -10,11 +10,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
-import { TokenIcon } from '@/components/ui/token-icon';
 import { cn } from '@/utils/cn';
 
 import { useCustomNoteCloseGuard } from '@/features/sponsor-dashboard/components/GrantApplications/hooks/useCustomNoteCloseGuard';
 import { CustomNoteEditor } from '@/features/sponsor-dashboard/components/GrantApplications/Modals/CustomNoteEditor';
+import { RequestedAmountRow } from '@/features/sponsor-dashboard/components/GrantApplications/Modals/RequestedAmountRow';
 import {
   getCustomEmailPlainText,
   sanitizeCustomEmailBody,
@@ -99,17 +99,11 @@ export const RejectTrancheModal = ({
     } catch (e) {
       console.error(e);
     } finally {
+      // react-doctor-disable-next-line react-doctor/no-unowned-async-error-clear -- the submit button is disabled while `loading`, and the parent keys this modal by tranche id, so no other request can own this flag
       setLoading(false);
       closeWithoutGuard();
     }
   };
-
-  useEffect(() => {
-    setCustomNote('');
-    setIsCustomEmailOpen(false);
-    setEmailError(null);
-    setLoading(false);
-  }, [trancheId]);
 
   return (
     <>
@@ -130,19 +124,11 @@ export const RejectTrancheModal = ({
               will be notified via email.
             </p>
 
-            <div className="mb-6 flex items-center justify-between">
-              <p className="text-slate-500">Tranche Payment</p>
-              <div className="flex items-center">
-                <TokenIcon
-                  className="h-5 w-5 rounded-full"
-                  alt={`${token} icon`}
-                  symbol={token}
-                />
-                <p className="ml-1 font-semibold text-slate-600">
-                  {ask} <span className="text-slate-400">{token}</span>
-                </p>
-              </div>
-            </div>
+            <RequestedAmountRow
+              label="Tranche Payment"
+              ask={ask}
+              token={token}
+            />
 
             {enableCustomEmail && isCustomEmailOpen && (
               <CustomNoteEditor

@@ -184,8 +184,8 @@ export const ApplicationModal = ({
                 )?.find((a) => a.question === q.question)?.answer || '',
             }))
           : [],
-      lumaLink: (grantApplication as any)?.lumaLink || '',
-      expenseBreakdown: (grantApplication as any)?.expenseBreakdown || '',
+      lumaLink: grantApplication?.lumaLink || '',
+      expenseBreakdown: grantApplication?.expenseBreakdown || '',
     },
   });
 
@@ -307,7 +307,7 @@ export const ApplicationModal = ({
       } else {
         setVerificationStatus('error');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('X verification failed:', error);
       setVerificationStatus('error');
     }
@@ -471,7 +471,7 @@ export const ApplicationModal = ({
       ],
     };
 
-    form.trigger(fieldsToValidate[activeStep] as any).then((isValid) => {
+    form.trigger(fieldsToValidate[activeStep]).then((isValid) => {
       if (isValid) {
         const nextStep = activeStep + 1;
         setActiveStep(nextStep);
@@ -548,7 +548,7 @@ export const ApplicationModal = ({
           {steps.map((step, i) => (
             <div
               className="flex items-center gap-1.5 text-sm sm:text-base"
-              key={i}
+              key={step.title}
             >
               <span
                 className={cn(
@@ -725,12 +725,13 @@ export const ApplicationModal = ({
                         </FormControl>
                         {!isSameAsEmbeddedWallet && (
                           <p className="pt-0.5 text-xs text-slate-500">
-                            <span
+                            <button
+                              type="button"
                               className="cursor-pointer underline"
                               onClick={handleAutoFill}
                             >
                               Click here
-                            </span>{' '}
+                            </button>{' '}
                             to auto-fill this field with your Earn embedded
                             wallet address
                           </p>
@@ -931,7 +932,7 @@ export const ApplicationModal = ({
                   if (question.type === 'link') {
                     return (
                       <FormField
-                        key={question.order ?? index}
+                        key={question.order ?? question.question}
                         control={form.control}
                         name={`answers.${index}.answer`}
                         render={({ field }) => (
@@ -987,7 +988,7 @@ export const ApplicationModal = ({
 
                   return (
                     <FormFieldWrapper
-                      key={question.order ?? index}
+                      key={question.order ?? question.question}
                       control={form.control}
                       name={`answers.${index}.answer`}
                       label={question.question}
@@ -1294,7 +1295,7 @@ export const ApplicationModal = ({
                             : `https://${answerValue}`;
 
                           return (
-                            <div key={i}>
+                            <div key={q.order ?? q.question}>
                               <span className="font-medium text-slate-500">
                                 {q.question}
                               </span>

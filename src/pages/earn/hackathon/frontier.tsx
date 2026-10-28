@@ -1,26 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { Info } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
 import Image from 'next/image';
-import { type ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 
 import { TrackBox } from '@/components/hackathon/TrackBox';
 import { CountDownRenderer } from '@/components/shared/countdownRenderer';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
-import { Tooltip } from '@/components/ui/tooltip';
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { type TrackProps } from '@/interface/hackathon';
 import { Default } from '@/layouts/Default';
 import { Meta } from '@/layouts/Meta';
-import { domPurify } from '@/lib/domPurify';
 import { prisma } from '@/prisma';
 import { type HackathonGetPayload } from '@/prisma/models/Hackathon';
 import {
@@ -29,8 +20,10 @@ import {
   trackDataQuery,
 } from '@/queries/hackathon';
 import { PulseIcon } from '@/svg/pulse-icon';
-import { cn } from '@/utils/cn';
 import { dayjs } from '@/utils/dayjs';
+
+import { HackathonFAQs } from '@/features/hackathon/components/HackathonFAQs';
+import { HackathonMiniStat } from '@/features/hackathon/components/HackathonMiniStat';
 
 type Hackathon = HackathonGetPayload<{
   include: {
@@ -68,7 +61,7 @@ export default function Frontier({ hackathon }: { hackathon: Hackathon }) {
       <Hero stats={stats} START_DATE={START_DATE} CLOSE_DATE={CLOSE_DATE} />
       <div className="mx-auto mt-14 mb-20 w-full max-w-7xl px-4 md:mt-14 xl:mt-16">
         <Tracks tracks={trackData} />
-        <FAQs />
+        <HackathonFAQs faqs={faqs} />
       </div>
     </Default>
   );
@@ -187,7 +180,7 @@ function HeroMini({
   stats: Stats | undefined;
 }) {
   const isMd = useBreakpoint('md');
-  const [countdownDate, setCountdownDate] = useState<Date>(
+  const [countdownDate, setCountdownDate] = useState<Date>(() =>
     dayjs.utc(START_DATE).toDate(),
   );
   const [status, setStatus] = useState<HackathonStatus>(() =>
@@ -217,7 +210,7 @@ function HeroMini({
 
   return (
     <div className="relative flex w-full items-center justify-center gap-8 rounded-md bg-black px-6 py-6 md:flex-row md:gap-12 md:rounded-xl md:px-16">
-      <MiniStat
+      <HackathonMiniStat
         title={isMd ? `Submissions ${status}` : mobileTitleForCountdown(status)}
       >
         {status !== 'Closed' ? (
@@ -229,18 +222,18 @@ function HeroMini({
         ) : (
           '-'
         )}
-      </MiniStat>
-      <MiniStat title={'Total Prizes'}>
+      </HackathonMiniStat>
+      <HackathonMiniStat title={'Total Prizes'}>
         $
         {stats?.totalRewardAmount.toLocaleString('en-US', {
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
         }) ?? '-'}
-      </MiniStat>
+      </HackathonMiniStat>
 
-      <MiniStat className="hidden sm:flex" title={'Tracks'}>
+      <HackathonMiniStat className="hidden sm:flex" title={'Tracks'}>
         {stats?.totalListings ?? '-'}
-      </MiniStat>
+      </HackathonMiniStat>
     </div>
   );
 }
@@ -249,43 +242,6 @@ function mobileTitleForCountdown(status: HackathonStatus) {
   if (status === 'Start In') return 'Starts In';
   if (status === 'Close In') return 'Closes In';
   return status;
-}
-
-function MiniStat({
-  title,
-  children,
-  className,
-  infotipContent,
-}: {
-  title: string;
-  children: ReactNode;
-  className?: string;
-  infotipContent?: string;
-}) {
-  return (
-    <Tooltip
-      content={infotipContent}
-      contentProps={{
-        className: 'w-3/4 md:w-auto',
-      }}
-      disabled={!infotipContent}
-    >
-      <div
-        className={cn(
-          'flex flex-col items-start gap-1 md:items-start',
-          className,
-        )}
-      >
-        <span className="flex items-center gap-2">
-          <p className="text-left text-xs text-white/80 md:w-max md:text-sm">
-            {title}
-          </p>
-          {infotipContent && <Info className="h-3 w-3 text-gray-400" />}
-        </span>
-        <p className="text-lg font-bold md:text-2xl">{children}</p>
-      </div>
-    </Tooltip>
-  );
 }
 
 function Tracks({ tracks }: { tracks: TrackProps[] | undefined }) {
@@ -345,38 +301,6 @@ const faqs: { question: string; answer: string }[] = [
       'Each Sidetrack sponsor defines their own evaluation criteria. Be sure to carefully review the description and judging guidelines for each Sidetrack you’re submitting to.',
   },
 ];
-
-function FAQs() {
-  return (
-    <div className="mt-4 flex flex-col items-center px-1 py-8 md:mt-8">
-      <h2 className="pb-2 text-4xl font-bold md:text-5xl">FAQ</h2>
-      <div className="w-full max-w-[35rem]">
-        <Accordion type="single" collapsible>
-          {faqs.map((faq) => (
-            <AccordionItem
-              key={faq.question}
-              value={faq.question}
-              className="my-4 rounded-lg border shadow-md"
-            >
-              <AccordionTrigger className="rounded px-4 py-3 text-left font-normal text-slate-500 hover:bg-black/5 hover:no-underline focus:no-underline data-[state=open]:bg-black/5">
-                <span className="flex-1 text-left text-sm sm:text-base">
-                  {faq.question}
-                </span>
-              </AccordionTrigger>
-              <AccordionContent className="px-4 pt-3 text-sm text-slate-700 sm:text-base [&_a]:text-blue-700">
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: domPurify(faq.answer),
-                  }}
-                />
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
-    </div>
-  );
-}
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const hackathon = await prisma.hackathon.findUnique({

@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 
+import { type Skills } from '@/interface/skills';
 import { api } from '@/lib/api';
 
 export interface LocalProfile {
@@ -14,7 +15,7 @@ export interface LocalProfile {
   totalSubmissions: number;
   rank: number;
   wins: number;
-  skills: any;
+  skills: Skills | null;
   twitter: string;
   telegram: string;
   discord: string;

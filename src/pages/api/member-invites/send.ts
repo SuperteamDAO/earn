@@ -109,7 +109,7 @@ async function sendInvites(
       `Invite sent successfully to ${normalizedEmail} by user ${userId}`,
     );
     return res.status(200).json({ message: 'Invite sent successfully.' });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `User ${userId} unable to send invite: ${safeStringify(error)}`,
     );

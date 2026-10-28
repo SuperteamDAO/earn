@@ -60,7 +60,7 @@ function CircularProgress({
       />
       <div
         data-slot="circular-progress-indicator"
-        className="absolute h-full w-full rounded-full transition-all duration-300"
+        className="absolute h-full w-full rounded-full transition-[background] duration-300"
         style={{
           background: `conic-gradient(${color} ${normalizedValue}%, transparent ${normalizedValue}%)`,
           transform: 'rotate(-108deg)',

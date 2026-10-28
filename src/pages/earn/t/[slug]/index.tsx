@@ -75,7 +75,9 @@ interface TalentProps {
   shouldNoIndex: boolean;
 }
 
-const getWorkPreferenceText = (workPrefernce?: string): string | null => {
+const getWorkPreferenceText = (
+  workPrefernce?: string | null,
+): string | null => {
   if (!workPrefernce || workPrefernce === 'Not looking for Work') {
     return null;
   }
@@ -103,6 +105,14 @@ const getWorkPreferenceText = (workPrefernce?: string): string | null => {
 
   return workPrefernce;
 };
+
+const winningsFormatter = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 0,
+});
+
+// Module-scope elements keep the memoized ProfileActionButton's icon prop stable.
+const editProfileIcon = <SquarePen />;
+const shareIcon = <ShareIcon />;
 
 const ProfileActionButton = memo(function ProfileActionButton({
   icon,
@@ -465,7 +475,7 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
               <div className="flex w-auto gap-3 md:w-[160px] md:flex-col">
                 {user?.id === talent?.id && (
                   <ProfileActionButton
-                    icon={<SquarePen />}
+                    icon={editProfileIcon}
                     text="Edit Profile"
                     onClick={handleEditProfileClick}
                     isPro={talent?.isPro}
@@ -473,7 +483,7 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
                   />
                 )}
                 <ProfileActionButton
-                  icon={<ShareIcon />}
+                  icon={shareIcon}
                   text="Share"
                   onClick={onOpen}
                   outline
@@ -522,9 +532,9 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
                   <div className="w-full md:w-1/2">
                     <p className="font-medium text-slate-900">Skills</p>
                     {Array.isArray(talent.skills) ? (
-                      talent.skills.map((skillItem: any, index: number) => {
+                      talent.skills.map((skillItem, index: number) => {
                         return skillItem ? (
-                          <div className="mt-4" key={index}>
+                          <div className="mt-4" key={skillItem.skills}>
                             <p className="text-xs font-medium text-slate-400">
                               {skillItem.skills.toUpperCase()}
                             </p>
@@ -592,16 +602,22 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
             <div className="flex flex-col justify-between gap-12 md:flex-row md:gap-25">
               <div className="flex w-full gap-6 md:w-1/2">
                 {socialLinks.map(({ Icon, link }, i) => {
-                  return <Icon link={link} className="h-5 w-5" key={i} />;
+                  return (
+                    <Icon
+                      link={link ?? undefined}
+                      className="h-5 w-5"
+                      key={i}
+                    />
+                  );
                 })}
               </div>
               <div className="flex w-full gap-6 md:w-1/2 md:gap-8">
                 <div className="flex flex-col">
                   <p className="font-semibold">
                     $
-                    {new Intl.NumberFormat('en-US', {
-                      maximumFractionDigits: 0,
-                    }).format(Math.round(stats?.totalWinnings || 0))}
+                    {winningsFormatter.format(
+                      Math.round(stats?.totalWinnings || 0),
+                    )}
                   </p>
                   <p className="font-medium text-slate-500">Earned</p>
                 </div>
@@ -638,7 +654,8 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
                   )}
                 </div>
                 <div className="mt-12 flex w-full justify-between gap-6 md:mt-0 md:justify-end">
-                  <p
+                  <button
+                    type="button"
                     className={cn(
                       'cursor-pointer font-medium',
                       activeTab === 'activity'
@@ -648,9 +665,10 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
                     onClick={() => setActiveTab('activity')}
                   >
                     Activity Feed
-                  </p>
+                  </button>
 
-                  <p
+                  <button
+                    type="button"
                     className={cn(
                       'cursor-pointer font-medium',
                       activeTab === 'projects'
@@ -660,7 +678,7 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
                     onClick={() => setActiveTab('projects')}
                   >
                     Personal Projects
-                  </p>
+                  </button>
                 </div>
               </div>
             </div>

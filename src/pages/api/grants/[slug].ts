@@ -30,7 +30,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
 
     logger.info(`Grant details fetched successfully for slug: ${slug}`);
     return res.status(200).json(grant);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching grant with slug=${slug}: ${safeStringify(error)}`,
     );

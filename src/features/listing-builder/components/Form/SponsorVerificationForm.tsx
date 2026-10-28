@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
@@ -118,10 +119,11 @@ export const SponsorVerificationForm = () => {
       await refetchUser();
 
       toast.success('Verification information updated successfully');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error submitting verification:', error);
       toast.error(
-        error.response?.data?.message ||
+        (isAxiosError<{ message?: string }>(error) &&
+          error.response?.data?.message) ||
           'Failed to update verification information',
       );
     } finally {

@@ -1,15 +1,14 @@
 import { Lock } from 'lucide-react';
-import Link from 'next/link';
 import { useState } from 'react';
 
 import { OgImageViewer } from '@/components/shared/ogImageViewer';
-import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Tooltip } from '@/components/ui/tooltip';
 import { getURL } from '@/utils/validUrl';
 
 import { type FeedDataProps } from '../types';
 import { FeedCardContainer } from './FeedCardContainer';
 import { FeedCardLink } from './FeedCardLink';
+import { FeedCardListingInfo } from './FeedCardListingInfo';
 import { WinnerFeedImage } from './WinnerFeedImage';
 
 interface SubCardProps {
@@ -61,31 +60,13 @@ export function SubmissionCard({ sub, type, commentCount }: SubCardProps) {
   const actionLinks = (
     <>
       {!sub?.isPrivate ? (
-        <div className="flex items-center gap-1.5 sm:gap-3">
-          {sub?.sponsorSlug ? (
-            <Link
-              href={`/earn/s/${sub.sponsorSlug}`}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <Avatar className="size-5 sm:size-7">
-                <AvatarImage src={sub?.sponsorLogo} alt="Sponsor Logo" />
-              </Avatar>
-            </Link>
-          ) : (
-            <Avatar className="size-5 sm:size-7">
-              <AvatarImage src={sub?.sponsorLogo} alt="Sponsor Logo" />
-            </Avatar>
-          )}
-          <Link
-            className={`text-xs font-semibold text-gray-500 sm:text-sm md:text-base ${isViewSubmissionHovered ? '' : 'group-hover:underline'} line-clamp-1 group-hover:decoration-current`}
-            href={listingLink}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {sub?.listingTitle}
-          </Link>
-        </div>
+        <FeedCardListingInfo
+          sponsorSlug={sub?.sponsorSlug}
+          sponsorLogo={sub?.sponsorLogo}
+          listingLink={listingLink}
+          listingTitle={sub?.listingTitle}
+          isViewLinkHovered={isViewSubmissionHovered}
+        />
       ) : (
         <div className="flex items-center gap-2 text-slate-500">
           <Lock className="size-4" />

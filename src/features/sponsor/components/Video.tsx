@@ -33,7 +33,9 @@ export function Video({ showVideo }: Props) {
         </p>
       </div>
 
-      <div
+      <button
+        type="button"
+        aria-label="Play video"
         className={cn(
           'ph-no-capture relative mx-auto mt-6 flex w-full items-center justify-center',
           maxW2,
@@ -74,7 +76,7 @@ export function Video({ showVideo }: Props) {
             alt="Sponsor dashboard preview"
           />
         </div>
-      </div>
+      </button>
     </section>
   );
 }

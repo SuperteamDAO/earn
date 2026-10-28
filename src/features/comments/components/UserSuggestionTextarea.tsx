@@ -16,11 +16,8 @@ import { type User } from '@/interface/user';
 import { cn } from '@/utils/cn';
 
 import { validUsernamesAtom } from '../atoms';
-import {
-  addMention,
-  Suggestions,
-  userSuggestionOverrider,
-} from './Suggestions';
+import { addMention, userSuggestionOverrider } from '../utils/mentions';
+import { Suggestions } from './Suggestions';
 
 const MAX_LENGTH = 280;
 
@@ -86,9 +83,9 @@ export const UserSuggestionTextarea = ({
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      if (autoFocusOn) inputRef?.current?.focus();
-    }, 0);
+    if (!autoFocusOn) return;
+    const timer = setTimeout(() => inputRef?.current?.focus(), 0);
+    return () => clearTimeout(timer);
   }, [autoFocusOn]);
 
   return (

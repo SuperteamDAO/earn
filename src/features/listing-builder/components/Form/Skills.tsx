@@ -24,7 +24,7 @@ export function Skills() {
   const [skillsKey, setSkillsKey] = useAtom(skillsKeyAtom);
   useEffect(() => {
     setSkillsKey(`editor-${templateId || 'default'}`);
-  }, [templateId]);
+  }, [templateId, setSkillsKey]);
 
   return (
     <FormField

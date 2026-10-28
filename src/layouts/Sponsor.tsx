@@ -140,7 +140,7 @@ export function SponsorLayout({
     if (open) {
       setAutoGenerateOpen(true);
     }
-  }, [open]);
+  }, [open, setAutoGenerateOpen]);
 
   const { data: isCreateListingAllowed } = useQuery(
     isCreateListingAllowedQuery,
@@ -167,7 +167,7 @@ export function SponsorLayout({
       }
     };
     modalsToShow();
-  }, [user]);
+  }, [user, onSponsorInfoModalOpen]);
 
   useEffect(() => {
     if (
@@ -177,8 +177,10 @@ export function SponsorLayout({
       user &&
       !user?.currentSponsorId
     ) {
+      // react-doctor-disable-next-line react-doctor/nextjs-no-client-side-redirect -- the condition depends on Privy auth state and the user's sponsor, which only resolve on the client, so there is nothing for middleware or getServerSideProps to check
       router.push('/earn');
     }
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- the Pages Router rebinds router.push on every route change, so depending on it would re-run this redirect mid-transition
   }, [user, authenticated, ready, isUserLoading]);
 
   const { data: hackathons } = useQuery({
@@ -297,7 +299,7 @@ export function SponsorLayout({
             Please use a desktop to check out the Sponsor Dashboard
           </p>
         </div>
-        <div className="hidden min-h-[max(100vh,1000px)] justify-start transition-all duration-300 ease-in-out hover:shadow-lg md:flex">
+        <div className="hidden min-h-[max(100vh,1000px)] justify-start transition-shadow duration-300 ease-in-out hover:shadow-lg md:flex">
           <div
             className={cn(
               'sponsor-dashboard-sidebar overflow-x-hidden border-r border-slate-200 bg-white pt-5 whitespace-nowrap',

@@ -1,4 +1,5 @@
 import { type GetServerSideProps } from 'next';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { ASSET_URL } from '@/constants/ASSET_URL';
@@ -30,14 +31,17 @@ const AgentListingsBanner = () => {
             asChild
             className="bg-emerald-600 text-white hover:bg-emerald-500"
           >
-            <a href="/earn/agents">Read the agent playbook</a>
+            <Link href="/earn/agents">Read the agent playbook</Link>
           </Button>
           <Button
             asChild
             variant="outline"
             className="border-slate-200 text-slate-700 hover:bg-slate-50"
           >
+            {/* eslint-disable @next/next/no-html-link-for-pages -- /skill.md is a static file in public/, not a page */}
+            {/* react-doctor-disable-next-line react-doctor/nextjs-no-a-element -- /skill.md is a static file in public/, not a Next.js route, so a full load is what serves it */}
             <a href="/skill.md">Open skill.md</a>
+            {/* eslint-enable @next/next/no-html-link-for-pages */}
           </Button>
         </div>
       </div>
@@ -66,14 +70,17 @@ const AgentSidebar = () => {
             asChild
             className="bg-slate-900 text-white hover:bg-slate-800"
           >
-            <a href="/earn/agents">Agent docs</a>
+            <Link href="/earn/agents">Agent docs</Link>
           </Button>
           <Button
             asChild
             variant="outline"
             className="border-slate-200 text-slate-700 hover:bg-slate-50"
           >
+            {/* eslint-disable @next/next/no-html-link-for-pages -- /heartbeat.md is a static file in public/, not a page */}
+            {/* react-doctor-disable-next-line react-doctor/nextjs-no-a-element -- /heartbeat.md is a static file in public/, not a Next.js route, so a full load is what serves it */}
             <a href="/heartbeat.md">Heartbeat spec</a>
+            {/* eslint-enable @next/next/no-html-link-for-pages */}
           </Button>
         </div>
       </div>
@@ -118,14 +125,17 @@ export default function AgentListingsPage({
             asChild
             className="bg-emerald-600 text-white hover:bg-emerald-500"
           >
-            <a href="/earn/agents">Go to the playbook</a>
+            <Link href="/earn/agents">Go to the playbook</Link>
           </Button>
           <Button
             asChild
             variant="outline"
             className="border-slate-200 text-slate-700 hover:bg-slate-50"
           >
+            {/* eslint-disable @next/next/no-html-link-for-pages -- /skill.md is a static file in public/, not a page */}
+            {/* react-doctor-disable-next-line react-doctor/nextjs-no-a-element -- /skill.md is a static file in public/, not a Next.js route, so a full load is what serves it */}
             <a href="/skill.md">Open skill.md</a>
+            {/* eslint-enable @next/next/no-html-link-for-pages */}
           </Button>
         </div>
       </div>

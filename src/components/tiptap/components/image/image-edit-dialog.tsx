@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import type { toggleVariants } from '@/components/ui/toggle';
+import type { toggleVariants } from '@/components/ui/toggle.variants';
 
 import { ToolbarButton } from '../toolbar-button';
 import { ImageEditBlock } from './image-edit-block';
@@ -29,7 +29,7 @@ const ImageEditDialog = ({ editor, size, variant }: ImageEditDialogProps) => {
         <ToolbarButton
           isActive={editor.isActive('image')}
           tooltip="Image"
-          aria-label="Image"
+          aria-label="Insert image"
           size={size}
           variant={variant}
         >

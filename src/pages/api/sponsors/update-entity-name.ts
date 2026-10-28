@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -37,9 +38,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Entity name of sponsor updated successfully by user: ${userId}`,
     );
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error occurred while updating sponsor for user ${userId}: ${error.message}`,
+      `Error occurred while updating sponsor for user ${userId}: ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

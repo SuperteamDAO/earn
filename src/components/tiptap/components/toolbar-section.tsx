@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { toggleVariants } from '@/components/ui/toggle';
+import type { toggleVariants } from '@/components/ui/toggle.variants';
 import { cn } from '@/utils/cn';
 
 import type { FormatAction } from '../types';
@@ -39,8 +39,9 @@ export const ToolbarSection: React.FC<ToolbarSectionProps> = ({
   variant,
 }) => {
   const { mainActions, dropdownActions } = React.useMemo(() => {
+    const activeActionSet = new Set(activeActions);
     const sortedActions = actions
-      .filter((action) => activeActions.includes(action.value))
+      .filter((action) => activeActionSet.has(action.value))
       .sort(
         (a, b) =>
           activeActions.indexOf(a.value) - activeActions.indexOf(b.value),

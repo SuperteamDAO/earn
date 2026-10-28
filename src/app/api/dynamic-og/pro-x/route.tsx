@@ -2,14 +2,18 @@ import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
 import { convertToJpegUrl } from '@/utils/cloudinary';
-import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
+import { getErrorMessage } from '@/utils/getErrorMessage';
+import {
+  createParamReader,
+  formatString,
+  loadGoogleFont,
+} from '@/utils/ogHelpers';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const getParam = (name: any, processFn = (x: any) => x) =>
-      searchParams.has(name) ? processFn(searchParams.get(name)) : null;
+    const getParam = createParamReader(searchParams);
 
     const name = getParam('name', (x) => formatString(x, 24));
     const username = getParam('username', (x) => formatString(x, 28));
@@ -71,8 +75,8 @@ export async function GET(request: Request) {
                 color: '#9CA3AF',
               }}
             >
-              {name?.[0]?.toUpperCase() +
-                (name.split(' ')?.[1]?.[0]?.toUpperCase() || '') || '?'}
+              {(name?.[0]?.toUpperCase() ?? '') +
+                (name?.split(' ')?.[1]?.[0]?.toUpperCase() || '') || '?'}
             </div>
           )}
           <div
@@ -119,8 +123,8 @@ export async function GET(request: Request) {
         ],
       },
     );
-  } catch (e: any) {
-    console.log(`${e.message}`);
+  } catch (e) {
+    console.log(getErrorMessage(e));
     return new Response(`Failed to generate the image`, {
       status: 500,
     });

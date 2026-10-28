@@ -9,22 +9,19 @@ import { useUser } from './user';
 
 const creditBalanceAtom = atom<number | null>(null);
 
-const lastRefreshTimestampAtom = atom<string | null>(null);
-
 interface CreditBalanceResponse {
   balance: number;
 }
 
 export const useCreditBalance = () => {
   const [creditBalance, setCreditBalance] = useAtom(creditBalanceAtom);
-  const [lastRefreshTimestamp, setLastRefreshTimestamp] = useAtom(
-    lastRefreshTimestampAtom,
-  );
   const { user } = useUser();
   const userId = user?.id;
+  // Credits reset monthly, so a new month gets its own cache entry and refetches.
+  const month = dayjs().format('YYYY-MM');
 
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ['creditBalance', userId],
+  const { data, isLoading } = useQuery({
+    queryKey: ['creditBalance', userId, month],
     queryFn: async () => {
       const response = await api.get<CreditBalanceResponse>(
         '/api/user/credit/balance',
@@ -38,20 +35,8 @@ export const useCreditBalance = () => {
   useEffect(() => {
     if (data !== undefined) {
       setCreditBalance(data);
-      setLastRefreshTimestamp(new Date().toISOString());
     }
-  }, [data, setCreditBalance, setLastRefreshTimestamp]);
-
-  useEffect(() => {
-    if (!lastRefreshTimestamp || !userId) return;
-
-    const lastRefresh = dayjs(lastRefreshTimestamp);
-    const now = dayjs();
-
-    if (lastRefresh.month() !== now.month()) {
-      refetch();
-    }
-  }, [lastRefreshTimestamp, refetch, userId]);
+  }, [data, setCreditBalance]);
 
   return {
     creditBalance: creditBalance ?? 0,

@@ -48,7 +48,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    console.log('queryData', queryData);
     const { where, take } = await buildGrantsQuery(queryData, user);
 
     const grants = await prisma.grants.findMany({

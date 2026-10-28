@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useEffectEvent, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { cn } from '@/utils/cn';
@@ -23,12 +23,25 @@ export function SideDrawer({
     return () => setMounted(false);
   }, []);
 
+  const handleKeyDown = useEffectEvent((event: KeyboardEvent) => {
+    // A Radix dialog opened inside the drawer handles Escape first and calls
+    // preventDefault, so only that dialog closes.
+    if (event.key === 'Escape' && !event.defaultPrevented) onClose();
+  });
+
+  useEffect(() => {
+    if (!isOpen) return;
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
   if (!mounted || !isOpen) {
     return null;
   }
 
   return createPortal(
     <>
+      {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- click-outside backdrop for the drawer; keyboard users close it with Escape or the drawer's own close controls */}
       <div
         className={cn(
           'fixed inset-0 z-60 bg-black/80 transition-all',
@@ -38,6 +51,7 @@ export function SideDrawer({
         onClick={onClose}
         data-state={isOpen ? 'open' : 'closed'}
       />
+      {/* react-doctor-disable-next-line react-doctor/dialog-has-accessible-name -- the name has to come from each caller's content (SubmissionDrawer, WalletDrawer, CreditDrawer, SponsorVerificationForm), which this generic shell cannot know */}
       <div
         className={cn(
           'fixed inset-y-0 right-0 z-60 h-full max-w-full overflow-x-hidden bg-white shadow-xl duration-300',
@@ -45,6 +59,7 @@ export function SideDrawer({
           'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right',
           className,
         )}
+        // react-doctor-disable-next-line react-doctor/prefer-html-dialog -- moving to a native <dialog> means reworking open/close, the portal overlay and the slide animations for all four drawers, which is its own change
         role="dialog"
         aria-modal="true"
         data-state={isOpen ? 'open' : 'closed'}

@@ -23,7 +23,7 @@ import { grantAmount } from '@/features/grants/utils/grantAmount';
 import { COINDCX_GRANT_ID } from '@/features/grants/utils/stGrant';
 import { LiveGrants } from '@/features/home/components/LiveGrants';
 import { ExtraInfoSection } from '@/features/listings/components/ListingPage/ExtraInfoSection';
-import { grantSnackbarAtom } from '@/features/navbar/components/GrantSnackbar';
+import { grantSnackbarAtom } from '@/features/navbar/atoms';
 
 import { Default } from './Default';
 
@@ -63,7 +63,7 @@ export function GrantPageLayout({
         isPublished: !!initialGrant?.isPublished,
       });
     }
-  }, [initialGrant]);
+  }, [initialGrant, setGrantSnackbar]);
 
   const ogImageUrl = `${getURL()}api/dynamic-og/grant/?title=${encodedTitle}&token=${initialGrant?.token}&sponsor=${initialGrant?.sponsor?.name}&logo=${initialGrant?.sponsor?.logo}&minReward=${initialGrant?.minReward}&maxReward=${initialGrant?.maxReward}&isSponsorVerified=${initialGrant?.sponsor?.isVerified}`;
 
@@ -168,7 +168,6 @@ export function GrantPageLayout({
                             <ExtraInfoSection
                               skills={iterableSkills}
                               region={grant.region}
-                              requirements={grant.requirements}
                               pocSocials={grant.pocSocials}
                               isGrant
                             />

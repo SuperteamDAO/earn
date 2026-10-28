@@ -90,7 +90,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         message: 'Tranche requested successfully',
       });
-    } catch (error: any) {
+    } catch (error) {
       if (error instanceof LockNotAcquiredError) {
         return NextResponse.json(
           {
@@ -100,7 +100,10 @@ export async function POST(request: Request) {
           { status: 409 },
         );
       }
-      if (error.message === WALLET_ADDRESS_CONFLICT_MESSAGE) {
+      if (
+        error instanceof Error &&
+        error.message === WALLET_ADDRESS_CONFLICT_MESSAGE
+      ) {
         return NextResponse.json(
           {
             code: WALLET_ADDRESS_CONFLICT_CODE,
@@ -110,7 +113,10 @@ export async function POST(request: Request) {
           { status: 409 },
         );
       }
-      if (error.message === TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE) {
+      if (
+        error instanceof Error &&
+        error.message === TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE
+      ) {
         return NextResponse.json(
           {
             error: TRANCHE_APPLICATION_UNAUTHORIZED_MESSAGE,
@@ -128,7 +134,7 @@ export async function POST(request: Request) {
         { status: 500 },
       );
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`Unable to request grant tranche: ${safeStringify(error)}`);
     return NextResponse.json(
       {

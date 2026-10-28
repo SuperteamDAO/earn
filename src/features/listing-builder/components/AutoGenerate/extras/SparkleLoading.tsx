@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 import { useId } from 'react';
 
 import { easeOutQuad } from '@/utils/easings';
@@ -34,7 +34,7 @@ export function SparkleLoading({
           fill="#818CF8"
         />
       </g>
-      <motion.path
+      <m.path
         d={pathData}
         fill={`url(#${radialId})`}
         animate={{ opacity: [0, 1, 0] }}
@@ -44,7 +44,7 @@ export function SparkleLoading({
           ease: easeOutQuad,
         }}
       />
-      <motion.path
+      <m.path
         d={pathData}
         fill={`url(#${linearId})`}
         animate={{ opacity: [0.8, 0, 0.8] }}

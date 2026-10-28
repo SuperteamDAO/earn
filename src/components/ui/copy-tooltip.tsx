@@ -75,6 +75,7 @@ export function CopyButton({
       {...props}
     >
       <div
+        // react-doctor-disable-next-line react-doctor/prefer-tag-over-role -- callers pass interactive children (Form/PrePublish/Slug.tsx renders a <button>), which would nest invalidly inside a <button>
         role="button"
         className={cn('inline-flex items-center', className)}
         onClick={handleCopy}

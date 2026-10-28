@@ -4,6 +4,7 @@ import { type ReactNode, useEffect, useMemo } from 'react';
 
 // useful for provider (component locked atoms)
 interface HydrateAtomsProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- jotai keeps its per-atom tuple type (InferAtomTuples) internal, so a mixed list of atoms cannot be typed without any
   initialValues: Array<[PrimitiveAtom<any>, any]>;
   children: ReactNode;
 }
@@ -21,7 +22,10 @@ export const useInitAtom = <T>(atom: PrimitiveAtom<T>, initialValue: T) => {
 
   useEffect(() => {
     setValue(initialValue);
-  }, [initialValue]);
+  }, [initialValue, setValue]);
 
-  return useMemo(() => [value ?? initialValue, setValue], [value, setValue]);
+  return useMemo(
+    () => [value ?? initialValue, setValue],
+    [value, initialValue, setValue],
+  );
 };

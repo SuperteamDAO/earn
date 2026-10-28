@@ -69,12 +69,9 @@ export const DesktopNavbar = ({
 
   const hideSponsorCTA = useMemo(() => {
     if (!isNewTalentRoute) return false;
-    try {
-      const url = new URL(window.location.origin + router.asPath);
-      return url.searchParams.get('referral') === 'true';
-    } catch {
-      return router.asPath.includes('referral=true');
-    }
+    // The base only lets URL parse a relative path; it is the same on server and client.
+    const url = new URL(router.asPath, 'http://localhost');
+    return url.searchParams.get('referral') === 'true';
   }, [isNewTalentRoute, router.asPath]);
 
   const maxWidth = useMemo(() => {
@@ -206,12 +203,14 @@ export const DesktopNavbar = ({
 
           {!router.pathname.startsWith('/earn/search') &&
             !router.pathname.startsWith('/earn/new/') && (
-              <div
-                className="flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 px-2 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
+              <button
+                type="button"
+                aria-label="Search"
+                className="flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 px-2 py-2 text-slate-500 transition-colors duration-100 hover:bg-slate-100 hover:text-slate-700"
                 onClick={onSearchOpen}
               >
                 <IoSearchOutline className="size-4" />
-              </div>
+              </button>
             )}
         </div>
 
@@ -260,8 +259,9 @@ export const DesktopNavbar = ({
 
               {user?.isTalentFilled && (
                 <div className="flex items-center gap-1.5">
-                  <div
-                    className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-2 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
+                  <button
+                    type="button"
+                    className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-2 text-slate-500 transition-colors duration-100 hover:bg-slate-100 hover:text-slate-700"
                     onClick={openCreditDrawer}
                   >
                     <CreditIcon
@@ -278,10 +278,11 @@ export const DesktopNavbar = ({
                     >
                       {creditBalance}
                     </p>
-                  </div>
+                  </button>
                   <div className="relative">
-                    <div
-                      className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700"
+                    <button
+                      type="button"
+                      className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-colors duration-100 hover:bg-slate-100 hover:text-slate-700"
                       onClick={onWalletOpen}
                     >
                       <IoWalletOutline
@@ -298,7 +299,7 @@ export const DesktopNavbar = ({
                       >
                         ${formatNumberWithSuffix(walletBalance || 0, 1, false)}
                       </span>
-                    </div>
+                    </button>
                   </div>
                 </div>
               )}

@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
@@ -26,9 +27,9 @@ async function user(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.info(`Fetched current sponsor for user: ${userId}`);
     return res.status(200).json(user.currentSponsor);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error occurred while fetching user ${userId}: ${error.message}`,
+      `Error occurred while fetching user ${userId}: ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

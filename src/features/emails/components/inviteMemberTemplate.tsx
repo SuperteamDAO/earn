@@ -18,9 +18,9 @@ export const InviteMemberTemplate = ({
         You have been invited by {senderName} to join{' '}
         <strong>{sponsorName}</strong> {''} on Superteam Earn!{' '}
         <a href={link} style={styles.link}>
-          Click here
-        </a>{' '}
-        to accept the invite.
+          Accept the invite
+        </a>
+        .
       </p>
       <p style={styles.salutation}>
         Best,

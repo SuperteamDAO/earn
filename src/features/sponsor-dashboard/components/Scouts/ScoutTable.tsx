@@ -305,6 +305,7 @@ function ScoreBar({ score }: { score: number }) {
   return (
     <div className="flex h-2 gap-0.5">
       {[first, second, third].map((value, index) => (
+        // react-doctor-disable-next-line react-doctor/no-array-index-as-key -- fixed three-segment bar that is never reordered or filtered
         <Progress
           key={index}
           value={value}

@@ -38,6 +38,7 @@ export const SelectWinner = ({
   isMultiSelectOn,
 }: Props) => {
   const rewards = sortRank(cleanRewards(bounty?.rewards));
+  const usedPositionSet = new Set(usedPositions);
 
   const [selectedSubmission] = useAtom(selectedSubmissionAtom);
 
@@ -122,11 +123,11 @@ export const SelectWinner = ({
                         isHackathonPage ||
                         isMultiSelectOn
                       }
-                      className="w-full justify-between rounded-lg border border-emerald-600 bg-emerald-50 py-4 text-emerald-600 transition-all duration-300 ease-out hover:bg-emerald-100 hover:text-emerald-700 disabled:opacity-50 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200"
+                      className="w-full justify-between rounded-lg border border-emerald-600 bg-emerald-50 py-4 text-emerald-600 transition-[color,background-color,border-color,border-radius,opacity] duration-300 ease-out hover:bg-emerald-100 hover:text-emerald-700 disabled:opacity-50 data-[state=open]:rounded-b-none data-[state=open]:border-slate-200"
                     >
                       <div className="flex items-center">
                         <div className="mr-2">
-                          <Trophy className="size-4 text-emerald-600 transition-all duration-300 ease-out" />
+                          <Trophy className="size-4 text-emerald-600 transition-colors duration-300 ease-out" />
                         </div>
                         <span className="text-sm font-semibold text-emerald-600 capitalize">
                           Select Winner
@@ -141,7 +142,7 @@ export const SelectWinner = ({
                   className="w-full min-w-[180px] divide-y divide-slate-100 rounded-t-none p-0"
                 >
                   {rewards.map((reward) => {
-                    let isRewardUsed = usedPositions.includes(reward);
+                    let isRewardUsed = usedPositionSet.has(reward);
                     if (reward === BONUS_REWARD_POSITION) {
                       if (
                         usedPositions.filter((u) => u === BONUS_REWARD_POSITION)
@@ -208,11 +209,11 @@ export const SelectWinner = ({
                     isHackathonPage ||
                     isMultiSelectOn
                   }
-                  className="w-full justify-between rounded-lg border border-slate-200 bg-white py-4 transition-all duration-300 ease-out hover:bg-slate-50 disabled:opacity-50"
+                  className="w-full justify-between rounded-lg border border-slate-200 bg-white py-4 transition-[background-color,opacity] duration-300 ease-out hover:bg-slate-50 disabled:opacity-50"
                 >
                   <div className="flex items-center">
                     <div className="mr-2">
-                      <Trophy className="size-4 text-emerald-600 transition-all duration-300 ease-out" />
+                      <Trophy className="size-4 text-emerald-600 transition-colors duration-300 ease-out" />
                     </div>
                     <span className="text-sm font-semibold text-emerald-600 capitalize">
                       {selectedSubmission?.winnerPosition &&
@@ -250,7 +251,7 @@ export const SelectWinner = ({
                     )}
                   </div>
                   <button
-                    className="flex h-6 w-6 items-center justify-center text-slate-500 transition-all duration-300 ease-out hover:text-slate-600"
+                    className="flex h-6 w-6 items-center justify-center text-slate-500 transition-colors duration-300 ease-out hover:text-slate-600"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -259,6 +260,7 @@ export const SelectWinner = ({
                     }}
                     disabled={isMultiSelectOn}
                     type="button"
+                    aria-label="Remove winner"
                   >
                     <X className="size-3" />
                   </button>

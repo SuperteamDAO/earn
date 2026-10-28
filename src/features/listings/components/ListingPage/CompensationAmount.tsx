@@ -1,20 +1,25 @@
 import { ArrowRight } from 'lucide-react';
 import React from 'react';
 
+import { type CompensationType } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 interface CompensationAmountType {
-  compensationType?: 'fixed' | 'range' | 'variable';
-  rewardAmount?: number;
-  minRewardAsk?: number;
-  maxRewardAsk?: number;
-  token?: string;
+  compensationType?: CompensationType;
+  rewardAmount?: number | null;
+  minRewardAsk?: number | null;
+  maxRewardAsk?: number | null;
+  token?: string | null;
   className?: string;
   style?: React.CSSProperties;
   showUsdSymbol?: boolean;
   isWinnersAnnounced?: boolean;
 }
+
+const TokenLabel = ({ token }: { token?: string | null }) => {
+  return <span className="ml-1 text-slate-400">{token}</span>;
+};
 
 export const CompensationAmount = ({
   compensationType,
@@ -27,10 +32,6 @@ export const CompensationAmount = ({
   showUsdSymbol,
   isWinnersAnnounced,
 }: CompensationAmountType) => {
-  const Token = () => {
-    return <span className="ml-1 text-slate-400">{token}</span>;
-  };
-
   const renderCompensation = () => {
     switch (compensationType) {
       case 'fixed':
@@ -40,7 +41,7 @@ export const CompensationAmount = ({
               {showUsdSymbol ? '$' : ''}
               {formatNumberWithSuffix(rewardAmount!, 2, true)}
             </span>
-            <Token />
+            <TokenLabel token={token} />
           </>
         );
       case 'range':
@@ -49,7 +50,7 @@ export const CompensationAmount = ({
             <>
               {showUsdSymbol ? '$' : ''}
               {`${formatNumberWithSuffix(minRewardAsk!)}-${formatNumberWithSuffix(maxRewardAsk!)}`}
-              <Token />
+              <TokenLabel token={token} />
             </>
           );
         } else {
@@ -57,7 +58,7 @@ export const CompensationAmount = ({
             <>
               {showUsdSymbol ? '$' : ''}
               {formatNumberWithSuffix(rewardAmount!, 2, true)}
-              <Token />
+              <TokenLabel token={token} />
             </>
           );
         }
@@ -77,7 +78,7 @@ export const CompensationAmount = ({
                 {showUsdSymbol ? '$' : ''}
                 {formatNumberWithSuffix(rewardAmount!, 2, true)}
               </span>
-              <Token />
+              <TokenLabel token={token} />
             </>
           );
         }

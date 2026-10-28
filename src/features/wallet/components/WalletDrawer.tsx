@@ -157,6 +157,7 @@ export function WalletDrawer({
                 You will receive payments in this wallet each time you win.{' '}
                 <a
                   href="https://superteamdao.notion.site/using-your-earn-wallet"
+                  aria-label="Learn more about using your Earn wallet"
                   className="underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -189,14 +190,15 @@ export function WalletDrawer({
                     Withdraw
                     <ArrowUpRight className="h-4 w-4" />
                   </Button>
-                  <div
+                  <button
+                    type="button"
                     onClick={() => showMfaEnrollmentModal()}
-                    className="mt-1.5 cursor-pointer py-0.5 text-xs font-semibold text-slate-400 hover:text-slate-500 hover:underline"
+                    className="mt-1.5 block w-full cursor-pointer py-0.5 text-left text-xs font-semibold text-slate-400 hover:text-slate-500 hover:underline"
                   >
                     {privyUser?.mfaMethods.length === 0
                       ? '+ Add Two Factor Authentication'
                       : 'Edit Two Factor Authentication'}
-                  </div>
+                  </button>
                 </div>
               )}
             </div>
@@ -232,6 +234,7 @@ export function WalletDrawer({
                 <Button
                   variant="ghost"
                   size="icon"
+                  aria-label="Back"
                   onClick={handleBack}
                   className="mr-1 ml-4"
                 >
@@ -254,7 +257,7 @@ export function WalletDrawer({
                 />
               </div>
             )}
-            <p className="sticky bottom-0 mt-auto bg-white px-2 py-2 text-center text-xs text-slate-400 sm:text-sm">
+            <div className="sticky bottom-0 mt-auto bg-white px-2 py-2 text-center text-xs text-slate-400 sm:text-sm">
               Have questions? Reach out to us at{' '}
               {isMD ? (
                 <CopyButton text="support@superteam.fun">
@@ -271,7 +274,7 @@ export function WalletDrawer({
                   support@superteam.fun
                 </a>
               )}
-            </p>
+            </div>
           </div>
         </ScrollArea>
       </SideDrawerContent>

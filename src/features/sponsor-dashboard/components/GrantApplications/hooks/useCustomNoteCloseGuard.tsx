@@ -61,6 +61,7 @@ export const useCustomNoteCloseGuard = ({
       open={isDiscardDialogOpen}
       onOpenChange={setIsDiscardDialogOpen}
     >
+      {/* react-doctor-disable-next-line react-doctor/duplicate-jsx-subtree -- stock shadcn AlertDialog confirm composition; this discard guard and the listing builder's type-change prompt are unrelated flows whose copy and actions change independently */}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure?</AlertDialogTitle>

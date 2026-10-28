@@ -33,56 +33,56 @@ export function ProSlideout({
     return () => setMounted(false);
   }, []);
 
-  const calculateArrow = () => {
-    if (!slideoutRef.current || !proSwitchRef) return;
-
-    const slideoutRect = slideoutRef.current.getBoundingClientRect();
-    const switchRect = proSwitchRef.getBoundingClientRect();
-
-    // Original start point: left edge of slideout, vertically centered
-    const originalStartX = slideoutRect.left;
-    const originalStartY = slideoutRect.top + slideoutRect.height / 2;
-
-    // Original end point: right edge of switch, vertically centered
-    const originalEndX = switchRect.right;
-    const originalEndY = switchRect.top + switchRect.height / 2;
-
-    // Calculate direction vector
-    const dx = originalEndX - originalStartX;
-    const dy = originalEndY - originalStartY;
-    const length = Math.sqrt(dx * dx + dy * dy);
-    const unitX = dx / length;
-    const unitY = dy / length;
-
-    // Offset both ends by 40px so arrow doesn't connect end-to-end
-    const startX = originalStartX + unitX * 200;
-    const startY = originalStartY + unitY * 200;
-    const endX = originalEndX - unitX * 20;
-    const endY = originalEndY - unitY * 20;
-
-    // Control point for quadratic bezier curve (curved to the left)
-    const controlX = startX - (startX - endX) * 0.3; // Curve goes left first
-    const controlY = (startY + endY) / 2;
-
-    // Create quadratic bezier path
-    const path = `M ${startX} ${startY} Q ${controlX} ${controlY} ${endX} ${endY}`;
-    setArrowPath(path);
-
-    // Calculate arrowhead position and angle
-    // For quadratic bezier, tangent at end point is from control point to end point
-    const endDx = endX - controlX;
-    const endDy = endY - controlY;
-    const angle = Math.atan2(endDy, endDx);
-
-    setArrowHead({ x: endX, y: endY, angle: (angle * 180) / Math.PI });
-  };
-
   useEffect(() => {
     if (!show || !mounted || !proSwitchRef) {
       setArrowPath(null);
       setArrowHead(null);
       return;
     }
+
+    const calculateArrow = () => {
+      if (!slideoutRef.current || !proSwitchRef) return;
+
+      const slideoutRect = slideoutRef.current.getBoundingClientRect();
+      const switchRect = proSwitchRef.getBoundingClientRect();
+
+      // Original start point: left edge of slideout, vertically centered
+      const originalStartX = slideoutRect.left;
+      const originalStartY = slideoutRect.top + slideoutRect.height / 2;
+
+      // Original end point: right edge of switch, vertically centered
+      const originalEndX = switchRect.right;
+      const originalEndY = switchRect.top + switchRect.height / 2;
+
+      // Calculate direction vector
+      const dx = originalEndX - originalStartX;
+      const dy = originalEndY - originalStartY;
+      const length = Math.sqrt(dx * dx + dy * dy);
+      const unitX = dx / length;
+      const unitY = dy / length;
+
+      // Offset both ends by 40px so arrow doesn't connect end-to-end
+      const startX = originalStartX + unitX * 200;
+      const startY = originalStartY + unitY * 200;
+      const endX = originalEndX - unitX * 20;
+      const endY = originalEndY - unitY * 20;
+
+      // Control point for quadratic bezier curve (curved to the left)
+      const controlX = startX - (startX - endX) * 0.3; // Curve goes left first
+      const controlY = (startY + endY) / 2;
+
+      // Create quadratic bezier path
+      const path = `M ${startX} ${startY} Q ${controlX} ${controlY} ${endX} ${endY}`;
+      setArrowPath(path);
+
+      // Calculate arrowhead position and angle
+      // For quadratic bezier, tangent at end point is from control point to end point
+      const endDx = endX - controlX;
+      const endDy = endY - controlY;
+      const angle = Math.atan2(endDy, endDx);
+
+      setArrowHead({ x: endX, y: endY, angle: (angle * 180) / Math.PI });
+    };
 
     // Calculate arrow on mount and when dependencies change
     const timeoutId = setTimeout(() => {
@@ -98,7 +98,7 @@ export function ProSlideout({
       window.removeEventListener('resize', calculateArrow);
       window.removeEventListener('scroll', calculateArrow, true);
     };
-  }, [show, mounted, proSwitchRef]);
+  }, [show, mounted, proSwitchRef, slideoutRef]);
 
   if (!mounted || !show) return null;
 
@@ -165,6 +165,7 @@ export function ProSlideout({
               variant="ghost"
               size="icon"
               className="absolute top-2 right-2 z-50 h-6 w-6 text-slate-400 hover:text-slate-600"
+              aria-label="Dismiss"
               onClick={(e) => {
                 e.stopPropagation();
                 onClose();

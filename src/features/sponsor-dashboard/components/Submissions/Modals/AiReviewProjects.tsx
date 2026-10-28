@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { Check, InfoIcon, Wand2, XCircle } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { Check } from 'lucide-react';
+import { AnimatePresence, m } from 'motion/react';
 import posthog from 'posthog-js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -20,7 +20,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
-import { Tooltip } from '@/components/ui/tooltip';
 import { type SubmissionWithUser } from '@/interface/submission';
 import { useUser } from '@/store/user';
 import { WandAnimated } from '@/svg/WandAnimated/WandAnimated';
@@ -30,13 +29,16 @@ import {
   type Listing,
   type ProjectApplicationAi,
 } from '@/features/listings/types';
+import { AiReviewErrorContent } from '@/features/sponsor-dashboard/components/Modals/AiReviewErrorContent';
 import { useCommitReviewsSubmissions } from '@/features/sponsor-dashboard/mutations/useCommitReviewsSubmissions';
 import { unreviewedSubmissionsQuery } from '@/features/sponsor-dashboard/queries/unreviewed-submissions';
 import { colorMap } from '@/features/sponsor-dashboard/utils/statusColorMap';
 
+import { AiReviewInitContent } from './AiReviewInitContent';
+
 interface Props {
   applications: SubmissionWithUser[] | undefined;
-  listing: Listing | undefined;
+  listing: Omit<Listing, 'Hackathon'> | undefined;
 }
 export default function AiReviewProjectApplicationsModal({
   applications,
@@ -123,6 +125,7 @@ export default function AiReviewProjectApplicationsModal({
       !!user?.currentSponsorId &&
       user?.currentSponsorId === listing?.sponsorId
     ) {
+      // react-doctor-disable-next-line react-doctor/query-no-query-in-effect -- the unreviewed list must follow the parent's `applications` prop, which is not part of this query's key, and refetchOnMount is off
       refetchUnreviewedApplications();
     }
   }, [
@@ -138,7 +141,6 @@ export default function AiReviewProjectApplicationsModal({
   );
 
   const nonAnalysedApplications = useMemo(() => {
-    console.log('unreviewedApplications', unreviewedApplications);
     return unreviewedApplications?.filter(
       (appl) => !(appl.ai as ProjectApplicationAi)?.review,
     );
@@ -164,9 +166,7 @@ export default function AiReviewProjectApplicationsModal({
     setTimeout(async () => {
       setProgress(100);
       try {
-        console.log('Commiting Reviewed applications');
         const data = await commitReviews();
-        console.log('commit data - ', data.data);
         setCompletedStats({
           totalReviewed: data.data.length,
           shortlisted: data.data.filter((s) => s.label === 'Shortlisted')
@@ -178,7 +178,7 @@ export default function AiReviewProjectApplicationsModal({
         posthog.capture('complete_ai review project');
         setState('DONE');
         await refetchUnreviewedApplications();
-      } catch (error: any) {
+      } catch (error) {
         console.log(
           'error occured while commiting reviewed applications',
           error,
@@ -186,14 +186,7 @@ export default function AiReviewProjectApplicationsModal({
         setState('ERROR');
       }
     }, 10000);
-  }, [
-    applications,
-    unreviewedApplications,
-    nonAnalysedApplications,
-    posthog,
-    commitReviews,
-    refetchUnreviewedApplications,
-  ]);
+  }, [commitReviews, refetchUnreviewedApplications]);
   function onComplete() {
     setState('INIT');
     setProgress(0);
@@ -299,70 +292,24 @@ export default function AiReviewProjectApplicationsModal({
           <AnimateChangeInHeight>
             <AnimatePresence mode="popLayout">
               {state === 'INIT' && (
-                <motion.div
+                <m.div
                   key="init"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className="px-6 py-4">
-                    <div className="space-y-2 font-medium">
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-2 text-base text-slate-500">
-                          Unreviewed Applications
-                          <Tooltip
-                            content="We will only review unreviewed submissions. If you've already reviewed some submissions, those will remain untouched."
-                            contentProps={{
-                              style: {
-                                zIndex: '100',
-                              },
-                            }}
-                          >
-                            <InfoIcon className="h-4 w-4 text-slate-400" />
-                          </Tooltip>
-                        </span>
-                        <span className="text-xl font-semibold">
-                          {totalApplications}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-base text-slate-500">
-                          Credits Used
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="rounded-full bg-green-100 px-2 py-0 text-sm text-green-700">
-                            Free
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between text-slate-500">
-                        <span className="text-base">Estimated Time</span>
-                        <span className="text-lg">{estimatedTime}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex flex-col px-6">
-                    <Button
-                      className="ph-no-capture mt-4 w-full"
-                      size="lg"
-                      onClick={() => {
-                        onReviewClick?.();
-                      }}
-                    >
-                      <Wand2 className="mr-2 h-5 w-5" />
-                      Proceed
-                    </Button>
-
-                    <p className="text-muted-foreground mt-2 text-center text-sm">
-                      AI can make mistakes. Check important info before
-                      approving or rejecting a project application.
-                    </p>
-                  </CardFooter>
-                </motion.div>
+                  <AiReviewInitContent
+                    unreviewedLabel="Unreviewed Applications"
+                    unreviewedCount={totalApplications}
+                    estimatedTime={estimatedTime}
+                    disclaimer="AI can make mistakes. Check important info before approving or rejecting a project application."
+                    onProceed={onReviewClick}
+                  />
+                </m.div>
               )}
               {state === 'PROCESSING' && (
-                <motion.div
+                <m.div
                   key="processing"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -390,10 +337,10 @@ export default function AiReviewProjectApplicationsModal({
                       Approx. {estimatedTimeSingular} remaining
                     </p>
                   </CardFooter>
-                </motion.div>
+                </m.div>
               )}
               {state === 'DONE' && (
-                <motion.div
+                <m.div
                   key="done"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
@@ -450,38 +397,21 @@ export default function AiReviewProjectApplicationsModal({
                       Have a look
                     </Button>
                   </CardContent>
-                </motion.div>
+                </m.div>
               )}
               {state === 'ERROR' && (
-                <motion.div
+                <m.div
                   key="error"
                   initial={{ opacity: 0, y: -20, filter: 'blur(8px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
                   transition={{ duration: 0.3 }}
                 >
-                  <CardContent className="flex flex-col items-center space-y-8 p-8 text-center">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
-                      <XCircle className="h-8 w-8 stroke-[2.5] text-red-600" />
-                    </div>
-
-                    <div className="space-y-2">
-                      <h2 className="text-xl font-semibold">Review Failed</h2>
-                      <p className="mx-auto w-4/5 text-sm text-slate-500">
-                        Something went wrong while reviewing the applications.
-                        Please try again.
-                      </p>
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      className="w-full border-[#e2e8f0] text-[#62748e]"
-                      onClick={() => setState('INIT')}
-                    >
-                      Try Again
-                    </Button>
-                  </CardContent>
-                </motion.div>
+                  <AiReviewErrorContent
+                    subject="applications"
+                    onRetry={() => setState('INIT')}
+                  />
+                </m.div>
               )}
             </AnimatePresence>
           </AnimateChangeInHeight>
@@ -518,7 +448,6 @@ function formatTime(milliseconds: number): string {
   return `${hours}h ${minutes}m`;
 }
 function estimateTime(totalApplications: number, singular = false): string {
-  console.log('total applications', totalApplications);
   const lowerBoundSeconds = totalApplications * 10;
   const upperBoundSeconds = totalApplications * 20;
 

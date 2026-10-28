@@ -2,6 +2,11 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { PrismaClientKnownRequestError } from '@/prisma/internal/prismaNamespace';
+import {
+  type PoWCreateManyInput,
+  type PoWUpdateInput,
+} from '@/prisma/models/PoW';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -31,7 +36,9 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
   }
 
   try {
-    const incomingIds = pows.map((pow) => pow.id).filter(Boolean) as string[];
+    const incomingIdSet = new Set(
+      pows.map((pow) => pow.id).filter(Boolean) as string[],
+    );
 
     const existingPoWs = await prisma.poW.findMany({
       where: {
@@ -41,12 +48,13 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     });
 
     const existingIds = existingPoWs.map((pow) => pow.id);
-    const idsToDelete = existingIds.filter((id) => !incomingIds.includes(id));
+    const existingIdSet = new Set(existingIds);
+    const idsToDelete = existingIds.filter((id) => !incomingIdSet.has(id));
 
-    const createData: { [key: string]: any }[] = [];
+    const createData: PoWCreateManyInput[] = [];
     const updateData: {
       where: { id: string };
-      data: { [key: string]: any };
+      data: PoWUpdateInput;
     }[] = [];
 
     for (const pow of pows) {
@@ -59,7 +67,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         pow;
 
       if (id) {
-        if (existingIds.includes(id)) {
+        if (existingIdSet.has(id)) {
           updateData.push({
             where: { id },
             data: {
@@ -77,7 +85,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       } else {
         createData.push({
           title,
-          userId,
+          userId: userId!,
           description,
           skills,
           subSkills,
@@ -99,7 +107,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     if (createData.length > 0) {
-      await prisma.poW.createMany({ data: createData as any });
+      await prisma.poW.createMany({ data: createData });
     }
 
     if (updateData.length > 0) {
@@ -111,12 +119,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
     logger.info(`Successfully processed PoWs for user ${userId}`);
     return res.status(200).json({ message: 'Success' });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error processing PoWs for user ${userId}:`,
       safeStringify(error),
     );
-    if (error.code) {
+    if (error instanceof PrismaClientKnownRequestError) {
       return res.status(500).json({
         error: {
           code: error.code,

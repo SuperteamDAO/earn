@@ -39,7 +39,8 @@ import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DayPicker, type Matcher, TZDate } from 'react-day-picker';
 
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button.variants';
 import {
   Popover,
   PopoverContent,
@@ -223,9 +224,10 @@ export function DateTimePicker({
       if (max && newDate > max) {
         newDate.setHours(max.getHours(), max.getMinutes(), max.getSeconds());
       }
+      setMonth(new TZDate(newDate, timezone));
       onChange(newDate);
     },
-    [value, onChange, min, max],
+    [value, onChange, min, max, timezone],
   );
 
   const onMonthYearChanged = useCallback(
@@ -246,12 +248,16 @@ export function DateTimePicker({
     setMonth(subMonths(month, 1));
   }, [month]);
 
-  useEffect(() => {
-    if (open) {
-      setMonth(initDate);
-      setMonthYearPicker(false);
-    }
-  }, [open, initDate]);
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (nextOpen) {
+        setMonth(initDate);
+        setMonthYearPicker(false);
+      }
+      setOpen(nextOpen);
+    },
+    [initDate],
+  );
 
   const displayValue = value;
 
@@ -261,10 +267,10 @@ export function DateTimePicker({
       displayValue,
       `${!hideTime ? 'MMM' : 'MMMM'} d, yyyy${!hideTime ? (use12HourFormat ? ' hh:mm a' : ' HH:mm:ss') : ''}`,
     );
-  }, [displayValue, hideTime, use12HourFormat]);
+  }, [displayValue, defaultDisplayValue, hideTime, use12HourFormat]);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         {renderTrigger ? (
           renderTrigger({
@@ -273,7 +279,7 @@ export function DateTimePicker({
             timezone,
             disabled,
             use12HourFormat,
-            setOpen,
+            setOpen: handleOpenChange,
           })
         ) : (
           <div
@@ -284,7 +290,15 @@ export function DateTimePicker({
               disabled && 'pointer-events-none cursor-not-allowed opacity-50',
               classNames?.trigger,
             )}
+            role="button"
             tabIndex={0}
+            onKeyDown={(e) => {
+              if (disabled || e.target !== e.currentTarget) return;
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleOpenChange(!open);
+              }
+            }}
           >
             <div className="flex grow items-center text-slate-700">
               <CalendarIcon className="mr-2 size-4" />
@@ -317,7 +331,8 @@ export function DateTimePicker({
         <div className="flex items-center justify-between">
           <div className="ms-2 flex cursor-pointer items-center text-sm font-medium">
             <div>
-              <span
+              <button
+                type="button"
                 onClick={() =>
                   setMonthYearPicker(
                     monthYearPicker === 'month' ? false : 'month',
@@ -325,8 +340,9 @@ export function DateTimePicker({
                 }
               >
                 {format(month, 'MMMM')}
-              </span>
-              <span
+              </button>
+              <button
+                type="button"
                 className="ms-1"
                 onClick={() =>
                   setMonthYearPicker(
@@ -335,11 +351,16 @@ export function DateTimePicker({
                 }
               >
                 {format(month, 'yyyy')}
-              </span>
+              </button>
             </div>
             <Button
               variant="ghost"
               size="icon"
+              aria-label={
+                monthYearPicker
+                  ? 'Hide month and year picker'
+                  : 'Show month and year picker'
+              }
               onClick={() =>
                 setMonthYearPicker(monthYearPicker ? false : 'year')
               }
@@ -350,10 +371,20 @@ export function DateTimePicker({
           <div
             className={cn('flex space-x-2', monthYearPicker ? 'hidden' : '')}
           >
-            <Button variant="ghost" size="icon" onClick={onPrevMonth}>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Previous month"
+              onClick={onPrevMonth}
+            >
               <ChevronLeftIcon />
             </Button>
-            <Button variant="ghost" size="icon" onClick={onNextMonth}>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Next month"
+              onClick={onNextMonth}
+            >
               <ChevronRightIcon />
             </Button>
           </div>
@@ -442,7 +473,7 @@ export function DateTimePicker({
           ></div>
           <MonthYearPicker
             value={month}
-            mode={monthYearPicker as any}
+            mode={monthYearPicker}
             onChange={onMonthYearChanged}
             minDate={minDate}
             maxDate={maxDate}
@@ -458,6 +489,7 @@ export function DateTimePicker({
             <TimePicker
               hideSeconds={hideSeconds}
               timePicker={timePicker}
+              // react-doctor-disable-next-line react-doctor/rendering-hydration-mismatch-time -- PopoverContent only mounts after the user opens the picker on the client, so this never renders on the server
               value={value || new Date()}
               onChange={onChange}
               use12HourFormat={use12HourFormat}
@@ -487,7 +519,8 @@ function MonthYearPicker({
   isPro = false,
 }: {
   value: Date;
-  mode: 'month' | 'year';
+  // false while the month/year overlay is closed: neither grid renders
+  mode: 'month' | 'year' | false;
   minDate?: Date;
   maxDate?: Date;
   onChange: (value: Date, mode: 'month' | 'year') => void;
@@ -636,6 +669,7 @@ function TimePicker({
   const [second, setSecond] = useState(value.getSeconds());
 
   useEffect(() => {
+    // react-doctor-disable-next-line react-doctor/no-pass-data-to-parent, react-doctor/no-pass-live-state-to-parent, react-doctor/no-prop-callback-in-effect -- the mount run fills an empty value with the current time when the picker opens, and the four handlers clamp several time parts at once, so moving this into them would change that behavior
     onChange(
       buildTime({
         use12HourFormat,
@@ -648,6 +682,7 @@ function TimePicker({
       }),
       true,
     );
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- value and onChange are left out on purpose: onChange produces a new value, so depending on it would loop
   }, [hour, minute, second, ampm, formatStr, use12HourFormat]);
 
   const _hourIn24h = useMemo(() => {
@@ -655,7 +690,7 @@ function TimePicker({
     //   return (hour % 12) + ampm * 12;
     // }
     return use12HourFormat ? (hour % 12) + ampm * 12 : hour;
-  }, [value, use12HourFormat, ampm]);
+  }, [hour, use12HourFormat, ampm]);
 
   const hours: TimeOption[] = useMemo(
     () =>
@@ -797,8 +832,8 @@ function TimePicker({
           use12HourFormat,
           value,
           formatStr,
-          hour: v.value,
-          minute,
+          hour,
+          minute: v.value,
           second,
           ampm,
         });
@@ -811,8 +846,8 @@ function TimePicker({
           use12HourFormat,
           value,
           formatStr,
-          hour: v.value,
-          minute,
+          hour,
+          minute: v.value,
           second,
           ampm,
         });
@@ -832,7 +867,6 @@ function TimePicker({
       ampm,
       min,
       max,
-      minute,
     ],
   );
 

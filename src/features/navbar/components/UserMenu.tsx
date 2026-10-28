@@ -2,7 +2,7 @@ import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
-import { useEffect } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 
 import { SupportFormDialog } from '@/components/shared/SupportFormDialog';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,8 @@ import { useLogout, useUser } from '@/store/user';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 import { EmailSettingsModal } from '@/features/talent/components/EmailSettingsModal';
 
+const subscribeToNothing = () => () => {};
+
 export function UserMenu() {
   const router = useRouter();
 
@@ -28,11 +30,13 @@ export function UserMenu() {
   const logout = useLogout();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  // Check if user has clicked on telegram alerts before
-  const hasSeenTelegramAlerts = () => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem('telegram-alerts-shown') === 'true';
-  };
+  // Check if user has clicked on telegram alerts before. The server snapshot
+  // keeps the hydration render identical to the server HTML.
+  const hasSeenTelegramAlerts = useSyncExternalStore(
+    subscribeToNothing,
+    () => localStorage.getItem('telegram-alerts-shown') === 'true',
+    () => false,
+  );
 
   useEffect(() => {
     const checkHashAndOpenModal = () => {
@@ -50,7 +54,6 @@ export function UserMenu() {
   }, [isOpen, onOpen]);
 
   const handleClose = async () => {
-    console.log('close -', router);
     await router.replace(
       router.asPath.replace('#emailPreferences', ''),
       undefined,
@@ -93,7 +96,7 @@ export function UserMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger
           id="user menu"
-          className="ph-no-capture rounded-lg border border-white px-2 py-1 transition-all duration-100 hover:bg-slate-100 focus:outline-hidden active:border-slate-300 active:bg-slate-200 data-[state=open]:bg-slate-100"
+          className="ph-no-capture rounded-lg border border-white px-2 py-1 transition-colors duration-100 hover:bg-slate-100 focus:outline-hidden active:border-slate-300 active:bg-slate-200 data-[state=open]:bg-slate-100"
           onClick={() => {
             posthog.capture('clicked_user menu');
           }}
@@ -105,7 +108,7 @@ export function UserMenu() {
                 {user?.firstName ?? user?.email ?? ''}
               </p>
             </div>
-            {!hasSeenTelegramAlerts() && (
+            {!hasSeenTelegramAlerts && (
               <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
             )}
             <ChevronDown className="block size-4 text-slate-400" />
@@ -211,7 +214,7 @@ export function UserMenu() {
             >
               <div className="flex items-center gap-2">
                 <span>Telegram Alerts</span>
-                {!hasSeenTelegramAlerts() && (
+                {!hasSeenTelegramAlerts && (
                   <div className="block h-1.5 w-1.5 rounded-full bg-sky-400" />
                 )}
               </div>

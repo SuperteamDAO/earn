@@ -1,15 +1,21 @@
 import { z } from 'zod';
 
+import { type BountyTemplateWithSponsor } from '@/app/api/sponsor-dashboard/templates/route';
+import { skillsArraySchema } from '@/interface/skills';
 import { type BountyType, type CompensationType } from '@/prisma/enums';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { dayjs } from '@/utils/dayjs';
+import { parseQuestionConfigs } from '@/utils/parseQuestionConfigs';
 
+import { type BuilderHackathon } from '@/features/listing-builder/types';
 import { type Listing } from '@/features/listings/types';
 
 import { type GeneratedListingData } from '../atoms';
 import { DEADLINE_FORMAT, getDefaultListingToken } from '../constants';
 import { type ListingFormData } from '../types';
-import { createListingFormSchema } from '../types/schema';
+import {
+  createListingFormSchema,
+  type TEligibilityQuestion,
+} from '../types/schema';
 import { calculateTotalRewardsForPodium } from './rewards';
 
 interface ListingDefaults {
@@ -17,7 +23,7 @@ interface ListingDefaults {
   isEditing: boolean;
   isST: boolean;
   type?: BountyType;
-  hackathons?: HackathonModel[];
+  hackathons?: BuilderHackathon[];
   hackathonId?: string;
   generatedListing?: GeneratedListingData;
 }
@@ -39,17 +45,17 @@ export const getListingDefaults = ({
   });
 
   // Get the inner schema by unwrapping the ZodEffects
-  const getInnerSchema = (schema: z.ZodTypeAny): z.ZodObject<any> => {
+  const getInnerSchema = (schema: z.ZodTypeAny): z.ZodObject<z.ZodRawShape> => {
     if (schema instanceof z.ZodEffects) {
       return getInnerSchema(schema.innerType());
     }
-    return schema as z.ZodObject<any>;
+    return schema as z.ZodObject<z.ZodRawShape>;
   };
 
   const innerSchema = getInnerSchema(schema);
   const shape = innerSchema.shape;
 
-  const defaults: Record<string, any> = {};
+  const defaults: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(shape)) {
     const zodValue = value as z.ZodTypeAny;
@@ -147,50 +153,64 @@ export const getListingDefaults = ({
   return defaults as ListingFormData;
 };
 
-export const cleanTemplate = (
-  template: Listing,
-  prevValues: ListingFormData,
-) => {
-  const reTemplate: Partial<
-    Listing & { color: string; emoji: string; Bounties: string }
-  > = { ...template } as any;
+// The form requires `type`; older stored questions flag links with `isLink`
+// instead, which submission validation also honours.
+export const toFormEligibility = (
+  value: unknown,
+): TEligibilityQuestion[] | undefined =>
+  parseQuestionConfigs(value)?.map(
+    ({ order, question, optional, isLink, type }) => ({
+      order,
+      question,
+      optional,
+      type: type ?? (isLink ? 'link' : 'text'),
+    }),
+  );
 
-  reTemplate.templateId = reTemplate.id;
-  reTemplate.id = prevValues.id || undefined;
-  reTemplate.slug = prevValues.slug;
-  reTemplate.compensationType = prevValues.compensationType;
-  reTemplate.rewards = prevValues.rewards || undefined;
-  reTemplate.deadline = prevValues.deadline;
-  reTemplate.commitmentDate = prevValues.commitmentDate;
-  reTemplate.maxBonusSpots = prevValues.maxBonusSpots || undefined;
-  reTemplate.minRewardAsk = prevValues.minRewardAsk || undefined;
-  reTemplate.maxRewardAsk = prevValues.maxRewardAsk || undefined;
-  reTemplate.pocSocials = prevValues.pocSocials;
-  reTemplate.rewardAmount = prevValues.rewardAmount || undefined;
-  reTemplate.rewards = prevValues.rewards || undefined;
-  reTemplate.region = prevValues.region;
-  reTemplate.isPrivate = prevValues.isPrivate;
-  reTemplate.agentAccess = prevValues.agentAccess;
-  reTemplate.isFndnPaying = prevValues.isFndnPaying;
-  reTemplate.hackathonId = prevValues.hackathonId || undefined;
-  reTemplate.eligibility = (prevValues.eligibility as any) || undefined;
-  reTemplate.token = prevValues.token || reTemplate.token;
-
-  delete reTemplate.isFeatured;
-  delete reTemplate.isActive;
-  delete reTemplate.isArchived;
-  delete reTemplate.applicationType;
-  delete reTemplate.isPublished;
-  delete reTemplate.pocId;
-  delete reTemplate.publishedAt;
-  delete reTemplate.requirements;
-  delete reTemplate.sponsorId;
-  delete reTemplate.color;
-  delete reTemplate.emoji;
-  delete reTemplate.Bounties;
-
-  return reTemplate;
+// Older listings can store rewards as an array. Number it from 1, as
+// validateFields does, because 0-based positions fail the reward schema.
+const toFormRewards = (
+  rewards: Listing['rewards'],
+): ListingFormData['rewards'] => {
+  if (!rewards) return undefined;
+  if (Array.isArray(rewards)) {
+    return Object.fromEntries(
+      rewards.filter(Boolean).map((value, index) => [String(index + 1), value]),
+    );
+  }
+  return Object.fromEntries(Object.entries(rewards));
 };
+
+// Applying a template keeps the sponsor's current settings and takes only the
+// template's content: title, description, skills and type.
+export const cleanTemplate = (
+  template: BountyTemplateWithSponsor,
+  prevValues: ListingFormData,
+): Partial<ListingFormData> => ({
+  title: template.title ?? undefined,
+  description: template.description ?? undefined,
+  skills: skillsArraySchema.safeParse(template.skills).data,
+  type: template.type,
+  templateId: template.id,
+  id: prevValues.id || undefined,
+  slug: prevValues.slug,
+  compensationType: prevValues.compensationType,
+  rewards: prevValues.rewards || undefined,
+  deadline: prevValues.deadline,
+  commitmentDate: prevValues.commitmentDate,
+  maxBonusSpots: prevValues.maxBonusSpots || undefined,
+  minRewardAsk: prevValues.minRewardAsk || undefined,
+  maxRewardAsk: prevValues.maxRewardAsk || undefined,
+  pocSocials: prevValues.pocSocials,
+  rewardAmount: prevValues.rewardAmount || undefined,
+  region: prevValues.region,
+  isPrivate: prevValues.isPrivate,
+  agentAccess: prevValues.agentAccess,
+  isFndnPaying: prevValues.isFndnPaying,
+  hackathonId: prevValues.hackathonId || undefined,
+  eligibility: prevValues.eligibility || undefined,
+  token: prevValues.token || template.token || undefined,
+});
 
 export function transformListingToFormListing(
   listing: Listing,
@@ -223,9 +243,9 @@ export function transformListingToFormListing(
     type: (listing.type as BountyType) || 'bounty',
     title: listing.title || '',
     description: listing.description || '',
-    eligibility: listing.eligibility as any,
+    eligibility: toFormEligibility(listing.eligibility),
     region: listing.region || 'Global',
-    rewards: listing.rewards as any,
+    rewards: toFormRewards(listing.rewards),
     compensationType: listing.compensationType as CompensationType,
     rewardAmount: listing.rewardAmount,
     maxBonusSpots: listing.maxBonusSpots,

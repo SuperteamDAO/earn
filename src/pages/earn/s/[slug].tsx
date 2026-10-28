@@ -36,7 +36,6 @@ interface Props {
 }
 
 const SponsorPage = ({ sponsor, stats }: Props) => {
-  console.log('stats', stats);
   const logo = sponsor.logo;
   const url = sponsor.url;
   const twitter = sponsor.twitter;

@@ -27,7 +27,7 @@ import { roundToNearestTenth } from '@/utils/number';
 
 import { type Listing } from '@/features/listings/types';
 import { isDeadlineOver } from '@/features/listings/utils/deadline';
-import { bountySnackbarAtom } from '@/features/navbar/components/BountySnackbar';
+import { bountySnackbarAtom } from '@/features/navbar/atoms';
 
 import { popupOpenAtom, popupsShowedAtom, popupTimeoutAtom } from '../atoms';
 import { GetStarted } from './GetStarted';
@@ -36,7 +36,7 @@ interface VariantInfo {
   title: string;
   description: string;
   sponsorName: string | undefined;
-  sponsorLogo: string | undefined;
+  sponsorLogo: string | undefined | null;
 }
 const getVariantInfoMap = (
   listing: Listing | null,
@@ -52,7 +52,7 @@ const getVariantInfoMap = (
   return {
     0: {
       title: `Don’t miss out on this ${rewardLabel} ${type}`,
-      description: `Apply to ${sponsorName}’s ${type} and win from ${!!rewardLabel ? `a ${rewardLabel} pool` : 'an amazing pool'}. Takes 2 minutes to get started!`,
+      description: `Apply to ${sponsorName}’s ${type} and win from ${rewardLabel ? `a ${rewardLabel} pool` : 'an amazing pool'}. Takes 2 minutes to get started!`,
       sponsorName: listing?.sponsor?.name,
       sponsorLogo: listing?.sponsor?.logo,
     },
@@ -87,7 +87,7 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
 
   const initated = useRef(false); // only run use effect once
   useEffect(() => {
-    if (
+    const shouldStart =
       !initated.current &&
       ready &&
       !authenticated &&
@@ -95,14 +95,17 @@ export const ListingPop = ({ listing }: { listing: Listing | null }) => {
       !isDeadlineOver(listing.deadline, serverTime()) &&
       popupsShowed < 1 &&
       !open &&
-      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
-    ) {
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+    if (!shouldStart) return;
+
+    // Marked inside the timer so a cancelled run can schedule again.
+    const timer = setTimeout(() => {
       initated.current = true;
-      setTimeout(() => {
-        timeoutHandle.start();
-        setPopupTimeout(timeoutHandle);
-      }, 0);
-    }
+      timeoutHandle.start();
+      setPopupTimeout(timeoutHandle);
+    }, 0);
+    return () => clearTimeout(timer);
+    // react-doctor-disable-next-line react-doctor/exhaustive-deps -- schedules once when auth resolves; the rest is a snapshot read at that moment, and useTimeout returns a new handle object every render
   }, [ready, authenticated]);
 
   const variant = useMemo<VariantInfo>(() => {
@@ -144,7 +147,7 @@ const Desktop = ({
         }}
         unsetDefaultPosition
         unsetDefaultTransition
-        className="data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full right-4 bottom-4 max-w-[22.5rem] translate-x-0 translate-y-0 overflow-hidden duration-500"
+        className="data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full animation-duration-500 right-4 bottom-4 max-w-[22.5rem] translate-x-0 translate-y-0 overflow-hidden"
       >
         <DialogHeader className="">
           <LocalImage

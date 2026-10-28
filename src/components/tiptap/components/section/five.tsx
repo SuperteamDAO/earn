@@ -9,7 +9,7 @@ import type { Editor } from '@tiptap/react';
 import type { VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
-import type { toggleVariants } from '@/components/ui/toggle';
+import type { toggleVariants } from '@/components/ui/toggle.variants';
 
 import type { FormatAction } from '../../types';
 import { ImageEditDialog } from '../image/image-edit-dialog';

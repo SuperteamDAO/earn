@@ -2,6 +2,8 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type SubmissionUpdateInput } from '@/prisma/models/Submission';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -42,9 +44,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     if (currentSubmissions.length !== submissionIds.length) {
-      const foundIds = currentSubmissions.map((s) => s.id);
+      const foundIdSet = new Set(currentSubmissions.map((s) => s.id));
       const missingIds = submissionIds.filter(
-        (id: string) => !foundIds.includes(id),
+        (id: string) => !foundIdSet.has(id),
       );
       logger.warn(`Submissions not found: ${missingIds.join(', ')}`);
       return res.status(404).json({
@@ -94,7 +96,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     for (const submission of currentSubmissions) {
       let autoFixed = false;
-      const updateData: any = { label };
+      const updateData: SubmissionUpdateInput = { label };
 
       if (label === 'Spam' && submission.isWinner) {
         updateData.isWinner = false;
@@ -110,6 +112,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         `Updating submission with ID: ${submission.id} and label: ${label}`,
       );
 
+      // react-doctor-disable-next-line react-doctor/async-await-in-loop -- bulk relabels can cover hundreds of rows with up to three writes each, and there is no concurrency limiter here, so running them unbounded would starve the Prisma connection pool
       const result = await prisma.submission.update({
         where: { id: submission.id },
         data: updateData,
@@ -151,8 +154,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       });
     }
-  } catch (error: any) {
-    logger.error(`Error occurred while updating submissions: ${error.message}`);
+  } catch (error) {
+    logger.error(
+      `Error occurred while updating submissions: ${getErrorMessage(error)}`,
+    );
     return res.status(500).json({
       error: 'Internal Server Error',
       message: 'Error occurred while updating the submissions.',

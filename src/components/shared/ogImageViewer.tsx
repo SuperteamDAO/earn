@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { ogImageQuery } from '@/queries/og';
@@ -42,10 +42,8 @@ export const OgImageViewer = ({
   isWinnersAnnounced = true,
 }: Props) => {
   const cachedImageUrl = imageUrl === 'error' ? null : imageUrl;
-  const [fallbackImage] = useState(getRandomFallbackImage());
-  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
-    cachedImageUrl || null,
-  );
+  const [fallbackImage] = useState(getRandomFallbackImage);
+  const [imageFailed, setImageFailed] = useState(false);
 
   const {
     data: ogData,
@@ -57,24 +55,17 @@ export const OgImageViewer = ({
     enabled: !cachedImageUrl && isWinnersAnnounced && !!externalUrl,
   });
 
-  useEffect(() => {
-    if (error) setCurrentImageUrl(fallbackImage);
-  }, [error, fallbackImage]);
-
-  useEffect(() => {
-    if (!ogData || currentImageUrl) return;
-
-    if (ogData === 'error') {
-      setCurrentImageUrl(fallbackImage);
-      return;
-    }
-
-    setCurrentImageUrl(ogData.images?.[0]?.url || fallbackImage);
-  }, [ogData, fallbackImage, currentImageUrl]);
+  const ogImageUrl = !ogData
+    ? null
+    : ogData === 'error'
+      ? fallbackImage
+      : ogData.images?.[0]?.url || fallbackImage;
+  const currentImageUrl =
+    imageFailed || error ? fallbackImage : cachedImageUrl || ogImageUrl;
 
   const handleImageError = useCallback(() => {
-    setCurrentImageUrl(fallbackImage);
-  }, [fallbackImage]);
+    setImageFailed(true);
+  }, []);
 
   if (isLoading) {
     return <Skeleton className={className} />;

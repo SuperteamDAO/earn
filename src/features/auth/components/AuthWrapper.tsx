@@ -1,6 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import dynamic from 'next/dynamic';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect } from 'react';
 
 import { useDisclosure } from '@/hooks/use-disclosure';
 import { useUser } from '@/store/user';
@@ -49,8 +49,6 @@ export function AuthWrapper({
   const isSponsor = !!user?.currentSponsorId || false;
   const isTalentFilled = !!user?.isTalentFilled || false;
 
-  const [triggerLogin, setTriggerLogin] = useState(false);
-
   const {
     isOpen: loginIsOpen,
     onOpen: loginOnOpen,
@@ -89,14 +87,6 @@ export function AuthWrapper({
     }
   };
 
-  useEffect(() => {
-    if (triggerLogin && !isAuthenticated) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTriggerLogin(false);
-      loginOnOpen();
-    }
-  }, [triggerLogin, isAuthenticated, loginOnOpen]);
-
   const shouldAllowInteraction =
     isAuthenticated &&
     (!showCompleteProfileModal ||
@@ -122,6 +112,7 @@ export function AuthWrapper({
           isSponsor={isSponsor}
         />
       )}
+      {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- intercepts clicks bubbling from the wrapped child control (a Button, link or menu item) to gate them behind login; keyboard activation of that child bubbles here too */}
       <div
         onClick={handleLoginTrigger}
         className={cn('flex cursor-pointer', className)}

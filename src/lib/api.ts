@@ -4,24 +4,10 @@ import axios from 'axios';
 
 const api = axios.create();
 
-// api.interceptors.response.use(
-//   (response) => response,
-//   async (error) => {
-//     const currentPath = window.location.pathname;
-//     localStorage.setItem('loginRedirectPath', currentPath);
-
-//     await signOut({
-//       redirect: true,
-//       callbackUrl: '/signin',
-//     });
-//     return Promise.reject(error);
-//   },
-// );
-
 api.interceptors.request.use(
   async (config) => {
     const isPrivyInitializing =
-      typeof window !== 'undefined' && (window as any).__privyInitializing;
+      typeof window !== 'undefined' && window.__privyInitializing;
 
     let authToken = await getAccessToken();
     if (!authToken && isPrivyInitializing) {

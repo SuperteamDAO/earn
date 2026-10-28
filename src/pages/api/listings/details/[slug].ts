@@ -70,7 +70,7 @@ export default async function handler(
 
     logger.info(`Successfully fetched bounty details for slug=${slug}`);
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error fetching bounty with slug=${slug}:`,
       safeStringify(error),

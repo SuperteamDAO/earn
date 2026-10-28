@@ -54,16 +54,6 @@ export const profileSchema = z
     telegram: telegramUsernameSchema.optional().or(z.literal('')),
     website: websiteUrlSchema.optional().or(z.literal('')),
     community: z.string().array().optional().nullable(),
-    // removing this since for some unknown reason where even valid one's fail only in backend
-    // .refine(
-    //   (community) => {
-    //     if (!community) return true;
-    //     return community.every((item) => CommunityList.includes(item));
-    //   },
-    //   {
-    //     message: 'Invalid Community values',
-    //   },
-    // )
     interests: z
       .enum(IndustryList, { message: 'Invalid Industry' })
       .array()

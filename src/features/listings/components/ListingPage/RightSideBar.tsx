@@ -137,7 +137,7 @@ export function RightSideBar({
       calculateWidthOfPrize = '90%';
     }
     return calculateWidthOfPrize;
-  }, [largestDigits, rewards]);
+  }, [largestDigits, rewards, compensationType]);
 
   const inReview =
     isDeadlineOver(deadline, serverTime()) && !isWinnersAnnounced;
@@ -332,7 +332,7 @@ export function RightSideBar({
                 dayjs.utc('2025-08-06'),
               ) && <ApprovalStages listing={listing} />}
           </div>
-          {isProject && deadline && dayjs(deadline).isAfter(new Date()) && (
+          {isProject && deadline && dayjs(deadline).isAfter(serverTime()) && (
             <div className="mb-4 flex w-full gap-2 bg-[#62F6FF10] p-3">
               <TriangleAlert color="#1A7F86" />
               <p className="text-xs font-medium text-[#1A7F86]" color="#1A7F86">

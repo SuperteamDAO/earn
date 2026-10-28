@@ -19,10 +19,6 @@ interface Props {
   onReferralOpen: () => void;
 }
 
-// const AnnouncementBar = dynamic(() =>
-//   import('@/features/navbar').then((mod) => mod.AnnouncementBar),
-// );
-
 const MobileDrawer = dynamic(
   () => import('./MobileDrawer').then((mod) => mod.MobileDrawer),
   {
@@ -58,13 +54,17 @@ export const MobileNavbar = ({
 
   return (
     <>
-      {/* {router.pathname === '/' && <AnnouncementBar />} */}
       <div className="sticky top-0 z-50">
         <div className="flex min-h-12 items-center justify-between border-b border-black/20 bg-white px-1 py-1 lg:hidden">
           <div className="flex items-center gap-3">
-            <div onClick={openDrawer} className="ml-1 cursor-pointer">
+            <button
+              type="button"
+              aria-label="Open menu"
+              onClick={openDrawer}
+              className="ml-1 cursor-pointer"
+            >
               <Menu className="size-5 text-gray-400" />
-            </div>
+            </button>
             <Link
               href="/earn"
               className="flex items-center hover:no-underline"
@@ -105,8 +105,9 @@ export const MobileNavbar = ({
                   <span>Free Credits</span>
                 </Button>
                 <div className="relative">
-                  <div
-                    className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1.5 text-slate-500 transition-all duration-100 hover:bg-slate-100 hover:text-slate-700 md:gap-2"
+                  <button
+                    type="button"
+                    className="flex cursor-pointer items-center gap-1 rounded-md px-2 py-1.5 text-slate-500 transition-colors duration-100 hover:bg-slate-100 hover:text-slate-700 md:gap-2"
                     onClick={openCreditDrawer}
                   >
                     <CreditIcon
@@ -116,7 +117,7 @@ export const MobileNavbar = ({
                       )}
                     />
                     <p className="text-sm font-medium">{creditBalance}</p>
-                  </div>
+                  </button>
                 </div>
               </div>
             )}

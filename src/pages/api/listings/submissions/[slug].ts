@@ -125,7 +125,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       `Successfully fetched bounty and submissions for slug: ${slug}`,
     );
     return res.status(200).json({ submission });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching bounty with slug=${slug}: ${safeStringify(error)}`,
     );
