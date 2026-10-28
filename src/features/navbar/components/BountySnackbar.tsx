@@ -1,5 +1,6 @@
 import { useAtom } from 'jotai';
 import { Pencil } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useUser } from '@/store/user';
@@ -95,24 +96,29 @@ export const BountySnackbar = () => {
   const bgColorClass = getBackgroundColor();
 
   if (showSnackbar && bountySnackbar && message) {
-    return (
-      <div
-        className={cn(
-          'flex w-full items-center justify-center gap-1 text-white',
-          bgColorClass,
-          isPreviewSponsor ? 'cursor-pointer' : 'cursor-default',
-        )}
-        onClick={() => {
-          if (!isPreviewSponsor) return;
-          router.push(`/earn/dashboard/listings/${slug}/edit`);
-        }}
-      >
-        {isPreviewSponsor && <Pencil className="h-4 w-4" />}
-        <p className="p-3 text-center text-xs font-medium md:text-sm">
-          {message}
-        </p>
-      </div>
+    const className = cn(
+      'flex w-full items-center justify-center gap-1 text-white',
+      bgColorClass,
+      isPreviewSponsor ? 'cursor-pointer' : 'cursor-default',
     );
+    const messageText = (
+      <p className="p-3 text-center text-xs font-medium md:text-sm">
+        {message}
+      </p>
+    );
+
+    if (isPreviewSponsor) {
+      return (
+        <Link
+          href={`/earn/dashboard/listings/${slug}/edit`}
+          className={className}
+        >
+          <Pencil className="h-4 w-4" />
+          {messageText}
+        </Link>
+      );
+    }
+    return <div className={className}>{messageText}</div>;
   }
   return null;
 };

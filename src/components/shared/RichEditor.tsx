@@ -95,6 +95,7 @@ export const RichEditor: React.FC<RichEditorProps> = ({
   return (
     <div className="relative w-full">
       <FloatingToolbar editor={editor} editorClassname={`editor-${id}`} />
+      {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions -- pointer convenience that focuses the editor when the padding around it is clicked; the ProseMirror contenteditable inside is itself focusable */}
       <div
         className={cn(
           'flex w-full flex-col overflow-y-auto rounded-md border py-2 shadow-xs **:text-xs! sm:**:text-sm!',

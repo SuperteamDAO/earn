@@ -725,12 +725,13 @@ export const ApplicationModal = ({
                         </FormControl>
                         {!isSameAsEmbeddedWallet && (
                           <p className="pt-0.5 text-xs text-slate-500">
-                            <span
+                            <button
+                              type="button"
                               className="cursor-pointer underline"
                               onClick={handleAutoFill}
                             >
                               Click here
-                            </span>{' '}
+                            </button>{' '}
                             to auto-fill this field with your Earn embedded
                             wallet address
                           </p>

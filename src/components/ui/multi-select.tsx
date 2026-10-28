@@ -466,6 +466,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
         } // When onSearch is provided, we don't want to filter the options. You can still override it.
         filter={commandFilter()}
       >
+        {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions -- pointer convenience that focuses the search input when the badge area is clicked; the input itself is focusable */}
         <div
           className={cn(
             'border-input ring-primary min-h-10 rounded-md border text-sm focus-within:ring-1',

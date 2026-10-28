@@ -139,6 +139,31 @@ const GrantTh = ({ children }: { children?: string }) => {
   );
 };
 
+const ExpandToggle = ({
+  label,
+  isExpanded,
+  onToggle,
+}: {
+  label: string;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) => {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      aria-expanded={isExpanded}
+      className={cn(
+        'cursor-pointer text-slate-500 transition-transform duration-300',
+        isExpanded ? 'rotate-0' : 'rotate-180',
+      )}
+      onClick={onToggle}
+    >
+      <ChevronUp className="h-4 w-4 text-slate-400" />
+    </button>
+  );
+};
+
 export const PaymentsHistoryTab = ({
   grantId,
   grant,
@@ -292,15 +317,11 @@ export const PaymentsHistoryTab = ({
                             />
                           )}
                           {isNativeAndNonST && grantee.paymentDetails && (
-                            <span
-                              className={cn(
-                                'cursor-pointer text-slate-500 transition-transform duration-300',
-                                isExpanded ? 'rotate-0' : 'rotate-180',
-                              )}
-                              onClick={() => toggleExpandRow(grantee.id)}
-                            >
-                              <ChevronUp className="h-4 w-4 text-slate-400" />
-                            </span>
+                            <ExpandToggle
+                              label="Toggle payment details"
+                              isExpanded={isExpanded}
+                              onToggle={() => toggleExpandRow(grantee.id)}
+                            />
                           )}
                         </div>
                       </TableCell>
@@ -393,15 +414,11 @@ export const PaymentsHistoryTab = ({
                         {grantee.GrantTranche &&
                           grantee.GrantTranche.length > 0 && (
                             <div className="flex items-center gap-2">
-                              <span
-                                className={cn(
-                                  'cursor-pointer text-slate-500 transition-transform duration-300',
-                                  isExpanded ? 'rotate-0' : 'rotate-180',
-                                )}
-                                onClick={() => toggleExpandRow(grantee.id)}
-                              >
-                                <ChevronUp className="h-4 w-4 text-slate-400" />
-                              </span>
+                              <ExpandToggle
+                                label="Toggle tranche details"
+                                isExpanded={isExpanded}
+                                onToggle={() => toggleExpandRow(grantee.id)}
+                              />
                             </div>
                           )}
                       </TableCell>

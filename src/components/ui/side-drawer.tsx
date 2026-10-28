@@ -29,6 +29,7 @@ export function SideDrawer({
 
   return createPortal(
     <>
+      {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- click-outside backdrop for the drawer; the drawer's own close controls are the keyboard path (there is no Escape handler yet) */}
       <div
         className={cn(
           'fixed inset-0 z-60 bg-black/80 transition-all',

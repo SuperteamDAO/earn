@@ -34,6 +34,7 @@ const VideoPlayback = ({
   setVideoPopup: (value: boolean) => void;
 }) => {
   return (
+    // react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- click-outside backdrop that closes the video popup; there is no Escape handler or close button yet
     <div
       className="fixed z-50 grid h-screen w-screen place-content-center bg-[rgba(191,203,220,0.67)]"
       onClick={() => setVideoPopup(false)}

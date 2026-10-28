@@ -1,6 +1,7 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import posthog from 'posthog-js';
 import React, { useState } from 'react';
@@ -41,22 +42,47 @@ interface MobileDrawerProps {
 }
 
 interface NavItemProps {
-  onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onClick?: () => void;
+  href?: string;
+  isExternal?: boolean;
   label: React.ReactNode;
   className?: string;
 }
 
-const NavItem = ({ onClick, label, className }: NavItemProps) => {
+const NavItem = ({
+  onClick,
+  href,
+  isExternal,
+  label,
+  className,
+}: NavItemProps) => {
+  const itemClassName = cn(
+    'ph-no-capture flex cursor-pointer items-center rounded-lg p-2 text-slate-600 select-none hover:bg-slate-100',
+    className,
+  );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        onClick={onClick}
+        className={itemClassName}
+        target={isExternal ? '_blank' : undefined}
+        rel={isExternal ? 'noopener noreferrer' : undefined}
+      >
+        {label}
+      </Link>
+    );
+  }
+
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
-      className={cn(
-        'ph-no-capture flex cursor-pointer items-center rounded-lg p-2 text-slate-600 select-none hover:bg-slate-100',
-        className,
-      )}
+      className={cn(itemClassName, 'w-full text-left')}
     >
       {label}
-    </div>
+    </button>
   );
 };
 
@@ -102,12 +128,10 @@ export const MobileDrawer = ({
 
         {isLoggedIn && (
           <div>
-            <div
+            <Link
+              href={`/earn/t/${user?.username}`}
               className="flex items-center gap-1.5 px-4 py-3 select-none sm:gap-2 sm:py-4"
-              onClick={() => {
-                router.push(`/earn/t/${user?.username}`);
-                onDrawerClose();
-              }}
+              onClick={onDrawerClose}
             >
               <EarnAvatar
                 className="size-8 sm:size-9"
@@ -117,7 +141,7 @@ export const MobileDrawer = ({
               <p className="line-clamp-1 text-lg text-slate-600">
                 {user?.firstName} {user?.lastName}
               </p>
-            </div>
+            </Link>
             <Separator />
             <div className="mt-1 px-1">
               {showProIntro && (
@@ -130,7 +154,8 @@ export const MobileDrawer = ({
         <div className="px-4 py-3">
           {ready && !authenticated && (
             <div className="ph-no-capture mb-3 ml-2 flex items-center gap-3">
-              <div
+              <button
+                type="button"
                 className="text-semibold cursor-pointer p-0 text-slate-600 hover:text-slate-900"
                 onClick={() => {
                   posthog.capture('login_navbar');
@@ -139,9 +164,10 @@ export const MobileDrawer = ({
                 }}
               >
                 Login
-              </div>
+              </button>
               <Separator orientation="vertical" className="h-5 bg-slate-300" />
-              <div
+              <button
+                type="button"
                 className="text-semibold text-brand-purple hover:text-brand-purple-dark cursor-pointer"
                 onClick={() => {
                   posthog.capture('signup_navbar');
@@ -150,7 +176,7 @@ export const MobileDrawer = ({
                 }}
               >
                 Sign Up
-              </div>
+              </button>
             </div>
           )}
           {user && !user.currentSponsorId && !user.isTalentFilled && (
@@ -176,28 +202,23 @@ export const MobileDrawer = ({
                   />
                 </div>
               }
-              onClick={() => {
-                router.push(`/earn/hackathon/${hackathon.slug}`);
-              }}
+              href={`/earn/hackathon/${hackathon.slug}`}
             />
           ))}
           <div className="ph-no-capture flex flex-col">
             {isLoggedIn && user?.isTalentFilled && (
               <>
-                <NavItem
-                  label="Profile"
-                  onClick={() => router.push(`/earn/t/${user?.username}`)}
-                />
+                <NavItem label="Profile" href={`/earn/t/${user?.username}`} />
                 <NavItem
                   label="Edit Profile"
-                  onClick={() => router.push(`/earn/t/${user?.username}/edit`)}
+                  href={`/earn/t/${user?.username}/edit`}
                 />
                 <NavItem label="Email Preferences" onClick={onOpen} />
                 <NavItem
                   label="Bookmarks"
+                  href="/earn/bookmarks"
                   onClick={() => {
                     posthog.capture('bookmarks_user menu');
-                    router.push(`/earn/bookmarks`);
                   }}
                 />
               </>
@@ -228,9 +249,9 @@ export const MobileDrawer = ({
                   {LISTING_NAV_ITEMS?.map((navItem) => {
                     return (
                       <NavItem
+                        href={navItem.href}
                         onClick={() => {
                           posthog.capture(navItem.posthog);
-                          router.push(navItem.href);
                           onDrawerClose();
                         }}
                         key={navItem.label}
@@ -240,9 +261,9 @@ export const MobileDrawer = ({
                   })}
                   <NavItem
                     className="ph-no-capture"
+                    href="/earn/pro"
                     onClick={() => {
                       posthog.capture('pro_navbar');
-                      router.push('/earn/pro');
                     }}
                     label={
                       <ProBadge
@@ -281,9 +302,9 @@ export const MobileDrawer = ({
                   {CATEGORY_NAV_ITEMS?.map((navItem) => {
                     return (
                       <NavItem
+                        href={navItem.href}
                         onClick={() => {
                           posthog.capture(navItem.posthog);
-                          router.push(navItem.href);
                           onDrawerClose();
                         }}
                         key={navItem.label}
@@ -295,14 +316,8 @@ export const MobileDrawer = ({
               </CollapsibleContent>
             </Collapsible>
 
-            <NavItem
-              label="Activity Feed"
-              onClick={() => router.push(`/earn/feed`)}
-            />
-            <NavItem
-              label="Leaderboard"
-              onClick={() => router.push(`/earn/leaderboard`)}
-            />
+            <NavItem label="Activity Feed" href="/earn/feed" />
+            <NavItem label="Leaderboard" href="/earn/leaderboard" />
             <SupportFormDialog>
               <NavItem
                 label="Get Help"
@@ -313,13 +328,10 @@ export const MobileDrawer = ({
             </SupportFormDialog>
             {isLoggedIn && (
               <NavItem
+                href={generateTelegramBotUrl(user?.email)}
+                isExternal
                 onClick={() => {
                   posthog.capture('telegram notifications_user menu');
-                  window.open(
-                    generateTelegramBotUrl(user?.email),
-                    '_blank',
-                    'noopener,noreferrer',
-                  );
                 }}
                 label="Telegram Notifications"
               />

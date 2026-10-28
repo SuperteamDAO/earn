@@ -47,6 +47,7 @@ export function WalletConnectionBadge({
 
   if (!connected) {
     return (
+      // react-doctor-disable-next-line react-doctor/no-static-element-interactions -- only observes clicks on the inner WalletMultiButton for analytics; that button overrides any onClick passed to it
       <div
         className={cn('ph-no-capture wallet-header-button', className)}
         onClick={() => {

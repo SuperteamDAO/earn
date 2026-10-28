@@ -450,12 +450,13 @@ export const SubmissionHeader = ({
         <div className="flex flex-row-reverse items-center gap-8">
           <p className="text-slate-800">
             {`Didn't find a suitable candidate? `}
-            <span
+            <button
+              type="button"
               className="cursor-pointer text-blue-500 underline"
               onClick={unpublishOnOpen}
             >
               Click here
-            </span>
+            </button>
           </p>
         </div>
       )}

@@ -43,6 +43,17 @@ export default function Accordion({
           isOpen ? 'accordion-open' : 'accordion-closed',
         )}
         onClick={toggleAccordion}
+        role="button"
+        tabIndex={0}
+        aria-expanded={isOpen}
+        onKeyDown={(e) => {
+          // Enter on the CTA link inside bubbles here; let it navigate without toggling.
+          if (e.target !== e.currentTarget) return;
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleAccordion();
+          }
+        }}
       >
         <div className="flex h-[100px] flex-row justify-between">
           <div

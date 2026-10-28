@@ -203,12 +203,14 @@ export const DesktopNavbar = ({
 
           {!router.pathname.startsWith('/earn/search') &&
             !router.pathname.startsWith('/earn/new/') && (
-              <div
+              <button
+                type="button"
+                aria-label="Search"
                 className="flex cursor-pointer items-center gap-1.5 rounded-md border border-slate-300 px-2 py-2 text-slate-500 transition-colors duration-100 hover:bg-slate-100 hover:text-slate-700"
                 onClick={onSearchOpen}
               >
                 <IoSearchOutline className="size-4" />
-              </div>
+              </button>
             )}
         </div>
 
@@ -257,7 +259,8 @@ export const DesktopNavbar = ({
 
               {user?.isTalentFilled && (
                 <div className="flex items-center gap-1.5">
-                  <div
+                  <button
+                    type="button"
                     className="flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-2 text-slate-500 transition-colors duration-100 hover:bg-slate-100 hover:text-slate-700"
                     onClick={openCreditDrawer}
                   >
@@ -275,9 +278,10 @@ export const DesktopNavbar = ({
                     >
                       {creditBalance}
                     </p>
-                  </div>
+                  </button>
                   <div className="relative">
-                    <div
+                    <button
+                      type="button"
                       className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-slate-500 transition-colors duration-100 hover:bg-slate-100 hover:text-slate-700"
                       onClick={onWalletOpen}
                     >
@@ -295,7 +299,7 @@ export const DesktopNavbar = ({
                       >
                         ${formatNumberWithSuffix(walletBalance || 0, 1, false)}
                       </span>
-                    </div>
+                    </button>
                   </div>
                 </div>
               )}

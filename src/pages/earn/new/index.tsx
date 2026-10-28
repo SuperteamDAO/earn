@@ -107,6 +107,7 @@ export default function NewProfilePage({
               </div>
 
               <AuthWrapper className="w-full" onClick={checkTalent}>
+                {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions -- pointer convenience that widens the hit area of the TalentButton inside this card, which runs the same checkTalent and is the keyboard path */}
                 <div
                   className="flex w-full cursor-pointer flex-col gap-4 overflow-hidden rounded-md bg-white"
                   onClick={checkTalent}
@@ -175,6 +176,7 @@ export default function NewProfilePage({
               </p>
             </div>
             <AuthWrapper className="w-full" onClick={checkSponsor}>
+              {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions -- pointer convenience that widens the hit area of the SponsorButton inside this card, which runs the same checkSponsor and is the keyboard path */}
               <div
                 className="flex w-full cursor-pointer flex-col gap-4 overflow-hidden rounded-md bg-white"
                 onClick={checkSponsor}

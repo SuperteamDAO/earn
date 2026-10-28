@@ -190,14 +190,15 @@ export function WalletDrawer({
                     Withdraw
                     <ArrowUpRight className="h-4 w-4" />
                   </Button>
-                  <div
+                  <button
+                    type="button"
                     onClick={() => showMfaEnrollmentModal()}
-                    className="mt-1.5 cursor-pointer py-0.5 text-xs font-semibold text-slate-400 hover:text-slate-500 hover:underline"
+                    className="mt-1.5 block w-full cursor-pointer py-0.5 text-left text-xs font-semibold text-slate-400 hover:text-slate-500 hover:underline"
                   >
                     {privyUser?.mfaMethods.length === 0
                       ? '+ Add Two Factor Authentication'
                       : 'Edit Two Factor Authentication'}
-                  </div>
+                  </button>
                 </div>
               )}
             </div>

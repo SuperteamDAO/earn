@@ -40,6 +40,7 @@ export default function Modal({
   }, [handleKeydown]);
 
   return (
+    // react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- click-outside backdrop; Escape already closes via the window keydown listener above
     <div
       className="st-modal-backdrop bg-opacity-50 fixed inset-0 col-span-5 flex items-center justify-center bg-black"
       onClick={onClose}
@@ -57,22 +58,26 @@ export default function Modal({
           />
           <div className="text-on-img absolute top-[24px] left-[24px] flex w-5/6 flex-row justify-between text-[24px] text-white md:top-[53px] md:left-[40px] md:text-[32px]">
             <div className="section-heading">{text}</div>
-            <div
+            <button
+              type="button"
+              aria-label="Close"
               className="cross z-11 cursor-pointer md:hidden"
               onClick={onClose}
             >
               <X size={20} color="#727272" weight="duotone" />
-            </div>
+            </button>
           </div>
         </div>
 
         <div className="right relative z-10 flex h-fit w-full flex-col bg-[#161616] text-left text-white md:h-full md:w-1/2 md:rounded-r-lg md:rounded-b-lg md:rounded-bl-none">
-          <div
+          <button
+            type="button"
+            aria-label="Close"
             className="cross mt-[46px] mr-[64px] hidden cursor-pointer self-end md:block"
             onClick={onClose}
           >
             <X size={30} />
-          </div>
+          </button>
           <div className="top-content mt-[32px] mr-[105px] ml-[32px] w-fit text-[14px] leading-[19px] md:mr-0 md:ml-[64px] md:w-[230px] md:text-[18px] md:leading-[19px]">
             {top_content}
           </div>

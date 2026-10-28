@@ -57,20 +57,17 @@ const PaymentDetailsRow = ({
           (payment) =>
             payment.txId && (
               <div key={payment.tranche} className="my-2">
-                <div
+                <a
+                  href={`https://solscan.io/tx/${payment.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex cursor-pointer items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900"
-                  onClick={() => {
-                    window.open(
-                      `https://solscan.io/tx/${payment.txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
-                      '_blank',
-                    );
-                  }}
                 >
                   <p className="text-sm font-medium text-slate-500">
                     {truncatePublicKey(payment.txId, 5)}
                   </p>
                   <ExternalLink className="h-4 w-4 text-slate-400" />
-                </div>
+                </a>
               </div>
             ),
         )}
@@ -287,7 +284,9 @@ export const PayoutSection = ({
                         <div className="flex items-center gap-2">
                           {submission.isPaid && !shouldHideTxLinks ? (
                             isProject && hasMultipleTranches ? (
-                              <div
+                              <button
+                                type="button"
+                                aria-expanded={isExpanded}
                                 className="flex cursor-pointer items-center gap-1 text-sm font-medium text-slate-600 hover:text-slate-900"
                                 onClick={() => toggleExpandRow(submission.id)}
                               >
@@ -298,20 +297,17 @@ export const PayoutSection = ({
                                     isExpanded ? 'rotate-180' : 'rotate-0',
                                   )}
                                 />
-                              </div>
+                              </button>
                             ) : (
-                              <div
+                              <a
+                                href={
+                                  submission.paymentDetails?.[0]?.txId
+                                    ? `https://solscan.io/tx/${submission.paymentDetails[0].txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`
+                                    : undefined
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="flex cursor-pointer items-center text-sm font-medium text-slate-600 hover:text-slate-900"
-                                onClick={() => {
-                                  const txId =
-                                    submission.paymentDetails?.[0]?.txId;
-                                  if (txId) {
-                                    window.open(
-                                      `https://solscan.io/tx/${txId}?cluster=${process.env.NEXT_PUBLIC_PAYMENT_CLUSTER}`,
-                                      '_blank',
-                                    );
-                                  }
-                                }}
                               >
                                 {submission.paymentDetails?.[0]?.txId &&
                                   truncatePublicKey(
@@ -319,7 +315,7 @@ export const PayoutSection = ({
                                     5,
                                   )}
                                 <ExternalLink className="ml-1 h-4 w-4" />
-                              </div>
+                              </a>
                             )
                           ) : bounty.isWinnersAnnounced && !isFndnToPay ? (
                             <div className="flex items-center">
@@ -328,7 +324,10 @@ export const PayoutSection = ({
                                 submission={submission}
                               />
                               {hasMultipleTranches && (
-                                <span
+                                <button
+                                  type="button"
+                                  aria-label="Toggle transaction links"
+                                  aria-expanded={isExpanded}
                                   onClick={() => toggleExpandRow(submission.id)}
                                 >
                                   <ChevronDown
@@ -337,7 +336,7 @@ export const PayoutSection = ({
                                       isExpanded ? 'rotate-180' : 'rotate-0',
                                     )}
                                   />
-                                </span>
+                                </button>
                               )}
                             </div>
                           ) : (

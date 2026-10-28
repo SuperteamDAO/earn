@@ -274,8 +274,10 @@ export function ImageUploader({
         type="file"
         disabled={disabled || uploading}
       />
-      <div
-        className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer"
+      <button
+        type="button"
+        aria-label="Upload image"
+        className="absolute top-0 right-0 bottom-0 left-0 h-full w-full cursor-pointer"
         onClick={handleClick}
       />
     </div>
@@ -343,8 +345,10 @@ export function ImageUploader({
         type="file"
         disabled={disabled || uploading}
       />
-      <div
-        className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer"
+      <button
+        type="button"
+        aria-label="Upload image"
+        className="absolute top-0 right-0 bottom-0 left-0 h-full w-full cursor-pointer"
         onClick={handleClick}
       />
     </div>
@@ -403,8 +407,10 @@ export function ImageUploader({
         disabled={disabled || uploading}
       />
       {!preview && (
-        <div
-          className="absolute top-0 right-0 bottom-0 left-0 cursor-pointer"
+        <button
+          type="button"
+          aria-label="Upload image"
+          className="absolute top-0 right-0 bottom-0 left-0 h-full w-full cursor-pointer"
           onClick={handleClick}
         />
       )}

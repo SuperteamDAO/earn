@@ -20,7 +20,8 @@ export function CategoryPill({
   isPro = false,
 }: CategoryPillProps) {
   return (
-    <div
+    <button
+      type="button"
       className={cn(
         'ph-no-capture flex items-center gap-2 px-3.5 py-0.5 whitespace-nowrap select-none sm:py-0.5',
         'rounded-full border border-slate-200 text-[0.8rem] transition-colors duration-100 sm:text-sm',
@@ -47,6 +48,6 @@ export function CategoryPill({
       }}
     >
       {children}
-    </div>
+    </button>
   );
 }

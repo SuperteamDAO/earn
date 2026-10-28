@@ -166,7 +166,10 @@ export const FeedCardContainer = ({
               )}
               id="feed-actions"
             >
-              <div
+              <button
+                type="button"
+                aria-label={`${totalLikes} likes`}
+                aria-pressed={isLiked}
                 className="ph-no-capture z-10 mr-2 flex items-center gap-1"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -186,8 +189,11 @@ export const FeedCardContainer = ({
                 <p className="cursor-pointer text-sm font-medium text-slate-500 sm:text-base">
                   {totalLikes}
                 </p>
-              </div>
-              <div
+              </button>
+              <button
+                type="button"
+                aria-label={`${commentCount} comments`}
+                aria-expanded={isCommentOpen}
                 className="ph-no-capture z-10 mr-2 flex items-center gap-1"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -212,7 +218,7 @@ export const FeedCardContainer = ({
                     />
                   ))}
                 </div>
-              </div>
+              </button>
             </div>
           )}
           <Collapsible open={isCommentOpen}>

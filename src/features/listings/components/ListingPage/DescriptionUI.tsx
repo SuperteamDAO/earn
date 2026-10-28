@@ -235,6 +235,7 @@ export function DescriptionUI({
             !showMore && 'h-[50vh] overflow-hidden',
           )}
         >
+          {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- delegated handler that only reacts to clicks on the <a> links inside the rendered HTML; keyboard activation of those links bubbles here too */}
           <div
             className={`${styles.content} mt-4 w-full overflow-visible pb-7`}
             onClick={handleDescriptionClick}

@@ -390,6 +390,7 @@ export const PayoutButton = ({ bounty, submission }: Props) => {
 
   return (
     <>
+      {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- only observes clicks on the inner WalletMultiButton for analytics; that button overrides any onClick passed to it */}
       <div
         className="ph-no-capture wallet-payout-button"
         onClick={() => {

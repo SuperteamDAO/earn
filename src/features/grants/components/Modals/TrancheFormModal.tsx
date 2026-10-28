@@ -534,7 +534,8 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                     </FormControl>
                     {!isST && !isSameAsEmbeddedWallet && (
                       <p className="pt-0.5 text-xs text-slate-500">
-                        <span
+                        <button
+                          type="button"
                           className="cursor-pointer underline"
                           onClick={() => {
                             if (user?.walletAddress) {
@@ -546,7 +547,7 @@ export const TrancheFormModal = ({ grant, applicationId, onClose }: Props) => {
                           }}
                         >
                           Click here
-                        </span>{' '}
+                        </button>{' '}
                         to auto-fill this field with your Earn embedded wallet
                         address
                       </p>

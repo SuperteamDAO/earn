@@ -331,7 +331,8 @@ export function DateTimePicker({
         <div className="flex items-center justify-between">
           <div className="ms-2 flex cursor-pointer items-center text-sm font-medium">
             <div>
-              <span
+              <button
+                type="button"
                 onClick={() =>
                   setMonthYearPicker(
                     monthYearPicker === 'month' ? false : 'month',
@@ -339,8 +340,9 @@ export function DateTimePicker({
                 }
               >
                 {format(month, 'MMMM')}
-              </span>
-              <span
+              </button>
+              <button
+                type="button"
                 className="ms-1"
                 onClick={() =>
                   setMonthYearPicker(
@@ -349,7 +351,7 @@ export function DateTimePicker({
                 }
               >
                 {format(month, 'yyyy')}
-              </span>
+              </button>
             </div>
             <Button
               variant="ghost"

@@ -112,6 +112,7 @@ export function AuthWrapper({
           isSponsor={isSponsor}
         />
       )}
+      {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions, react-doctor/click-events-have-key-events -- intercepts clicks bubbling from the wrapped child control (a Button, link or menu item) to gate them behind login; keyboard activation of that child bubbles here too */}
       <div
         onClick={handleLoginTrigger}
         className={cn('flex cursor-pointer', className)}

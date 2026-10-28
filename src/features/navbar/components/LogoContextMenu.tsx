@@ -55,6 +55,7 @@ export const LogoContextMenu = ({
         }}
       >
         <DropdownMenuTrigger asChild>
+          {/* react-doctor-disable-next-line react-doctor/no-static-element-interactions -- the child next/link to /earn is the focusable control; this wrapper only adds a mousedown shortcut and the right-click brand menu, and the context-menu key on the focused link bubbles here */}
           <div
             className="cursor-pointer"
             onMouseDown={handleMouseDown}

@@ -16,8 +16,12 @@ export default function IllustrationCard({
   onClick,
 }: IllustrationCardProps) {
   return (
-    <div
-      className={cn('image-with-text z-1 cursor-pointer rounded-lg', className)}
+    <button
+      type="button"
+      className={cn(
+        'image-with-text z-1 block w-full cursor-pointer rounded-lg text-left',
+        className,
+      )}
       onClick={onClick}
     >
       <div className="image-with-text-content relative h-full min-h-[298px] w-full min-w-[238px] overflow-hidden rounded-lg">
@@ -33,6 +37,6 @@ export default function IllustrationCard({
           {text}
         </p>
       </div>
-    </div>
+    </button>
   );
 }

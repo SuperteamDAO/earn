@@ -165,7 +165,12 @@ export const MobileNavbar = () => {
       </div>
 
       {ready && authenticated && (
-        <div onClick={openDrawer} className="relative ml-1 cursor-pointer">
+        <button
+          type="button"
+          aria-label="Open menu"
+          onClick={openDrawer}
+          className="relative ml-1 cursor-pointer"
+        >
           {ready && authenticated ? (
             <>
               <EarnAvatar
@@ -177,7 +182,7 @@ export const MobileNavbar = () => {
           ) : (
             <Menu className="size-6 text-slate-500" />
           )}
-        </div>
+        </button>
       )}
       {ready && !authenticated && (
         <Link
