@@ -119,11 +119,18 @@ export const MobileDrawer = ({
         side="left"
         className="w-[300px] overflow-y-auto p-0 text-sm sm:w-[380px] sm:text-base"
         showCloseIcon={false}
-        onOpenAutoFocus={() => false}
+        onOpenAutoFocus={(event) => {
+          // Radix skips links when it picks the first focus, which landed on
+          // the last item. Start at the top instead; a tap or click open shows
+          // no focus ring there, a keyboard open does.
+          event.preventDefault();
+          if (event.target instanceof HTMLElement) {
+            event.target
+              .querySelector<HTMLElement>('a[href], button:not([disabled])')
+              ?.focus();
+          }
+        }}
       >
-        {/* Hidden element to prevent auto-focus */}
-        <div tabIndex={-1} className="sr-only" />
-
         <EmailSettingsModal isOpen={isOpen} onClose={onClose} />
 
         {isLoggedIn && (
@@ -229,10 +236,8 @@ export const MobileDrawer = ({
               onOpenChange={setCategoriesOpen}
             >
               <CollapsibleTrigger
-                tabIndex={-1}
-                data-no-focus
                 className={cn(
-                  'flex w-full items-center justify-between rounded-lg p-2 text-slate-600 transition-colors focus:outline-none focus-visible:ring-0 focus-visible:outline-none',
+                  'flex w-full items-center justify-between rounded-lg p-2 text-slate-600 transition-colors',
                   'hover:bg-slate-100',
                   categoriesOpen && 'bg-slate-100',
                 )}
@@ -282,10 +287,8 @@ export const MobileDrawer = ({
               onOpenChange={setSkillsOpen}
             >
               <CollapsibleTrigger
-                tabIndex={-1}
-                data-no-focus
                 className={cn(
-                  'flex w-full items-center justify-between rounded-lg p-2 text-slate-600 transition-colors focus:outline-none focus-visible:ring-0 focus-visible:outline-none',
+                  'flex w-full items-center justify-between rounded-lg p-2 text-slate-600 transition-colors',
                   'hover:bg-slate-100',
                   skillsOpen && 'bg-slate-100',
                 )}
