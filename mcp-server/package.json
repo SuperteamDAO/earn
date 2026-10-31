@@ -1,0 +1,33 @@
+{
+  "name": "superteam-earn-mcp",
+  "version": "1.0.0",
+  "description": "Official Model Context Protocol (MCP) Server for Superteam Earn",
+  "main": "dist/index.js",
+  "bin": {
+    "superteam-earn-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "node --test dist/test.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "superteam",
+    "solana",
+    "bounties",
+    "grants",
+    "ai-agent"
+  ],
+  "author": "NePreby <haokun1135@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.4.5"
+  }
+}
