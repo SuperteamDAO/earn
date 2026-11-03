@@ -18,7 +18,6 @@ interface IDefaultProps {
   readonly children: ReactNode;
   readonly className?: string;
   readonly hideFooter?: boolean;
-  readonly topBanner?: ReactNode;
 }
 
 const Footer = dynamic(
@@ -39,7 +38,6 @@ export const Default = ({
   meta,
   children,
   hideFooter,
-  topBanner,
 }: IDefaultProps) => {
   return (
     <div
@@ -47,7 +45,6 @@ export const Default = ({
     >
       {meta}
       <OutdatedBrowserWarning />
-      {topBanner}
       <Header />
       <div className="flex flex-1 flex-col">{children}</div>
       {!hideFooter && <Footer />}

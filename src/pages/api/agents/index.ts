@@ -42,8 +42,6 @@ export default async function handler(
   if (req.method === 'GET') {
     return res.status(200).json({
       message: 'Superteam Earn Agent API',
-      docs: '/skill.md',
-      heartbeat: '/heartbeat.md',
       register: 'POST /api/agents',
       submit: 'POST /api/agents/submissions/create',
       editSubmission: 'POST /api/agents/submissions/update',
