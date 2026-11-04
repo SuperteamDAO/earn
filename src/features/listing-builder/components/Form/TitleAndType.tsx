@@ -34,9 +34,11 @@ import {
 } from '@/components/ui/select';
 import type { CompensationType } from '@/prisma/enums';
 
+import { getVisibleHackathons } from '@/features/hackathon/utils/getVisibleHackathons';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
-import { hackathonsAtom, isEditingAtom } from '../../atoms';
+import { hackathonsAtom, isEditingAtom, isSTAtom } from '../../atoms';
+import { getDefaultListingToken } from '../../constants';
 import { useListingForm } from '../../hooks';
 import { slugCheckQuery } from '../../queries/slug-check';
 import { calculateTotalRewardsForPodium } from '../../utils/rewards';
@@ -195,7 +197,12 @@ export function TitleAndType() {
 function Type() {
   const form = useListingForm();
   const isEditing = useAtomValue(isEditingAtom);
+  const isST = useAtomValue(isSTAtom);
   const hackathons = useAtomValue(hackathonsAtom);
+  const visibleHackathons = useMemo(
+    () => getVisibleHackathons(hackathons),
+    [hackathons],
+  );
   const [prevCompType, setPrevCompType] = useState<CompensationType>('fixed');
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [pendingTypeChange, setPendingTypeChange] = useState<string | null>(
@@ -221,9 +228,10 @@ function Type() {
     if (newType !== 'bounty' && newType !== 'project') {
       form.setValue('type', 'hackathon');
       const hackathon = hackathons?.find((s) => s.slug === newType);
-      if (!!hackathon) {
+      if (hackathon) {
         form.setValue('hackathonId', hackathon.id);
         form.setValue('eligibility', hackathon?.eligibility as any);
+        form.setValue('token', getDefaultListingToken(isST, hackathon.slug));
       }
     } else {
       form.setValue('type', newType);
@@ -276,7 +284,7 @@ function Type() {
       'token',
       'maxBonusSpots',
     ]);
-    if (!!form.getValues().id) form.saveDraft();
+    if (form.getValues().id) form.saveDraft();
   };
 
   const currentTypeLabel = useMemo(() => {
@@ -335,7 +343,7 @@ function Type() {
                       </div>
                     </SelectItem>
                   ))}
-                  {hackathons?.map((hackathon) => (
+                  {visibleHackathons.map((hackathon) => (
                     <SelectItem key={hackathon.id} value={hackathon.slug}>
                       <div className="flex items-center gap-2 text-xs">
                         {getListingIcon('hackathon')}

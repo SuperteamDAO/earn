@@ -91,18 +91,13 @@ const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
 
     return res.status(200).json(result);
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : 'Internal server error';
-
     logger.error(
       `Submission KYC verification failed: ${safeStringify(error)}, submissionId: ${submissionId}`,
     );
 
-    if (typeof message === 'string' && message.includes('Sumsub')) {
-      return res.status(422).json({ message });
-    }
-
-    return res.status(400).json({ message });
+    return res
+      .status(500)
+      .json({ message: 'Unable to verify KYC completion.' });
   }
 };
 

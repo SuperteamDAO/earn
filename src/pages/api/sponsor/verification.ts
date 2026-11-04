@@ -126,8 +126,8 @@ async function verification(req: NextApiRequestWithUser, res: NextApiResponse) {
     );
 
     return res.status(500).json({
-      error: error.message,
-      message: `User ${userId} unable to update verification: ${error.message}`,
+      error: 'Internal Server Error',
+      message: 'Unable to update verification.',
     });
   }
 }

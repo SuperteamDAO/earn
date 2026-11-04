@@ -8,6 +8,7 @@ import { dayjs } from '@/utils/dayjs';
 import { getURLSanitized } from '@/utils/getURLSanitized';
 
 import { chaptersQuery } from '@/features/chapters/queries/chapters';
+import { getHackathonPageHref } from '@/features/hackathon/utils/getHackathonPageHref';
 
 import type { ListingHackathon } from '../../types';
 import { getCombinedRegion, getRegionSlug } from '../../utils/region';
@@ -67,7 +68,7 @@ export function ExtraInfoSection({
           <p className="text-slate-500">{Hackathon.description}</p>
           <a
             className="flex items-center font-medium text-slate-500"
-            href={`/earn/hackathon/${Hackathon.slug}`}
+            href={getHackathonPageHref(Hackathon.slug)}
             target="_blank"
             rel="noopener noreferrer"
           >

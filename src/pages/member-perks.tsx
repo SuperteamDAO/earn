@@ -5,6 +5,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Meta } from '@/layouts/Meta';
 
 import HeroContainer from '@/features/stfun/components/common/HeroContainer';
+import { getStLayout } from '@/features/stfun/components/common/StLayout';
 import PerksGrid from '@/features/stfun/components/grids/PerksGrid';
 
 interface MemberPerksProps {
@@ -86,7 +87,9 @@ export default function MemberPerks({
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+MemberPerks.getLayout = getStLayout;
+
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const airtableUrl = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.AIRTABLE_PERKS_TABLE}`;
 
   try {
@@ -120,6 +123,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       (item: any) => item.fields['Status'] === 'Coming Soon',
     );
 
+    res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
     return {
       props: {
         liveNow,
@@ -150,6 +154,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       console.error('Unexpected error fetching perks:', error);
     }
 
+    res.setHeader('Cache-Control', 'no-store');
     return {
       props: {
         liveNow: [],

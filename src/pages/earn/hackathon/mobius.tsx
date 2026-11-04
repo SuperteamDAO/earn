@@ -512,7 +512,7 @@ function FAQs() {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({}) => {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const hackathon = await prisma.hackathon.findUnique({
     where: {
       slug: 'mobius',
@@ -523,6 +523,7 @@ export const getServerSideProps: GetServerSideProps = async ({}) => {
   });
   if (!hackathon) throw Error('Hackathon not found');
 
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       hackathon: {

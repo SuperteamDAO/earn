@@ -1,7 +1,7 @@
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
+import { type ClassNameValue } from 'cn';
 import { CheckIcon } from 'lucide-react';
 import * as React from 'react';
-import { type ClassNameValue } from 'tailwind-merge';
 
 import { cn } from '@/utils/cn';
 

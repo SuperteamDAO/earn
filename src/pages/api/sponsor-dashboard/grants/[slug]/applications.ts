@@ -3,14 +3,7 @@ import type { NextApiResponse } from 'next';
 import { type PrismaUserWithoutKYC } from '@/interface/user';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import {
-  PrismaClientInitializationError,
-  PrismaClientKnownRequestError,
-  PrismaClientRustPanicError,
-  PrismaClientUnknownRequestError,
-  PrismaClientValidationError,
-  sql,
-} from '@/prisma/internal/prismaNamespace';
+import { sql } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -221,37 +214,14 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     return res.status(200).json(responseData);
   } catch (error: any) {
-    let errorMessage = `Error fetching submissions with slug=${slug}.`;
-    if (error.code) {
-      errorMessage += ` Code: ${error.code}`;
-    }
-    if (
-      error instanceof PrismaClientKnownRequestError ||
-      error instanceof PrismaClientUnknownRequestError ||
-      error instanceof PrismaClientRustPanicError ||
-      error instanceof PrismaClientInitializationError ||
-      error instanceof PrismaClientValidationError
-    ) {
-      logger.error(
-        `Prisma Error fetching submissions with slug=${slug}: ${safeStringify(error)}`,
-        error.stack,
-      );
-      if (error instanceof PrismaClientKnownRequestError && error.meta) {
-        errorMessage += ` Meta: ${safeStringify(error.meta)}`;
-      }
-    } else {
-      logger.error(
-        `Generic Error fetching submissions with slug=${slug}: ${safeStringify(error)}`,
-        error.stack,
-      );
-    }
+    logger.error(
+      `Error fetching submissions with slug=${slug}: ${safeStringify(error)}`,
+      error.stack,
+    );
 
     return res.status(500).json({
       error: 'Internal Server Error',
-      message: errorMessage,
-      ...(process.env.NODE_ENV !== 'production'
-        ? { details: safeStringify(error) }
-        : {}),
+      message: 'Error occurred while fetching grant applications.',
     });
   }
 }

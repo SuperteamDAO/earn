@@ -1,2 +1,4 @@
-# Disable concurent to run `check-types` after ESLint in lint-staged
+corepack pnpm check:lockfile || exit 1
+
+# Run type checking after lint fixes.
 lint-staged --concurrent false

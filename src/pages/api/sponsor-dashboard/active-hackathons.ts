@@ -15,11 +15,18 @@ async function handler(_: NextApiRequestWithSponsor, res: NextApiResponse) {
           not: null,
           gt: now,
         },
-        Sponsor: {
-          chapter: {
-            isNot: null,
+        OR: [
+          {
+            slug: 'crypto-worlds-fair',
           },
-        },
+          {
+            Sponsor: {
+              chapter: {
+                isNot: null,
+              },
+            },
+          },
+        ],
       },
       select: {
         id: true,
@@ -45,7 +52,7 @@ async function handler(_: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.error('Error looking for active hackathon', error);
     return res.status(500).json({
       message: 'Error looking for active hackathon',
-      error,
+      error: 'Internal Server Error',
     });
   }
 }

@@ -106,7 +106,7 @@ export async function POST(
     );
     return NextResponse.json(
       {
-        error: error.message,
+        error: 'Internal Server Error',
         message: `Error occurred while updating listing with id = ${id}.`,
       },
       { status: 500 },

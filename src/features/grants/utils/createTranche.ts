@@ -266,9 +266,10 @@ export async function createTranche({
   const isAgenticEngineering = isAgenticEngineeringGrant(application.grant);
   const requiresEventProof = isST && !isFirstTranche;
 
-  const existingTranches = application.GrantTranche.filter(
+  const validTranches = application.GrantTranche.filter(
     (tranche) => tranche.status !== 'Rejected',
-  ).length;
+  );
+  const existingTranches = validTranches.length;
   const requiresAgenticFinalProof =
     isAgenticEngineering && !isFirstTranche && existingTranches === 1;
   const maxTranches = 4;
@@ -280,21 +281,10 @@ export async function createTranche({
   }
 
   if (isFirstTranche && existingTranches > 0) {
-    const cutoff = new Date('2025-04-17');
-    const allExistingCreatedAt = application.GrantTranche.every(
-      (tranche) => new Date(tranche.createdAt) < cutoff,
+    logger.info(
+      `Skipping first tranche creation for application ${applicationId} because ${existingTranches} valid tranche(s) already exist.`,
     );
-
-    if (allExistingCreatedAt) {
-      logger.info(
-        `Skipping first tranche creation for application ${applicationId} as existing tranches were created before the cutoff date.`,
-      );
-      return null;
-    }
-
-    const errorMessage = `Cannot create first tranche when tranches already exist for application ${applicationId} (created after cutoff)`;
-    logger.error(errorMessage);
-    throw new Error(errorMessage);
+    return null;
   }
 
   if (!isFirstTranche && existingTranches === 0) {
@@ -304,7 +294,7 @@ export async function createTranche({
   }
 
   if (existingTranches > 0) {
-    const previousTranche = application.GrantTranche[existingTranches - 1];
+    const previousTranche = validTranches[existingTranches - 1];
     if (
       previousTranche &&
       previousTranche.status !== 'Paid' &&

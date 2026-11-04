@@ -146,7 +146,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     );
     res.status(400).json({
       error: 'Error occurred while fetching users.',
-      details: error.message,
+      details: 'Internal Server Error',
     });
   }
 }

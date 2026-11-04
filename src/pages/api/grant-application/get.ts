@@ -5,6 +5,7 @@ import { prisma } from '@/prisma';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
+import { userApplicationSelect } from '@/features/grants/constants/userApplication';
 
 async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
   const userId = req.userId;
@@ -24,18 +25,7 @@ async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
         applicationStatus: { not: { in: ['Completed'] } },
       },
       orderBy: { createdAt: 'desc' },
-      omit: {
-        ai: true,
-        label: true,
-        notes: true,
-        paymentDetails: true,
-      },
-      include: {
-        GrantTranche: {
-          orderBy: { createdAt: 'asc' },
-        },
-        user: true,
-      },
+      select: userApplicationSelect,
     });
 
     if (!result) {
@@ -50,7 +40,7 @@ async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Error fetching Grant Application for user=${userId} and grantId=${id}: ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while getting the grant application.',
     });
   }

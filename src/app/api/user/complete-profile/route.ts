@@ -306,7 +306,7 @@ export async function POST(request: NextRequest) {
     );
     return NextResponse.json(
       {
-        message: `Error occurred while updating user ${userId}: ${error.message}`,
+        message: 'Error occurred while updating the user.',
       },
       { status: 500 },
     );

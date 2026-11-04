@@ -23,17 +23,17 @@ const satoshi = localFont({
 const archivo = localFont({
   src: [
     {
-      path: '../../public/fonts/Archivo_SemiExpanded-Regular.ttf',
+      path: '../../public/fonts/Archivo_SemiExpanded-Regular.woff2',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/Archivo_SemiExpanded-SemiBold.ttf',
+      path: '../../public/fonts/Archivo_SemiExpanded-SemiBold.woff2',
       weight: '600',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/Archivo_SemiExpanded-Bold.ttf',
+      path: '../../public/fonts/Archivo_SemiExpanded-Bold.woff2',
       weight: '700',
       style: 'normal',
     },
@@ -47,7 +47,7 @@ const archivo = localFont({
  * Supports weights 100-900 (use font-weight to control)
  */
 const dmSans = localFont({
-  src: '../../public/fonts/DMSans-Variable.ttf',
+  src: '../../public/fonts/DMSans-Variable.woff2',
   variable: '--font-dm-sans',
   display: 'swap',
   weight: '100 900',

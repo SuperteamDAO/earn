@@ -34,6 +34,7 @@ import {
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 import { selectedGrantApplicationAtom } from '../../atoms';
+import { type GrantApplicationMutationResponse } from '../../constants/grantApplicationMutation';
 import { type GrantApplicationsReturn } from '../../queries/applications';
 import { type GrantApplicationWithUser } from '../../types';
 import { InfoBox } from '../InfoBox';
@@ -142,9 +143,13 @@ export const ApplicationDetails = ({
   );
 
   const updateApplicationState = (
-    updatedApplication: GrantApplicationWithUser,
+    updatedApplication: GrantApplicationMutationResponse,
   ) => {
-    setSelectedApplication(updatedApplication);
+    setSelectedApplication((currentApplication) =>
+      currentApplication?.id === updatedApplication.id
+        ? { ...currentApplication, ...updatedApplication }
+        : currentApplication,
+    );
 
     queryClient.setQueryData<GrantApplicationsReturn>(
       ['sponsor-applications', grant?.slug],
@@ -152,7 +157,7 @@ export const ApplicationDetails = ({
         if (!oldData) return oldData;
         const data = oldData?.data.map((application) =>
           application.id === updatedApplication.id
-            ? updatedApplication
+            ? { ...application, ...updatedApplication }
             : application,
         );
         return {
@@ -226,16 +231,18 @@ export const ApplicationDetails = ({
                 )}
                 {isPending && (
                   <>
-                    <Button
-                      className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
-                      disabled={isMultiSelectOn}
-                      onClick={approveOnOpen}
-                    >
-                      <div className="rounded-full bg-emerald-600 p-0.5">
-                        <Check className="size-1 text-white" />
-                      </div>
-                      Approve
-                    </Button>
+                    {!grant?.isPaused && (
+                      <Button
+                        className="rounded-lg border border-emerald-500 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={isMultiSelectOn}
+                        onClick={approveOnOpen}
+                      >
+                        <div className="rounded-full bg-emerald-600 p-0.5">
+                          <Check className="size-1 text-white" />
+                        </div>
+                        Approve
+                      </Button>
+                    )}
 
                     <Button
                       className="rounded-lg border border-red-500 bg-red-50 text-red-600 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"

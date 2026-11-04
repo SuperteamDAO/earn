@@ -120,7 +120,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       return res.status(500).json({
         error: {
           code: error.code,
-          message: error.message,
+          message: 'Internal Server Error',
           meta: error.meta,
         },
       });

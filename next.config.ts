@@ -138,17 +138,6 @@ const nextConfig: NextConfig = {
     });
 
     headers.push({
-      source: '/',
-      headers: [
-        {
-          key: 'Link',
-          value:
-            '</assets/banner/banner-mobile.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(max-width: 639px)", </assets/banner/banner.avif>; rel=preload; as=image; type=image/avif; fetchpriority=high; media="(min-width: 640px)"',
-        },
-      ],
-    });
-
-    headers.push({
       source: '/assets/banner/:path*',
       headers: [
         {
@@ -207,14 +196,6 @@ const nextConfig: NextConfig = {
       {
         source: '/cdn/phantom/:path*',
         destination: 'https://api.phantom.app/:path*',
-      },
-      {
-        source: '/cdn/arweave/:path*',
-        destination: 'https://arweave.net/:path*',
-      },
-      {
-        source: '/cdn/ipfs-io/:path*',
-        destination: 'https://ipfs.io/:path*',
       },
       {
         source: '/cdn/imagedelivery/:path*',

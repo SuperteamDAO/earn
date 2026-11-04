@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { type z } from 'zod';
 
 import { api } from '@/lib/api';
@@ -21,6 +21,7 @@ interface ListingsFilterCountParams {
   sponsor?: string;
   skill?: string;
   authenticated?: boolean;
+  enabled?: boolean;
 }
 
 type CategoryCounts = Record<string, number>;
@@ -60,8 +61,13 @@ export function useListingsFilterCount({
   sponsor,
   skill,
   authenticated,
+  enabled = true,
 }: ListingsFilterCountParams) {
   return useQuery({
+    enabled,
+    // Keep showing the previous results while a new key loads (auth or
+    // filter change) instead of collapsing back to skeletons.
+    placeholderData: keepPreviousData,
     queryKey: [
       'listings-filter-count',
       context,

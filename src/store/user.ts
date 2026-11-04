@@ -20,6 +20,17 @@ const COOKIE_OPTIONS = {
   sameSite: 'lax' as const,
 } as const;
 
+// Cosmetic only: lets SSR and first render pick sponsor vs talent skeletons
+// before Privy is ready. Never use it for identity, data or authorization.
+const USER_ROLE_HINT_COOKIE_NAME = 'user-role-hint';
+export type UserRoleHint = 'sponsor' | 'talent';
+
+export function parseUserRoleHint(
+  value: string | null | undefined,
+): UserRoleHint | null {
+  return value === 'sponsor' || value === 'talent' ? value : null;
+}
+
 export const useUser = () => {
   const { authenticated, ready, logout } = usePrivy();
   const router = useRouter();
@@ -55,6 +66,7 @@ export const useUser = () => {
             if (error.response?.status === 401) {
               console.warn('User request returned 401, logging out.');
               removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
+              removeCookie(USER_ROLE_HINT_COOKIE_NAME, { path: '/' });
               await logout();
               if (posthog._isIdentified()) posthog.reset();
             }
@@ -79,6 +91,14 @@ export const useUser = () => {
   const userEmail = user?.email;
   const isTalentFilled = user?.isTalentFilled;
   const currentSponsorId = user?.currentSponsorId;
+
+  useEffect(() => {
+    if (!userId) return;
+    const roleHint: UserRoleHint = currentSponsorId ? 'sponsor' : 'talent';
+    if (getCookie(USER_ROLE_HINT_COOKIE_NAME) !== roleHint) {
+      setCookie(USER_ROLE_HINT_COOKIE_NAME, roleHint, COOKIE_OPTIONS);
+    }
+  }, [userId, currentSponsorId]);
 
   useEffect(() => {
     if (isLoading || !ready) return;
@@ -134,6 +154,7 @@ export const useLogout = () => {
 
   return async () => {
     removeCookie(USER_ID_COOKIE_NAME, { path: '/' });
+    removeCookie(USER_ROLE_HINT_COOKIE_NAME, { path: '/' });
 
     await logout();
 

@@ -13,6 +13,7 @@ import { GrantApplicationStatus, type SubmissionLabels } from '@/prisma/enums';
 import { useUser } from '@/store/user';
 
 import { applicationsAtom, selectedGrantApplicationAtom } from '../atoms';
+import { type GrantApplicationStatusMutationResponse } from '../constants/grantApplicationMutation';
 import { useRejectGrantApplications } from '../mutations/useRejectGrantApplications';
 import {
   applicationsQuery,
@@ -197,7 +198,7 @@ export const ApplicationsTab = ({ slug }: Props) => {
       customNote?: string;
     }) => {
       const reviewerNote = customNote?.trim();
-      const response = await api.post(
+      await api.post<GrantApplicationStatusMutationResponse>(
         '/api/sponsor-dashboard/grants/update-application-status',
         {
           data: [{ id: applicationId, approvedAmount }],
@@ -205,7 +206,6 @@ export const ApplicationsTab = ({ slug }: Props) => {
           ...(reviewerNote ? { customNote: reviewerNote } : {}),
         },
       );
-      return response.data;
     },
     onMutate: async ({ applicationId, approvedAmount }) => {
       const previousApplications =
@@ -532,20 +532,22 @@ export const ApplicationsTab = ({ slug }: Props) => {
         onRejectGrant={handleRejectGrant}
       />
 
-      <ApproveModal
-        applicationId={selectedApplication?.id}
-        approveIsOpen={approveIsOpen}
-        approveOnClose={approveOnClose}
-        ask={selectedApplication?.ask}
-        granteeName={selectedApplication?.user?.firstName}
-        grantTitle={grant?.title}
-        projectTitle={selectedApplication?.projectTitle}
-        salutation={grant?.emailSalutation}
-        token={grant?.token || 'USDC'}
-        enableCustomEmail={grant?.isNative === true}
-        onApproveGrant={handleApproveGrant}
-        max={grant?.maxReward}
-      />
+      {!grant?.isPaused && (
+        <ApproveModal
+          applicationId={selectedApplication?.id}
+          approveIsOpen={approveIsOpen}
+          approveOnClose={approveOnClose}
+          ask={selectedApplication?.ask}
+          granteeName={selectedApplication?.user?.firstName}
+          grantTitle={grant?.title}
+          projectTitle={selectedApplication?.projectTitle}
+          salutation={grant?.emailSalutation}
+          token={grant?.token || 'USDC'}
+          enableCustomEmail={grant?.isNative === true}
+          onApproveGrant={handleApproveGrant}
+          max={grant?.maxReward}
+        />
+      )}
       {currentAction && (
         <MultiActionModal
           isOpen={rejectedMultipleIsOpen}

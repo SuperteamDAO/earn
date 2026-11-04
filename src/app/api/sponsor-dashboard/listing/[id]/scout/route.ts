@@ -8,6 +8,7 @@ import { Decimal } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { validateSession } from '@/features/auth/utils/getSponsorSession';
+import { scoutUserSelect } from '@/features/sponsor-dashboard/constants/scouts';
 
 function flattenSubSkills(skillsArray: any[]): string[] {
   const flattenedSubSkills: string[] = [];
@@ -115,8 +116,18 @@ export async function GET(
       orderBy: {
         score: 'desc',
       },
-      include: {
-        user: true,
+      select: {
+        id: true,
+        userId: true,
+        listingId: true,
+        dollarsEarned: true,
+        score: true,
+        invited: true,
+        skills: true,
+        createdAt: true,
+        user: {
+          select: scoutUserSelect,
+        },
       },
     });
 
@@ -519,15 +530,17 @@ END)
       orderBy: {
         score: 'desc',
       },
-      include: {
+      select: {
+        id: true,
+        userId: true,
+        listingId: true,
+        dollarsEarned: true,
+        score: true,
+        invited: true,
+        skills: true,
+        createdAt: true,
         user: {
-          select: {
-            stRecommended: true,
-            firstName: true,
-            lastName: true,
-            username: true,
-            photo: true,
-          },
+          select: scoutUserSelect,
         },
       },
     });

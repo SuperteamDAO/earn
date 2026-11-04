@@ -100,6 +100,19 @@ export async function POST(request: NextRequest) {
           );
         }
 
+        if (currentTranche.status !== 'Pending') {
+          logger.warn(
+            `Rejected tranche re-decision for ${id}: current status is ${currentTranche.status}`,
+          );
+          return NextResponse.json(
+            {
+              error: 'Tranche has already been decided',
+              message: `Only pending tranches can be approved or rejected. This tranche is already ${currentTranche.status.toLowerCase()}.`,
+            },
+            { status: 409 },
+          );
+        }
+
         let sanitizedCustomNote: string | undefined;
         if (customNote) {
           const fullEmailHtml =
@@ -324,7 +337,7 @@ export async function POST(request: NextRequest) {
     );
     return NextResponse.json(
       {
-        error: error.message,
+        error: 'Internal Server Error',
         message: 'Error occurred while updating the grant tranche.',
       },
       { status: 500 },

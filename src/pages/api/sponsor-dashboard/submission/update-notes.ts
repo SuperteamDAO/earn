@@ -60,7 +60,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Error occurred while updating submission with ID ${id} with notes: ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while updating the submission with notes.',
     });
   }

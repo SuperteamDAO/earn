@@ -7,6 +7,7 @@ import { Meta } from '@/layouts/Meta';
 import { prisma } from '@/prisma';
 import { generateSuperteamChaptersSchema } from '@/utils/json-ld';
 
+import { getStLayout } from '@/features/stfun/components/common/StLayout';
 import Collab from '@/features/stfun/components/sections/Collab';
 import Geographies from '@/features/stfun/components/sections/Geographies';
 import Hero from '@/features/stfun/components/sections/Hero';
@@ -82,9 +83,11 @@ export default function Home({ chapters, chaptersForSchema }: HomePageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<
-  HomePageProps
-> = async () => {
+Home.getLayout = getStLayout;
+
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async ({
+  res,
+}) => {
   const chapters = await prisma.chapter.findMany({
     where: { active: true },
     select: {
@@ -120,6 +123,7 @@ export const getServerSideProps: GetServerSideProps<
     link: chapter.link || undefined,
   }));
 
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       chapters: chaptersForGeographies,

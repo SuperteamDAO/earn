@@ -17,7 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { countries } from '@/constants/country';
+import { countries, SANCTIONED_COUNTRY_CODES } from '@/constants/country';
 import { cn } from '@/utils/cn';
 
 import { chaptersQuery } from '@/features/chapters/queries/chapters';
@@ -90,6 +90,12 @@ interface RegionComboboxProps {
   disabled?: boolean;
 
   /**
+   * Whether to hide sanctioned countries from the list.
+   * @default false
+   */
+  excludeSanctioned?: boolean;
+
+  /**
    * Object containing class names for specific subcomponents.
    */
   classNames?: {
@@ -116,12 +122,18 @@ export function RegionCombobox({
   unset,
   regions: allowRegions = false,
   disabled = false,
+  excludeSanctioned = false,
   className,
   classNames,
 }: RegionComboboxProps): JSX.Element {
   const { data: chapters = [] } = useQuery(chaptersQuery);
 
   const options: SelectOption[] = useMemo(() => {
+    const isoCountries = countries.filter(
+      (c) =>
+        c.iso &&
+        !(excludeSanctioned && SANCTIONED_COUNTRY_CODES.includes(c.code)),
+    );
     const regions: SelectOption[] = [];
     if (global)
       regions.push({ value: 'Global', label: 'Global', code: 'Global' });
@@ -130,7 +142,7 @@ export function RegionCombobox({
         chapter.code.toLowerCase(),
       );
 
-      const nonSuperteamCountries = countries.filter(
+      const nonSuperteamCountries = isoCountries.filter(
         (country) => !chapterCountries.includes(country.code.toLowerCase()),
       );
       regions.push({
@@ -143,24 +155,20 @@ export function RegionCombobox({
       });
       regions.push({
         label: 'Other Countries',
-        options: nonSuperteamCountries
-          .filter((s) => s.iso)
-          .map((country) => ({
-            value: country.name,
-            label: country.name,
-            code: country.code,
-          })),
+        options: nonSuperteamCountries.map((country) => ({
+          value: country.name,
+          label: country.name,
+          code: country.code,
+        })),
       });
     } else {
       regions.push({
         label: 'Countries',
-        options: countries
-          .filter((s) => s.iso)
-          .map((country) => ({
-            value: country.name,
-            label: country.name,
-            code: country.code,
-          })),
+        options: isoCountries.map((country) => ({
+          value: country.name,
+          label: country.name,
+          code: country.code,
+        })),
       });
     }
     if (allowRegions) {
@@ -176,7 +184,7 @@ export function RegionCombobox({
       });
     }
     return regions;
-  }, [global, superteams, allowRegions, chapters]);
+  }, [global, superteams, allowRegions, excludeSanctioned, chapters]);
   const [open, setOpen] = React.useState(false);
   const listRef = React.useRef<HTMLDivElement>(null);
 

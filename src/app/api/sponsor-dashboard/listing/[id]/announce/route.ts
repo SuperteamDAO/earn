@@ -489,7 +489,7 @@ export async function POST(
     );
     return NextResponse.json(
       {
-        error: error.message,
+        error: 'Internal Server Error',
         message: `Error occurred while announcing bounty with id=${params.id}.`,
       },
       { status: 400 },

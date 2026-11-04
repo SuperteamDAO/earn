@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+import {
+  isSanctionedCountry,
+  SANCTIONED_LOCATION_MESSAGE,
+} from '@/constants/country';
 import { skillsArraySchema } from '@/interface/skills';
 import { canonicalizeRegionValue } from '@/utils/canonicalRegion';
 import { getURL } from '@/utils/validUrl';
@@ -83,7 +87,10 @@ export const profileSchema = z
     currentEmployer: z.string().optional(),
     skills: skillsArraySchema,
     private: z.boolean().default(false),
-    location: z.string().transform(canonicalizeRegionValue),
+    location: z
+      .string()
+      .transform(canonicalizeRegionValue)
+      .refine((v) => !isSanctionedCountry(v), SANCTIONED_LOCATION_MESSAGE),
   })
   .superRefine((data, ctx) => {
     socialSuperRefine(data, ctx);

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { type GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import NProgress from 'nprogress';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -24,7 +25,7 @@ interface SearchProps {
   initialQuery?: string;
 }
 
-const SearchPage = ({ initialQuery = '' }: SearchProps) => {
+const SearchPageContent = ({ initialQuery = '' }: SearchProps) => {
   const { user } = useUser();
   const { data: chapters = [] } = useQuery(chaptersQuery);
   const userRegion = useMemo(
@@ -156,9 +157,17 @@ const SearchPage = ({ initialQuery = '' }: SearchProps) => {
   );
 };
 
+// Search state is seeded from the query, so remount whenever it changes.
+const SearchPage = (props: SearchProps) => {
+  const router = useRouter();
+  return <SearchPageContent key={router.asPath} {...props} />;
+};
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { res } = context;
   const query = (context.query.q as string)?.trim() || '';
 
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       initialQuery: query,

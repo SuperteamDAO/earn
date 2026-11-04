@@ -280,8 +280,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        error: error.message,
-        message: `Unable to update grant application: ${error.message}`,
+        error: 'Internal Server Error',
+        message: 'Unable to update grant application.',
       },
       { status: statusCode },
     );

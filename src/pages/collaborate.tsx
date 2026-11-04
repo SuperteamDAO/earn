@@ -2,6 +2,7 @@ import { ASSET_URL } from '@/constants/ASSET_URL';
 import { Meta } from '@/layouts/Meta';
 
 import HeroContainer from '@/features/stfun/components/common/HeroContainer';
+import { getStLayout } from '@/features/stfun/components/common/StLayout';
 import CollabServices from '@/features/stfun/components/sections/CollabServices';
 import LoveRespect from '@/features/stfun/components/sections/LoveRespect';
 
@@ -97,3 +98,5 @@ export default function Collaborate() {
     </>
   );
 }
+
+Collaborate.getLayout = getStLayout;

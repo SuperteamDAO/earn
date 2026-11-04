@@ -410,7 +410,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `User ${userId} unable to export to Google Sheets: ${safeStringify(error)}`,
     );
     return res.status(400).json({
-      error: error.message || error.toString(),
+      error: 'Internal Server Error',
       message: `Error occurred while exporting submissions to Google Sheets for listing=${listingId}.`,
     });
   }

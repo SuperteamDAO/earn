@@ -9,6 +9,7 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 import { queueEmail } from '@/features/emails/utils/queueEmail';
+import { grantApplicationMutationSelect } from '@/features/sponsor-dashboard/constants/grantApplicationMutation';
 import {
   findUsedPaymentTxIds,
   normalizePaymentTxId,
@@ -42,7 +43,20 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.info(`Fetching grant application with ID: ${id}`);
     const currentApplication = await prisma.grantApplication.findUnique({
       where: { id },
-      include: { grant: true },
+      select: {
+        grantId: true,
+        userId: true,
+        approvedAmount: true,
+        totalPaid: true,
+        paymentDetails: true,
+        totalTranches: true,
+        walletAddress: true,
+        grant: {
+          select: {
+            token: true,
+          },
+        },
+      },
     });
 
     if (!currentApplication) {
@@ -134,10 +148,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           paymentDetails: updatedPaymentDetails as any,
           ...(isFullyPaid && { applicationStatus: 'Completed' }),
         },
-        include: {
-          user: true,
-          grant: true,
-        },
+        select: grantApplicationMutationSelect,
       });
 
       return updatedGrantApplication;
@@ -160,7 +171,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       safeStringify(error),
     );
     return res.status(400).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: `Error occurred while updating payment of a submission ${id}.`,
     });
   }
