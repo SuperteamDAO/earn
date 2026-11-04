@@ -183,6 +183,56 @@ export function userRegionEligibilty({
   return isEligible;
 }
 
+export function verifiedUserRegionEligibility({
+  region,
+  location,
+  isKYCVerified,
+  kycCountry,
+  chapters,
+}: {
+  readonly region: string | undefined;
+  readonly location: string | null | undefined;
+  readonly isKYCVerified: boolean | null | undefined;
+  readonly kycCountry: string | null | undefined;
+  readonly chapters: ChapterRegionData[];
+}): boolean {
+  if (!isKYCVerified || !kycCountry) {
+    return userRegionEligibilty({
+      region,
+      userLocation: location || '',
+      chapters,
+    });
+  }
+
+  let kycCountryCode: string | undefined;
+  try {
+    kycCountryCode = lookup.byIso(kycCountry.trim())?.iso2.toLowerCase();
+  } catch {
+    kycCountryCode = undefined;
+  }
+
+  const verifiedCountry = countries.find(
+    (country) => country.code === kycCountryCode,
+  );
+  if (!verifiedCountry) {
+    return normalizeRegionValue(region) === 'global';
+  }
+
+  const profileCountry = countries.find(
+    (country) =>
+      normalizeRegionValue(country.name) === normalizeRegionValue(location),
+  );
+  const verifiedLocations = profileCountry?.code.startsWith(
+    `${verifiedCountry.code}-`,
+  )
+    ? [verifiedCountry.name, profileCountry.name]
+    : [verifiedCountry.name];
+
+  return verifiedLocations.some((userLocation) =>
+    userRegionEligibilty({ region, userLocation, chapters }),
+  );
+}
+
 export function generateSlug(name: string): string {
   return name
     .toLowerCase()
