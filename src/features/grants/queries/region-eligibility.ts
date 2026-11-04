@@ -10,8 +10,11 @@ const fetchRegionEligibility = async (grantId: string) => {
   return response.data;
 };
 
-export const regionEligibilityQuery = (grantId: string) =>
+export const regionEligibilityQuery = (
+  grantId: string,
+  userId: string | undefined,
+) =>
   queryOptions({
-    queryKey: ['regionEligibility', grantId],
+    queryKey: ['regionEligibility', grantId, userId],
     queryFn: () => fetchRegionEligibility(grantId),
   });

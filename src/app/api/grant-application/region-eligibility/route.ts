@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -20,14 +21,19 @@ export async function GET(request: NextRequest) {
   }
 
   const userId = session.data.userId as string;
-  const grantId = request.nextUrl.searchParams.get('grantId');
+  const parsedGrantId = z
+    .string()
+    .uuid()
+    .safeParse(request.nextUrl.searchParams.get('grantId'));
 
-  if (!grantId) {
+  if (!parsedGrantId.success) {
     return NextResponse.json(
-      { error: 'Grant ID is required' },
+      { error: 'A valid grant ID is required' },
       { status: 400 },
     );
   }
+
+  const grantId = parsedGrantId.data;
 
   try {
     const [grant, user] = await Promise.all([

@@ -62,11 +62,13 @@ export const ApplicationActionButton = ({
 
   const isRegionRestricted =
     !!region && region.trim().toLowerCase() !== 'global';
-  const { data: regionEligibility, isLoading: isRegionEligibilityLoading } =
-    useQuery({
-      ...regionEligibilityQuery(id),
-      enabled: !!user?.id && isRegionRestricted,
-    });
+  const shouldCheckRegionEligibility = !!user?.id && isRegionRestricted;
+  const { data: regionEligibility } = useQuery({
+    ...regionEligibilityQuery(id, user?.id),
+    enabled: shouldCheckRegionEligibility,
+  });
+  const isRegionEligibilityUnavailable =
+    shouldCheckRegionEligibility && !regionEligibility;
 
   const { buttonConfig, hasApplied, applicationState, tranches } =
     useApplicationState(application, grant);
@@ -123,7 +125,7 @@ export const ApplicationActionButton = ({
     buttonConfig.isDisabled ||
     Boolean(
       !isPublished ||
-      isRegionEligibilityLoading ||
+      isRegionEligibilityUnavailable ||
       isPausedForNewApplications ||
       (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
       (user?.id && user?.isTalentFilled && isNewApplicationLocationCooldown) ||
