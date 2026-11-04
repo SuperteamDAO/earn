@@ -2,7 +2,7 @@ import { prisma } from '@/prisma';
 import { getChapterRegions } from '@/utils/chapterRegion';
 
 import { getLocationCooldown } from '@/features/listings/utils/locationCooldown';
-import { userRegionEligibilty } from '@/features/listings/utils/region';
+import { verifiedUserRegionEligibility } from '@/features/listings/utils/region';
 
 export async function validateGrantRequest(
   userId: string,
@@ -56,6 +56,8 @@ export async function validateGrantRequest(
       isPro: true,
       location: true,
       locationUpdatedAt: true,
+      isKYCVerified: true,
+      kycCountry: true,
       peopleId: true,
       people: {
         select: {
@@ -79,9 +81,11 @@ export async function validateGrantRequest(
   }
 
   const chapterRegions = await getChapterRegions();
-  const isUserEligibleByRegion = userRegionEligibilty({
+  const isUserEligibleByRegion = verifiedUserRegionEligibility({
     region: grant.region,
-    userLocation: user.location || '',
+    location: user.location,
+    isKYCVerified: user.isKYCVerified,
+    kycCountry: user.kycCountry,
     chapters: chapterRegions,
   });
 

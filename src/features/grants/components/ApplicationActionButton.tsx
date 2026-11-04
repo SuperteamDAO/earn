@@ -21,6 +21,7 @@ import {
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { useApplicationState } from '../hooks/useApplicationState';
+import { regionEligibilityQuery } from '../queries/region-eligibility';
 import { userApplicationQuery } from '../queries/user-application';
 import { type Grant } from '../types';
 import { grantApplicationCooldownTooltip } from '../utils/grantApplicationCooldown';
@@ -59,18 +60,31 @@ export const ApplicationActionButton = ({
   });
   const { data: chapters = [] } = useQuery(chaptersQuery);
 
+  const isRegionRestricted =
+    !!region && region.trim().toLowerCase() !== 'global';
+  const { data: regionEligibility, isLoading: isRegionEligibilityLoading } =
+    useQuery({
+      ...regionEligibilityQuery(id),
+      enabled: !!user?.id && isRegionRestricted,
+    });
+
   const { buttonConfig, hasApplied, applicationState, tranches } =
     useApplicationState(application, grant);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const isUserEligibleByRegion = userRegionEligibilty({
+  const isProfileEligibleByRegion = userRegionEligibilty({
     region,
     userLocation: user?.location,
     chapters,
   });
+  const isUserEligibleByRegion =
+    regionEligibility?.isEligible ?? isProfileEligibleByRegion;
 
-  const regionTooltipLabel = getRegionTooltipLabel(region, false, chapters);
+  const regionTooltipLabel =
+    isProfileEligibleByRegion && !isUserEligibleByRegion
+      ? 'Your KYC verified country is not eligible for this grant.'
+      : getRegionTooltipLabel(region, true, chapters);
 
   const locationCooldown = getLocationCooldown({
     locationUpdatedAt: user?.locationUpdatedAt ?? null,
@@ -109,6 +123,7 @@ export const ApplicationActionButton = ({
     buttonConfig.isDisabled ||
     Boolean(
       !isPublished ||
+      isRegionEligibilityLoading ||
       isPausedForNewApplications ||
       (user?.id && user?.isTalentFilled && !isUserEligibleByRegion) ||
       (user?.id && user?.isTalentFilled && isNewApplicationLocationCooldown) ||
