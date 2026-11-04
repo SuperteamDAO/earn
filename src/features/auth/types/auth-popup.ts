@@ -1,4 +1,4 @@
-import type { RedirectableProviderType } from 'next-auth/providers';
+import type { RedirectableProviderType } from 'next-auth/providers/index';
 import type { SignInResponse } from 'next-auth/react';
 
 export interface SignInOptions extends Record<string, unknown> {

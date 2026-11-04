@@ -130,7 +130,7 @@ export default async function user(req: NextApiRequest, res: NextApiResponse) {
       `Error occurred while fetching bounty with slug=${slug}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: `Error occurred while fetching bounty with slug=${slug}.`,
     });
   }

@@ -79,7 +79,7 @@ async function grantApplication(
       `Error occurred while fetching applications for grantId: ${grantId} by user ${userId}: ${safeStringify(error)}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while fetching grant applications.',
     });
   }

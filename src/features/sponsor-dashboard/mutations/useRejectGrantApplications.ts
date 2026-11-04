@@ -6,6 +6,7 @@ import { api } from '@/lib/api';
 import { GrantApplicationStatus } from '@/prisma/enums';
 
 import { selectedGrantApplicationAtom } from '../atoms';
+import { type GrantApplicationStatusMutationResponse } from '../constants/grantApplicationMutation';
 import { type GrantApplicationsReturn } from '../queries/applications';
 import { type GrantApplicationWithUser } from '../types';
 
@@ -79,7 +80,7 @@ export const useRejectGrantApplications = (slug: string) => {
       const batchSize = 10;
       for (let i = 0; i < applicationIds.length; i += batchSize) {
         const batch = applicationIds.slice(i, i + batchSize);
-        await api.post(
+        await api.post<GrantApplicationStatusMutationResponse>(
           '/api/sponsor-dashboard/grants/update-application-status',
           {
             data: batch.map((id) => ({ id })),

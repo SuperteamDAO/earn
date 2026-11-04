@@ -119,18 +119,20 @@ export async function POST(request: Request) {
           { status: 403 },
         );
       }
+      logger.error(`Unable to create grant tranche: ${safeStringify(error)}`);
       return NextResponse.json(
         {
-          error: error.message,
+          error: 'Internal Server Error',
           message: 'Error occurred while creating tranche.',
         },
         { status: 500 },
       );
     }
   } catch (error: any) {
+    logger.error(`Unable to request grant tranche: ${safeStringify(error)}`);
     return NextResponse.json(
       {
-        error: error.message,
+        error: 'Internal Server Error',
         message: 'Error occurred while creating tranche.',
       },
       { status: 500 },

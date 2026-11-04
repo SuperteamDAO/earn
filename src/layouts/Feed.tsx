@@ -22,7 +22,7 @@ const NavItem = ({ name, icon: Icon, href }: NavItemProps) => {
       <div className="flex h-9 w-9 items-center justify-center">
         <Icon />
       </div>
-      <span className="mt-1 font-medium text-slate-500">{name}</span>
+      <span className="font-medium text-slate-500">{name}</span>
     </Link>
   );
 };
@@ -40,9 +40,9 @@ export const FeedPageLayout = ({
 }: FeedPageProps) => {
   return (
     <Home type="feed" meta={meta}>
-      <div className="-mt-4 -mr-[10px] -ml-5 border-r border-slate-200 lg:-mr-[25px] lg:ml-0">
+      <div className="-mx-2 border-r border-slate-200 lg:-mr-[25px] lg:ml-0">
         <div className="flex">
-          <div className="sticky top-14 hidden h-screen w-48 flex-col gap-3 border-r pt-5 pr-5 lg:flex">
+          <div className="sticky top-14 hidden h-screen w-48 shrink-0 flex-col gap-3 border-r pt-5 pr-5 lg:flex">
             <NavItem name="Homepage" icon={HomeIcon} href="/earn" />
             <NavItem
               name="Leaderboard"
@@ -58,7 +58,7 @@ export const FeedPageLayout = ({
               <NavItem name="All Posts" icon={AllPostsIcon} href="/earn/feed" />
             )}
           </div>
-          <div className="flex w-full flex-col lg:max-w-[44rem]">
+          <div className="flex min-w-0 flex-1 flex-col lg:max-w-[44rem]">
             {children}
           </div>
         </div>

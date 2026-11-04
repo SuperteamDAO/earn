@@ -81,7 +81,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Error occurred while updating user ${userId}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
-      message: `Error occurred while updating user ${userId}: ${error.message}`,
+      message: 'Error occurred while updating the user.',
     });
   }
 }

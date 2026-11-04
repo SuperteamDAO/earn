@@ -1,3 +1,5 @@
+import { Download } from 'lucide-react';
+
 import { Meta } from '@/layouts/Meta';
 
 import {
@@ -11,6 +13,7 @@ import BrandingColorSwatch from '@/features/stfun/components/branding/BrandingCo
 import BrandingSectionHeader from '@/features/stfun/components/branding/BrandingSectionHeader';
 import BrandingSTLogo from '@/features/stfun/components/branding/BrandingSTLogo';
 import BrandingTypeSample from '@/features/stfun/components/branding/BrandingTypeSample';
+import { getStLayout } from '@/features/stfun/components/common/StLayout';
 
 export default function Branding() {
   return (
@@ -44,6 +47,26 @@ export default function Branding() {
 
             {/* Main Content */}
             <main className="min-w-0 flex-1">
+              {/* Download Assets CTA */}
+              <div className="mt-20 flex flex-col gap-6 rounded-xl border border-white/10 bg-[#121212] p-8 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="font-secondary text-sm font-bold text-white">
+                    Brand Assets
+                  </p>
+                  <p className="font-secondary mt-1 text-xs leading-relaxed text-white/50">
+                    Logo and symbol in all approved colours, as SVG and PNG.
+                  </p>
+                </div>
+                <a
+                  href="/superteam-brand-assets.zip"
+                  download
+                  className="font-secondary inline-flex shrink-0 items-center gap-2 rounded-lg bg-[#f4a60b] px-5 py-3 text-xs font-bold tracking-widest text-black uppercase transition-opacity hover:opacity-90"
+                >
+                  <Download className="h-4 w-4" />
+                  Download Assets
+                </a>
+              </div>
+
               {/* 1. Primary Logo */}
               <BrandingSectionHeader num="1" title="Primary Logo" id="logo" />
               <p className="font-secondary mb-8 max-w-xl text-sm leading-relaxed text-white/70">
@@ -191,3 +214,5 @@ export default function Branding() {
     </>
   );
 }
+
+Branding.getLayout = getStLayout;

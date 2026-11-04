@@ -290,10 +290,8 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: `Server error: ${errorMessage}` },
+      { error: 'Internal Server Error' },
       { status: 500 },
     );
   }

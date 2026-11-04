@@ -114,6 +114,11 @@ export type PublicListingDetails = Omit<
   slug: string;
 };
 
+export interface SubmissionMutationResponse {
+  success: true;
+  submissionId: string;
+}
+
 export interface ListingHackathon {
   name: string;
   logo: string;

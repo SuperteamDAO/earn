@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     );
     return NextResponse.json(
       {
-        error: error.message,
+        error: 'Internal Server Error',
         message: `Error occurred while retrieving unreviewed grant applications`,
       },
       { status: 500 },

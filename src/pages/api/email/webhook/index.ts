@@ -3,9 +3,11 @@ import { buffer } from 'micro';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { type WebhookRequiredHeaders } from 'svix';
 
+import logger from '@/lib/logger';
 import { webhook } from '@/lib/webhook';
 import { validateEmailWithZeroBounce } from '@/lib/zerobounce';
 import { prisma } from '@/prisma';
+import { safeStringify } from '@/utils/safeStringify';
 
 export const config = {
   api: {
@@ -145,7 +147,10 @@ const webhooks = async (req: NextApiRequest, res: NextApiResponse) => {
 
         return res.status(200).end();
       } catch (error) {
-        return res.status(400).send(error);
+        logger.error(
+          `Email webhook processing failed: ${safeStringify(error)}`,
+        );
+        return res.status(500).json({ error: 'Internal Server Error' });
       }
     }
     default:

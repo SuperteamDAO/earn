@@ -430,8 +430,6 @@ s.name LIKE CONCAT('%', ?, '%')
     });
   } catch (err: any) {
     logger.error('Error fetching bounties or grants:', err);
-    res
-      .status(500)
-      .json({ error: 'Internal server error', details: err.message });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 }

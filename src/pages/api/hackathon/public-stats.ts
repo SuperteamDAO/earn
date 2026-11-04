@@ -17,27 +17,23 @@ export default async function handler(
       return res.status(404).json({ error: 'Hackathon not found' });
     }
 
+    const listingsWhere = {
+      hackathonId: hackathon.id,
+      isActive: true,
+      isArchived: false,
+      status: 'OPEN' as const,
+      isPublished: true,
+    };
+
     const totalListings = await prisma.bounties.count({
-      where: {
-        hackathonId: hackathon.id,
-        isActive: true,
-        isArchived: false,
-        status: 'OPEN',
-        isPublished: true,
-      },
+      where: listingsWhere,
     });
 
     const totalRewardAmount = await prisma.bounties.aggregate({
       _sum: {
         usdValue: true,
       },
-      where: {
-        hackathonId: hackathon.id,
-        isActive: true,
-        isArchived: false,
-        status: 'OPEN',
-        isPublished: true,
-      },
+      where: listingsWhere,
     });
 
     return res.status(200).json({
@@ -48,6 +44,6 @@ export default async function handler(
       announceDate: hackathon.announceDate,
     });
   } catch (error) {
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }

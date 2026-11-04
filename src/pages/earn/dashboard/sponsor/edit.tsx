@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { ImageUploader } from '@/components/shared/ImageUploader';
+import { RegionCombobox } from '@/components/shared/RegionCombobox';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -56,6 +57,7 @@ export default function UpdateSponsor() {
       url: '',
       twitter: '',
       entityName: '',
+      location: '',
     },
   });
 
@@ -112,8 +114,17 @@ export default function UpdateSponsor() {
 
   useEffect(() => {
     if (sponsorData) {
-      const { bio, industry, name, slug, logo, twitter, url, entityName } =
-        sponsorData;
+      const {
+        bio,
+        industry,
+        name,
+        slug,
+        logo,
+        twitter,
+        url,
+        entityName,
+        location,
+      } = sponsorData;
       setSponsorName(name);
       setSlug(slug);
       setInitialLogo(logo || '');
@@ -128,6 +139,7 @@ export default function UpdateSponsor() {
           ? extractSocialUsername('twitter', twitter) || undefined
           : undefined,
         entityName,
+        location: location ?? '',
       });
     }
   }, [sponsorData, form.reset, setSlug, setSponsorName]);
@@ -251,6 +263,31 @@ export default function UpdateSponsor() {
                 >
                   <Input placeholder="Full Entity Name" />
                 </FormFieldWrapper>
+              </div>
+              <div className="mt-6 w-full">
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel isRequired>Company Location</FormLabel>
+                      <FormControl>
+                        <RegionCombobox
+                          className="h-9 w-full"
+                          excludeSanctioned
+                          placeholder="Where is your team based?"
+                          value={field.value}
+                          onChange={field.onChange}
+                          classNames={{
+                            popoverContent:
+                              'w-[var(--radix-popper-anchor-width)]',
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <div className="mt-6 mb-3 w-full">

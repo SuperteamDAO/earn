@@ -64,9 +64,13 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
                   : '-'
               }
             />
-            {isTweetStatusUrl(selectedSubmission?.link) && (
-              <TweetStats submissionId={selectedSubmission!.id} type="link" />
-            )}
+            {selectedSubmission &&
+              isTweetStatusUrl(selectedSubmission.link) && (
+                <TweetStats
+                  source="link"
+                  submissionId={selectedSubmission.id}
+                />
+              )}
             <InfoBox
               label="Tweet Link"
               content={
@@ -75,9 +79,13 @@ export const Details = ({ bounty, isHackathonPage }: Props) => {
                   : '-'
               }
             />
-            {isTweetStatusUrl(selectedSubmission?.tweet) && (
-              <TweetStats submissionId={selectedSubmission!.id} type="tweet" />
-            )}
+            {selectedSubmission &&
+              isTweetStatusUrl(selectedSubmission.tweet) && (
+                <TweetStats
+                  source="tweet"
+                  submissionId={selectedSubmission.id}
+                />
+              )}
           </>
         )}
         {bounty?.compensationType !== 'fixed' && (

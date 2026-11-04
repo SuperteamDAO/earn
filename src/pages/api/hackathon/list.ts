@@ -1,7 +1,9 @@
 import type { NextApiResponse } from 'next';
 
+import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { parseBoundedIntegerParam } from '@/utils/apiPagination';
+import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
@@ -96,9 +98,12 @@ async function hackathons(req: NextApiRequestWithUser, res: NextApiResponse) {
       });
     }
     res.status(200).json(finalHackathons);
-  } catch (error) {
-    res.status(400).json({
-      error,
+  } catch (error: unknown) {
+    logger.error(
+      `Error occurred while fetching hackathons: ${safeStringify(error)}`,
+    );
+    res.status(500).json({
+      error: 'Internal Server Error',
       message: 'Error occurred while fetching hackathons',
     });
   }

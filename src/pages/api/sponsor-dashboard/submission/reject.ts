@@ -116,7 +116,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Error occurred while rejecting listing submission ID: ${data.map((c) => c.id)}:  ${error.message}`,
     );
     return res.status(500).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: 'Error occurred while rejecting listing submissions',
     });
   }

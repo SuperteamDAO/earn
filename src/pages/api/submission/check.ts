@@ -89,7 +89,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Error occurred while checking submission existence for listing ID=${listingId} and user ID=${userId}: ${safeStringify(error)}`,
     );
     res.status(400).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: `Error occurred while checking submission existence for listing=${listingId} and user=${userId}.`,
     });
   }

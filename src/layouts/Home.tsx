@@ -173,7 +173,7 @@ export function Home({
       <div className={cn('mx-auto w-full px-2 lg:px-6')}>
         <div className="mx-auto w-full max-w-7xl p-0">
           <div className="flex items-start justify-between">
-            <div className="w-full lg:border-r lg:border-slate-100">
+            <div className="w-full min-w-0 lg:border-r lg:border-slate-100">
               <div className="w-full lg:pr-6">
                 {!currentCategory && type === 'listing' && !listingType && (
                   <div className="pt-3">

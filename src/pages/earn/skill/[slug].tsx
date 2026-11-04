@@ -86,6 +86,7 @@ const SkillPage = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { res } = context;
   const { params } = context;
 
   const slug = params?.slug;
@@ -104,6 +105,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=600');
   return {
     props: {
       slug,

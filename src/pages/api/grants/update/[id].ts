@@ -52,7 +52,7 @@ async function grant(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Error occurred while updating grant with ID: ${id}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: `Error occurred while updating grant with id=${id}.`,
     });
   }

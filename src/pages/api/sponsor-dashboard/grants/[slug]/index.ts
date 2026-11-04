@@ -7,6 +7,10 @@ import { safeStringify } from '@/utils/safeStringify';
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import {
+  sponsorGrantDetailsSelect,
+  type SponsorGrantDetailsResponse,
+} from '@/features/sponsor-dashboard/constants/sponsorGrantDetails';
 
 async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
   const userId = req.userId;
@@ -21,11 +25,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     const grant = await prisma.grants.findFirst({
       where: { slug },
-      include: { sponsor: true, poc: true, GrantApplication: true },
-    });
-
-    const grantTrancheCount = await prisma.grantTranche.count({
-      where: { grantId: grant?.id },
+      select: sponsorGrantDetailsSelect,
     });
 
     if (!grant) {
@@ -62,34 +62,64 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       return res.status(error.status).json(response);
     }
 
-    const totalApplications = grant.GrantApplication.length;
-    const approvedAmountTotal = grant.GrantApplication.reduce(
-      (sum, application) => {
-        if (
-          application.applicationStatus !== 'Approved' &&
-          application.applicationStatus !== 'Completed'
-        ) {
-          return sum;
-        }
+    const [totalApplications, approvedAmount, grantTrancheCount] =
+      await Promise.all([
+        prisma.grantApplication.count({ where: { grantId: grant.id } }),
+        prisma.grantApplication.aggregate({
+          where: {
+            grantId: grant.id,
+            applicationStatus: { in: ['Approved', 'Completed'] },
+          },
+          _sum: { approvedAmountInUSD: true },
+        }),
+        prisma.grantTranche.count({ where: { grantId: grant.id } }),
+      ]);
 
-        return sum + (application.approvedAmountInUSD || 0);
+    const response: SponsorGrantDetailsResponse = {
+      id: grant.id,
+      title: grant.title,
+      slug: grant.slug,
+      token: grant.token ?? undefined,
+      maxReward: grant.maxReward ?? undefined,
+      historicalApplications: grant.historicalApplications,
+      sponsorId: grant.sponsorId,
+      isPublished: grant.isPublished,
+      isActive: grant.isActive,
+      isArchived: grant.isArchived,
+      isPaused: grant.isPaused,
+      questions: grant.questions as SponsorGrantDetailsResponse['questions'],
+      region: grant.region,
+      status: grant.status,
+      references:
+        (grant.references as unknown as SponsorGrantDetailsResponse['references']) ??
+        [],
+      airtableId: grant.airtableId ?? undefined,
+      isNative: grant.isNative,
+      ai: grant.ai as SponsorGrantDetailsResponse['ai'],
+      emailSalutation: grant.emailSalutation,
+      isST: grant.isST,
+      sponsor: {
+        id: grant.sponsor.id,
+        name: grant.sponsor.name,
+        slug: grant.sponsor.slug,
+        logo: grant.sponsor.logo ?? '',
+        entityName: grant.sponsor.entityName ?? undefined,
+        isVerified: grant.sponsor.isVerified,
+        chapter: grant.sponsor.chapter,
       },
-      0,
-    );
-
-    logger.info(`Grant details fetched successfully for slug=${slug}`);
-    return res.status(200).json({
-      ...grant,
-      approvedAmountTotal,
+      approvedAmountTotal: approvedAmount._sum.approvedAmountInUSD ?? 0,
       totalApplications,
       grantTrancheCount,
-    });
+    };
+
+    logger.info(`Grant details fetched successfully for slug=${slug}`);
+    return res.status(200).json(response);
   } catch (error: any) {
     logger.error(
       `Error fetching grant with slug=${slug} for user=${userId}: ${safeStringify(error)}`,
     );
     return res.status(400).json({
-      error: error.message,
+      error: 'Internal Server Error',
       message: `Error occurred while fetching grant with slug=${slug}.`,
     });
   }

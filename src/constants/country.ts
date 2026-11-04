@@ -2484,3 +2484,29 @@ export const countries = [
     ],
   },
 ];
+
+// Sanctioned jurisdictions per Colosseum / Solana hackathon official rules.
+// Crimea, Donetsk, Luhansk, Zaporizhzhia and Kherson are also excluded there
+// but have no separate entry in this list.
+export const SANCTIONED_COUNTRY_CODES = [
+  'af',
+  'by',
+  'cu',
+  'ir',
+  'kp',
+  'ru',
+  'so',
+  'sy',
+  've',
+  'ye',
+];
+
+export const SANCTIONED_LOCATION_MESSAGE =
+  'This country is not supported due to sanctions restrictions';
+
+export const isSanctionedCountry = (name: string) =>
+  countries.some(
+    (c) =>
+      SANCTIONED_COUNTRY_CODES.includes(c.code) &&
+      c.name.toLowerCase() === name.trim().toLowerCase(),
+  );

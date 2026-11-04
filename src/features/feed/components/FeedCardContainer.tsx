@@ -128,7 +128,7 @@ export const FeedCardContainer = ({
         <EarnAvatar
           id={userId}
           avatar={photo}
-          className="size-7 sm:size-9"
+          className="size-7 shrink-0 sm:size-9"
           onClick={(e) => {
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
@@ -136,7 +136,7 @@ export const FeedCardContainer = ({
           }}
         />
 
-        <div className="flex w-full flex-col">
+        <div className="flex min-w-0 flex-1 flex-col">
           <FeedCardHeader
             name={`${firstName} ${lastName}`}
             photo={photo}

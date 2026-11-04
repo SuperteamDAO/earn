@@ -8,7 +8,7 @@ import {
   TOKEN_PROGRAM_ADDRESS,
 } from '@solana-program/token';
 import { TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022';
-import { address, type Signature } from '@solana/kit';
+import { address, type Address, type Signature } from '@solana/kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import bs58 from 'bs58';
@@ -43,6 +43,23 @@ interface WithdrawFlowProps {
   txData: TxData;
   setTxData: (txData: TxData) => void;
 }
+
+interface WithdrawalApiErrorResponse {
+  code?: string;
+  error?: string;
+}
+
+const SUPPORT_ERROR_MESSAGE =
+  'Something went wrong. Please try again. If the issue persists, contact support@superteam.fun.';
+
+const actionableWithdrawalErrorCodes = new Set([
+  'AMOUNT_BELOW_ACCOUNT_SETUP_FEE',
+  'AMOUNT_TOO_SMALL',
+  'AUTHENTICATION_REQUIRED',
+  'INVALID_WITHDRAWAL_DETAILS',
+  'UNSUPPORTED_TOKEN',
+  'WITHDRAWAL_NOT_ALLOWED',
+]);
 
 export function WithdrawFundsFlow({
   tokens,
@@ -98,6 +115,24 @@ export function WithdrawFundsFlow({
     values: WithdrawFormData,
   ): Promise<string> {
     const rpc = getRpc();
+    let recipient: Address;
+
+    try {
+      recipient = address(values.recipientAddress);
+    } catch (e) {
+      const message =
+        e instanceof Error ? e.message : 'Unknown address validation error';
+
+      toast.error(
+        'The destination address is invalid. Please enter a valid Solana wallet address.',
+      );
+      log.error(
+        `Withdrawal recipient validation failed: ${message}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
+      );
+      posthog.capture('withdraw_failed');
+      setView('withdraw');
+      return Promise.reject(new Error('Withdrawal precheck failed'));
+    }
 
     try {
       if (
@@ -106,7 +141,6 @@ export function WithdrawFundsFlow({
         return handleWithdraw(values);
       }
 
-      const recipient = address(values.recipientAddress);
       const tokenMint = address(values.tokenAddress);
       const programId = await detectTokenProgram(values.tokenAddress);
 
@@ -131,7 +165,16 @@ export function WithdrawFundsFlow({
         const tokenAmountToCharge = ataCreationCostInUSD / tokenUSDValue;
 
         const tokenDetails = await getTokenBySymbol(selectedToken?.tokenSymbol);
-        const power = tokenDetails?.decimals as number;
+        const power = tokenDetails?.decimals;
+        if (
+          !Number.isFinite(tokenUSDValue) ||
+          tokenUSDValue <= 0 ||
+          !Number.isFinite(solUSDValue) ||
+          solUSDValue <= 0 ||
+          power === undefined
+        ) {
+          throw new Error('Unable to calculate token account setup fee');
+        }
         const cost = Math.ceil(tokenAmountToCharge * 10 ** power);
 
         setAtaCreationCost(cost);
@@ -143,16 +186,9 @@ export function WithdrawFundsFlow({
       return handleWithdraw(values);
     } catch (e) {
       const message =
-        e instanceof Error ? e.message : 'Unknown address validation error';
+        e instanceof Error ? e.message : 'Unknown withdrawal precheck error';
 
-      let errorMessage =
-        'Invalid destination address. Please paste a valid Solana address.';
-      if (message.includes('Non-base58') || message.includes('base58')) {
-        errorMessage =
-          'The destination address contains invalid characters. Please ensure it is a valid base58 Solana address.';
-      }
-
-      toast.error(errorMessage);
+      toast.error(SUPPORT_ERROR_MESSAGE);
       log.error(
         `Withdrawal precheck failed: ${message}, userId: ${user?.id}, amount: ${values.amount}, destinationAddress: ${values.recipientAddress}, token: ${values.tokenAddress}`,
       );
@@ -206,8 +242,9 @@ export function WithdrawFundsFlow({
           })
           .send();
         if (simulation.value.err) {
+          const simulationLogs = simulation.value.logs?.join('\n');
           throw new Error(
-            `Simulation failed: ${JSON.stringify(simulation.value.err)}`,
+            `Simulation failed: ${JSON.stringify(simulation.value.err)}${simulationLogs ? `\n${simulationLogs}` : ''}`,
           );
         }
       } catch (simError) {
@@ -227,20 +264,27 @@ export function WithdrawFundsFlow({
 
       signature = bs58.encode(result.signature);
 
+      let transactionConfirmed = false;
       for (let i = 0; i < 30; i++) {
         const status = await rpc
           .getSignatureStatuses([signature as Signature])
           .send();
-        if (
-          status.value[0]?.confirmationStatus === 'confirmed' ||
-          status.value[0]?.confirmationStatus === 'finalized'
-        ) {
-          break;
-        }
-        if (status.value[0]?.err) {
+        const transactionStatus = status.value[0];
+
+        if (transactionStatus?.err) {
           throw new Error('Transaction failed on-chain');
         }
+        if (
+          transactionStatus?.confirmationStatus === 'confirmed' ||
+          transactionStatus?.confirmationStatus === 'finalized'
+        ) {
+          transactionConfirmed = true;
+          break;
+        }
         await new Promise((r) => setTimeout(r, 1000));
+      }
+      if (!transactionConfirmed) {
+        throw new Error('Transaction confirmation timed out');
       }
 
       setTxData({
@@ -264,10 +308,22 @@ export function WithdrawFundsFlow({
 
       const errorMessage = (e as Error)?.message?.toLowerCase() || '';
       const isAxiosErr = isAxiosError(e);
+      const apiError = isAxiosErr
+        ? (e.response?.data as WithdrawalApiErrorResponse | undefined)
+        : undefined;
       const errorType = classifySolanaError(e);
       const tokenSymbol = selectedToken?.tokenSymbol ?? 'token';
 
       if (
+        apiError?.code &&
+        actionableWithdrawalErrorCodes.has(apiError.code) &&
+        apiError.error
+      ) {
+        toast.error(apiError.error);
+        posthog.capture('withdraw_request_rejected', {
+          code: apiError.code,
+        });
+      } else if (
         errorMessage.includes('mfa canceled') ||
         errorMessage.includes('mfa cancelled')
       ) {
@@ -276,14 +332,6 @@ export function WithdrawFundsFlow({
       } else if (errorMessage.includes('max mfa verification attempts')) {
         toast.error('Maximum MFA attempts reached. Please try again later.');
         posthog.capture('mfa_max_attempts_reached');
-      } else if (
-        isAxiosErr &&
-        e.response?.data?.error === 'Invalid token selected'
-      ) {
-        toast.error(
-          "We don't support this token yet. Contact support@superteam.fun for us to add it.",
-        );
-        posthog.capture('withdraw_unsupported_token');
       } else {
         switch (errorType) {
           case 'user-rejected':
@@ -308,9 +356,7 @@ export function WithdrawFundsFlow({
           case 'rpc':
           case 'unknown':
           default:
-            toast.error(
-              'Something went wrong. Please try again. If the issue persists, contact support@superteam.fun.',
-            );
+            toast.error(SUPPORT_ERROR_MESSAGE);
             break;
         }
       }

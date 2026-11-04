@@ -1,4 +1,5 @@
 {
+  "installCommand": "corepack pnpm install --frozen-lockfile",
   "rewrites": [
     { "source": "/build", "destination": "https://build.superteam.fun/build" },
     {
@@ -20,6 +21,18 @@
     {
       "source": "/hackathon/:path*",
       "destination": "https://hackathon.superteam.fun/hackathon/:path*"
+    },
+    {
+      "source": "/helius",
+      "destination": "https://helius.superteam.fun/helius"
+    },
+    {
+      "source": "/helius/",
+      "destination": "https://helius.superteam.fun/helius/"
+    },
+    {
+      "source": "/helius/:path*",
+      "destination": "https://helius.superteam.fun/helius/:path*"
     }
   ]
 }

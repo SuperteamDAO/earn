@@ -69,6 +69,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         'Email ID': user.email,
         'Profile Link': `https://superteam.fun/earn/t/${user.username}`,
         'User Wallet': user.walletAddress,
+        'Recipient Wallet': application.walletAddress,
         'User Social Link': getSocialMediaLink(user),
         'Twitter Link': application.twitter || '',
         'Application Date': applicationDate,
@@ -112,7 +113,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `User ${userId} unable to download CSV: ${safeStringify(error)}`,
     );
     return res.status(400).json({
-      error: error.message || error.toString(),
+      error: 'Internal Server Error',
       message: `Error occurred while exporting applications of grant=${grantId}.`,
     });
   }

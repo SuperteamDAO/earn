@@ -2,7 +2,6 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
-import { AnimateChangeInHeight } from '@/components/shared/AnimateChangeInHeight';
 import { EmptySection } from '@/components/shared/EmptySection';
 import { Separator } from '@/components/ui/separator';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
@@ -69,10 +68,12 @@ export const ListingsSection = ({
   const isSponsorContext = type === 'sponsor';
   const isBookmarksContext = type === 'bookmarks';
   const isProContext = type === 'pro';
-  const isAgentContext = type === 'agents';
 
   const { authenticated, ready } = usePrivy();
   const supportsForYou = FOR_YOU_SUPPORTED_TYPES.includes(type);
+  // With a session hint, wait for Privy so we fetch once with the final auth
+  // state instead of rendering a throwaway signed-out result first.
+  const canFetch = !potentialSession || ready;
 
   const { data: sponsorStageData } = useQuery({
     ...sponsorStageQuery,
@@ -96,7 +97,7 @@ export const ListingsSection = ({
     showRightShadow,
   } = useScrollShadow<HTMLDivElement>();
 
-  const { data: categoryCounts, isLoading: countsLoading } =
+  const { data: categoryCounts, isPending: countsLoading } =
     useListingsFilterCount({
       context: type,
       tab: defaultTab ?? 'all',
@@ -105,6 +106,7 @@ export const ListingsSection = ({
       sponsor,
       skill,
       authenticated,
+      enabled: canFetch,
     });
 
   const optimalDefaultCategory = useMemo((): ListingCategory => {
@@ -168,7 +170,7 @@ export const ListingsSection = ({
 
   const {
     data: listings,
-    isLoading,
+    isPending,
     error,
   } = useListings({
     context: type,
@@ -181,6 +183,7 @@ export const ListingsSection = ({
     sponsor,
     skill,
     authenticated,
+    enabled: canFetch,
   });
 
   const shouldShowForYou = useMemo(() => {
@@ -229,7 +232,7 @@ export const ListingsSection = ({
   }, [handleCategoryChange]);
 
   const renderContent = () => {
-    if (isLoading) {
+    if (isPending) {
       return skeletonArray.map((index) => <ListingCardSkeleton key={index} />);
     }
 
@@ -303,9 +306,6 @@ export const ListingsSection = ({
     }
     if (isProContext) {
       return 'Premium Listings';
-    }
-    if (isAgentContext) {
-      return 'Agent-eligible listings';
     }
     return 'Browse Opportunities';
   };
@@ -414,9 +414,7 @@ export const ListingsSection = ({
         </div>
       )}
 
-      <AnimateChangeInHeight disableOnHeightZero>
-        {renderContent()}
-      </AnimateChangeInHeight>
+      {renderContent()}
     </div>
   );
 };
