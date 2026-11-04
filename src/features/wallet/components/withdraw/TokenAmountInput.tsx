@@ -12,6 +12,7 @@ import {
 import { useTokenByMintAddress } from '@/constants/tokenList';
 
 import type { TokenAsset } from '../../types/TokenAsset';
+import { DECIMAL_AMOUNT_REGEX } from '../../utils/withdrawFormSchema';
 
 interface TokenAmountInputProps {
   tokens: TokenAsset[];
@@ -22,20 +23,6 @@ interface TokenAmountInputProps {
   className?: string;
 }
 
-const EDITING_KEYS = [
-  'Backspace',
-  'Delete',
-  'Tab',
-  'Enter',
-  'Escape',
-  'ArrowLeft',
-  'ArrowRight',
-  'ArrowUp',
-  'ArrowDown',
-  'Home',
-  'End',
-];
-
 export const TokenAmountInput = ({
   tokens,
   selectedToken,
@@ -45,12 +32,6 @@ export const TokenAmountInput = ({
   className,
 }: TokenAmountInputProps) => {
   const tokenMetadata = useTokenByMintAddress(selectedToken?.tokenAddress);
-
-  const handleMaxClick = () => {
-    if (selectedToken) {
-      onAmountChange(selectedToken.amount.toString());
-    }
-  };
 
   const clampToDecimals = (value: string, maxDecimals: number): string => {
     if (!value) return value;
@@ -66,27 +47,23 @@ export const TokenAmountInput = ({
     return tokenMetadata?.decimals ?? 9;
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      handleMaxClick();
+  // Number#toString uses exponent notation below 1e-6, which the amount pattern rejects
+  const toDecimalString = (value: number, maxDecimals: number): string => {
+    const plain = value.toString().includes('e')
+      ? value.toFixed(maxDecimals)
+      : value.toString();
+    return clampToDecimals(plain, maxDecimals);
+  };
+
+  const handleMaxClick = () => {
+    if (selectedToken) {
+      onAmountChange(toDecimalString(selectedToken.amount, getMaxDecimals()));
     }
   };
 
-  const handleAmountKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // let the browser handle shortcuts (copy, paste, select all, undo)
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
-
-    if (EDITING_KEYS.includes(e.key)) return;
-
-    if (e.key === '.') {
-      if (e.currentTarget.value.includes('.')) {
-        e.preventDefault();
-      }
-      return;
-    }
-
-    if (!/^[0-9]$/.test(e.key)) {
-      e.preventDefault();
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      handleMaxClick();
     }
   };
 
@@ -144,16 +121,15 @@ export const TokenAmountInput = ({
         <Input
           value={amount}
           onChange={(e) => {
-            const raw = e.target.value;
-            const maxDecimals = getMaxDecimals();
-            const clamped = clampToDecimals(raw, maxDecimals);
-            onAmountChange(clamped);
+            // the balance is shown with en-US grouping, so a pasted copy of it has commas
+            const raw = e.target.value.replace(/,/g, '').trim();
+            if (!DECIMAL_AMOUNT_REGEX.test(raw)) return;
+            onAmountChange(clampToDecimals(raw, getMaxDecimals()));
           }}
           className="rounded-l-none border-0 pr-4 text-right focus-visible:ring-transparent"
           placeholder="0.00"
           inputMode="decimal"
           min="0"
-          onKeyDown={handleAmountKeyDown}
         />
       </div>
     </>
