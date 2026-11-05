@@ -6,6 +6,7 @@ import { useUser } from '@/store/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getPayoutCopy } from '@/utils/payout-date';
 
+import { InKindRewardDisplay } from '@/features/listings/components/InKindRewardDisplay';
 import type { Listing } from '@/features/listings/types';
 
 import { userSubmissionQuery } from '../../queries/user-submission-status';
@@ -77,6 +78,74 @@ export const ApprovalStages = ({ listing }: Props) => {
   const rewardAmount = submission.winnerPosition
     ? (listing.rewards?.[Number(submission.winnerPosition)] ?? 0)
     : 0;
+
+  if (listing.rewardType === 'IN_KIND' && listing.inKindReward) {
+    const fulfillmentStatus = submission.inKindFulfillment?.status ?? 'PENDING';
+    const isFulfilled = fulfillmentStatus === 'FULFILLED';
+    const fulfillmentCopy = {
+      PENDING: 'Your reward is awaiting fulfillment',
+      PROCESSING: 'Your reward is being arranged',
+      FULFILLED: 'Your reward has been fulfilled',
+      CANCELLED: 'Reward fulfillment was cancelled',
+    }[
+      fulfillmentStatus as 'PENDING' | 'PROCESSING' | 'FULFILLED' | 'CANCELLED'
+    ];
+
+    return (
+      <div className="relative mt-6">
+        <div className="space-y-8">
+          <div className="relative flex items-start gap-4">
+            <div className="relative z-10">
+              <CheckIcon />
+            </div>
+            <ConnectingLine isStartComplete isEndComplete={isKycVerified} />
+            <div>
+              <Heading>{wonTitle}</Heading>
+              <InKindRewardDisplay
+                item={listing.inKindReward}
+                quantity={rewardAmount}
+                className="mt-1 text-sm"
+              />
+            </div>
+          </div>
+
+          <div className="relative flex items-start gap-4">
+            <div className="relative z-10">
+              {isKycVerified ? <CheckIcon /> : <PendingIcon />}
+            </div>
+            <ConnectingLine
+              isStartComplete={isKycVerified}
+              isEndComplete={isFulfilled}
+            />
+            <div>
+              <Heading>
+                {isKycVerified ? 'KYC Successful' : 'KYC Required'}
+              </Heading>
+              <Subheading>
+                {isKycVerified
+                  ? 'Documents verified'
+                  : 'Complete KYC before your reward can be fulfilled'}
+              </Subheading>
+            </div>
+          </div>
+
+          <div className="relative flex items-start gap-4">
+            <div className="relative z-10">
+              {isFulfilled ? <CheckIcon /> : <PendingIcon />}
+            </div>
+            <div>
+              <Heading>Reward Fulfillment</Heading>
+              <Subheading>
+                {isKycVerified
+                  ? fulfillmentCopy
+                  : 'Waiting for KYC verification'}
+              </Subheading>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative mt-6">

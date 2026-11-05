@@ -47,6 +47,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
             lastName: true,
             username: true,
             email: true,
+            isKYCVerified: true,
             walletAddress: true,
             twitter: true,
             discord: true,
@@ -86,6 +87,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           },
         },
         listing: true,
+        inKindFulfillment: {
+          select: {
+            id: true,
+            quantity: true,
+            status: true,
+            reference: true,
+            notes: true,
+            fulfilledAt: true,
+          },
+        },
       },
       orderBy: { createdAt: 'asc' },
     });

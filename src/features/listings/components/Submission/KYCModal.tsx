@@ -82,12 +82,14 @@ export const KYCModal = ({
   onClose,
   isOpen,
   region,
+  successMessage,
 }: {
   submissionId: string;
   listingId: string;
   onClose: () => void;
   isOpen: boolean;
   region?: string;
+  successMessage?: string;
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const verificationProcessedRef = useRef(false);
@@ -176,6 +178,7 @@ export const KYCModal = ({
       const verificationToast = toast.promise(verificationPromise, {
         loading: 'Verifying your KYC submission...',
         success:
+          successMessage ??
           'Your KYC is verified! You will receive your payment in around a week.',
         error: (error) => {
           if (

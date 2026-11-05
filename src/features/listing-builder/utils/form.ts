@@ -174,6 +174,8 @@ export const cleanTemplate = (
   reTemplate.isFndnPaying = prevValues.isFndnPaying;
   reTemplate.hackathonId = prevValues.hackathonId || undefined;
   reTemplate.eligibility = (prevValues.eligibility as any) || undefined;
+  reTemplate.rewardType = prevValues.rewardType;
+  reTemplate.inKindRewardId = prevValues.inKindRewardId;
   reTemplate.token = prevValues.token || reTemplate.token;
 
   delete reTemplate.isFeatured;
@@ -232,7 +234,12 @@ export function transformListingToFormListing(
     maxRewardAsk: listing.maxRewardAsk,
     minRewardAsk: listing.minRewardAsk,
     pocSocials: listing.pocSocials || '',
-    token: listing.token || (isST ? 'USDG' : 'USDC'),
+    rewardType: listing.rewardType || 'TOKEN',
+    token:
+      listing.rewardType === 'IN_KIND'
+        ? null
+        : listing.token || (isST ? 'USDG' : 'USDC'),
+    inKindRewardId: listing.inKindRewardId,
     isFndnPaying: listing.isFndnPaying || false,
     skills: listing.skills || [],
     hackathonId: listing.hackathonId,
@@ -253,6 +260,12 @@ export function transformListingToFormListing(
 }
 
 export const refineReadyListing = (listing: ListingFormData) => {
+  if (listing.rewardType === 'IN_KIND') {
+    listing.token = null;
+  } else {
+    listing.inKindRewardId = null;
+  }
+
   if (listing.type !== 'project') {
     listing.compensationType = 'fixed';
     listing.maxRewardAsk = null;

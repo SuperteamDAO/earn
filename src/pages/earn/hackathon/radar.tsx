@@ -152,7 +152,9 @@ export default function Radar() {
                   key={index}
                   title={track.title}
                   sponsor={track.sponsor}
+                  rewardType={track.rewardType}
                   token={track.token}
+                  inKindReward={track.inKindReward}
                   rewardAmount={track.rewardAmount}
                   slug={track.slug}
                 />

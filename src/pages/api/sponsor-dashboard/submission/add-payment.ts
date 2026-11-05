@@ -52,6 +52,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         listing: {
           select: {
             rewards: true,
+            rewardType: true,
             token: true,
             type: true,
           },
@@ -77,6 +78,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const { listing, user, winnerPosition } = currentSubmission;
+    if (listing.rewardType === 'IN_KIND') {
+      return res.status(400).json({
+        error: 'In-kind rewards must be fulfilled, not paid as tokens',
+        message: 'In-kind rewards must be fulfilled, not paid as tokens',
+      });
+    }
     const txIds = paymentDetails
       .map((payment: { txId?: string }) => payment.txId)
       .filter((txId: string | undefined): txId is string => !!txId)

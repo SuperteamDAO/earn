@@ -65,6 +65,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       select: {
         isWinnersAnnounced: true,
         rewards: true,
+        rewardType: true,
         token: true,
         type: true,
       },
@@ -90,6 +91,12 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     if (!listing) return res.status(400).json({ error: 'Listing not found' });
+
+    if (listing.rewardType === 'IN_KIND') {
+      return res.status(400).json({
+        error: 'In-kind rewards must be fulfilled, not paid as tokens',
+      });
+    }
 
     if (!listing.isWinnersAnnounced)
       return res.status(400).json({ error: 'Listing not announced' });

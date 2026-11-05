@@ -10,6 +10,7 @@ import { timeAgoShort } from '@/utils/timeAgo';
 
 import { type Listing } from '../types';
 import { getListingIcon } from '../utils/getListingIcon';
+import { InKindRewardDisplay } from './InKindRewardDisplay';
 import { CompensationAmount } from './ListingPage/CompensationAmount';
 
 export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
@@ -20,6 +21,8 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
     sponsor,
     title,
     token,
+    rewardType,
+    inKindReward,
     slug,
     compensationType,
     minRewardAsk,
@@ -29,7 +32,9 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
   } = bounty;
 
   const isVariable = compensationType === 'variable';
-  const showToken = !isVariable || (isVariable && isWinnersAnnounced);
+  const isInKindReward = rewardType === 'IN_KIND' && !!inKindReward;
+  const showToken =
+    !isInKindReward && (!isVariable || (isVariable && isWinnersAnnounced));
 
   const { serverTime } = useServerTimeSync();
   const isBeforeDeadline = dayjs(serverTime()).isBefore(dayjs(deadline));
@@ -83,6 +88,13 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
             </Link>
             <div className="mt-px flex flex-wrap items-center gap-1">
               <div className="flex items-center justify-start">
+                {isInKindReward && (
+                  <InKindRewardDisplay
+                    item={inKindReward}
+                    quantity={rewardAmount ?? 0}
+                    className="text-xs"
+                  />
+                )}
                 {!!showToken && (
                   <TokenIcon
                     className="mr-0.5 h-4 w-4 rounded-full"
@@ -90,19 +102,23 @@ export const ListingCardMini = ({ bounty }: { bounty: Listing }) => {
                     symbol={token}
                   />
                 )}
-                <div className="flex items-baseline">
-                  <CompensationAmount
-                    compensationType={compensationType}
-                    maxRewardAsk={maxRewardAsk}
-                    minRewardAsk={minRewardAsk}
-                    rewardAmount={rewardAmount}
-                    isWinnersAnnounced={isWinnersAnnounced}
-                    className="text-xs font-semibold whitespace-nowrap text-slate-600"
-                  />
-                  {!!showToken && (
-                    <p className="text-xs font-medium text-gray-400">{token}</p>
-                  )}
-                </div>
+                {!isInKindReward && (
+                  <div className="flex items-baseline">
+                    <CompensationAmount
+                      compensationType={compensationType}
+                      maxRewardAsk={maxRewardAsk}
+                      minRewardAsk={minRewardAsk}
+                      rewardAmount={rewardAmount}
+                      isWinnersAnnounced={isWinnersAnnounced}
+                      className="text-xs font-semibold whitespace-nowrap text-slate-600"
+                    />
+                    {!!showToken && (
+                      <p className="text-xs font-medium text-gray-400">
+                        {token}
+                      </p>
+                    )}
+                  </div>
+                )}
                 <p className="ml-1 text-xs text-slate-300 md:text-sm">|</p>
               </div>
               {getListingIcon(type!)}

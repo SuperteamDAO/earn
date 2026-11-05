@@ -3,6 +3,7 @@ import type { SponsorType } from '@/interface/sponsor';
 import { type User } from '@/interface/user';
 import {
   type BountyType,
+  type ListingRewardType,
   type status,
   type SubmissionLabels,
 } from '@/prisma/enums';
@@ -25,7 +26,10 @@ export interface Listing {
   isArchived?: boolean;
   isPublished?: boolean;
   isFeatured?: boolean;
+  rewardType?: ListingRewardType;
   token?: string;
+  inKindRewardId?: string | null;
+  inKindReward?: InKindRewardMetadata | null;
   rewardAmount?: number;
   rewards?: Rewards;
   maxBonusSpots?: number;
@@ -79,7 +83,10 @@ type PublicListingDetailsFields =
   | 'commitmentDate'
   | 'eligibility'
   | 'status'
+  | 'rewardType'
   | 'token'
+  | 'inKindRewardId'
+  | 'inKindReward'
   | 'rewardAmount'
   | 'rewards'
   | 'maxBonusSpots'
@@ -156,6 +163,28 @@ export interface References {
 export interface Rewards {
   [rank: number]: number;
 }
+
+export interface InKindRewardMetadata {
+  id: string;
+  slug: string;
+  name: string;
+  pluralName: string;
+  icon: string;
+}
+
+export type ListingReward =
+  | {
+      type: 'TOKEN';
+      token: string;
+      total: number;
+      distribution?: Rewards;
+    }
+  | {
+      type: 'IN_KIND';
+      item: InKindRewardMetadata;
+      total: number;
+      distribution?: Rewards;
+    };
 
 export interface ListingTabsProps {
   type: ListingContext;

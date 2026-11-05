@@ -12,7 +12,13 @@ type BountyGrant = {
   id: string;
   title: string;
   slug: string;
+  rewardType: 'TOKEN' | 'IN_KIND';
   token: string | null;
+  inKindRewardId: string | null;
+  inKindRewardSlug: string | null;
+  inKindRewardName: string | null;
+  inKindRewardPluralName: string | null;
+  inKindRewardIcon: string | null;
   status: string;
   deadline: Date | null;
   isPublished: boolean;
@@ -42,7 +48,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           b.id,
           b.title,
           b.slug,
+          b.rewardType,
           b.token,
+          b.inKindRewardId,
+          ikr.slug as inKindRewardSlug,
+          ikr.name as inKindRewardName,
+          ikr.pluralName as inKindRewardPluralName,
+          ikr.icon as inKindRewardIcon,
           b.status,
           b.deadline,
           b.isPublished,
@@ -62,6 +74,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           NULL as airtableId,
           CAST((SELECT COUNT(*) FROM Submission s WHERE s.listingId = b.id) AS SIGNED) as submissionCount
         FROM Bounties b
+        LEFT JOIN InKindReward ikr ON ikr.id = b.inKindRewardId
         WHERE b.isActive = true
         AND b.isArchived = false
         AND b.sponsorId = ?
@@ -74,7 +87,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           g.id,
           g.title,
           g.slug,
+          'TOKEN' as rewardType,
           g.token,
+          NULL as inKindRewardId,
+          NULL as inKindRewardSlug,
+          NULL as inKindRewardName,
+          NULL as inKindRewardPluralName,
+          NULL as inKindRewardIcon,
           g.status,
           NULL as deadline,
           g.isPublished,
@@ -82,16 +101,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           NULL as rewards,
           NULL as rewardAmount,
           g.totalPaid as totalPaymentsMade,
+          NULL as maxBonusSpots,
           NULL as isWinnersAnnounced,
-          g.minReward as minRewardAsk,
           g.maxReward as maxRewardAsk,
+          g.minReward as minRewardAsk,
           NULL as compensationType,
           g.createdAt,
           NULL as isFndnPaying,
           NULL as usdValue,
           0 as isPro,
           g.airtableId,
-          NULL as maxBonusSpots,
           CAST((SELECT COUNT(*) FROM GrantApplication ga WHERE ga.grantId = g.id) AS SIGNED) as submissionCount
         FROM Grants g
         WHERE g.isActive = true
@@ -109,12 +128,37 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       GrantStatus.OPEN,
     );
 
-    const serializedData = data.map((item) => ({
-      ...item,
-      submissionCount: Number(item.submissionCount),
-      isFndnPaying: Boolean(Number(item.isFndnPaying)),
-      isPro: Boolean(Number(item.isPro)),
-    }));
+    const serializedData = data.map((item) => {
+      const {
+        inKindRewardIcon,
+        inKindRewardName,
+        inKindRewardPluralName,
+        inKindRewardSlug,
+        ...listing
+      } = item;
+
+      return {
+        ...listing,
+        inKindReward:
+          item.rewardType === 'IN_KIND' &&
+          item.inKindRewardId &&
+          inKindRewardSlug &&
+          inKindRewardName &&
+          inKindRewardPluralName &&
+          inKindRewardIcon
+            ? {
+                id: item.inKindRewardId,
+                slug: inKindRewardSlug,
+                name: inKindRewardName,
+                pluralName: inKindRewardPluralName,
+                icon: inKindRewardIcon,
+              }
+            : null,
+        submissionCount: Number(item.submissionCount),
+        isFndnPaying: Boolean(Number(item.isFndnPaying)),
+        isPro: Boolean(Number(item.isPro)),
+      };
+    });
 
     logger.info(
       `Successfully fetched bounties and grants for sponsor ${userSponsorId}`,

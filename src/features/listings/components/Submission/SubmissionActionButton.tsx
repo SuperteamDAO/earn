@@ -127,6 +127,7 @@ export const SubmissionActionButton = ({
     type,
     isWinnersAnnounced,
     isFndnPaying,
+    rewardType,
     Hackathon,
     isPro,
   } = listing;
@@ -235,11 +236,14 @@ export const SubmissionActionButton = ({
   let isSubmitDisabled = false;
 
   function getButtonState() {
-    const isWinnerKycFlow =
+    const isFoundationWinnerKycFlow =
       isWinnersAnnounced &&
       isFndnPaying &&
       submission?.isWinner &&
       dayjs(listing.winnersAnnouncedAt).isAfter(dayjs.utc('2025-08-06'));
+    const isInKindWinnerKycFlow =
+      isWinnersAnnounced && rewardType === 'IN_KIND' && submission?.isWinner;
+    const isWinnerKycFlow = isFoundationWinnerKycFlow || isInKindWinnerKycFlow;
 
     if (isWinnerKycFlow) {
       if (!submission?.isKYCVerified) {
@@ -303,14 +307,18 @@ export const SubmissionActionButton = ({
       break;
 
     case 'kyc_done':
-      buttonText = 'Processing Payment';
+      buttonText =
+        rewardType === 'IN_KIND'
+          ? 'Awaiting Reward Fulfillment'
+          : 'Processing Payment';
       buttonBG = 'bg-green-600';
       isBtnDisabled = true;
       btnLoadingText = null;
       break;
 
     case 'paid':
-      buttonText = 'Payment Successful';
+      buttonText =
+        rewardType === 'IN_KIND' ? 'Reward Fulfilled' : 'Payment Successful';
       buttonBG = 'bg-green-600';
       isBtnDisabled = true;
       btnLoadingText = null;
@@ -502,6 +510,11 @@ export const SubmissionActionButton = ({
           listingId={id!}
           onClose={() => setIsKYCModalOpen(false)}
           submissionId={submission.id}
+          successMessage={
+            rewardType === 'IN_KIND'
+              ? 'Your KYC is verified. The sponsor can now fulfill your reward.'
+              : undefined
+          }
         />
       )}
 
