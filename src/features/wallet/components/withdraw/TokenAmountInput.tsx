@@ -121,8 +121,8 @@ export const TokenAmountInput = ({
         <Input
           value={amount}
           onChange={(e) => {
-            // the balance is shown with en-US grouping, so a pasted copy of it has commas
-            const raw = e.target.value.replace(/,/g, '').trim();
+            // a comma is rejected, not stripped: on a comma-decimal keypad '1,5' means 1.5
+            const raw = e.target.value.trim();
             if (!DECIMAL_AMOUNT_REGEX.test(raw)) return;
             onAmountChange(clampToDecimals(raw, getMaxDecimals()));
           }}
