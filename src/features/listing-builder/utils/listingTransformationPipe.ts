@@ -80,7 +80,9 @@ export const transformToPrismaData = async ({
     eligibility,
     rewardAmount,
     rewards,
+    rewardType,
     token,
+    inKindRewardId,
     compensationType,
     minRewardAsk,
     maxRewardAsk,
@@ -113,11 +115,12 @@ export const transformToPrismaData = async ({
   let usdValue: number = 0;
   let includeUsdValue = false;
   const amount = calculateRewardAmount(validatedListing) || 0;
+  const isInKindReward = rewardType === 'IN_KIND';
   const prevToken = listing.token ?? undefined;
   const nextToken = token ?? undefined;
   const tokenChanged = prevToken !== nextToken;
 
-  if (!isVerifying) {
+  if (!isVerifying && !isInKindReward) {
     if (!isEditing) {
       if (validatedListing.token && amount > 0) {
         const token = await getTokenBySymbol(validatedListing.token, {
@@ -182,7 +185,11 @@ export const transformToPrismaData = async ({
 
   const baseData: BountiesUncheckedUpdateInput = {
     title,
-    ...(includeUsdValue ? { usdValue } : {}),
+    ...(isInKindReward
+      ? { usdValue: null, tokenUsdAtPublish: null }
+      : includeUsdValue
+        ? { usdValue }
+        : {}),
     ...(typeof isFeaturedUpdate === 'boolean'
       ? { isFeatured: isFeaturedUpdate }
       : {}),
@@ -198,7 +205,9 @@ export const transformToPrismaData = async ({
     eligibility: eligibility || (isEditing ? [] : undefined),
     rewardAmount,
     rewards: rewards || (isEditing ? {} : undefined),
-    token,
+    rewardType,
+    token: isInKindReward ? null : token,
+    inKindRewardId: isInKindReward ? inKindRewardId : null,
     compensationType,
     minRewardAsk,
     maxRewardAsk,

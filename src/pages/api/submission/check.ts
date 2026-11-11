@@ -35,6 +35,14 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
         isPaid: true,
         winnerPosition: true,
         paymentSynced: true,
+        inKindFulfillment: {
+          select: {
+            status: true,
+            quantity: true,
+            reference: true,
+            fulfilledAt: true,
+          },
+        },
         listing: {
           select: {
             isWinnersAnnounced: true,
@@ -63,6 +71,12 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       paymentSynced?: boolean;
       kycCountry?: string | null;
       listingRegion?: string | null;
+      inKindFulfillment?: {
+        status: string;
+        quantity: number;
+        reference: string | null;
+        fulfilledAt: Date | null;
+      } | null;
     } = {
       isSubmitted: !!submission,
       status: submission ? submission.status : null,
@@ -78,6 +92,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       responseData.kycVerifiedAt = submission.user.kycVerifiedAt ?? undefined;
       responseData.kycCountry = submission.user.kycCountry ?? undefined;
       responseData.listingRegion = submission.listing.region ?? undefined;
+      responseData.inKindFulfillment = submission.inKindFulfillment;
     }
 
     logger.info(

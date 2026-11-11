@@ -84,7 +84,18 @@ async function getHackathonListings(
         title: true,
         type: true,
         slug: true,
+        rewardType: true,
         token: true,
+        inKindRewardId: true,
+        inKindReward: {
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            pluralName: true,
+            icon: true,
+          },
+        },
         status: true,
         deadline: true,
         isPublished: true,

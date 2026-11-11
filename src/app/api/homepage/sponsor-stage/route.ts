@@ -58,7 +58,18 @@ const listingSelectForStage = {
   skills: true,
   region: true,
   sponsorId: true,
+  rewardType: true,
   token: true,
+  inKindRewardId: true,
+  inKindReward: {
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      pluralName: true,
+      icon: true,
+    },
+  },
   rewardAmount: true,
   compensationType: true,
   minRewardAsk: true,
@@ -164,6 +175,13 @@ function determineSponsorStage(
     (deadline.isAfter(now) || deadline.isSame(now));
 
   if (isActiveListing) {
+    if (listing.rewardType === 'IN_KIND') {
+      return {
+        stage: SponsorStage.BOOSTED,
+        sortDate: listing.publishedAt ?? now.toDate(),
+      };
+    }
+
     const usdValue = listing.usdValue || 0;
     const publishedDate = listing.publishedAt
       ? dayjs(listing.publishedAt)
@@ -305,7 +323,10 @@ function formatListingData(listing: BountyWithStageFields): Listing {
     isActive: listing.isActive ?? undefined,
     isArchived: listing.isArchived ?? undefined,
     isWinnersAnnounced: listing.isWinnersAnnounced ?? undefined,
+    rewardType: listing.rewardType,
     token: listing.token ?? undefined,
+    inKindRewardId: listing.inKindRewardId,
+    inKindReward: listing.inKindReward,
     rewardAmount: listing.rewardAmount ?? undefined,
     compensationType: listing.compensationType ?? undefined,
     minRewardAsk: listing.minRewardAsk ?? undefined,
@@ -391,7 +412,9 @@ export async function GET(_request: NextRequest) {
       } as SponsorStageResponse);
     }
 
-    const listingIds = listings.map((l) => l.id);
+    const tokenListingIds = listings
+      .filter((listing) => listing.rewardType === 'TOKEN')
+      .map((listing) => listing.id);
     const unpaidWinnersMap = new Map<string, boolean>();
     const uncommittedProjectAiReviewsMap = new Map<string, boolean>();
     const projectListings = listings.filter((l) => l.type === 'project');
@@ -403,7 +426,7 @@ export async function GET(_request: NextRequest) {
         prisma.submission.groupBy({
           by: ['listingId'],
           where: {
-            listingId: { in: listingIds },
+            listingId: { in: tokenListingIds },
             isWinner: true,
             isPaid: false,
           },

@@ -37,6 +37,7 @@ import { api } from '@/lib/api';
 import { useUser } from '@/store/user';
 import { dayjs } from '@/utils/dayjs';
 
+import { InKindRewardDisplay } from '@/features/listings/components/InKindRewardDisplay';
 import { type ListingWithSubmissions } from '@/features/listings/types';
 import { formatDeadline } from '@/features/listings/utils/deadline';
 import { getColorStyles } from '@/features/listings/utils/getColorStyles';
@@ -245,21 +246,31 @@ export default function Hackathon() {
                         </p>
                       </TableCell>
                       <TableCell className="py-2">
-                        <div className="flex items-center justify-start gap-1">
-                          <TokenIcon
-                            className="h-5 w-5 rounded-full"
-                            alt={currentBounty.token || 'token'}
-                            symbol={currentBounty.token}
+                        {currentBounty.rewardType === 'IN_KIND' &&
+                        currentBounty.inKindReward ? (
+                          <InKindRewardDisplay
+                            item={currentBounty.inKindReward}
+                            quantity={currentBounty.rewardAmount ?? 0}
+                            className="text-sm"
+                            iconClassName="size-5"
                           />
-                          <p className="text-sm font-medium text-slate-700">
-                            {(currentBounty.rewardAmount || 0).toLocaleString(
-                              'en-US',
-                            )}
-                          </p>
-                          <p className="text-sm font-medium text-slate-400">
-                            {currentBounty.token}
-                          </p>
-                        </div>
+                        ) : (
+                          <div className="flex items-center justify-start gap-1">
+                            <TokenIcon
+                              className="h-5 w-5 rounded-full"
+                              alt={currentBounty.token || 'token'}
+                              symbol={currentBounty.token}
+                            />
+                            <p className="text-sm font-medium text-slate-700">
+                              {(currentBounty.rewardAmount || 0).toLocaleString(
+                                'en-US',
+                              )}
+                            </p>
+                            <p className="text-sm font-medium text-slate-400">
+                              {currentBounty.token}
+                            </p>
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell className="items-center py-2">
                         <StatusPill

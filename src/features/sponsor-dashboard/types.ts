@@ -137,6 +137,12 @@ export const addSubmissionPaymentRequestSchema = z.object({
     .max(25),
 });
 
+export const fulfillInKindRewardRequestSchema = z.object({
+  submissionId: z.string().trim().min(1).max(191),
+  reference: z.string().trim().max(500).optional(),
+  notes: z.string().trim().max(5000).optional(),
+});
+
 export type ValidatePaymentResult = {
   submissionId: string;
   txId: string;
