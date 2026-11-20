@@ -3,6 +3,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import logger from '@/lib/logger';
 
 import { CLOUDINARY_CONFIG, UPLOAD_CONFIGS } from './config';
+import { isCloudinaryNotFound } from './errors';
 import type { ImageSource, SignedUploadParams } from './types';
 
 cloudinary.config({
@@ -67,8 +68,8 @@ export async function getImageOwnerId(
       });
       const ownerId = resource.context?.custom?.owner_id;
       return typeof ownerId === 'string' && ownerId ? ownerId : null;
-    } catch (error: any) {
-      if (error?.http_code !== 404 && error?.error?.http_code !== 404) {
+    } catch (error) {
+      if (!isCloudinaryNotFound(error)) {
         throw error;
       }
     }
@@ -84,10 +85,8 @@ export async function deleteImage(publicId: string): Promise<boolean> {
         resource_type: resourceType,
       });
       if (result.result === 'ok') return true;
-    } catch (error: any) {
-      const isNotFound =
-        error?.http_code === 404 || error?.error?.http_code === 404;
-      if (isNotFound) continue;
+    } catch (error) {
+      if (isCloudinaryNotFound(error)) continue;
 
       logger.error('Cloudinary asset deletion failed', {
         publicId,
