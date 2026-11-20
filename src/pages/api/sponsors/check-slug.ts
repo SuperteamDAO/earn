@@ -38,7 +38,7 @@ export default async function handler(
 
     logger.info(`slug ${slug} is available`);
     return res.status(200).json({ available: true });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while checking slug availability: ${safeStringify(error)}`,
     );

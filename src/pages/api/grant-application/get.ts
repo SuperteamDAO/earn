@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
@@ -35,9 +36,9 @@ async function application(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error fetching Grant Application for user=${userId} and grantId=${id}: ${error.message}`,
+      `Error fetching Grant Application for user=${userId} and grantId=${id}: ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

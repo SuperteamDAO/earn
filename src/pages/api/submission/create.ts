@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { parseQuestionConfigs } from '@/utils/parseQuestionConfigs';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { queueAgent } from '@/features/agents/utils/queueAgent';
@@ -18,14 +19,15 @@ import { type SubmissionMutationResponse } from '@/features/listings/types';
 import { submissionSchema } from '@/features/listings/utils/submissionFormSchema';
 import { validateSubmissionRequest } from '@/features/listings/utils/validateSubmissionRequest';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+import { getLinkedTwitterHandles } from '@/features/social/utils/linkedTwitter';
 
 type PrismaLike = Pick<typeof prisma, 'user' | 'submission'>;
 
 export async function createSubmission(
   userId: string,
   listingId: string,
-  data: any,
-  listing: any,
+  data: unknown,
+  listing: Awaited<ReturnType<typeof validateSubmissionRequest>>['listing'],
   options?: { isAgent?: boolean; agentId?: string; client?: PrismaLike },
 ) {
   const client = options?.client ?? prisma;
@@ -35,10 +37,14 @@ export async function createSubmission(
   });
 
   const validationResult = submissionSchema(
-    listing,
+    {
+      type: listing.type,
+      compensationType: listing.compensationType,
+      eligibility: parseQuestionConfigs(listing.eligibility),
+    },
     listing.minRewardAsk || 0,
     listing.maxRewardAsk || 0,
-    user as any,
+    { linkedTwitter: getLinkedTwitterHandles(user.linkedTwitter) },
     { isAgent: options?.isAgent },
   ).safeParse(data);
 
@@ -193,8 +199,11 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     };
 
     return res.status(200).json(response);
-  } catch (error: any) {
-    const statusCode = error.message.includes('Validation') ? 400 : 403;
+  } catch (error) {
+    const statusCode =
+      error instanceof Error && error.message.includes('Validation')
+        ? 400
+        : 403;
     logger.error(`User ${userId} unable to submit: ${safeStringify(error)}`);
 
     return res.status(statusCode).json({

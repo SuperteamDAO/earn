@@ -90,7 +90,7 @@ export async function POST(
       `Scout invitation sent successfully for listing ID: ${id} and user ID: ${userId}`,
     );
     return NextResponse.json({ message: 'Success' }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while inviting scout user=${userId} for bounty with id=${id}: ${safeStringify(error)}`,
     );

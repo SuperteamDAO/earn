@@ -114,7 +114,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.info(`Grant details fetched successfully for slug=${slug}`);
     return res.status(200).json(response);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error fetching grant with slug=${slug} for user=${userId}: ${safeStringify(error)}`,
     );

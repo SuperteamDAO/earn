@@ -48,7 +48,7 @@ async function handler(_: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     return res.status(200).json(hackathons);
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Error looking for active hackathon', error);
     return res.status(500).json({
       message: 'Error looking for active hackathon',

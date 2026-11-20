@@ -43,7 +43,7 @@ async function comment(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.info(`Comment deleted successfully by user ID: ${userId}`);
     return res.status(200).json({ message: 'Comment deleted successfully.' });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while deleting a comment: ${safeStringify(error)}`,
     );
