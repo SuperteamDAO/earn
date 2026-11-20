@@ -2,6 +2,7 @@ import {
   type GrantApplicationGetPayload,
   type GrantApplicationSelect,
 } from '@/prisma/models/GrantApplication';
+import { type JsonResponse } from '@/utils/jsonResponse';
 
 export const userApplicationSelect = {
   id: true,
@@ -42,14 +43,6 @@ export const userApplicationSelect = {
     },
   },
 } satisfies GrantApplicationSelect;
-
-type JsonResponse<T> = T extends Date
-  ? string
-  : T extends readonly (infer Item)[]
-    ? JsonResponse<Item>[]
-    : T extends object
-      ? { [Key in keyof T]: JsonResponse<T[Key]> }
-      : T;
 
 export type UserApplicationResponse = JsonResponse<
   GrantApplicationGetPayload<{ select: typeof userApplicationSelect }>

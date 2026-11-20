@@ -91,7 +91,7 @@ export async function fetchComments({
 }
 
 function extractUsernames(
-  comments: Array<{ message: string; replies?: any[] }>,
+  comments: Array<{ message: string; replies?: Array<{ message: string }> }>,
 ) {
   const usernames = new Set<string>();
 

@@ -1,8 +1,10 @@
+import { type CSSProperties } from 'react';
+
 export const ScribesLogo = ({
   styles,
   variant = 'black',
 }: {
-  styles?: any;
+  styles?: CSSProperties;
   variant?: string;
 }) => {
   return (

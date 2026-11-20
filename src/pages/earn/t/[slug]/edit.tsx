@@ -253,6 +253,14 @@ export default function EditProfilePage({
               data.photo = uploadedPhotoUrl;
             }
 
+            // Generic over the key so acc[key] and data[key] share one type.
+            const copyField = <K extends keyof ProfileFormData>(
+              target: Partial<ProfileFormData>,
+              key: K,
+            ) => {
+              target[key] = data[key];
+            };
+
             const finalUpdatedData = Object.keys(data).reduce((acc, key) => {
               const fieldKey = key as keyof ProfileFormData;
               const newValue = data[fieldKey];
@@ -264,8 +272,8 @@ export default function EditProfilePage({
               if (newValue === null && oldValue === null) return acc;
 
               try {
-                let normalizedOldValue: any = oldValue;
-                const normalizedNewValue: any = newValue;
+                let normalizedOldValue: unknown = oldValue;
+                const normalizedNewValue: unknown = newValue;
 
                 if (
                   typeof oldValue === 'string' &&
@@ -290,11 +298,11 @@ export default function EditProfilePage({
                     : String(normalizedNewValue);
 
                 if (oldValueStr !== newValueStr) {
-                  acc[fieldKey] = newValue as any;
+                  copyField(acc, fieldKey);
                 }
               } catch (error) {
                 if (oldValue !== newValue) {
-                  acc[fieldKey] = newValue as any;
+                  copyField(acc, fieldKey);
                 }
               }
 
@@ -321,7 +329,7 @@ export default function EditProfilePage({
         )
         .unwrap();
       return true;
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error edit profile - ', error);
       toast.error('Failed to update profile.');
       return false;

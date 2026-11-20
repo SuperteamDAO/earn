@@ -2,12 +2,12 @@ interface SponsorType {
   id?: string;
   slug: string;
   name: string;
-  logo?: string;
-  url?: string;
+  logo?: string | null;
+  url?: string | null;
   industry?: string;
-  twitter?: string;
-  bio?: string;
-  entityName?: string;
+  twitter?: string | null;
+  bio?: string | null;
+  entityName?: string | null;
   location?: string | null;
   isVerified?: boolean;
   isCaution?: boolean;

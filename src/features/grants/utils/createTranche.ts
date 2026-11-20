@@ -1,5 +1,6 @@
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { addOnboardingInfoToAirtable } from './addOnboardingInfoToAirtable';
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
@@ -494,9 +495,9 @@ export async function createTranche({
         `Adding payment info to Airtable for tranche ${tranche.id} (application ${applicationId})`,
       );
       await addPaymentInfoToAirtable(tranche.GrantApplication, tranche);
-    } catch (airtableError: any) {
+    } catch (airtableError) {
       logger.error(
-        `Error adding info to Airtable for application ${applicationId} / tranche ${tranche.id}: ${airtableError.message}`,
+        `Error adding info to Airtable for application ${applicationId} / tranche ${tranche.id}: ${getErrorMessage(airtableError)}`,
         { error: airtableError },
       );
     }

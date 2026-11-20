@@ -12,7 +12,7 @@ import {
 
 interface NavItemProps {
   name: string;
-  icon: any;
+  icon: React.ComponentType;
   href: string;
 }
 
