@@ -1,4 +1,6 @@
+import crypto from 'node:crypto';
 import { prisma } from '@/prisma';
+import { Prisma } from '@/prisma/client';
 import { z } from 'zod';
 
 export const FeedTypeSchema = z.enum(['submission', 'pow', 'grant-application']);
@@ -27,118 +29,320 @@ export interface FeedFilters {
 export const FeedCursorSchema = z.object({
   id: z.string().min(1),
   type: FeedTypeSchema,
-  sortDate: z.string().min(1),
+  sortDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: 'sortDate must be a valid ISO date string',
+  }),
   likeCount: z.number().int().nonnegative().optional(),
   highlightId: z.string().min(1).optional(),
+  highlightType: FeedTypeSchema.optional(),
 });
 
 export type FeedCursor = z.infer<typeof FeedCursorSchema>;
 
-const ID_COLUMN: Record<FeedType, string> = {
-  submission: 's.id',
-  pow: 'p.id',
-  'grant-application': 'ga.id',
-};
+// Authenticated encryption for cursors using AES-256-GCM.
+// Guarantees that internal database IDs of redacted items (such as private grant applications)
+// are never exposed in plaintext over the wire or accessible via base64 decoding.
+const CURSOR_KEY = crypto
+  .createHash('sha256')
+  .update(
+    process.env.FEED_CURSOR_SECRET ||
+      process.env.PRIVY_APP_SECRET ||
+      process.env.DATABASE_URL ||
+      'superteam-earn-authenticated-feed-cursor-key-32',
+  )
+  .digest();
 
 export function encodeCursor(c: FeedCursor): string {
-  return Buffer.from(JSON.stringify(c), 'utf8').toString('base64');
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', CURSOR_KEY, iv);
+  const plaintext = Buffer.from(JSON.stringify(c), 'utf8');
+  const encrypted = Buffer.concat([cipher.update(plaintext), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  // Combined format: IV (12 bytes) + Tag (16 bytes) + Ciphertext
+  const combined = Buffer.concat([iv, tag, encrypted]);
+  return combined.toString('base64url');
 }
 
 export function decodeCursor(encoded: string): FeedCursor | null {
   try {
+    const combined = Buffer.from(encoded, 'base64url');
+    if (combined.length >= 28) {
+      const iv = combined.subarray(0, 12);
+      const tag = combined.subarray(12, 28);
+      const ciphertext = combined.subarray(28);
+      const decipher = crypto.createDecipheriv('aes-256-gcm', CURSOR_KEY, iv);
+      decipher.setAuthTag(tag);
+      const decrypted = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+      const raw = JSON.parse(decrypted.toString('utf8'));
+      const parsed = FeedCursorSchema.safeParse(raw);
+      if (parsed.success) return parsed.data;
+    }
+  } catch {
+    // Fall through to legacy fallback if any
+  }
+
+  // Graceful fallback for unencrypted base64 JSON cursors during transition
+  try {
     const raw = JSON.parse(Buffer.from(encoded, 'base64').toString('utf8'));
     const parsed = FeedCursorSchema.safeParse(raw);
-    if (!parsed.success) return null;
-    return parsed.data;
+    if (parsed.success) return parsed.data;
   } catch {
-    return null;
+    // Ignore fallback failure
   }
+
+  return null;
 }
 
-function addParam(params: unknown[], value: unknown): string {
-  params.push(value);
-  return '?';
-}
+// Winner-aware sort date expression for submissions
+const SUBMISSION_SORT_DATE_SQL = Prisma.sql`
+  CASE 
+    WHEN s.isWinner = 1 AND b.isWinnersAnnounced = 1 AND b.winnersAnnouncedAt IS NOT NULL 
+    THEN b.winnersAnnouncedAt 
+    ELSE s.createdAt 
+  END
+`;
 
-interface BranchSql {
-  readonly sql: string;
-  readonly params: readonly unknown[];
-}
+function buildSubmissionBranch(
+  filters: FeedFilters,
+  cursor: FeedCursor | null,
+  candidateLimit: number,
+  effectiveHighlightId?: string,
+  effectiveHighlightType?: string,
+): Prisma.Sql {
+  const isPopular = filters.filter === 'popular';
+  const conditions: Prisma.Sql[] = [
+    Prisma.sql`s.createdAt <= ${filters.endDate}`,
+  ];
 
-// Winner-aware sort date: announced winners sort by the announcement date,
-// everything else by createdAt. Matches the createdAt value the API returns.
-const SUBMISSION_SORT_DATE =
-  'CASE WHEN s.isWinner = 1 AND b.isWinnersAnnounced = 1 AND b.winnersAnnouncedAt IS NOT NULL THEN b.winnersAnnouncedAt ELSE s.createdAt END as sortDate';
-
-function buildSubmissionBranch(filters: FeedFilters): BranchSql {
-  const params: unknown[] = [];
-  const where: string[] = [];
-  where.push(`s.createdAt <= ${addParam(params, filters.endDate)}`);
   if (filters.startDate) {
-    where.push(`s.createdAt >= ${addParam(params, filters.startDate)}`);
+    conditions.push(Prisma.sql`s.createdAt >= ${filters.startDate}`);
   }
   if (filters.isWinner) {
-    where.push('s.isWinner = 1 AND b.isWinnersAnnounced = 1');
+    conditions.push(Prisma.sql`s.isWinner = 1 AND b.isWinnersAnnounced = 1`);
   }
   if (filters.profileUserId) {
     if (filters.shouldIncludeAgentSubmissions && filters.profileAgentId) {
-      where.push(
-        `(s.userId = ${addParam(params, filters.profileUserId)} OR s.agentId = ${addParam(params, filters.profileAgentId)})`,
+      conditions.push(
+        Prisma.sql`(s.userId = ${filters.profileUserId} OR s.agentId = ${filters.profileAgentId})`,
       );
     } else {
-      where.push(`s.userId = ${addParam(params, filters.profileUserId)}`);
+      conditions.push(Prisma.sql`s.userId = ${filters.profileUserId}`);
     }
   } else {
-    where.push('b.isPrivate = 0');
+    conditions.push(Prisma.sql`b.isPrivate = 0`);
   }
-  const sql = `SELECT s.id, 'submission' as type, ${SUBMISSION_SORT_DATE}, s.likeCount FROM Submission s JOIN Bounties b ON s.listingId = b.id WHERE ${where.join(' AND ')}`;
-  return { sql, params };
+
+  // Highlight exclusion matching both type AND ID
+  if (effectiveHighlightId && effectiveHighlightType === 'submission') {
+    conditions.push(Prisma.sql`s.id != ${effectiveHighlightId}`);
+  }
+
+  // Keyset seek condition
+  if (cursor) {
+    const cursorDate = new Date(cursor.sortDate);
+    if (isPopular) {
+      conditions.push(
+        Prisma.sql`(s.likeCount, ${SUBMISSION_SORT_DATE_SQL}, 'submission', s.id) < (${cursor.likeCount ?? 0}, ${cursorDate}, ${cursor.type}, ${cursor.id})`,
+      );
+    } else {
+      conditions.push(
+        Prisma.sql`(${SUBMISSION_SORT_DATE_SQL}, 'submission', s.id) < (${cursorDate}, ${cursor.type}, ${cursor.id})`,
+      );
+    }
+  }
+
+  const whereClause = Prisma.join(conditions, ' AND ');
+  const branchOrder = isPopular
+    ? Prisma.sql`s.likeCount DESC, sortDate DESC, s.id DESC`
+    : Prisma.sql`sortDate DESC, s.id DESC`;
+
+  return Prisma.sql`
+    (SELECT s.id, 'submission' as type, ${SUBMISSION_SORT_DATE_SQL} as sortDate, s.likeCount 
+     FROM Submission s 
+     JOIN Bounties b ON s.listingId = b.id 
+     WHERE ${whereClause} 
+     ORDER BY ${branchOrder} 
+     LIMIT ${candidateLimit})
+  `;
 }
 
-function buildPoWBranch(filters: FeedFilters): BranchSql | null {
-  if (filters.isWinner) return null; // PoWs excluded when isWinner filter is active
-  const params: unknown[] = [];
-  const where: string[] = [];
-  where.push(`p.createdAt <= ${addParam(params, filters.endDate)}`);
+function buildPoWBranch(
+  filters: FeedFilters,
+  cursor: FeedCursor | null,
+  candidateLimit: number,
+  effectiveHighlightId?: string,
+  effectiveHighlightType?: string,
+): Prisma.Sql | null {
+  if (filters.isWinner) return null; // PoWs excluded when isWinner is active
+
+  const isPopular = filters.filter === 'popular';
+  const conditions: Prisma.Sql[] = [
+    Prisma.sql`p.createdAt <= ${filters.endDate}`,
+  ];
+
   if (filters.startDate) {
-    where.push(`p.createdAt >= ${addParam(params, filters.startDate)}`);
+    conditions.push(Prisma.sql`p.createdAt >= ${filters.startDate}`);
   }
   if (filters.profileUserId) {
-    where.push(`p.userId = ${addParam(params, filters.profileUserId)}`);
+    conditions.push(Prisma.sql`p.userId = ${filters.profileUserId}`);
   }
-  const sql = `SELECT p.id, 'pow' as type, p.createdAt as sortDate, p.likeCount FROM PoW p WHERE ${where.join(' AND ')}`;
-  return { sql, params };
+
+  // Highlight exclusion matching both type AND ID
+  if (effectiveHighlightId && effectiveHighlightType === 'pow') {
+    conditions.push(Prisma.sql`p.id != ${effectiveHighlightId}`);
+  }
+
+  // Keyset seek condition
+  if (cursor) {
+    const cursorDate = new Date(cursor.sortDate);
+    if (isPopular) {
+      conditions.push(
+        Prisma.sql`(p.likeCount, p.createdAt, 'pow', p.id) < (${cursor.likeCount ?? 0}, ${cursorDate}, ${cursor.type}, ${cursor.id})`,
+      );
+    } else {
+      conditions.push(
+        Prisma.sql`(p.createdAt, 'pow', p.id) < (${cursorDate}, ${cursor.type}, ${cursor.id})`,
+      );
+    }
+  }
+
+  const whereClause = Prisma.join(conditions, ' AND ');
+  const branchOrder = isPopular
+    ? Prisma.sql`p.likeCount DESC, p.createdAt DESC, p.id DESC`
+    : Prisma.sql`p.createdAt DESC, p.id DESC`;
+
+  return Prisma.sql`
+    (SELECT p.id, 'pow' as type, p.createdAt as sortDate, p.likeCount 
+     FROM PoW p 
+     WHERE ${whereClause} 
+     ORDER BY ${branchOrder} 
+     LIMIT ${candidateLimit})
+  `;
 }
 
-function buildGrantBranch(filters: FeedFilters): BranchSql {
-  const params: unknown[] = [];
-  const where: string[] = [];
-  where.push(`ga.applicationStatus IN ('Approved', 'Completed')`);
-  where.push(`ga.decidedAt <= ${addParam(params, filters.endDate)}`);
+function buildGrantBranch(
+  filters: FeedFilters,
+  cursor: FeedCursor | null,
+  candidateLimit: number,
+  effectiveHighlightId?: string,
+  effectiveHighlightType?: string,
+): Prisma.Sql {
+  const isPopular = filters.filter === 'popular';
+  const conditions: Prisma.Sql[] = [
+    Prisma.sql`ga.applicationStatus IN ('Approved', 'Completed')`,
+    Prisma.sql`ga.decidedAt <= ${filters.endDate}`,
+  ];
+
   if (filters.startDate) {
-    where.push(`ga.decidedAt >= ${addParam(params, filters.startDate)}`);
+    conditions.push(Prisma.sql`ga.decidedAt >= ${filters.startDate}`);
   }
   if (filters.profileUserId) {
-    where.push(`ga.userId = ${addParam(params, filters.profileUserId)}`);
+    conditions.push(Prisma.sql`ga.userId = ${filters.profileUserId}`);
   }
   if (!filters.profileUserId) {
-    where.push('g.isPrivate = 0');
+    conditions.push(Prisma.sql`g.isPrivate = 0`);
   }
-  const sql = `SELECT ga.id, 'grant-application' as type, COALESCE(ga.decidedAt, ga.createdAt) as sortDate, ga.likeCount FROM GrantApplication ga JOIN Grants g ON ga.grantId = g.id WHERE ${where.join(' AND ')}`;
-  return { sql, params };
+
+  // Highlight exclusion matching both type AND ID
+  if (effectiveHighlightId && effectiveHighlightType === 'grant-application') {
+    conditions.push(Prisma.sql`ga.id != ${effectiveHighlightId}`);
+  }
+
+  // Keyset seek condition
+  if (cursor) {
+    const cursorDate = new Date(cursor.sortDate);
+    if (isPopular) {
+      conditions.push(
+        Prisma.sql`(ga.likeCount, COALESCE(ga.decidedAt, ga.createdAt), 'grant-application', ga.id) < (${cursor.likeCount ?? 0}, ${cursorDate}, ${cursor.type}, ${cursor.id})`,
+      );
+    } else {
+      conditions.push(
+        Prisma.sql`(COALESCE(ga.decidedAt, ga.createdAt), 'grant-application', ga.id) < (${cursorDate}, ${cursor.type}, ${cursor.id})`,
+      );
+    }
+  }
+
+  const whereClause = Prisma.join(conditions, ' AND ');
+  const branchOrder = isPopular
+    ? Prisma.sql`ga.likeCount DESC, sortDate DESC, ga.id DESC`
+    : Prisma.sql`sortDate DESC, ga.id DESC`;
+
+  return Prisma.sql`
+    (SELECT ga.id, 'grant-application' as type, COALESCE(ga.decidedAt, ga.createdAt) as sortDate, ga.likeCount 
+     FROM GrantApplication ga 
+     JOIN Grants g ON ga.grantId = g.id 
+     WHERE ${whereClause} 
+     ORDER BY ${branchOrder} 
+     LIMIT ${candidateLimit})
+  `;
 }
 
-function getBranch(type: FeedType, filters: FeedFilters): BranchSql | null {
-  switch (type) {
-    case 'submission':
-      return buildSubmissionBranch(filters);
-    case 'pow':
-      return buildPoWBranch(filters);
-    case 'grant-application':
-      return buildGrantBranch(filters);
-    default:
-      return null;
+function buildHighlightSql(
+  hlType: FeedType,
+  hlId: string,
+  filters: FeedFilters,
+): Prisma.Sql | null {
+  // Highlight lookup is intentionally NOT bounded by startDate/endDate window,
+  // allowing directly linked highlights to be found regardless of active date filters.
+  if (hlType === 'submission') {
+    const conditions: Prisma.Sql[] = [Prisma.sql`s.id = ${hlId}`];
+    if (filters.isWinner) {
+      conditions.push(Prisma.sql`s.isWinner = 1 AND b.isWinnersAnnounced = 1`);
+    }
+    if (filters.profileUserId) {
+      if (filters.shouldIncludeAgentSubmissions && filters.profileAgentId) {
+        conditions.push(
+          Prisma.sql`(s.userId = ${filters.profileUserId} OR s.agentId = ${filters.profileAgentId})`,
+        );
+      } else {
+        conditions.push(Prisma.sql`s.userId = ${filters.profileUserId}`);
+      }
+    } else {
+      conditions.push(Prisma.sql`b.isPrivate = 0`);
+    }
+    return Prisma.sql`
+      SELECT s.id, 'submission' as type, ${SUBMISSION_SORT_DATE_SQL} as sortDate, s.likeCount 
+      FROM Submission s 
+      JOIN Bounties b ON s.listingId = b.id 
+      WHERE ${Prisma.join(conditions, ' AND ')}
+      LIMIT 1
+    `;
   }
+
+  if (hlType === 'pow') {
+    if (filters.isWinner) return null;
+    const conditions: Prisma.Sql[] = [Prisma.sql`p.id = ${hlId}`];
+    if (filters.profileUserId) {
+      conditions.push(Prisma.sql`p.userId = ${filters.profileUserId}`);
+    }
+    return Prisma.sql`
+      SELECT p.id, 'pow' as type, p.createdAt as sortDate, p.likeCount 
+      FROM PoW p 
+      WHERE ${Prisma.join(conditions, ' AND ')}
+      LIMIT 1
+    `;
+  }
+
+  if (hlType === 'grant-application') {
+    const conditions: Prisma.Sql[] = [
+      Prisma.sql`ga.id = ${hlId}`,
+      Prisma.sql`ga.applicationStatus IN ('Approved', 'Completed')`,
+    ];
+    if (filters.profileUserId) {
+      conditions.push(Prisma.sql`ga.userId = ${filters.profileUserId}`);
+    } else {
+      conditions.push(Prisma.sql`g.isPrivate = 0`);
+    }
+    return Prisma.sql`
+      SELECT ga.id, 'grant-application' as type, COALESCE(ga.decidedAt, ga.createdAt) as sortDate, ga.likeCount 
+      FROM GrantApplication ga 
+      JOIN Grants g ON ga.grantId = g.id 
+      WHERE ${Prisma.join(conditions, ' AND ')}
+      LIMIT 1
+    `;
+  }
+
+  return null;
 }
 
 function isHighlightInBranches(filters: FeedFilters, hlType?: string): boolean {
@@ -160,53 +364,25 @@ function isHighlightInBranches(filters: FeedFilters, hlType?: string): boolean {
   return false;
 }
 
-function buildHighlightSql(
-  hlType: FeedType,
-  hlId: string,
-  filters: FeedFilters,
-): BranchSql | null {
-  const branch = getBranch(hlType, filters);
-  if (!branch) return null;
-  return {
-    sql: `${branch.sql} AND ${ID_COLUMN[hlType]} = ?`,
-    params: [...branch.params, hlId],
-  };
+export interface BuildFeedQueryResult {
+  readonly query: Prisma.Sql;
+  readonly isEligibleHighlightOnPage1: boolean;
+  readonly candidateLimit: number;
 }
 
-const getOrderExpr = (isPopular: boolean): string =>
-  isPopular
-    ? 'base.likeCount DESC, base.sortDate DESC, base.type DESC, base.id DESC'
-    : 'base.sortDate DESC, base.type DESC, base.id DESC';
-
-const getOrderBy = (isPopular: boolean): string => `ORDER BY ${getOrderExpr(isPopular)}`;
-
-export async function getFeedPage(
+export function buildFeedQuery(
   filters: FeedFilters,
   cursor: FeedCursor | null,
   take: number,
   skip: number = 0,
-): Promise<FeedItem[]> {
+): BuildFeedQueryResult | null {
   const isPopular = filters.filter === 'popular';
-  const branches: BranchSql[] = [];
+  // Fetch one extra ordinary candidate to determine whether another page exists,
+  // avoiding the classic empty-last-request pagination bug.
+  const candidateLimit = take + 1;
 
-  if (!filters.takeOnlyType || filters.takeOnlyType === 'submission') {
-    branches.push(buildSubmissionBranch(filters));
-  }
-  const pow = buildPoWBranch(filters);
-  if (pow && (!filters.takeOnlyType || filters.takeOnlyType === 'pow')) {
-    branches.push(pow);
-  }
-  if (!filters.takeOnlyType || filters.takeOnlyType === 'grant-application') {
-    branches.push(buildGrantBranch(filters));
-  }
-
-  if (branches.length === 0) return [];
-
-  const unionSql = branches.map((b) => b.sql).join(' UNION ALL ');
-  const branchParams = branches.flatMap((b) => b.params);
-
-  // An effective highlight ID from cursor or initial filter
   const effectiveHighlightId = cursor?.highlightId || filters.highlightId;
+  const effectiveHighlightType = cursor?.highlightType || filters.highlightType;
 
   const isEligibleHighlightOnPage1 =
     !cursor &&
@@ -215,51 +391,129 @@ export async function getFeedPage(
     !!filters.highlightType &&
     isHighlightInBranches(filters, filters.highlightType);
 
-  const orderBy = getOrderBy(isPopular);
-  const params: unknown[] = [];
-  let sql: string;
+  const branches: Prisma.Sql[] = [];
+
+  if (!filters.takeOnlyType || filters.takeOnlyType === 'submission') {
+    branches.push(
+      buildSubmissionBranch(
+        filters,
+        cursor,
+        candidateLimit,
+        effectiveHighlightId,
+        effectiveHighlightType,
+      ),
+    );
+  }
+
+  const pow = buildPoWBranch(
+    filters,
+    cursor,
+    candidateLimit,
+    effectiveHighlightId,
+    effectiveHighlightType,
+  );
+  if (pow && (!filters.takeOnlyType || filters.takeOnlyType === 'pow')) {
+    branches.push(pow);
+  }
+
+  if (!filters.takeOnlyType || filters.takeOnlyType === 'grant-application') {
+    branches.push(
+      buildGrantBranch(
+        filters,
+        cursor,
+        candidateLimit,
+        effectiveHighlightId,
+        effectiveHighlightType,
+      ),
+    );
+  }
+
+  if (branches.length === 0) return null;
+
+  const unionSql = Prisma.join(branches, ' UNION ALL ');
+  const outerOrder = isPopular
+    ? Prisma.sql`likeCount DESC, sortDate DESC, type DESC, id DESC`
+    : Prisma.sql`sortDate DESC, type DESC, id DESC`;
+
+  let query: Prisma.Sql;
 
   if (isEligibleHighlightOnPage1) {
     const hlId = filters.highlightId!;
     const hlType = filters.highlightType as FeedType;
-    const hl = buildHighlightSql(hlType, hlId, filters);
+    const hlSql = buildHighlightSql(hlType, hlId, filters);
 
-    // Page 1: pin the highlight on top; fetch base query excluding hlId
-    // Pinned highlight is extra (+1), so full regular page size is preserved
-    params.push(...hl!.params, ...branchParams, hlId, take, hlId, take + 1);
-    sql = `SELECT * FROM ((${hl!.sql}) UNION ALL (SELECT * FROM (${unionSql}) AS base WHERE base.id != ? ${orderBy} LIMIT ?)) AS combined ORDER BY (CASE WHEN id = ? THEN 1 ELSE 0 END) DESC, ${isPopular ? 'likeCount DESC, sortDate DESC, type DESC, id DESC' : 'sortDate DESC, type DESC, id DESC'} LIMIT ?`;
-  } else {
-    // Normal query (Page 2+ with cursor, or Page 1 without highlight, or backward-compatible skip)
-    params.push(...branchParams);
-    const whereClauses: string[] = [];
-
-    // Exclude highlighted ID on subsequent pages so it NEVER duplicates anywhere in the feed
-    if (effectiveHighlightId) {
-      whereClauses.push('base.id != ?');
-      params.push(effectiveHighlightId);
-    }
-
-    if (cursor) {
-      if (isPopular) {
-        whereClauses.push('(base.likeCount, base.sortDate, base.type, base.id) < (?, ?, ?, ?)');
-        params.push(cursor.likeCount ?? 0, new Date(cursor.sortDate), cursor.type, cursor.id);
-      } else {
-        whereClauses.push('(base.sortDate, base.type, base.id) < (?, ?, ?)');
-        params.push(new Date(cursor.sortDate), cursor.type, cursor.id);
-      }
-    }
-
-    const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
-
-    if (!cursor && skip > 0) {
-      sql = `SELECT * FROM (${unionSql}) AS base ${whereSql} ${orderBy} LIMIT ? OFFSET ?`;
-      params.push(take, skip);
+    if (hlSql) {
+      // Pinned highlight on top via CASE WHEN, merged with bounded regular candidates
+      query = Prisma.sql`
+        SELECT * FROM (
+          (${hlSql})
+          UNION ALL
+          (SELECT * FROM (${unionSql}) AS base_candidates ORDER BY ${outerOrder} LIMIT ${candidateLimit})
+        ) AS combined
+        ORDER BY (CASE WHEN id = ${hlId} THEN 1 ELSE 0 END) DESC, ${outerOrder}
+        LIMIT ${take + 2}
+      `;
     } else {
-      sql = `SELECT * FROM (${unionSql}) AS base ${whereSql} ${orderBy} LIMIT ?`;
-      params.push(take);
+      query = Prisma.sql`
+        SELECT * FROM (${unionSql}) AS merged 
+        ORDER BY ${outerOrder} 
+        LIMIT ${candidateLimit}
+      `;
+    }
+  } else {
+    if (!cursor && skip > 0) {
+      query = Prisma.sql`
+        SELECT * FROM (${unionSql}) AS merged 
+        ORDER BY ${outerOrder} 
+        LIMIT ${candidateLimit} OFFSET ${skip}
+      `;
+    } else {
+      query = Prisma.sql`
+        SELECT * FROM (${unionSql}) AS merged 
+        ORDER BY ${outerOrder} 
+        LIMIT ${candidateLimit}
+      `;
     }
   }
 
-  const rows = await prisma.$queryRawUnsafe<FeedItem[]>(sql, ...params);
-  return rows;
+  return { query, isEligibleHighlightOnPage1, candidateLimit };
+}
+
+export interface GetFeedPageResult {
+  readonly items: FeedItem[];
+  readonly hasMore: boolean;
+}
+
+export async function getFeedPage(
+  filters: FeedFilters,
+  cursor: FeedCursor | null,
+  take: number,
+  skip: number = 0,
+): Promise<GetFeedPageResult> {
+  const queryResult = buildFeedQuery(filters, cursor, take, skip);
+  if (!queryResult) {
+    return { items: [], hasMore: false };
+  }
+
+  const { query, isEligibleHighlightOnPage1 } = queryResult;
+  const rows = await prisma.$queryRaw<FeedItem[]>(query);
+
+  if (rows.length === 0) {
+    return { items: [], hasMore: false };
+  }
+
+  if (isEligibleHighlightOnPage1 && rows[0].id === filters.highlightId) {
+    const highlightItem = rows[0];
+    const ordinaryRows = rows.slice(1);
+    const hasMore = ordinaryRows.length > take;
+    const items = [
+      highlightItem,
+      ...(hasMore ? ordinaryRows.slice(0, take) : ordinaryRows),
+    ];
+    return { items, hasMore };
+  }
+
+  const hasMore = rows.length > take;
+  const items = hasMore ? rows.slice(0, take) : rows;
+  return { items, hasMore };
 }

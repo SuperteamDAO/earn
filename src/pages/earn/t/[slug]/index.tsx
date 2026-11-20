@@ -196,10 +196,10 @@ function TalentProfile({ talent, stats, bgIndex, shouldNoIndex }: TalentProps) {
   } = useGetFeed(feedParams);
 
   useEffect(() => {
-    if (inView && hasNextPage) {
+    if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }, [inView, fetchNextPage, hasNextPage]);
+  }, [inView, fetchNextPage, hasNextPage, isFetchingNextPage, feed?.pages.length]);
 
   const handleToggleSubskills = (index: number) => {
     setShowSubskills((prev) => ({

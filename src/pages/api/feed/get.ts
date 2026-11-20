@@ -1,4 +1,5 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
+import { z } from 'zod';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
@@ -10,6 +11,8 @@ import {
   decodeCursor,
   encodeCursor,
   type FeedCursor,
+  type FeedType,
+  FeedTypeSchema,
   getFeedPage,
 } from '@/services/feedService';
 import { parseBoundedIntegerParam } from '@/utils/apiPagination';
@@ -18,14 +21,46 @@ import { dayjs } from '@/utils/dayjs';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
-import { type FeedPostType } from '@/features/feed/types';
+
+// Strict schema to validate request query parameters and reject repeated array parameters
+const FeedQuerySchema = z.object({
+  cursor: z.string().min(1).optional(),
+  highlightId: z.string().uuid().optional(),
+  highlightType: FeedTypeSchema.optional(),
+  takeOnlyType: FeedTypeSchema.optional(),
+  filter: z.enum(['popular', 'new']).optional(),
+  timePeriod: z.string().optional(),
+  isWinner: z.string().optional(),
+  userId: z.string().optional(),
+  take: z.union([z.string(), z.number()]).optional(),
+  skip: z.union([z.string(), z.number()]).optional(),
+});
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
   logger.debug(`Request query: ${safeStringify(req.query)}`);
-  const { timePeriod, isWinner, filter, userId } = req.query;
+
+  // Validate query parameter shapes: rejects arrays and malformed scalars with 400
+  const parsedQuery = FeedQuerySchema.safeParse(req.query);
+  if (!parsedQuery.success) {
+    return res.status(400).json({
+      error: 'Invalid query parameters',
+      details: parsedQuery.error.format(),
+    });
+  }
+
+  const {
+    timePeriod,
+    isWinner,
+    filter,
+    userId,
+    highlightId,
+    highlightType,
+    takeOnlyType,
+  } = parsedQuery.data;
+
   const takeResult = parseBoundedIntegerParam(req.query.take, {
     defaultValue: 15,
     maxValue: 30,
@@ -47,14 +82,21 @@ export default async function handler(
   const take = takeResult.value;
   const skip = skipResult.value;
 
-  const profileUserId = typeof userId === 'string' ? userId : null;
   let cursor: FeedCursor | null = null;
-  if (typeof req.query.cursor === 'string') {
-    cursor = decodeCursor(req.query.cursor);
+  if (parsedQuery.data.cursor) {
+    cursor = decodeCursor(parsedQuery.data.cursor);
     if (!cursor) {
       return res.status(400).json({ error: 'Invalid pagination cursor' });
     }
+    // Reject popular feed cursors that omit likeCount (0 is valid, omitted is not)
+    if (filter === 'popular' && cursor.likeCount === undefined) {
+      return res.status(400).json({
+        error: 'Popular feed cursor must include likeCount',
+      });
+    }
   }
+
+  const profileUserId = typeof userId === 'string' ? userId : null;
 
   let currentUserId: string | null = null;
   const privyDid = await getPrivyToken(req);
@@ -68,10 +110,6 @@ export default async function handler(
 
   const isOwnerProfile =
     typeof profileUserId === 'string' && currentUserId === profileUserId;
-
-  const highlightType = req.query.highlightType as FeedPostType | undefined;
-  const highlightId = req.query.highlightId as string | undefined;
-  const takeOnlyType = req.query.takeOnlyType as FeedPostType | undefined;
 
   try {
     const profileUser = profileUserId
@@ -140,8 +178,8 @@ export default async function handler(
       where: commentsWhere,
     };
 
-    // Step 1: Get globally sorted feed IDs via database query
-    const feedItems = await getFeedPage(
+    // Step 1: Get globally sorted feed IDs via keyset-bounded database query
+    const { items: feedItems, hasMore } = await getFeedPage(
       {
         startDate,
         endDate,
@@ -260,7 +298,7 @@ export default async function handler(
       },
     };
 
-    // Step 3: Batch fetch records in parallel for requested IDs
+    // Step 3: Batch fetch records in parallel for only the requested IDs
     const [submissions, powList, gaList] = await Promise.all([
       subIds.length > 0
         ? prisma.submission.findMany({
@@ -448,19 +486,14 @@ export default async function handler(
     }
 
     // Step 6: Determine nextCursor
+    // nextCursor is only generated if hasMore is true (an extra row was returned by the database),
+    // and is built from the last returned row, completely eliminating empty final pagination requests.
     const effectiveHighlightId = cursor?.highlightId || highlightId;
-    const hasActiveHighlightOnPage1 =
-      !cursor &&
-      skip === 0 &&
-      !!highlightId &&
-      feedItems.length > 0 &&
-      feedItems[0].id === highlightId;
-
-    const threshold = hasActiveHighlightOnPage1 ? take + 1 : take;
+    const effectiveHighlightType = cursor?.highlightType || (highlightType as FeedType | undefined);
     const lastItem = feedItems[feedItems.length - 1];
 
     const nextCursor =
-      feedItems.length >= threshold && lastItem
+      hasMore && lastItem
         ? encodeCursor({
             id: lastItem.id,
             type: lastItem.type,
@@ -469,15 +502,24 @@ export default async function handler(
                 ? lastItem.sortDate.toISOString()
                 : new Date(lastItem.sortDate).toISOString(),
             ...(filter === 'popular' ? { likeCount: lastItem.likeCount } : {}),
-            ...(effectiveHighlightId ? { highlightId: effectiveHighlightId } : {}),
+            ...(effectiveHighlightId && effectiveHighlightType
+              ? {
+                  highlightId: effectiveHighlightId,
+                  highlightType: effectiveHighlightType,
+                }
+              : {}),
           })
         : null;
 
     res.status(200).json({ data: results, nextCursor });
   } catch (error: any) {
     logger.error(
-      `Error occurred while fetching submissions and PoWs: ${safeStringify(error)}`,
+      `Error occurred while fetching feed: ${safeStringify(error)}`,
     );
-    res.status(500).json({ error: `Unable to fetch data: ${error.message}` });
+    // Generic safe 500 response that hides internal database/system details
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Unable to fetch feed data at this time',
+    });
   }
 }
