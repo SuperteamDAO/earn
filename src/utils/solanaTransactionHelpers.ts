@@ -10,7 +10,11 @@ export function classifySolanaError(
   | 'insufficient-funds'
   | 'token-not-available'
   | 'unknown' {
-  const text = String((error as any)?.message ?? error ?? '').toLowerCase();
+  const message =
+    typeof error === 'object' && error !== null && 'message' in error
+      ? error.message
+      : undefined;
+  const text = String(message ?? error ?? '').toLowerCase();
   if (
     text.includes('user rejected') ||
     text.includes('rejected the request') ||
