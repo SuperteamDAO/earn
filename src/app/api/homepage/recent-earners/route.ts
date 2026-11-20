@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import type { Rewards } from '@/features/listings/types';
 
@@ -62,9 +63,9 @@ export async function GET(_request: NextRequest) {
           'public, max-age=86400, s-maxage=86400, stale-while-revalidate=3600',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Error occurred while fetching winning submissions', {
-      error: error.message,
+      error: getErrorMessage(error),
     });
     return NextResponse.json(
       {

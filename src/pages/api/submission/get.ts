@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
 import { withAuth } from '@/features/auth/utils/withAuth';
@@ -37,9 +38,9 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error fetching submission for user=${userId} and listingId=${id}: ${error.message}`,
+      `Error fetching submission for user=${userId} and listingId=${id}: ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

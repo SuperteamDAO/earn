@@ -27,7 +27,7 @@ async function poWLike(req: NextApiRequestWithUser, res: NextApiResponse) {
       data: { ok: true },
       message: 'Operation successful',
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error updating PoW like for id ${req.body?.id}:`,
       safeStringify(error),

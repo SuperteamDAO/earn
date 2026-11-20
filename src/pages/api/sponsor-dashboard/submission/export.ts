@@ -5,6 +5,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
 import { dayjs } from '@/utils/dayjs';
+import { parseQuestionAnswers } from '@/utils/parseQuestionAnswers';
 import { plainTextFromHtmlTurndown } from '@/utils/plainTextFromHtml';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -59,8 +60,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     });
 
     const eligibilityQuestions = new Set<string>();
-    submissions.forEach((submission: any) => {
-      submission.eligibilityAnswers?.forEach((answer: any) => {
+    submissions.forEach((submission) => {
+      parseQuestionAnswers(submission.eligibilityAnswers).forEach((answer) => {
         eligibilityQuestions.add(answer.question);
       });
     });
@@ -70,10 +71,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     const finalJson = submissions.map((submission, i: number) => {
       const user = submission.user;
       const accountAge = Math.abs(dayjs(user.createdAt).diff(dayjs(), 'day'));
-      const eligibility: any = {};
+      const eligibility: Record<string, string> = {};
       eligibilityQuestions.forEach((question) => {
-        const answer = (submission.eligibilityAnswers as Array<any>)?.find(
-          (e: any) => e.question === question,
+        const answer = parseQuestionAnswers(submission.eligibilityAnswers).find(
+          (e) => e.question === question,
         );
         eligibility[question] = answer
           ? plainTextFromHtmlTurndown.turndown(answer.answer)
@@ -118,7 +119,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     return res.status(200).json({
       url: cloudinaryDetails?.secure_url || cloudinaryDetails?.url,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `User ${userId} unable to download CSV: ${safeStringify(error)}`,
     );

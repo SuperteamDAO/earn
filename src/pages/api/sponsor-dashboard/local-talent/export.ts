@@ -156,10 +156,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     logger.debug('Transforming users to JSON format for CSV export');
     const finalJson = rankedTalent.map((user) => {
       const parentSkills = (user?.skills as Skills)?.map(
-        (skill: any) => skill.skills,
+        (skill) => skill.skills,
       );
       const subSkills = (user?.skills as Skills)?.flatMap(
-        (skill: any) => skill.subskills,
+        (skill) => skill.subskills,
       );
       const communities = JSON.parse(user?.community || '[]');
       const interests = JSON.parse(user?.interests || '[]');
@@ -192,7 +192,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     return res.status(200).json({
       url: cloudinaryDetails?.secure_url || cloudinaryDetails?.url,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `User ${userId} unable to download CSV: ${safeStringify(error)}`,
     );

@@ -120,7 +120,7 @@ async function verification(req: NextApiRequestWithUser, res: NextApiResponse) {
     }
 
     return res.status(200).json(sponsor);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `User ${userId} unable to update verification: ${safeStringify(error)}`,
     );

@@ -50,7 +50,7 @@ export async function DELETE(
       { message: `Draft Bounty with id=${id} deleted successfully.` },
       { status: 200 },
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`Error deleting bounty ${id}: ${safeStringify(error)}`);
     return NextResponse.json(
       {

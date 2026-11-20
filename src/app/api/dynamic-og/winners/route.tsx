@@ -3,7 +3,12 @@ import { ImageResponse } from 'next/og';
 import { ExternalImage } from '@/components/ui/cloudinary-image';
 import type { ListingWinner } from '@/interface/submission';
 import { convertToJpegUrl } from '@/utils/cloudinary';
-import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
+import { getErrorMessage } from '@/utils/getErrorMessage';
+import {
+  createParamReader,
+  formatString,
+  loadGoogleFont,
+} from '@/utils/ogHelpers';
 import { nthLabelGenerator } from '@/utils/rank';
 
 import { type Rewards } from '@/features/listings/types';
@@ -118,8 +123,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url.replaceAll('&amp%3B', '&'));
 
-    const getParam = (name: string, processFn = (x: any) => x) =>
-      searchParams.has(name) ? processFn(searchParams.get(name)) : null;
+    const getParam = createParamReader(searchParams);
 
     const id = getParam('id', (x) => decodeURIComponent(x)) as string;
 
@@ -333,8 +337,8 @@ export async function GET(request: Request) {
         fonts: [{ name: 'Inter', data: interSemiBold, style: 'normal' }],
       },
     );
-  } catch (err: any) {
-    console.log(`${err.message}`);
+  } catch (err) {
+    console.log(getErrorMessage(err));
     return new Response(`Failed to generate the image`, {
       status: 500,
     });

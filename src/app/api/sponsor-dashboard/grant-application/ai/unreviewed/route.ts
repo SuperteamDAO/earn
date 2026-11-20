@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       (u) => !(u.ai as unknown as GrantApplicationAi)?.commited,
     );
     return NextResponse.json(notReviewedByAI, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while retrieving unreviewed grant applications`,
       {
