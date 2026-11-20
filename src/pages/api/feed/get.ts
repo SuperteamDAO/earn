@@ -1,12 +1,17 @@
-// activity feed
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
-import { type GrantApplicationInclude } from '@/prisma/models';
 import { type CommentFindManyArgs } from '@/prisma/models/Comment';
-import { type PoWGetPayload, type PoWInclude } from '@/prisma/models/PoW';
+import { type GrantApplicationInclude } from '@/prisma/models/GrantApplication';
+import { type PoWInclude } from '@/prisma/models/PoW';
 import { type SubmissionInclude } from '@/prisma/models/Submission';
+import {
+  decodeCursor,
+  encodeCursor,
+  type FeedCursor,
+  getFeedPage,
+} from '@/services/feedService';
 import { parseBoundedIntegerParam } from '@/utils/apiPagination';
 import { getCloudinaryFetchUrl } from '@/utils/cloudinary';
 import { dayjs } from '@/utils/dayjs';
@@ -43,6 +48,13 @@ export default async function handler(
   const skip = skipResult.value;
 
   const profileUserId = typeof userId === 'string' ? userId : null;
+  let cursor: FeedCursor | null = null;
+  if (typeof req.query.cursor === 'string') {
+    cursor = decodeCursor(req.query.cursor);
+    if (!cursor) {
+      return res.status(400).json({ error: 'Invalid pagination cursor' });
+    }
+  }
 
   let currentUserId: string | null = null;
   const privyDid = await getPrivyToken(req);
@@ -57,9 +69,8 @@ export default async function handler(
   const isOwnerProfile =
     typeof profileUserId === 'string' && currentUserId === profileUserId;
 
-  const highlightType = req.query.highlightType as FeedPostType;
-  let highlightId = req.query.highlightId as string | undefined;
-  if (skip !== 0) highlightId = undefined;
+  const highlightType = req.query.highlightType as FeedPostType | undefined;
+  const highlightId = req.query.highlightId as string | undefined;
   const takeOnlyType = req.query.takeOnlyType as FeedPostType | undefined;
 
   try {
@@ -83,24 +94,6 @@ export default async function handler(
     const profileAgentId = profileUser?.agentProfile?.id;
     const shouldIncludeAgentSubmissions =
       !!profileUser?.isAgent && !!profileAgentId;
-
-    const profileSubmissionFilter = profileUserId
-      ? shouldIncludeAgentSubmissions
-        ? {
-            OR: [{ userId: profileUserId }, { agentId: profileAgentId }],
-          }
-        : { userId: profileUserId }
-      : undefined;
-
-    const winnerFilter =
-      isWinner === 'true'
-        ? {
-            AND: [
-              { isWinner: true },
-              { listing: { isWinnersAnnounced: true } },
-            ],
-          }
-        : {};
 
     let startDate: Date | undefined;
     const endDate: Date = new Date();
@@ -147,7 +140,39 @@ export default async function handler(
       where: commentsWhere,
     };
 
-    logger.debug(`Fetching submissions from ${startDate} to ${endDate}`);
+    // Step 1: Get globally sorted feed IDs via database query
+    const feedItems = await getFeedPage(
+      {
+        startDate,
+        endDate,
+        isWinner: isWinner === 'true',
+        filter: (filter as 'popular' | 'new') || undefined,
+        profileUserId,
+        profileAgentId: profileAgentId ?? undefined,
+        shouldIncludeAgentSubmissions,
+        takeOnlyType,
+        highlightId,
+        highlightType,
+      },
+      cursor,
+      take,
+      skip,
+    );
+
+    if (feedItems.length === 0) {
+      res.status(200).json({ data: [], nextCursor: null });
+      return;
+    }
+
+    // Step 2: Separate IDs by type
+    const subIds = feedItems
+      .filter((i) => i.type === 'submission')
+      .map((i) => i.id);
+    const powIds = feedItems.filter((i) => i.type === 'pow').map((i) => i.id);
+    const gaIds = feedItems
+      .filter((i) => i.type === 'grant-application')
+      .map((i) => i.id);
+
     const submissionInclude: SubmissionInclude = {
       user: {
         select: {
@@ -184,55 +209,7 @@ export default async function handler(
         },
       },
     };
-    const submissions =
-      !takeOnlyType || (takeOnlyType && takeOnlyType === 'submission')
-        ? await prisma.submission.findMany({
-            where: {
-              createdAt: {
-                ...(startDate ? { gte: startDate } : {}),
-                lte: endDate,
-              },
-              ...winnerFilter,
-              ...profileSubmissionFilter,
-              listing: profileUserId ? {} : { isPrivate: false },
-            },
-            skip,
-            take,
-            orderBy:
-              highlightType === 'submission'
-                ? [
-                    { winnerPosition: 'asc' },
-                    { likeCount: 'desc' },
-                    { createdAt: 'desc' },
-                  ]
-                : filter === 'popular'
-                  ? [
-                      { likeCount: 'desc' },
-                      { listing: { winnersAnnouncedAt: 'desc' } },
-                      { createdAt: 'desc' },
-                    ]
-                  : [{ createdAt: 'desc' }],
-            include: submissionInclude,
-          })
-        : [];
 
-    const submissionHighlighted =
-      !submissions.find((s) => s.id === highlightId) &&
-      !!highlightId &&
-      highlightType === 'submission'
-        ? await prisma.submission.findFirst({
-            where: {
-              id: highlightId,
-              ...profileSubmissionFilter,
-            },
-            include: submissionInclude,
-          })
-        : null;
-    if (submissionHighlighted) {
-      submissions.unshift(submissionHighlighted);
-    }
-
-    logger.debug('Fetching PoWs');
     const poWInclude: PoWInclude = {
       user: {
         select: {
@@ -249,61 +226,7 @@ export default async function handler(
         },
       },
     };
-    type UserWithoutKYC = {
-      id: string;
-      firstName: string | null;
-      lastName: string | null;
-      photo: string | null;
-      username: string | null;
-      isKYCVerified: boolean;
-    };
-    type PoWWithUserAndCommentsCount = Omit<
-      PoWGetPayload<{
-        include: typeof poWInclude;
-      }>,
-      'user'
-    > & {
-      user: UserWithoutKYC;
-    };
-    let pow: PoWWithUserAndCommentsCount[] = [];
-    if (isWinner !== 'true') {
-      pow =
-        !takeOnlyType || (takeOnlyType && takeOnlyType === 'pow')
-          ? await prisma.poW.findMany({
-              where: {
-                createdAt: {
-                  ...(startDate ? { gte: startDate } : {}),
-                  lte: endDate,
-                },
-                ...(userId ? { userId: userId as string } : {}),
-              },
-              skip,
-              take,
-              orderBy:
-                filter === 'popular'
-                  ? [{ likeCount: 'desc' }, { createdAt: 'desc' }]
-                  : { createdAt: 'desc' },
-              include: poWInclude,
-            })
-          : [];
-    }
-    const powHighlighted =
-      !pow.find((p) => p.id === highlightId) &&
-      !!highlightId &&
-      highlightType === 'pow'
-        ? await prisma.poW.findUnique({
-            where: {
-              id: highlightId,
-              ...(userId ? { userId: userId as string } : {}),
-            },
-            include: poWInclude,
-          })
-        : null;
-    if (powHighlighted) {
-      pow.unshift(powHighlighted);
-    }
 
-    logger.debug(`Fetching grants from ${startDate} to ${endDate}`);
     const grantApplicationInclude: GrantApplicationInclude = {
       user: {
         select: {
@@ -336,216 +259,225 @@ export default async function handler(
         },
       },
     };
-    const grantApplications =
-      !takeOnlyType || (takeOnlyType && takeOnlyType === 'grant-application')
-        ? await prisma.grantApplication.findMany({
-            where: {
-              OR: [
-                {
-                  applicationStatus: 'Approved',
-                },
-                {
-                  applicationStatus: 'Completed',
-                },
-              ],
-              decidedAt: {
-                ...(startDate ? { gte: startDate } : {}),
-                lte: endDate,
-              },
-              ...(userId ? { userId: userId as string } : {}),
-              grant: userId ? {} : { isPrivate: false },
-            },
-            skip,
-            take,
-            orderBy:
-              filter === 'popular'
-                ? [{ likeCount: 'desc' }, { decidedAt: 'desc' }]
-                : { decidedAt: 'desc' },
-            include: grantApplicationInclude,
-          })
-        : [];
 
-    const grantApplicationHighlighted =
-      !grantApplications.find((ga) => ga.id === highlightId) &&
-      !!highlightId &&
-      highlightType === 'grant-application'
-        ? await prisma.grantApplication.findUnique({
-            where: {
-              id: highlightId,
-              ...(userId ? { userId: userId as string } : {}),
-              OR: [
-                {
-                  applicationStatus: 'Approved',
-                },
-                {
-                  applicationStatus: 'Completed',
-                },
-              ],
-            },
+    // Step 3: Batch fetch records in parallel for requested IDs
+    const [submissions, powList, gaList] = await Promise.all([
+      subIds.length > 0
+        ? prisma.submission.findMany({
+            where: { id: { in: subIds } },
+            include: submissionInclude,
+          })
+        : [],
+      powIds.length > 0
+        ? prisma.poW.findMany({
+            where: { id: { in: powIds } },
+            include: poWInclude,
+          })
+        : [],
+      gaIds.length > 0
+        ? prisma.grantApplication.findMany({
+            where: { id: { in: gaIds } },
             include: grantApplicationInclude,
           })
-        : null;
-    if (grantApplicationHighlighted) {
-      grantApplications.unshift(grantApplicationHighlighted);
+        : [],
+    ]);
+
+    // Step 4: Map records by ID
+    const subMap = new Map(submissions.map((s) => [s.id, s]));
+    const powMap = new Map(powList.map((p) => [p.id, p]));
+    const gaMap = new Map(gaList.map((g) => [g.id, g]));
+
+    // Step 5: Build results in exact database order
+    const results: Record<string, unknown>[] = [];
+
+    for (const item of feedItems) {
+      switch (item.type) {
+        case 'submission': {
+          const sub = subMap.get(item.id);
+          if (!sub) continue;
+          results.push({
+            ...(shouldIncludeAgentSubmissions &&
+            profileAgentId &&
+            sub.agentId === profileAgentId
+              ? {
+                  firstName: profileUser?.firstName,
+                  lastName: profileUser?.lastName,
+                  photo: profileUser?.photo,
+                  username: profileUser?.username,
+                  userId: profileUser?.id,
+                }
+              : {
+                  firstName: sub.user.firstName,
+                  lastName: sub.user.lastName,
+                  photo: sub.user.photo,
+                  username: sub.user.username,
+                  userId: sub.userId,
+                }),
+            id:
+              isOwnerProfile ||
+              (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
+                ? sub.id
+                : null,
+            createdAt:
+              sub.isWinner &&
+              sub.listing.isWinnersAnnounced &&
+              sub.listing.winnersAnnouncedAt
+                ? sub.listing.winnersAnnouncedAt
+                : sub.createdAt,
+            link:
+              isOwnerProfile ||
+              (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
+                ? sub.link
+                : null,
+            tweet:
+              isOwnerProfile ||
+              (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
+                ? sub.tweet
+                : null,
+            otherInfo:
+              isOwnerProfile ||
+              (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
+                ? sub.otherInfo
+                : null,
+            isWinner: sub.listing.isWinnersAnnounced ? sub.isWinner : null,
+            winnerPosition: sub.listing.isWinnersAnnounced
+              ? sub.winnerPosition
+              : null,
+            listingId:
+              isOwnerProfile || !sub.listing.isPrivate ? sub.listing.id : null,
+            listingTitle:
+              isOwnerProfile || !sub.listing.isPrivate
+                ? sub.listing.title
+                : null,
+            rewards: sub.listing.rewards,
+            listingType: sub.listing.type,
+            listingSlug:
+              isOwnerProfile || !sub.listing.isPrivate
+                ? sub.listing.slug
+                : null,
+            isWinnersAnnounced: sub.listing.isWinnersAnnounced,
+            token: sub.listing.token,
+            sponsorName:
+              isOwnerProfile || !sub.listing.isPrivate
+                ? sub.listing.sponsor.name
+                : null,
+            sponsorLogo:
+              isOwnerProfile || !sub.listing.isPrivate
+                ? sub.listing.sponsor.logo
+                : null,
+            sponsorSlug:
+              isOwnerProfile || !sub.listing.isPrivate
+                ? sub.listing.sponsor.slug
+                : null,
+            type: 'submission',
+            like: sub.like,
+            likeCount: sub.likeCount,
+            ogImage: !sub.listing.isPrivate
+              ? getCloudinaryFetchUrl(sub.ogImage)
+              : null,
+            commentCount: sub._count.Comments,
+            recentCommenters: sub.Comments,
+            isPrivate: isOwnerProfile ? false : sub.listing.isPrivate,
+          });
+          break;
+        }
+        case 'pow': {
+          const p = powMap.get(item.id);
+          if (!p) continue;
+          results.push({
+            id: p.id,
+            createdAt: p.createdAt,
+            description: p.description,
+            title: p.title,
+            userId: p.user.id,
+            firstName: p.user.firstName,
+            lastName: p.user.lastName,
+            photo: p.user.photo,
+            username: p.user.username,
+            type: 'pow',
+            link: p.link,
+            like: p.like,
+            likeCount: p.likeCount,
+            ogImage: getCloudinaryFetchUrl(p.ogImage),
+            commentCount: p._count.Comments,
+            recentCommenters: p.Comments,
+          });
+          break;
+        }
+        case 'grant-application': {
+          const ga = gaMap.get(item.id);
+          if (!ga) continue;
+          results.push({
+            id: isOwnerProfile || !ga.grant.isPrivate ? ga.id : null,
+            createdAt: ga.decidedAt || ga.createdAt,
+            userId: ga.userId,
+            firstName: ga.user.firstName,
+            lastName: ga.user.lastName,
+            photo: ga.user.photo,
+            username: ga.user.username,
+            listingId:
+              isOwnerProfile || !ga.grant.isPrivate ? ga.grant.id : null,
+            listingTitle:
+              isOwnerProfile || !ga.grant.isPrivate ? ga.grant.title : null,
+            listingSlug:
+              isOwnerProfile || !ga.grant.isPrivate ? ga.grant.slug : null,
+            token: ga.grant.token,
+            sponsorName:
+              isOwnerProfile || !ga.grant.isPrivate
+                ? ga.grant.sponsor.name
+                : null,
+            sponsorLogo:
+              isOwnerProfile || !ga.grant.isPrivate
+                ? ga.grant.sponsor.logo
+                : null,
+            sponsorSlug:
+              isOwnerProfile || !ga.grant.isPrivate
+                ? ga.grant.sponsor.slug
+                : null,
+            type: 'grant-application',
+            grantApplicationAmount: ga.approvedAmount,
+            like: ga.like,
+            likeCount: ga.likeCount,
+            commentCount: ga._count.Comments,
+            recentCommenters: ga.Comments,
+            isPrivate: isOwnerProfile ? false : ga.grant.isPrivate,
+          });
+          break;
+        }
+      }
     }
 
-    logger.info(
-      `Fetched ${submissions.length} submissions, ${pow.length} PoWs and ${grantApplications} grant applications`,
-    );
+    // Step 6: Determine nextCursor
+    const effectiveHighlightId = cursor?.highlightId || highlightId;
+    const hasActiveHighlightOnPage1 =
+      !cursor &&
+      skip === 0 &&
+      !!highlightId &&
+      feedItems.length > 0 &&
+      feedItems[0].id === highlightId;
 
-    const results = [
-      ...submissions.map((sub) => ({
-        ...(shouldIncludeAgentSubmissions &&
-        profileAgentId &&
-        sub.agentId === profileAgentId
-          ? {
-              firstName: profileUser?.firstName,
-              lastName: profileUser?.lastName,
-              photo: profileUser?.photo,
-              username: profileUser?.username,
-              userId: profileUser?.id,
-            }
-          : {
-              firstName: sub.user.firstName,
-              lastName: sub.user.lastName,
-              photo: sub.user.photo,
-              username: sub.user.username,
-              userId: sub.userId,
-            }),
-        id:
-          isOwnerProfile ||
-          (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
-            ? sub.id
-            : null,
-        createdAt:
-          sub.isWinner &&
-          sub.listing.isWinnersAnnounced &&
-          sub.listing.winnersAnnouncedAt
-            ? sub.listing.winnersAnnouncedAt
-            : sub.createdAt,
-        link:
-          isOwnerProfile ||
-          (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
-            ? sub.link
-            : null,
-        tweet:
-          isOwnerProfile ||
-          (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
-            ? sub.tweet
-            : null,
-        otherInfo:
-          isOwnerProfile ||
-          (sub.listing.isWinnersAnnounced && !sub.listing.isPrivate)
-            ? sub.otherInfo
-            : null,
-        isWinner: sub.listing.isWinnersAnnounced ? sub.isWinner : null,
-        winnerPosition: sub.listing.isWinnersAnnounced
-          ? sub.winnerPosition
-          : null,
-        listingId:
-          isOwnerProfile || !sub.listing.isPrivate ? sub.listing.id : null,
-        listingTitle:
-          isOwnerProfile || !sub.listing.isPrivate ? sub.listing.title : null,
-        rewards: sub.listing.rewards,
-        listingType: sub.listing.type,
-        listingSlug:
-          isOwnerProfile || !sub.listing.isPrivate ? sub.listing.slug : null,
-        isWinnersAnnounced: sub.listing.isWinnersAnnounced,
-        token: sub.listing.token,
-        sponsorName:
-          isOwnerProfile || !sub.listing.isPrivate //@ts-expect-error prisma ts error, this exists based on above include
-            ? sub.listing.sponsor.name
-            : null,
-        sponsorLogo:
-          isOwnerProfile || !sub.listing.isPrivate //@ts-expect-error prisma ts error, this exists based on above include
-            ? sub.listing.sponsor.logo
-            : null,
-        sponsorSlug:
-          isOwnerProfile || !sub.listing.isPrivate //@ts-expect-error prisma ts error, this exists based on above include
-            ? sub.listing.sponsor.slug
-            : null,
-        type: 'submission',
-        like: sub.like,
-        likeCount: sub.likeCount,
-        ogImage: !sub.listing.isPrivate
-          ? getCloudinaryFetchUrl(sub.ogImage)
-          : null,
-        commentCount: sub._count.Comments,
-        recentCommenters: sub.Comments,
-        isPrivate: isOwnerProfile ? false : sub.listing.isPrivate,
-      })),
-      ...pow.map((pow) => ({
-        id: pow.id,
-        createdAt: pow.createdAt,
-        description: pow.description,
-        title: pow.title,
-        userId: pow.user.id,
-        firstName: pow.user.firstName,
-        lastName: pow.user.lastName,
-        photo: pow.user.photo,
-        username: pow.user.username,
-        type: 'pow',
-        link: pow.link,
-        like: pow.like,
-        likeCount: pow.likeCount,
-        ogImage: getCloudinaryFetchUrl(pow.ogImage),
-        commentCount: pow._count.Comments,
-        recentCommenters: pow.Comments,
-      })),
-      ...grantApplications.map((ga) => ({
-        id: isOwnerProfile || !ga.grant.isPrivate ? ga.id : null,
-        createdAt: ga.decidedAt || ga.createdAt,
-        userId: ga.userId,
-        firstName: ga.user.firstName,
-        lastName: ga.user.lastName,
-        photo: ga.user.photo,
-        username: ga.user.username,
-        listingId: isOwnerProfile || !ga.grant.isPrivate ? ga.grant.id : null,
-        listingTitle:
-          isOwnerProfile || !ga.grant.isPrivate ? ga.grant.title : null,
-        listingSlug:
-          isOwnerProfile || !ga.grant.isPrivate ? ga.grant.slug : null,
-        token: ga.grant.token,
-        sponsorName:
-          isOwnerProfile || !ga.grant.isPrivate //@ts-expect-error prisma ts error, this exists based on above include
-            ? ga.grant.sponsor.name
-            : null,
-        sponsorLogo:
-          isOwnerProfile || !ga.grant.isPrivate //@ts-expect-error prisma ts error, this exists based on above include
-            ? ga.grant.sponsor.logo
-            : null,
-        sponsorSlug:
-          isOwnerProfile || !ga.grant.isPrivate //@ts-expect-error prisma ts error, this exists based on above include
-            ? ga.grant.sponsor.slug
-            : null,
-        type: 'grant-application',
-        grantApplicationAmount: ga.approvedAmount,
-        like: ga.like,
-        likeCount: ga.likeCount,
-        commentCount: ga._count.Comments,
-        recentCommenters: ga.Comments,
-        isPrivate: isOwnerProfile ? false : ga.grant.isPrivate,
-      })),
-    ];
+    const threshold = hasActiveHighlightOnPage1 ? take + 1 : take;
+    const lastItem = feedItems[feedItems.length - 1];
 
-    results.sort((a, b) => {
-      if (a.id === highlightId) return -1;
-      if (b.id === highlightId) return 1;
-      if (filter === 'popular') {
-        if (a.likeCount === b.likeCount) {
-          return b.createdAt.getTime() - a.createdAt.getTime();
-        }
-        return b.likeCount - a.likeCount;
-      } else {
-        return b.createdAt.getTime() - a.createdAt.getTime();
-      }
-    });
+    const nextCursor =
+      feedItems.length >= threshold && lastItem
+        ? encodeCursor({
+            id: lastItem.id,
+            type: lastItem.type,
+            sortDate:
+              lastItem.sortDate instanceof Date
+                ? lastItem.sortDate.toISOString()
+                : new Date(lastItem.sortDate).toISOString(),
+            ...(filter === 'popular' ? { likeCount: lastItem.likeCount } : {}),
+            ...(effectiveHighlightId ? { highlightId: effectiveHighlightId } : {}),
+          })
+        : null;
 
-    res.status(200).json(results);
+    res.status(200).json({ data: results, nextCursor });
   } catch (error: any) {
     logger.error(
       `Error occurred while fetching submissions and PoWs: ${safeStringify(error)}`,
     );
-    res.status(500).json({ error: 'Unable to fetch data.' });
+    res.status(500).json({ error: `Unable to fetch data: ${error.message}` });
   }
 }
