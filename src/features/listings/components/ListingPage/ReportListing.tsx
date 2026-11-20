@@ -123,7 +123,12 @@ export function ReportListing({
   const { user } = useUser();
 
   const mutation = useMutation({
-    mutationFn: async (payload: any) => {
+    mutationFn: async (payload: {
+      listingTitle: string;
+      listingUrl: string;
+      reasonTitle: string;
+      reasonSubtext: string;
+    }) => {
       return api.post('/api/report-listing', payload);
     },
     onError: (error) => {

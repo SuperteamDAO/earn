@@ -1,15 +1,16 @@
 import { ArrowRight } from 'lucide-react';
 import React from 'react';
 
+import { type CompensationType } from '@/prisma/enums';
 import { cn } from '@/utils/cn';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 
 interface CompensationAmountType {
-  compensationType?: 'fixed' | 'range' | 'variable';
-  rewardAmount?: number;
-  minRewardAsk?: number;
-  maxRewardAsk?: number;
-  token?: string;
+  compensationType?: CompensationType;
+  rewardAmount?: number | null;
+  minRewardAsk?: number | null;
+  maxRewardAsk?: number | null;
+  token?: string | null;
   className?: string;
   style?: React.CSSProperties;
   showUsdSymbol?: boolean;

@@ -1,5 +1,6 @@
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { addPaymentInfoToAirtable } from './addPaymentInfoToAirtable';
 
@@ -189,19 +190,19 @@ export async function createPayment({ userId }: CreatePaymentProps) {
         logger.info(
           `Successfully processed payment for submission ${submissionId}`,
         );
-      } catch (airtableError: any) {
+      } catch (airtableError) {
         logger.error(
-          `Error adding info to Airtable for submission ${submissionId}: ${airtableError.message}`,
+          `Error adding info to Airtable for submission ${submissionId}: ${getErrorMessage(airtableError)}`,
           { error: airtableError },
         );
-        errors.push({ submissionId, error: airtableError.message });
+        errors.push({ submissionId, error: getErrorMessage(airtableError) });
       }
-    } catch (validationError: any) {
+    } catch (validationError) {
       logger.error(
-        `Validation error for submission ${submissionId}: ${validationError.message}`,
+        `Validation error for submission ${submissionId}: ${getErrorMessage(validationError)}`,
         { error: validationError },
       );
-      errors.push({ submissionId, error: validationError.message });
+      errors.push({ submissionId, error: getErrorMessage(validationError) });
     }
   }
 

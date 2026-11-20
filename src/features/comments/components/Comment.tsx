@@ -104,7 +104,7 @@ export const Comment = ({
   const [pinLoading, setPinLoading] = useState(false);
   const [pinError, setPinError] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
-  const cancelRef = useRef<any>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
   const containsLink = newReply
     .split(/\s+/)

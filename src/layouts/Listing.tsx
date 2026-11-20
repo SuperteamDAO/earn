@@ -65,7 +65,7 @@ export function ListingPageLayout({
         isCaution: initialListing.sponsor?.isCaution,
         submissionCount: submissionNumber,
         deadline: initialListing.deadline,
-        rewardAmount: initialListing.rewardAmount,
+        rewardAmount: initialListing.rewardAmount ?? undefined,
         type: initialListing.type,
         isPublished: initialListing.isPublished,
         status: initialListing.status,
