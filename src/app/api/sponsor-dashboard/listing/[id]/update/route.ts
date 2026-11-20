@@ -99,7 +99,7 @@ export async function POST(
 
     logger.info(`Listing Updation API Fully Successful with ID: ${id}`);
     return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.log('error', JSON.stringify(error));
     logger.error(
       `Error occurred while updating listing with id = ${id}: ${safeStringify(error)}`,
