@@ -8,10 +8,12 @@ import { useCallback } from 'react';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { type User } from '@/interface/user';
 import { type UserRoleHint, useUser } from '@/store/user';
 
-import { recentEarnersQuery } from '@/features/listings/queries/recent-earners';
+import {
+  type RecentEarner,
+  recentEarnersQuery,
+} from '@/features/listings/queries/recent-earners';
 import { yourBookmarksQuery } from '@/features/listings/queries/your-bookmarks';
 import { type Listing } from '@/features/listings/types';
 import { isEligiblePeopleType } from '@/features/membership/utils/peopleEligibility';
@@ -81,7 +83,7 @@ const SectionHeader = ({
 );
 
 interface FeedSidebarContentProps {
-  recentEarners: User[] | undefined;
+  recentEarners: RecentEarner[] | undefined;
 }
 
 const FeedSidebarContent = ({ recentEarners }: FeedSidebarContentProps) => (
@@ -108,7 +110,7 @@ const SponsorSidebarContent = () => (
 interface NonSponsorSidebarContentProps {
   totals: { count?: number; totalInUSD?: number } | undefined;
   isTotalsLoading: boolean;
-  recentEarners: User[] | undefined;
+  recentEarners: RecentEarner[] | undefined;
   bookmarks: Listing[] | undefined;
   currentPath: string;
   showSponsorBanner: boolean;

@@ -97,7 +97,7 @@ export default async function grants(
 
     logger.info(`Fetched ${grants.length} grants successfully`);
     return res.status(200).json(grantsWithTotalApplications);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching grants: ${safeStringify(error)}`,
     );

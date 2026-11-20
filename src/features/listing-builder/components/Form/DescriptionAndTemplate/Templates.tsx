@@ -101,12 +101,9 @@ export function Templates() {
     try {
       await posthog.capture('template_sponsor');
       const currentValues = form.getValues();
-      const cleanedTemplate = cleanTemplate(
-        templateToApply as any,
-        currentValues,
-      );
+      const cleanedTemplate = cleanTemplate(templateToApply, currentValues);
 
-      form.reset(cleanedTemplate as any);
+      form.reset(cleanedTemplate);
       await form.saveDraft();
     } catch (error) {
       console.error('Error applying template', { error });

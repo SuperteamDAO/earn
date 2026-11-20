@@ -145,7 +145,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           totalTranches: {
             increment: 1,
           },
-          paymentDetails: updatedPaymentDetails as any,
+          paymentDetails: updatedPaymentDetails,
           ...(isFullyPaid && { applicationStatus: 'Completed' }),
         },
         select: grantApplicationMutationSelect,
@@ -165,7 +165,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Payment details updated successfully for grant application ID: ${id}`,
     );
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while updating payment for grant application ID: ${id}`,
       safeStringify(error),

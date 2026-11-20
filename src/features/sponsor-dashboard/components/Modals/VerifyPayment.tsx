@@ -41,7 +41,7 @@ import {
 interface VerifyPaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  listing: ListingWithSubmissions | undefined;
+  listing: Omit<ListingWithSubmissions, 'Hackathon'> | undefined;
   isHackathonPage?: boolean;
 }
 
@@ -587,6 +587,7 @@ export const VerifyPaymentModal = ({
                                 )}
                                 <FormMessage />
                                 <FormField
+                                  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- RHF's FieldPath excludes `.root` error paths; this FormField only renders the FormMessage for that error
                                   name={`paymentLinks.${index}.root` as any}
                                   control={control}
                                   render={() => {
@@ -827,6 +828,7 @@ export const VerifyPaymentModal = ({
                 )}
               </div>
               <FormField
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- RHF's FieldPath excludes `.root` error paths; this FormField only renders the FormMessage for that error
                 name={`paymentLinks.root` as any}
                 control={control}
                 render={() => {

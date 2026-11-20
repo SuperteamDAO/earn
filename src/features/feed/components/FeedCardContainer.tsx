@@ -31,12 +31,12 @@ interface FeedCardContainerProps {
   actionLinks: ReactNode;
   children: ReactNode;
   type: 'activity' | 'profile';
-  firstName: string;
-  lastName: string;
-  photo: string | undefined;
+  firstName: string | null;
+  lastName: string | null;
+  photo: string | undefined | null;
   username?: string;
   id: string;
-  like: any;
+  like?: FeedDataProps['like'];
   commentLink?: string;
   commentCount?: number;
   cardType: 'submission' | 'pow' | 'grant-application';
@@ -67,7 +67,7 @@ export const FeedCardContainer = ({
   const { user } = useUser();
 
   const [isLiked, setIsLiked] = useState<boolean>(
-    !!like?.find((e: any) => e.id === user?.id),
+    !!like?.find((e) => e.id === user?.id),
   );
   const [totalLikes, setTotalLikes] = useState<number>(like?.length ?? 0);
   const {
@@ -91,7 +91,7 @@ export const FeedCardContainer = ({
   const sanitizedLink = getURLSanitized(link);
 
   useEffect(() => {
-    setIsLiked(!!like?.find((e: any) => e.id === user?.id));
+    setIsLiked(!!like?.find((e) => e.id === user?.id));
   }, [like, user?.id]);
 
   const handleLike = async () => {

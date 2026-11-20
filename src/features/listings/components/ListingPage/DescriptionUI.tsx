@@ -29,7 +29,7 @@ import { ProIntro } from '@/features/pro/components/ProIntro';
 import styles from '@/styles/listing-description.module.css';
 
 interface Props {
-  description?: string;
+  description?: string | null;
   type: BountyType | 'grant';
   sponsorId: string;
   isPro?: boolean;

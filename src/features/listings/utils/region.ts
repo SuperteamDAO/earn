@@ -151,7 +151,7 @@ export function userRegionEligibilty({
   chapters = [],
 }: {
   region: string | undefined;
-  userLocation: string | undefined;
+  userLocation: string | undefined | null;
   chapters?: ChapterRegionData[];
 }) {
   if (normalizeRegionValue(region) === 'global') {

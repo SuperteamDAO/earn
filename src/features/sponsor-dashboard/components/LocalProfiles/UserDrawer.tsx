@@ -25,8 +25,8 @@ export const UserDrawer = ({
   onClose: () => void;
   user: LocalProfile;
 }) => {
-  const parentSkills = user.skills.map((skill: any) => skill.skills);
-  const subSkills = user.skills.flatMap((skill: any) => skill.subskills);
+  const parentSkills = (user.skills ?? []).map((skill) => skill.skills);
+  const subSkills = (user.skills ?? []).flatMap((skill) => skill.subskills);
   const socialLinks = [
     { Component: Telegram, link: user.telegram },
     { Component: Twitter, link: user.twitter },

@@ -92,7 +92,7 @@ export const SponsorInfoModal = ({
 
     updateUserMutation.mutate({
       ...data,
-      photo: finalPhoto,
+      photo: finalPhoto ?? undefined,
     });
   };
 

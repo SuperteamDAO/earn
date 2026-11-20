@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { type BountyType } from '@/prisma/enums';
+
 import { type Rewards } from '@/features/listings/types';
 
 export interface FeedDataProps {
@@ -10,21 +12,23 @@ export interface FeedDataProps {
     date: number;
   }[];
   link: string;
+  // PoW items only (submissions and grants carry listingTitle instead)
+  title?: string;
   tweet: string;
   eligibilityAnswers: string;
   otherInfo: string;
   isWinner: boolean;
   winnerPosition: keyof Rewards | undefined;
   description: string;
-  firstName: string;
-  lastName: string;
-  photo: string;
+  firstName: string | null;
+  lastName: string | null;
+  photo: string | null;
   username: string;
   listingId: number;
   sponsorId: number;
   listingTitle: string;
   rewards: Rewards | undefined;
-  listingType: 'bounty' | 'hackathon' | 'project';
+  listingType: BountyType;
   listingSlug: string;
   isWinnersAnnounced: boolean;
   token: string;

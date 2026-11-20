@@ -14,6 +14,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { Tooltip } from '@/components/ui/tooltip';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import {
+  parseQuestionAnswers,
+  type QuestionAnswer,
+} from '@/utils/parseQuestionAnswers';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
@@ -89,10 +93,12 @@ export const ApplicationDetails = ({
       ? AGENTIC_ENGINEERING_GRANT_COPY.application
       : null;
 
-  const getAnswerQuestion = (answer: any): GrantQuestion | undefined =>
+  const getAnswerQuestion = (
+    answer: QuestionAnswer,
+  ): GrantQuestion | undefined =>
     grant?.questions?.find((question) => question.question === answer.question);
 
-  const isLinkAnswer = (answer: any) => {
+  const isLinkAnswer = (answer: QuestionAnswer) => {
     const grantQuestion = getAnswerQuestion(answer);
     return answer.type === 'link' || grantQuestion?.type === 'link';
   };
@@ -510,10 +516,10 @@ export const ApplicationDetails = ({
                 isHtml
               />
 
-              {isST && (selectedApplication as any)?.lumaLink && (
+              {isST && selectedApplication?.lumaLink && (
                 <InfoBox
                   label={ST_GRANT_COPY.application.lumaLink!.label}
-                  content={(selectedApplication as any)?.lumaLink}
+                  content={selectedApplication?.lumaLink}
                 />
               )}
 
@@ -540,10 +546,10 @@ export const ApplicationDetails = ({
                 isHtml
               />
 
-              {isST && (selectedApplication as any)?.expenseBreakdown && (
+              {isST && selectedApplication?.expenseBreakdown && (
                 <InfoBox
                   label={ST_GRANT_COPY.application.expenseBreakdown!.label}
-                  content={(selectedApplication as any)?.expenseBreakdown}
+                  content={selectedApplication?.expenseBreakdown}
                   isHtml
                 />
               )}
@@ -567,22 +573,20 @@ export const ApplicationDetails = ({
                 />
               )}
 
-              {Array.isArray(selectedApplication?.answers) &&
-                selectedApplication.answers.map(
-                  (answer: any, answerIndex: number) => {
-                    const grantQuestion = getAnswerQuestion(answer);
-                    const isOptional =
-                      answer.optional ?? grantQuestion?.optional;
-                    return (
-                      <InfoBox
-                        key={answerIndex}
-                        label={`${answer.question}${isOptional ? ' (Optional)' : ''}`}
-                        content={answer.answer}
-                        isHtml={!isLinkAnswer(answer)}
-                      />
-                    );
-                  },
-                )}
+              {parseQuestionAnswers(selectedApplication?.answers).map(
+                (answer, answerIndex: number) => {
+                  const grantQuestion = getAnswerQuestion(answer);
+                  const isOptional = answer.optional ?? grantQuestion?.optional;
+                  return (
+                    <InfoBox
+                      key={answerIndex}
+                      label={`${answer.question}${isOptional ? ' (Optional)' : ''}`}
+                      content={answer.answer}
+                      isHtml={!isLinkAnswer(answer)}
+                    />
+                  );
+                },
+              )}
             </ScrollArea>
             <button
               aria-label="Resize notes panel"

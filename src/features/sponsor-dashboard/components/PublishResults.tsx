@@ -24,7 +24,7 @@ interface Props {
   isOpen: boolean;
   totalWinners: number;
   totalPaymentsMade: number;
-  bounty: Listing | undefined;
+  bounty: Omit<Listing, 'Hackathon'> | undefined;
   remainings: { podiums: number; bonus: number } | null;
   submissionsLeft: number;
   showSurvey?: () => void;

@@ -1,3 +1,5 @@
+import { type BountyType } from '@/prisma/enums';
+
 interface Suggestions {
   tokens: string[];
   suggestions: {
@@ -61,10 +63,7 @@ function calculateSuggestions(suggestions: Suggestions[], input: string) {
     .flatMap((row) => row.suggestions);
 }
 
-export function getSuggestions(
-  input: string | undefined,
-  type: 'bounty' | 'project' | 'hackathon',
-) {
+export function getSuggestions(input: string | undefined, type: BountyType) {
   if (!input) return [];
   if (type === 'bounty') {
     return calculateSuggestions(bountySuggestions, input);

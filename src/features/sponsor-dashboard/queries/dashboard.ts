@@ -9,7 +9,7 @@ const fetchListings = async (): Promise<ListingWithSubmissions[]> => {
   return data;
 };
 
-export const dashboardQuery = (sponsorId: string | undefined) =>
+export const dashboardQuery = (sponsorId: string | undefined | null) =>
   queryOptions({
     queryKey: ['dashboard', sponsorId],
     queryFn: () => fetchListings(),
