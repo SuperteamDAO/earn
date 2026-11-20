@@ -56,7 +56,7 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
       result,
       validUsernames,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `[AgentComment] Error occurred while fetching comments for refId=${refId}: ${safeStringify(error)}`,
     );
