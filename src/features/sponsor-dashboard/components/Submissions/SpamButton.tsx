@@ -22,7 +22,7 @@ interface UpdateLabelResponse {
     id: string;
     label: SubmissionLabels;
     autoFixed?: boolean;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 

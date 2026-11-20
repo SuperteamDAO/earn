@@ -1,4 +1,5 @@
 import { waitUntil } from '@vercel/functions';
+import { isAxiosError } from 'axios';
 import { headers } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -6,6 +7,8 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
+import { type GrantTrancheUpdateInput } from '@/prisma/models/GrantTranche';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
@@ -150,7 +153,7 @@ export async function POST(request: NextRequest) {
           sanitizedCustomNote = noteValidation.sanitized;
         }
 
-        const updateData: any = {
+        const updateData: GrantTrancheUpdateInput = {
           status,
           decidedAt: new Date().toISOString(),
           approvedAmount,
@@ -282,12 +285,12 @@ export async function POST(request: NextRequest) {
             if (result.status === 'Approved') {
               try {
                 await addPaymentInfoToAirtable(result.GrantApplication, result);
-              } catch (airtableError: any) {
+              } catch (airtableError) {
                 logger.error(
-                  `Error adding payment info to Airtable: ${airtableError.message}`,
+                  `Error adding payment info to Airtable: ${getErrorMessage(airtableError)}`,
                 );
                 logger.error(
-                  `Airtable error details: ${safeStringify(airtableError.response?.data || airtableError)}`,
+                  `Airtable error details: ${safeStringify((isAxiosError(airtableError) && airtableError.response?.data) || airtableError)}`,
                 );
               }
               await queueEmail({
@@ -322,7 +325,7 @@ export async function POST(request: NextRequest) {
       },
       { ttlSeconds: 300 },
     );
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof LockNotAcquiredError) {
       return NextResponse.json(
         {
@@ -333,7 +336,7 @@ export async function POST(request: NextRequest) {
       );
     }
     logger.error(
-      `Error occurred while updating grant tranche ID: ${id}:  ${error.message}`,
+      `Error occurred while updating grant tranche ID: ${id}:  ${getErrorMessage(error)}`,
     );
     return NextResponse.json(
       {

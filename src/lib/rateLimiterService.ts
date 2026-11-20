@@ -84,7 +84,7 @@ async function checkRateLimit(
         reset,
       },
     };
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `[RateLimiterService][${routeName}] CRITICAL ERROR for "${identifier}": ${safeStringify(error)}`,
     );

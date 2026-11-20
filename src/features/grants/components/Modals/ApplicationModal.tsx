@@ -184,8 +184,8 @@ export const ApplicationModal = ({
                 )?.find((a) => a.question === q.question)?.answer || '',
             }))
           : [],
-      lumaLink: (grantApplication as any)?.lumaLink || '',
-      expenseBreakdown: (grantApplication as any)?.expenseBreakdown || '',
+      lumaLink: grantApplication?.lumaLink || '',
+      expenseBreakdown: grantApplication?.expenseBreakdown || '',
     },
   });
 
@@ -307,7 +307,7 @@ export const ApplicationModal = ({
       } else {
         setVerificationStatus('error');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('X verification failed:', error);
       setVerificationStatus('error');
     }
@@ -471,7 +471,7 @@ export const ApplicationModal = ({
       ],
     };
 
-    form.trigger(fieldsToValidate[activeStep] as any).then((isValid) => {
+    form.trigger(fieldsToValidate[activeStep]).then((isValid) => {
       if (isValid) {
         const nextStep = activeStep + 1;
         setActiveStep(nextStep);

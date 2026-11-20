@@ -35,7 +35,7 @@ export async function getSponsorSession(
       ),
     };
 
-    const privyDid = await getPrivyToken(req as any);
+    const privyDid = await getPrivyToken(req);
 
     if (!privyDid) {
       logger.error('Unauthorized, Privy Did not found');

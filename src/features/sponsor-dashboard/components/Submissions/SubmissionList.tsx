@@ -26,7 +26,7 @@ import { MultiSelectFilter } from './MultiSelectFilter';
 import { SelectLabel } from './SelectLabel';
 
 interface Props {
-  listing?: Listing;
+  listing?: Omit<Listing, 'Hackathon'>;
   submissions: SubmissionWithUser[];
   setSearchText: Dispatch<SetStateAction<string>>;
   type?: string;

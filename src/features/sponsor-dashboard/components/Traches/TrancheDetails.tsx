@@ -12,6 +12,10 @@ import { CircularProgress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { TokenIcon } from '@/components/ui/token-icon';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
+import {
+  parseQuestionAnswers,
+  type QuestionAnswer,
+} from '@/utils/parseQuestionAnswers';
 import { truncatePublicKey } from '@/utils/truncatePublicKey';
 import { truncateString } from '@/utils/truncateString';
 
@@ -59,10 +63,12 @@ export const TrancheDetails = ({
       ? AGENTIC_ENGINEERING_GRANT_COPY.tranche
       : null;
 
-  const getAnswerQuestion = (answer: any): GrantQuestion | undefined =>
+  const getAnswerQuestion = (
+    answer: QuestionAnswer,
+  ): GrantQuestion | undefined =>
     grant?.questions?.find((question) => question.question === answer.question);
 
-  const isLinkAnswer = (answer: any) => {
+  const isLinkAnswer = (answer: QuestionAnswer) => {
     const grantQuestion = getAnswerQuestion(answer);
     return answer.type === 'link' || grantQuestion?.type === 'link';
   };
@@ -406,22 +412,20 @@ export const TrancheDetails = ({
                 content={selectedTranche?.GrantApplication?.twitter}
               />
 
-              {Array.isArray(selectedTranche?.GrantApplication?.answers) &&
-                selectedTranche?.GrantApplication?.answers.map(
-                  (answer: any, answerIndex: number) => {
-                    const grantQuestion = getAnswerQuestion(answer);
-                    const isOptional =
-                      answer.optional ?? grantQuestion?.optional;
-                    return (
-                      <InfoBox
-                        key={answerIndex}
-                        label={`${answer.question}${isOptional ? ' (Optional)' : ''}`}
-                        content={answer.answer}
-                        isHtml={!isLinkAnswer(answer)}
-                      />
-                    );
-                  },
-                )}
+              {parseQuestionAnswers(
+                selectedTranche?.GrantApplication?.answers,
+              ).map((answer, answerIndex: number) => {
+                const grantQuestion = getAnswerQuestion(answer);
+                const isOptional = answer.optional ?? grantQuestion?.optional;
+                return (
+                  <InfoBox
+                    key={answerIndex}
+                    label={`${answer.question}${isOptional ? ' (Optional)' : ''}`}
+                    content={answer.answer}
+                    isHtml={!isLinkAnswer(answer)}
+                  />
+                );
+              })}
             </ScrollArea>
           </div>
         </>

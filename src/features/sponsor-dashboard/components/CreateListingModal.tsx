@@ -8,11 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
 import { BountyIcon } from '@/svg/bounty-icon';
 import { ProjectIcon } from '@/svg/project-icon';
 
 import { getVisibleHackathons } from '@/features/hackathon/utils/getVisibleHackathons';
+import { type BuilderHackathon } from '@/features/listing-builder/types';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
 export const CreateListingModal = ({
@@ -22,7 +22,7 @@ export const CreateListingModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  hackathons?: HackathonModel[];
+  hackathons?: BuilderHackathon[];
 }) => {
   const router = useRouter();
 

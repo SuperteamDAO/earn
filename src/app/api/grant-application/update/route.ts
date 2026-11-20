@@ -5,6 +5,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { parseQuestionConfigs } from '@/utils/parseQuestionConfigs';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { queueAgent } from '@/features/agents/utils/queueAgent';
@@ -28,12 +29,13 @@ import {
   WALLET_ADDRESS_CONFLICT_MESSAGE,
 } from '@/features/grants/utils/walletAddressOwnership.constants';
 import { extractSocialUsername } from '@/features/social/utils/extractUsername';
+import { getLinkedTwitterHandles } from '@/features/social/utils/linkedTwitter';
 
 async function updateGrantApplication(
   userId: string,
   grantId: string,
-  data: any,
-  grant: any,
+  data: Record<string, unknown>,
+  grant: Awaited<ReturnType<typeof validateGrantRequest>>['grant'],
 ) {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id: userId },
@@ -44,21 +46,28 @@ async function updateGrantApplication(
   const fixedAsk = getGrantFixedAsk(grant);
 
   const validationResult = grantApplicationSchema(
-    grant.minReward,
-    grant.maxReward,
-    grant.token,
-    grant.questions,
-    user as any,
+    // null behaves as 0 in every comparison the schema makes
+    grant.minReward ?? 0,
+    grant.maxReward ?? 0,
+    grant.token ?? '',
+    parseQuestionConfigs(grant.questions),
+    { linkedTwitter: getLinkedTwitterHandles(user.linkedTwitter) },
     isST,
     isAgenticEngineering,
   ).safeParse({
     ...data,
     twitter:
       data.twitter !== undefined
-        ? extractSocialUsername('twitter', data.twitter) || ''
+        ? extractSocialUsername(
+            'twitter',
+            typeof data.twitter === 'string' ? data.twitter : '',
+          ) || ''
         : undefined,
     github: data.github
-      ? extractSocialUsername('github', data.github) || ''
+      ? extractSocialUsername(
+          'github',
+          typeof data.github === 'string' ? data.github : '',
+        ) || ''
       : null,
   });
 
@@ -252,7 +261,7 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `User ${userId} unable to update grant application: ${safeStringify(error)}`,
       {
@@ -261,7 +270,10 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    if (error.message === WALLET_ADDRESS_CONFLICT_MESSAGE) {
+    if (
+      error instanceof Error &&
+      error.message === WALLET_ADDRESS_CONFLICT_MESSAGE
+    ) {
       return NextResponse.json(
         {
           code: WALLET_ADDRESS_CONFLICT_CODE,
@@ -274,7 +286,7 @@ export async function POST(request: NextRequest) {
 
     let statusCode = 403;
     try {
-      JSON.parse(error.message);
+      JSON.parse(error instanceof Error ? error.message : '');
       statusCode = 400;
     } catch {}
 

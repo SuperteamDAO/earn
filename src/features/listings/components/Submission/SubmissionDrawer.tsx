@@ -434,7 +434,7 @@ export const SubmissionDrawer = ({
       } else {
         setVerificationStatus('error');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('X verification failed:', error);
       setVerificationStatus('error');
     }

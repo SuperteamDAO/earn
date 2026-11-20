@@ -2,6 +2,8 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type SubmissionUpdateInput } from '@/prisma/models/Submission';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -94,7 +96,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     for (const submission of currentSubmissions) {
       let autoFixed = false;
-      const updateData: any = { label };
+      const updateData: SubmissionUpdateInput = { label };
 
       if (label === 'Spam' && submission.isWinner) {
         updateData.isWinner = false;
@@ -151,8 +153,10 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         },
       });
     }
-  } catch (error: any) {
-    logger.error(`Error occurred while updating submissions: ${error.message}`);
+  } catch (error) {
+    logger.error(
+      `Error occurred while updating submissions: ${getErrorMessage(error)}`,
+    );
     return res.status(500).json({
       error: 'Internal Server Error',
       message: 'Error occurred while updating the submissions.',

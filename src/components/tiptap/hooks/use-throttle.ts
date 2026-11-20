@@ -1,14 +1,14 @@
 import { useCallback, useRef } from 'react';
 
-export function useThrottle<T extends (...args: any[]) => void>(
-  callback: T,
+export function useThrottle<Args extends unknown[]>(
+  callback: (...args: Args) => void,
   delay: number,
-): (...args: Parameters<T>) => void {
+): (...args: Args) => void {
   const lastRan = useRef<number>(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   return useCallback(
-    (...args: Parameters<T>) => {
+    (...args: Args) => {
       const handler = () => {
         const now = Date.now();
         // Initialize lastRan on first call (lazy initialization) and execute immediately

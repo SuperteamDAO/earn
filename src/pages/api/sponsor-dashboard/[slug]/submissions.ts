@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
@@ -148,9 +149,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       `Fetched ${sortedSubmissions.length} submissions for slug ${slug}`,
     );
     return res.status(200).json(sortedSubmissions);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error occurred while fetching submissions for slug=${slug}: ${error.message}`,
+      `Error occurred while fetching submissions for slug=${slug}: ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

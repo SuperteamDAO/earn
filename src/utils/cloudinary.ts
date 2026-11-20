@@ -1,5 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary';
 
+import { isCloudinaryNotFound } from '@/lib/image-upload/errors';
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const DatauriParser = require('datauri/parser');
 
@@ -10,7 +12,7 @@ cloudinary.config({
 });
 
 export const csvUpload = async (
-  file: any,
+  file: { content: string },
   fileName: string,
   listingId: string,
 ) => {
@@ -58,8 +60,8 @@ export const verifyImageExists = async (url: string): Promise<boolean> => {
     if (!publicId) return false;
     await cloudinary.api.resource(publicId, { resource_type: 'image' });
     return true;
-  } catch (error: any) {
-    if (error?.http_code === 404 || error?.error?.http_code === 404) {
+  } catch (error) {
+    if (isCloudinaryNotFound(error)) {
       return false;
     }
     throw error;

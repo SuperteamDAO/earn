@@ -160,7 +160,7 @@ export async function POST(request: NextRequest) {
         logger.info(
           `Photo verification successful for user ${userId}: ${filteredData.photo}`,
         );
-      } catch (error: any) {
+      } catch (error) {
         logger.warn(
           `Photo verification error for user ${userId}: ${safeStringify(error)}`,
         );
@@ -287,7 +287,7 @@ export async function POST(request: NextRequest) {
 
     logger.info(`User onboarded successfully for user ID: ${userId}`);
     return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     if (isZodValidationError(error)) {
       logger.warn(
         `Validation failed while onboarding user ${userId}: ${safeStringify(error.flatten())}`,

@@ -1,7 +1,11 @@
 import { atom, useSetAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { components } from 'react-select';
+import {
+  components,
+  type OptionProps,
+  type SingleValueProps,
+} from 'react-select';
 import AsyncSelect from 'react-select/async';
 
 import { VerifiedBadge } from '@/components/shared/VerifiedBadge';
@@ -78,7 +82,7 @@ export function SelectSponsor({
     }
   };
 
-  const handleChange = async (option?: any) => {
+  const handleChange = async (option: SponsorOption | null) => {
     if (!option || isSwitchingSponsor) return;
 
     if (type === 'hackathon') {
@@ -98,7 +102,7 @@ export function SelectSponsor({
     }
   };
 
-  const SingleValue = (props: any) => {
+  const SingleValue = (props: SingleValueProps<SponsorOption, false>) => {
     const { data, selectProps } = props;
 
     if (selectProps.menuIsOpen) {
@@ -124,7 +128,7 @@ export function SelectSponsor({
     );
   };
 
-  const Option = (props: any) => {
+  const Option = (props: OptionProps<SponsorOption, false>) => {
     const { data } = props;
     return (
       <components.Option {...props}>

@@ -13,6 +13,7 @@ import { RegionLabel } from '@/features/listings/components/ListingPage/RegionLa
 import { ListingHeaderSeparator } from '@/features/listings/components/ListingPage/Separator';
 import { ShareListing } from '@/features/listings/components/ListingPage/ShareListing';
 import { StatusBadge } from '@/features/listings/components/ListingPage/StatusBadge';
+import { type References } from '@/features/listings/types';
 import { ProBadge } from '@/features/pro/components/ProBadge';
 
 import { type GrantWithApplicationCount } from '../types';
@@ -29,7 +30,7 @@ interface Props {
   status: string;
   region: string;
   slug: string;
-  references: any;
+  references: References[] | null | undefined;
   isPublished: boolean;
   isApproved: boolean;
   isPro?: boolean;

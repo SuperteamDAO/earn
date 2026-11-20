@@ -34,11 +34,12 @@ const CustomNumberInput = ({
   value: number;
   onChange: (value: number) => void;
   min: number;
-  max?: number;
+  max?: number | null;
   step?: number;
 }) => {
   const increment = () => {
-    if (max === undefined || value + step <= max) {
+    // A null max has always blocked increments (`<= null` compares as `<= 0`).
+    if (max === undefined || (max !== null && value + step <= max)) {
       onChange(value + step);
     }
   };
@@ -123,7 +124,7 @@ interface ApproveModalProps {
     approvedAmount: number,
     customNote?: string,
   ) => void;
-  max: number | undefined;
+  max: number | undefined | null;
 }
 
 export const ApproveModal = ({

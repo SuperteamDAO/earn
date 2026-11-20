@@ -1,3 +1,5 @@
+import { isAxiosError } from 'axios';
+
 import { api } from '@/lib/api';
 
 const allowedNewUserRedirections = ['/earn/signup', '/earn/new/sponsor'];
@@ -26,11 +28,14 @@ export async function handleUserCreation(email: string): Promise<boolean> {
     }
 
     return true;
-  } catch (error: any) {
-    if (error.response?.status === 409) {
+  } catch (error) {
+    if (
+      isAxiosError<{ error?: string }>(error) &&
+      error.response?.status === 409
+    ) {
       console.error(
         'User exists with different authentication method:',
-        error.response.data.error,
+        error.response.data?.error,
       );
       return false;
     }

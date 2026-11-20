@@ -1,4 +1,5 @@
 import { type ClassNameValue } from 'cn';
+import { type CSSProperties } from 'react';
 import useMeasure from 'react-use-measure';
 
 import { cn } from '@/utils/cn';
@@ -31,17 +32,14 @@ export const WandAnimated = ({
   const zOuter = width * FACTORS.outer;
   const zMiddle = width * FACTORS.middle;
   const zInner = width * FACTORS.inner;
+  const depthVars: CSSProperties & Record<`--${string}`, string> = {
+    '--wand-z-outer': `${zOuter}px`,
+    '--wand-z-middle': `${zMiddle}px`,
+    '--wand-z-inner': `${zInner}px`,
+  };
 
   return (
-    <div
-      ref={ref}
-      className={cn(styles.root, className)}
-      style={{
-        ['--wand-z-outer' as any]: `${zOuter}px`,
-        ['--wand-z-middle' as any]: `${zMiddle}px`,
-        ['--wand-z-inner' as any]: `${zInner}px`,
-      }}
-    >
+    <div ref={ref} className={cn(styles.root, className)} style={depthVars}>
       <div className={cn(styles.star, styles.starOuter)}>
         <div className={styles.starSpin}>
           <div className={cn(styles.starClip, starColor)} />

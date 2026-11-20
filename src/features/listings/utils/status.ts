@@ -1,11 +1,11 @@
 import { calculateTotalPrizes } from '@/features/listing-builder/utils/rewards';
 
-import { type Listing, type ListingWithSubmissions } from '../types';
+import { type Rewards } from '../types';
 import { isDeadlineOver } from './deadline';
 
 export const getListingDraftStatus = (
-  status: string | undefined,
-  isPublished: boolean | undefined,
+  status: string | null | undefined,
+  isPublished: boolean | null | undefined,
 ) => {
   if (status === 'CLOSED') return 'CLOSED';
   if (status === 'REVIEW') return 'REVIEW';
@@ -23,8 +23,22 @@ export const getListingTypeLabel = (type: string) => {
   return;
 };
 
+// The fields getListingStatus reads; callers pass bounties, grants and drafts.
+interface ListingStatusInput {
+  type?: string;
+  status?: string | null;
+  isPublished?: boolean | null;
+  publishedAt?: string | Date | null;
+  deadline?: string | Date | null;
+  rewards?: Rewards | null;
+  maxBonusSpots?: number | null;
+  isWinnersAnnounced?: boolean | null;
+  totalPaymentsMade?: number | null;
+  isFndnPaying?: boolean | null;
+}
+
 export const getListingStatus = (
-  listing: Listing | ListingWithSubmissions | any,
+  listing: ListingStatusInput | null | undefined,
   isGrant?: boolean,
 ) => {
   if (!listing) return 'Draft';
@@ -68,7 +82,7 @@ export const getListingStatus = (
         return 'Payment Pending';
       if (
         listing?.isWinnersAnnounced &&
-        listing.totalPaymentsMade > 0 &&
+        (listing.totalPaymentsMade ?? 0) > 0 &&
         listing?.totalPaymentsMade === totalWinnerRanks
       )
         return 'Completed';

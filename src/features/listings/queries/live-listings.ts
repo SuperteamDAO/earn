@@ -1,13 +1,14 @@
 import { queryOptions } from '@tanstack/react-query';
 
 import { api } from '@/lib/api';
+import { type BountyType } from '@/prisma/enums';
 
 import { type Listing } from '../types';
 
 interface ListingsParams {
   take?: number;
   deadline?: string;
-  type?: 'bounty' | 'project' | 'hackathon';
+  type?: BountyType;
   order?: 'asc' | 'desc';
   excludeIds?: string[];
   exclusiveSponsorId?: string;

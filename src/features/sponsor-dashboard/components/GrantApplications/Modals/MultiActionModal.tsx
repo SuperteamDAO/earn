@@ -115,7 +115,7 @@ export const MultiActionModal = ({
                 ...old,
                 data: old.data.map((application) => {
                   if (applicationIds.includes(application.id)) {
-                    return { ...application, label: 'Spam' as any };
+                    return { ...application, label: 'Spam' };
                   }
                   return application;
                 }),
@@ -123,9 +123,9 @@ export const MultiActionModal = ({
             },
           );
 
-          setSelectedApplication((prev: any) => {
+          setSelectedApplication((prev) => {
             if (prev && applicationIds.includes(prev.id)) {
-              return { ...prev, label: 'Spam' as any };
+              return { ...prev, label: 'Spam' };
             }
             return prev;
           });

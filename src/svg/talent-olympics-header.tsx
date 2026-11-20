@@ -1,4 +1,10 @@
-export const TalentOlympicsHeader = ({ styles }: { styles?: any }) => {
+import { type CSSProperties } from 'react';
+
+export const TalentOlympicsHeader = ({
+  styles,
+}: {
+  styles?: CSSProperties;
+}) => {
   return (
     <svg
       style={styles}

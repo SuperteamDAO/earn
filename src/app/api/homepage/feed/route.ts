@@ -4,17 +4,14 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { homeFeedSelect } from '@/features/feed/constants/homeFeed';
+
 export async function GET(_request: NextRequest) {
   try {
     const submissions = await prisma.submission.findMany({
       where: { isArchived: false, isActive: true },
       take: 5,
-      select: {
-        createdAt: true,
-        isWinner: true,
-        listing: { select: { type: true, isWinnersAnnounced: true } },
-        user: { select: { firstName: true, lastName: true, username: true } },
-      },
+      select: homeFeedSelect,
       orderBy: { createdAt: 'desc' },
     });
 
@@ -23,7 +20,7 @@ export async function GET(_request: NextRequest) {
         'Cache-Control': 'public, max-age=300, stale-while-revalidate=600',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.warn(`Error`, safeStringify(error));
     return NextResponse.json(
       { error: 'Error occurred while fetching feed data.' },

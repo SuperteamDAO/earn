@@ -88,7 +88,7 @@ export async function GET(
 
     logger.info(`Successfully fetched bounty template for slug: ${slug}`);
     return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching bounty template with slug=${slug}: ${safeStringify(error)}`,
     );

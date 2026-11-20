@@ -125,7 +125,7 @@ export async function POST(request: Request) {
       system:
         'Your role is to generate proper rewards for listings, strictly adhering to the rules provided with each description and type.',
       prompt,
-      schema: responseSchema as any,
+      schema: responseSchema,
     });
 
     logger.info('Generated rewards object: ', safeStringify(object));

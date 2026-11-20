@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Tooltip } from '@/components/ui/tooltip';
+import { type User } from '@/interface/user';
 
 export const InfoWrapper = ({
   children,
@@ -12,7 +13,7 @@ export const InfoWrapper = ({
   children: React.ReactNode;
   isUserEligibleByRegion: boolean;
   regionTooltipLabel: string;
-  user: any;
+  user: User | null | undefined;
   cooldownTooltipContent?: string;
 }) => {
   const tooltipContent =

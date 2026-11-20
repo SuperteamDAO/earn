@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 
 import MdArrowForward from '@/components/icons/MdArrowForward';
 import { TokenIcon } from '@/components/ui/token-icon';
-import { type User } from '@/interface/user';
 import { formatNumberWithSuffix } from '@/utils/formatNumberWithSuffix';
 import { getURL } from '@/utils/validUrl';
 
+import { type RecentEarner } from '@/features/listings/queries/recent-earners';
 import { EarnAvatar } from '@/features/talent/components/EarnAvatar';
 
 interface EarnerProps {
@@ -64,7 +64,7 @@ const Earner = ({
   );
 };
 
-export const RecentEarners = ({ earners }: { earners?: User[] }) => {
+export const RecentEarners = ({ earners }: { earners?: RecentEarner[] }) => {
   const marqueeRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
@@ -116,15 +116,15 @@ export const RecentEarners = ({ earners }: { earners?: User[] }) => {
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          {multipliedEarners.map((t: any, index: number) => (
+          {multipliedEarners.map((t, index: number) => (
             <Earner
               key={`${t.id}-${index}`}
               amount={t.reward ?? 0}
-              token={t.rewardToken}
+              token={t.rewardToken ?? undefined}
               name={`${t.firstName} ${t.lastName}`}
-              username={t.username}
-              avatar={t.photo}
-              bounty={t.title ?? ''}
+              username={t.username ?? ''}
+              avatar={t.photo ?? undefined}
+              bounty={t.title}
               id={t.id}
             />
           ))}

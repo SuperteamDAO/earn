@@ -233,7 +233,7 @@ const openSignInWindow = (
       const data =
         typeof event.data === 'string'
           ? { type: 'earn-auth', query: event.data }
-          : (event.data as any);
+          : event.data;
       if (data?.type !== 'earn-auth') return;
       const params = new URLSearchParams(String(data.query || ''));
       const error = params.get('error');

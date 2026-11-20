@@ -15,8 +15,8 @@ import { getCombinedRegion, getRegionSlug } from '../../utils/region';
 
 interface ExtraInfoSectionProps {
   skills?: ParentSkills[];
-  requirements?: string | undefined;
-  pocSocials?: string | undefined;
+  requirements?: string | undefined | null;
+  pocSocials?: string | undefined | null;
   region?: string | undefined;
   commitmentDate?: string | undefined;
   Hackathon?: ListingHackathon;

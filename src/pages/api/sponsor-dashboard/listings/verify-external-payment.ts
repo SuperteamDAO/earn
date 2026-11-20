@@ -3,11 +3,16 @@ import { type NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { getTokenBySymbol } from '@/server/tokenList';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkListingSponsorAuth } from '@/features/auth/utils/checkListingSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
+import {
+  getPaymentAmount,
+  readPaymentHistory,
+} from '@/features/listings/utils/paymentDetails';
 import {
   type ValidatePaymentResult,
   verifyExternalPaymentRequestSchema,
@@ -177,18 +182,24 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           throw new Error('Submission has no winner position');
         }
 
-        const winnerReward = (listing.rewards as Record<string, any>)?.[
-          winnerPosition + ''
-        ] as number;
+        const winnerReward = (
+          listing.rewards as Record<string, number> | null
+        )?.[winnerPosition + ''] as number;
         if (!winnerReward) {
           logger.error('Winner Position has no reward');
           throw new Error('Winner Position has no reward');
         }
 
         const isProject = listing.type === 'project';
-        const existingPayments = (submission.paymentDetails as any[]) || [];
-        const totalAlreadyPaid = existingPayments.reduce(
-          (sum, payment) => sum + payment.amount,
+        const existingPayments = readPaymentHistory(submission.paymentDetails);
+        if (!existingPayments) {
+          logger.error(
+            `Submission ${submission.id} has payment history in an unexpected format`,
+          );
+          throw new Error('Unexpected payment history format');
+        }
+        const totalAlreadyPaid = existingPayments.reduce<number>(
+          (sum, payment) => sum + getPaymentAmount(payment),
           0,
         );
         const remainingAmount = winnerReward - totalAlreadyPaid;
@@ -243,7 +254,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           `External Payment Validation Successful for Submission ID: ${paymentLink.submissionId} with TxId: ${paymentLink.txId}`,
         );
         await wait(5000);
-      } catch (error: any) {
+      } catch (error) {
         validationResults.push({
           submissionId: paymentLink.submissionId,
           txId: paymentLink.txId || '',
@@ -252,7 +263,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
         });
         await wait(5000);
         logger.warn(
-          `External Payment Verification Failed for Submission ID: ${paymentLink.submissionId} with TxId: ${paymentLink.txId} with message: ${error.message}`,
+          `External Payment Verification Failed for Submission ID: ${paymentLink.submissionId} with TxId: ${paymentLink.txId} with message: ${getErrorMessage(error)}`,
         );
       }
     }
@@ -280,12 +291,13 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       const submission = submissions.find((s) => s.id === submissionId);
       if (!submission) continue;
 
-      const winnerReward = (listing.rewards as Record<string, any>)?.[
+      const winnerReward = (listing.rewards as Record<string, number> | null)?.[
         submission.winnerPosition + ''
       ] as number;
 
       const isProject = listing.type === 'project';
-      const existingPayments = (submission.paymentDetails as any[]) || [];
+      const existingPayments = readPaymentHistory(submission.paymentDetails);
+      if (!existingPayments) continue;
 
       const newPayments = results
         .filter(
@@ -302,8 +314,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
       const allPayments = [...existingPayments, ...newPayments];
 
-      const totalPaidAmount = allPayments.reduce(
-        (sum, payment) => sum + payment.amount,
+      const totalPaidAmount = allPayments.reduce<number>(
+        (sum, payment) => sum + getPaymentAmount(payment),
         0,
       );
       const isFullyPaid = totalPaidAmount >= winnerReward;
@@ -320,9 +332,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     return res.status(200).json({ validationResults });
-  } catch (err: any) {
+  } catch (err) {
     logger.error(
-      `Error verifying external payments: ${userSponsorId}: ${err.message}`,
+      `Error verifying external payments: ${userSponsorId}: ${getErrorMessage(err)}`,
     );
     res.status(400).json({
       err: 'Error verifying external payments: ',

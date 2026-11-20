@@ -3,6 +3,7 @@ import type { NextApiResponse } from 'next';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { parseBoundedIntegerParam } from '@/utils/apiPagination';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
@@ -119,9 +120,9 @@ async function sponsors(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     res.status(200).json(finalSponsors);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error fetching sponsors for user ${userId}: ${error.message}`,
+      `Error fetching sponsors for user ${userId}: ${getErrorMessage(error)}`,
     );
     res.status(500).json({
       error: 'Internal Server Error',
