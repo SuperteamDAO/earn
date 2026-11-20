@@ -1,5 +1,5 @@
 import { prisma } from '@/prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@/prisma/client';
 
 export type LikeModel = 'submission' | 'poW' | 'grantApplication';
 
