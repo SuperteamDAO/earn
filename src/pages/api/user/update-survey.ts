@@ -57,7 +57,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
 
     logger.info(`Surveys shown updated successfully for user ID: ${userId}`);
     return res.status(200).json({ message: 'Success' });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while processing the request for user ID: ${req.userId} - ${safeStringify(error)}`,
     );

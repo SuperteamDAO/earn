@@ -154,7 +154,7 @@ export default async function createUser(
 
       throw createError;
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while creating/checking user: ${safeStringify(error)}`,
     );
