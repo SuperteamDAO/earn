@@ -1,4 +1,4 @@
-import parse, { type HTMLReactParserOptions } from 'html-react-parser';
+import parse, { Element, type HTMLReactParserOptions } from 'html-react-parser';
 
 import { LinkTextParser } from '@/components/shared/LinkTextParser';
 
@@ -7,7 +7,9 @@ import { sanitizeGrantApplicationHtml } from '@/features/grants/utils/sanitizeGr
 import styles from '@/styles/info-box.module.css';
 
 const options: HTMLReactParserOptions = {
-  replace: ({ name, children, attribs }: any) => {
+  replace: (domNode) => {
+    if (!(domNode instanceof Element)) return undefined;
+    const { name, children, attribs } = domNode;
     if (name === 'p' && (!children || children.length === 0)) {
       return <br />;
     }

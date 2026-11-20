@@ -36,8 +36,8 @@ interface EmailNotificationParams {
   type: EmailType;
   id: string;
   userId?: string;
-  otherInfo?: any;
-  triggeredBy: any;
+  otherInfo?: unknown;
+  triggeredBy: string | undefined;
   delay?: number;
 }
 

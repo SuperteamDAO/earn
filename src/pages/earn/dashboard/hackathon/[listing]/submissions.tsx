@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useSetAtom } from 'jotai';
 import type { GetServerSideProps } from 'next';
 import { useSearchParams } from 'next/navigation';
@@ -73,7 +74,9 @@ export default function BountySubmissions({ listing }: Props) {
   useEffect(() => {
     // Don't show error toast if we're switching sponsors or if user is GOD mode
     if (bountyError && !isSwitchingSponsor && user?.role !== 'GOD') {
-      const error = bountyError as any;
+      const error = isAxiosError<{ sponsorId?: string }>(bountyError)
+        ? bountyError
+        : undefined;
       if (error?.response?.status === 403) {
         // Don't show error if it's a sponsor mismatch that will be auto-switched
         const hasSponsorId = error?.response?.data?.sponsorId;
@@ -172,8 +175,8 @@ export default function BountySubmissions({ listing }: Props) {
   }, []);
 
   const usedPositions = submissions
-    ?.filter((s: any) => s.isWinner)
-    .map((s: any) => Number(s.winnerPosition))
+    ?.filter((s) => s.isWinner)
+    .map((s) => Number(s.winnerPosition))
     .filter((key: number) => !isNaN(key));
 
   const totalWinners = submissions?.filter((sub) => sub.isWinner).length;

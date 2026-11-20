@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { type BountyType } from '@/generated/prisma/enums';
-import { type HackathonModel } from '@/prisma/models/Hackathon';
 import Sparkle from '@/svg/sparkle';
 
+import { type BuilderHackathon } from '@/features/listing-builder/types';
 import { getListingIcon } from '@/features/listings/utils/getListingIcon';
 
 import { Templates } from './Templates';
@@ -23,7 +23,7 @@ interface AutoGenerateFormProps {
   setInput: (input: string) => void;
   setHackathonSlug: (hackathon: string) => void;
   hackathonSlug: string;
-  hackathons?: HackathonModel[];
+  hackathons?: BuilderHackathon[];
 }
 
 export function AutoGenerateForm({

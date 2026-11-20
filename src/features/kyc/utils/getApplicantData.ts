@@ -9,6 +9,39 @@ import { handleSumSubError } from './handleSumSubError';
 
 const MISSING_ID_NUMBER_FALLBACK = 'REDACTED';
 
+// The parts of Sumsub's applicant and requiredIdDocsStatus payloads read here.
+// Image ids sit under several keys depending on the payload, hence the index signature.
+interface SumsubIdDoc {
+  idDocType?: string;
+  country?: string;
+  number?: string;
+  [key: string]: unknown;
+}
+
+interface SumsubApplicant {
+  id?: string;
+  info: {
+    firstNameEn?: string;
+    middleNameEn?: string;
+    lastNameEn?: string;
+    country?: string;
+    dob?: string;
+    idDocs?: SumsubIdDoc[];
+  };
+}
+
+interface SumsubIdentityStep {
+  idDocType?: string;
+  country?: string;
+  imageStatuses?: unknown;
+  imageReviewResults?: unknown;
+}
+
+const asRecord = (value: unknown): Record<string, unknown> | undefined =>
+  typeof value === 'object' && value !== null
+    ? (value as Record<string, unknown>)
+    : undefined;
+
 export const getApplicantData = async (
   userId: string,
   secretKey: string,
@@ -34,7 +67,7 @@ export const getApplicantData = async (
   );
 
   try {
-    const applicantResponse = await axios.get(
+    const applicantResponse = await axios.get<SumsubApplicant>(
       `${SUMSUB_BASE_URL}${applicantUrl}`,
       { headers },
     );
@@ -69,21 +102,25 @@ export const getApplicantData = async (
       appToken,
     );
 
-    const statusResponse = await axios.get(`${SUMSUB_BASE_URL}${statusUrl}`, {
-      headers: statusHeaders,
-    });
+    const statusResponse = await axios.get<{ IDENTITY?: SumsubIdentityStep }>(
+      `${SUMSUB_BASE_URL}${statusUrl}`,
+      {
+        headers: statusHeaders,
+      },
+    );
 
     const identityStep = statusResponse.data.IDENTITY;
-    let approvedIdDoc = null;
+    let approvedIdDoc: SumsubIdDoc | null = null;
 
     // Collect accepted image IDs (reviewAnswer === GREEN) from either imageStatuses or imageReviewResults
     const acceptedImageIds: number[] = [];
     if (identityStep) {
       // Prefer imageStatuses if available (newer/structured)
       if (Array.isArray(identityStep.imageStatuses)) {
-        for (const imgStatus of identityStep.imageStatuses as any[]) {
-          const reviewAnswer = imgStatus?.reviewResult?.reviewAnswer;
-          const imageId = imgStatus?.imageId;
+        for (const imgStatus of identityStep.imageStatuses) {
+          const status = asRecord(imgStatus);
+          const reviewAnswer = asRecord(status?.reviewResult)?.reviewAnswer;
+          const imageId = status?.imageId;
           if (
             reviewAnswer === 'GREEN' &&
             (typeof imageId === 'number' || typeof imageId === 'string')
@@ -98,10 +135,10 @@ export const getApplicantData = async (
       // Fallback to imageReviewResults if imageStatuses is absent
       if (acceptedImageIds.length === 0 && identityStep.imageReviewResults) {
         const entries = Object.entries(
-          identityStep.imageReviewResults as Record<string, any>,
+          asRecord(identityStep.imageReviewResults) ?? {},
         );
         for (const [imageIdStr, result] of entries) {
-          if (result?.reviewAnswer === 'GREEN') {
+          if (asRecord(result)?.reviewAnswer === 'GREEN') {
             const parsed = parseInt(imageIdStr, 10);
             if (!Number.isNaN(parsed)) acceptedImageIds.push(parsed);
           }
@@ -112,29 +149,31 @@ export const getApplicantData = async (
     }
 
     // Helper to extract image IDs from a document object in applicant info
-    const extractDocImageIds = (doc: any): number[] => {
+    const extractDocImageIds = (doc: SumsubIdDoc): number[] => {
       const ids = new Set<number>();
+      // External payload: entries are not guaranteed to be objects.
       if (!doc || typeof doc !== 'object') return [];
 
       // Common shapes observed in Sumsub payloads
       const possibleArrays = ['imageIds', 'images', 'pages', 'sides'];
       for (const key of possibleArrays) {
-        const value = (doc as any)[key];
+        const value = doc[key];
         if (Array.isArray(value)) {
           for (const item of value) {
+            const record = asRecord(item);
             const candidate =
               typeof item === 'number'
                 ? item
                 : typeof item === 'string'
                   ? parseInt(item, 10)
-                  : typeof item?.imageId === 'number'
-                    ? item.imageId
-                    : typeof item?.imageId === 'string'
-                      ? parseInt(item.imageId, 10)
-                      : typeof item?.id === 'number'
-                        ? item.id
-                        : typeof item?.id === 'string'
-                          ? parseInt(item.id, 10)
+                  : typeof record?.imageId === 'number'
+                    ? record.imageId
+                    : typeof record?.imageId === 'string'
+                      ? parseInt(record.imageId, 10)
+                      : typeof record?.id === 'number'
+                        ? record.id
+                        : typeof record?.id === 'string'
+                          ? parseInt(record.id, 10)
                           : undefined;
             if (typeof candidate === 'number' && !Number.isNaN(candidate)) {
               ids.add(candidate);
@@ -146,7 +185,7 @@ export const getApplicantData = async (
       // Some payloads may store a single image id
       const singleCandidates = ['imageId', 'id'];
       for (const key of singleCandidates) {
-        const value = (doc as any)[key];
+        const value = doc[key];
         if (typeof value === 'number' && !Number.isNaN(value)) ids.add(value);
         if (typeof value === 'string') {
           const parsed = parseInt(value, 10);
@@ -159,9 +198,9 @@ export const getApplicantData = async (
 
     // Try to correlate accepted images to the correct idDoc
     if (Array.isArray(info.idDocs) && info.idDocs.length > 0) {
-      let bestMatchDoc: any = null;
+      let bestMatchDoc: SumsubIdDoc | null = null;
       let bestMatchCount = -1;
-      for (const doc of info.idDocs as any[]) {
+      for (const doc of info.idDocs) {
         const docImageIds = extractDocImageIds(doc);
         if (docImageIds.length === 0) continue;
         const matchCount = docImageIds.filter((idNum) =>
@@ -186,11 +225,10 @@ export const getApplicantData = async (
       const stepCountry = identityStep.country;
       if (Array.isArray(info.idDocs) && info.idDocs.length > 0) {
         const byType = info.idDocs.find(
-          (d: any) =>
-            d?.idDocType && stepDocType && d.idDocType === stepDocType,
+          (d) => d?.idDocType && stepDocType && d.idDocType === stepDocType,
         );
         const byCountry = info.idDocs.find(
-          (d: any) => d?.country && stepCountry && d.country === stepCountry,
+          (d) => d?.country && stepCountry && d.country === stepCountry,
         );
         approvedIdDoc = byType || byCountry || null;
         if (approvedIdDoc) {

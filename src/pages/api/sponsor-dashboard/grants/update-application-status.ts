@@ -5,9 +5,10 @@ import { z } from 'zod';
 import logger from '@/lib/logger';
 import { LockNotAcquiredError, withRedisLock } from '@/lib/with-redis-lock';
 import { prisma } from '@/prisma';
-import { GrantApplicationStatus, type SubmissionLabels } from '@/prisma/enums';
+import { GrantApplicationStatus } from '@/prisma/enums';
 import { getTokenBySymbol } from '@/server/tokenList';
 import { airtableConfig, airtableUpsert, airtableUrl } from '@/utils/airtable';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -38,7 +39,7 @@ const UpdateGrantApplicationSchema = z.object({
     )
     .min(1, 'Data array cannot be empty')
     .max(MAX_RECORDS, `Only max ${MAX_RECORDS} records allowed in data`),
-  applicationStatus: z.string(),
+  applicationStatus: z.nativeEnum(GrantApplicationStatus),
   customNote: z.string().trim().min(1).max(5000).optional(),
   skipCooldown: z.boolean().optional(),
 });
@@ -185,10 +186,16 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     }
 
     const isApproved = applicationStatus === GrantApplicationStatus.Approved;
+    // findMany with `in` does not return rows in request order, so amounts
+    // are matched by id rather than by index into `data`.
+    const approvedAmountById = new Map(
+      data.map((d) => [d.id, d.approvedAmount]),
+    );
     let sanitizedCustomNote: string | undefined;
     if (customNote) {
-      for (const [index, application] of currentApplications.entries()) {
-        const approvedAmount = data[index]?.approvedAmount ?? undefined;
+      for (const application of currentApplications) {
+        const approvedAmount =
+          approvedAmountById.get(application.id) ?? undefined;
         const fullEmailHtml = isApproved
           ? getGrantApprovedEmailBody({
               granteeName: application.user?.firstName,
@@ -228,27 +235,19 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       isCooldownSkipped: applicationStatus === 'Rejected' && !!skipCooldown,
     };
 
-    const updatedData: {
-      applicationStatus: string;
-      decidedAt: string;
-      decidedBy: string | undefined;
-      approvedAmount?: number;
-      approvedAmountInUSD?: number;
-      totalTranches?: number;
-      label?: SubmissionLabels;
-      isCooldownSkipped?: boolean;
-    }[] = [];
-
-    await Promise.all(
-      currentApplications.map(async (currentApplicant, k) => {
+    // Return (not push) each update: approvals await token prices, so push
+    // order would not match currentApplications order.
+    const updates = await Promise.all(
+      currentApplications.map(async (currentApplicant) => {
         let approvedData = {
           approvedAmount: 0,
           approvedAmountInUSD: 0,
           totalTranches: 2,
         };
         if (isApproved) {
-          const parsedAmount = data[k]?.approvedAmount
-            ? parseInt(data[k]?.approvedAmount + '', 10)
+          const requestedAmount = approvedAmountById.get(currentApplicant.id);
+          const parsedAmount = requestedAmount
+            ? parseInt(requestedAmount + '', 10)
             : 0;
 
           if (!currentApplicant.grant.maxReward) {
@@ -281,19 +280,18 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
           currentApplicant.label === 'Pending'
             ? 'Reviewed'
             : currentApplicant.label;
-        updatedData.push({
-          ...commonUpdateField,
-          ...approvedData,
-          label,
-        });
+        return {
+          id: currentApplicant.id,
+          data: { ...commonUpdateField, ...approvedData, label },
+        };
       }),
     );
 
     const result = await prisma.$transaction(
-      currentApplications.map((application, k) => {
+      updates.map(({ id, data }) => {
         return prisma.grantApplication.update({
-          where: { id: application.id },
-          data: updatedData[k] as any,
+          where: { id },
+          data,
           include: {
             user: {
               select: {
@@ -398,9 +396,9 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     };
 
     return res.status(200).json(response);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error occurred while updating grant application ID: ${data.map((c) => c.id)}:  ${error.message}`,
+      `Error occurred while updating grant application ID: ${data.map((c) => c.id)}:  ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

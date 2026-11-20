@@ -55,7 +55,7 @@ async function toggleSubscription(
       `Subscription toggled successfully for hackathon slug: ${slug} and user ID: ${userId}`,
     );
     return res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while toggling subscription for hackathon slug: ${slug} and user ID: ${userId}: ${safeStringify(error)}`,
     );

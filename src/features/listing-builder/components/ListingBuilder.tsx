@@ -1,5 +1,6 @@
 import { usePrivy } from '@privy-io/react-auth';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
@@ -58,7 +59,7 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
   useEffect(() => {
     // Handle 403 errors for non-GOD users (must run before error page check)
     if (listingError && !isSwitchingSponsor && user?.role !== 'GOD') {
-      const error = listingError as any;
+      const error = isAxiosError(listingError) ? listingError : undefined;
       if (error?.response?.status === 403) {
         toast.error('This listing does not belong to you');
         router.push('/earn/dashboard/listings');
@@ -115,7 +116,8 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
 
   const is403Error =
     listingError &&
-    (listingError as any)?.response?.status === 403 &&
+    isAxiosError(listingError) &&
+    listingError.response?.status === 403 &&
     user?.role !== 'GOD';
   if (
     !user ||
@@ -166,12 +168,12 @@ export function ListingBuilder({ route, slug }: ListingBuilderLayout) {
       isEditing={!!listing?.publishedAt}
       hackathons={
         listing?.type === 'hackathon'
-          ? ([
-              listing?.Hackathon,
+          ? [
+              ...(listing?.Hackathon ? [listing.Hackathon] : []),
               ...(hackathons
                 ? hackathons.filter((s) => s.slug !== listing?.Hackathon?.slug)
                 : []),
-            ] as any)
+            ]
           : hackathons
       }
     />

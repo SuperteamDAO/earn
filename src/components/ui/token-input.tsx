@@ -12,7 +12,7 @@ function TokenInput({
   isPro = false,
   ...props
 }: React.ComponentProps<typeof Input> & {
-  token: string | undefined;
+  token: string | undefined | null;
   onChange?: (value: number | null) => void;
   value?: number | null;
   isPro?: boolean;

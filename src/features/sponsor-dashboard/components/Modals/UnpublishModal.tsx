@@ -13,7 +13,7 @@ import { type ListingWithSubmissions } from '@/features/listings/types';
 interface UnpublishModalProps {
   unpublishIsOpen: boolean;
   unpublishOnClose: () => void;
-  listing: ListingWithSubmissions | undefined;
+  listing: Omit<ListingWithSubmissions, 'Hackathon'> | undefined;
 }
 
 export const UnpublishModal = ({

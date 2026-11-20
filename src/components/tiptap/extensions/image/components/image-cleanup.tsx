@@ -1,6 +1,13 @@
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Extension } from '@tiptap/react';
 
+// The subset of ProseMirror's Node#toJSON() output this plugin walks.
+interface JSONNode {
+  type?: string;
+  attrs?: { src?: unknown };
+  content?: JSONNode[];
+}
+
 interface ImageCleanupOptions {
   onCleanup?: (src: string) => void;
 }
@@ -16,17 +23,21 @@ export const ImageCleanup = Extension.create<ImageCleanupOptions>({
 
   addProseMirrorPlugins() {
     const trackedImages = new Set<string>();
-    let prevContent: any = null;
+    let prevContent: JSONNode | null = null;
 
-    const extractImages = (content: any, images: Set<string>) => {
+    const extractImages = (
+      content: JSONNode | undefined,
+      images: Set<string>,
+    ) => {
       if (!content) return;
 
-      if (content.type === 'image' && content.attrs?.src) {
-        images.add(content.attrs.src);
+      const src = content.attrs?.src;
+      if (content.type === 'image' && typeof src === 'string' && src) {
+        images.add(src);
       }
 
       if (content.content) {
-        content.content.forEach((node: any) => {
+        content.content.forEach((node) => {
           extractImages(node, images);
         });
       }

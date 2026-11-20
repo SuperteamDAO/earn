@@ -262,7 +262,7 @@ function RewardsFooter({
                     }
                   }
                 } else {
-                  await form.trigger(['rewards', 'rewardAmount'] as any);
+                  await form.trigger(['rewards', 'rewardAmount']);
                   form.saveDraft();
                   setOpen(false, { bypassPrompt: true });
                 }

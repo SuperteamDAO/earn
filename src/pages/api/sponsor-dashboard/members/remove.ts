@@ -89,7 +89,7 @@ async function removeMember(
 
     logger.info(`Successfully removed member with ID: ${id}`);
     res.status(200).json({ message: 'Member removed successfully.' });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`Error removing member: ${safeStringify(error)}`);
     return res.status(500).json({ error: 'Internal server error' });
   }

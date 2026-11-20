@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { updateLike } from '@/services/likeService';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithUser } from '@/features/auth/types';
@@ -25,9 +26,9 @@ async function submission(req: NextApiRequestWithUser, res: NextApiResponse) {
       data: { ok: true },
       message: 'Operation successful',
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
-      `Error updating submission like for user=${req.userId}: ${error.message}`,
+      `Error updating submission like for user=${req.userId}: ${getErrorMessage(error)}`,
     );
     return res.status(500).json({
       error: 'Internal Server Error',

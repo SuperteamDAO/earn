@@ -48,20 +48,12 @@ export const FeedPost = ({ type, id }: Props) => {
             switch (item.type) {
               case 'submission':
                 return (
-                  <SubmissionCard
-                    key={index}
-                    sub={item as any}
-                    type="activity"
-                  />
+                  <SubmissionCard key={index} sub={item} type="activity" />
                 );
               case 'pow':
-                return (
-                  <PowCard key={index} pow={item as any} type="activity" />
-                );
+                return <PowCard key={index} pow={item} type="activity" />;
               case 'grant-application':
-                return (
-                  <GrantCard type="activity" grant={item as any} key={index} />
-                );
+                return <GrantCard type="activity" grant={item} key={index} />;
               default:
                 return null;
             }

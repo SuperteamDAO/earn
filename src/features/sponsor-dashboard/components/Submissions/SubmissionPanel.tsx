@@ -28,7 +28,7 @@ import { SelectWinner } from './SelectWinner';
 import { SpamButton } from './SpamButton';
 
 interface Props {
-  bounty: Listing | undefined;
+  bounty: Omit<Listing, 'Hackathon'> | undefined;
   submissions: SubmissionWithUser[];
   usedPositions: number[];
   isHackathonPage?: boolean;

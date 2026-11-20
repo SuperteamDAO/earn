@@ -537,9 +537,9 @@ const CreateSponsor = () => {
                               label: elm,
                               value: elm,
                             }))}
-                            onChange={(selected: any) => {
+                            onChange={(selected) => {
                               const values =
-                                selected?.map((item: any) => item.value) || [];
+                                selected?.map((item) => item.value) || [];
                               field.onChange(values.join(', '));
                             }}
                             className="mt-2"

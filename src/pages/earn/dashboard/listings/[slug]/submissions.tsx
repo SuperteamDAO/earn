@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { atom, useAtom } from 'jotai';
 import { LucideFlag } from 'lucide-react';
 import type { GetServerSideProps } from 'next';
@@ -148,7 +149,9 @@ export default function BountySubmissions({ slug }: Props) {
 
   useEffect(() => {
     if (bountyError && !isSwitchingSponsor) {
-      const error = bountyError as any;
+      const error = isAxiosError<{ sponsorId?: string }>(bountyError)
+        ? bountyError
+        : undefined;
       if (error?.response?.status === 403) {
         const hasSponsorId = error?.response?.data?.sponsorId;
         if (!hasSponsorId) {
@@ -382,8 +385,8 @@ export default function BountySubmissions({ slug }: Props) {
   };
 
   const usedPositions = submissions
-    ?.filter((s: any) => s.isWinner)
-    .map((s: any) => Number(s.winnerPosition))
+    ?.filter((s) => s.isWinner)
+    .map((s) => Number(s.winnerPosition))
     .filter((key: number) => !isNaN(key));
 
   const totalWinners = submissions?.filter((sub) => sub.isWinner).length;

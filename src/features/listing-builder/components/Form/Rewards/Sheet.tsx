@@ -49,6 +49,18 @@ import { Fixed } from './Types/Fixed';
 import { Podiums } from './Types/Podiums';
 import { Range } from './Types/Range';
 
+// Dispatched by PrePublish/ProOnly when Pro needs a higher reward total.
+type ProAdjustmentEvent = CustomEvent<{
+  increasedBy: number;
+  minRequired: number;
+}>;
+
+declare global {
+  interface WindowEventMap {
+    openRewardsWithProAdjustment: ProAdjustmentEvent;
+  }
+}
+
 export function RewardsSheet() {
   const form = useListingForm();
   const [open, setOpen] = useState(false);
@@ -222,7 +234,7 @@ export function RewardsSheet() {
   };
 
   useEffect(() => {
-    const handleProAdjustment = (event: CustomEvent) => {
+    const handleProAdjustment = (event: ProAdjustmentEvent) => {
       const { increasedBy, minRequired } = event.detail;
       setProAdjustment({ increasedBy, minRequired });
       setOpen(true);
@@ -230,13 +242,13 @@ export function RewardsSheet() {
     };
 
     window.addEventListener(
-      'openRewardsWithProAdjustment' as any,
-      handleProAdjustment as any,
+      'openRewardsWithProAdjustment',
+      handleProAdjustment,
     );
     return () => {
       window.removeEventListener(
-        'openRewardsWithProAdjustment' as any,
-        handleProAdjustment as any,
+        'openRewardsWithProAdjustment',
+        handleProAdjustment,
       );
     };
   }, []);
