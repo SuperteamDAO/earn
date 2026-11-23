@@ -32,7 +32,6 @@ import {
   submitListingMutationAtom,
 } from '../../../atoms';
 import { useListingForm } from '../../../hooks';
-import { AgentAccess } from './AgentAccess';
 import { Foundation } from './Foundation';
 import { GeoLock } from './GeoLock';
 import { ProOnly } from './ProOnly';
@@ -222,7 +221,6 @@ export function PrePublish() {
         <Separator className="relativerl w-[100%]" />
         <div className="space-y-4">
           <Visibility />
-          <AgentAccess />
           <GeoLock />
           <ReferredBy />
           <Slug />
