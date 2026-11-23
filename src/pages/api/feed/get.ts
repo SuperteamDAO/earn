@@ -224,6 +224,7 @@ export default async function handler(
             where: {
               id: highlightId,
               ...profileSubmissionFilter,
+              listing: profileUserId ? {} : { isPrivate: false },
             },
             include: submissionInclude,
           })
@@ -373,6 +374,7 @@ export default async function handler(
             where: {
               id: highlightId,
               ...(userId ? { userId: userId as string } : {}),
+              grant: userId ? {} : { isPrivate: false },
               OR: [
                 {
                   applicationStatus: 'Approved',
