@@ -34,6 +34,16 @@ interface ListingQueryResult {
   readonly take?: number;
 }
 
+export function shouldPrioritizeFeatured(
+  args: Pick<BuildListingQueryArgs, 'sortBy' | 'order' | 'status'>,
+): boolean {
+  return (
+    args.sortBy === 'Date' &&
+    args.order === 'asc' &&
+    (args.status === 'open' || args.status === 'all')
+  );
+}
+
 function getSkillFilter(
   category: z.infer<typeof ListingCategorySchema>,
 ): BountiesWhereInput | null {
@@ -141,10 +151,7 @@ function getOrderBy(
   }
 
   // add isFeatured prioritization only for default sorting (date + asc) and open or all status
-  const isDefaultSort =
-    sortBy === 'Date' &&
-    order === 'asc' &&
-    (status === 'open' || status === 'all');
+  const isDefaultSort = shouldPrioritizeFeatured(args);
 
   return isDefaultSort ? [{ isFeatured: 'desc' }, primarySort] : primarySort;
 }
