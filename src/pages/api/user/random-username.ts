@@ -36,7 +36,7 @@ export default async function checkUsername(
 
     logger.info(`Username ${username} is available`);
     return res.status(200).json({ available: true, username });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while checking username availability: ${safeStringify(error)}`,
     );

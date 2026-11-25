@@ -25,7 +25,7 @@ export async function GET(_request: NextRequest) {
     const balance = await creditAggregate(userId);
 
     return NextResponse.json({ balance });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 },

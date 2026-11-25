@@ -23,7 +23,7 @@ export async function GET(_request: NextRequest) {
         },
       },
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Error occurred while fetching sponsor count', {
       error: safeStringify(error),
     });

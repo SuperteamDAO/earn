@@ -2,6 +2,7 @@ import type { NextApiResponse } from 'next';
 
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
+import { type BountyType } from '@/prisma/enums';
 import { safeStringify } from '@/utils/safeStringify';
 
 import { type NextApiRequestWithSponsor } from '@/features/auth/types';
@@ -12,7 +13,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
   const params = req.query;
   const slug = params.slug as string;
-  const type = params.type as 'bounty' | 'project' | 'hackathon';
+  const type = params.type as BountyType;
 
   logger.debug(`Request query: ${safeStringify(params)}`);
 
@@ -122,7 +123,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
 
     logger.info(`Successfully fetched bounty details for slug=${slug}`);
     return res.status(200).json(resultTransformed);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error fetching bounty with slug=${slug}:`,
       safeStringify(error),

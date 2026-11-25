@@ -1,6 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 import { ASSET_URL } from '@/constants/ASSET_URL';
+import { getErrorMessage } from '@/utils/getErrorMessage';
 import { formatString, loadGoogleFont } from '@/utils/ogHelpers';
 
 import {
@@ -208,8 +209,8 @@ export async function GET(request: Request) {
         ],
       },
     );
-  } catch (e: any) {
-    console.log(`${e.message}`);
+  } catch (e) {
+    console.log(getErrorMessage(e));
     return new Response(`Failed to generate the image`, {
       status: 500,
     });

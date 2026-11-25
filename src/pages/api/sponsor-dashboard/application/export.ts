@@ -5,6 +5,7 @@ import Papa from 'papaparse';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { csvUpload, str2ab } from '@/utils/cloudinary';
+import { parseQuestionAnswers } from '@/utils/parseQuestionAnswers';
 import { plainTextFromHtmlTurndown } from '@/utils/plainTextFromHtml';
 import { safeStringify } from '@/utils/safeStringify';
 
@@ -12,7 +13,11 @@ import { type NextApiRequestWithSponsor } from '@/features/auth/types';
 import { checkGrantSponsorAuth } from '@/features/auth/utils/checkGrantSponsorAuth';
 import { withSponsorAuth } from '@/features/auth/utils/withSponsorAuth';
 
-function getSocialMediaLink(user: any): string {
+function getSocialMediaLink(user: {
+  telegram: string | null;
+  twitter: string | null;
+  discord: string | null;
+}): string {
   if (user.telegram) return user.telegram;
   if (user.twitter) return user.twitter;
   if (user.discord) return user.discord;
@@ -56,8 +61,8 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
       );
       const customGrantAnswers: { [key: string]: string } = {};
       questionSet.forEach((question) => {
-        const answer = (application as any).answers?.find(
-          (a: any) => a.question === question,
+        const answer = parseQuestionAnswers(application.answers).find(
+          (a) => a.question === question,
         );
         customGrantAnswers[question] = answer
           ? plainTextFromHtmlTurndown.turndown(answer.answer)
@@ -108,7 +113,7 @@ async function handler(req: NextApiRequestWithSponsor, res: NextApiResponse) {
     return res.status(200).json({
       url: cloudinaryDetails?.secure_url || cloudinaryDetails?.url,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `User ${userId} unable to download CSV: ${safeStringify(error)}`,
     );

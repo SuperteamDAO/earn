@@ -22,10 +22,10 @@ const projectTelegramSchema = z.preprocess((value) => {
 }, telegramUsernameSchema);
 
 const submissionSchema = (
-  listing: Listing,
+  listing: Pick<Listing, 'type' | 'compensationType' | 'eligibility'>,
   minRewardAsk: number,
   maxRewardAsk: number,
-  user: User | null,
+  user: Pick<User, 'linkedTwitter'> | null,
   options?: { isAgent?: boolean },
 ) =>
   z

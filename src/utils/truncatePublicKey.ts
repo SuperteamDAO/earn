@@ -1,5 +1,5 @@
 export const truncatePublicKey = (
-  publicKey: string = '',
+  publicKey: string | null = '',
   length: number = 4,
 ) => {
   if (!publicKey) {

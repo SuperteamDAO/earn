@@ -153,11 +153,9 @@ export async function POST(
       },
       { status: 200 },
     );
-  } catch (error: any) {
+  } catch (error) {
     console.log('error', error);
-    logger.error(
-      `User ${typeof error?.userId !== 'undefined' ? error.userId : ''} unable to publish a listing: ${safeStringify(error)}`,
-    );
+    logger.error(`Unable to publish a listing: ${safeStringify(error)}`);
     return NextResponse.json(
       {
         error: 'Internal Server Error',

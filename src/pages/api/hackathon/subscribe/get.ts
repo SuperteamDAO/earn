@@ -30,7 +30,7 @@ export default async function handler(
 
     logger.info(`Fetched subscription status for hackathon slug: ${slug}`);
     res.status(200).json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching subscription status for hackathon slug=${req.body.slug}: ${safeStringify(error)}`,
     );

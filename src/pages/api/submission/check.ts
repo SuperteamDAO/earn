@@ -84,7 +84,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       `Checked submission existence for listing ID: ${listingId} and user ID: ${userId}`,
     );
     res.status(200).json(responseData);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while checking submission existence for listing ID=${listingId} and user ID=${userId}: ${safeStringify(error)}`,
     );
