@@ -4,10 +4,12 @@ import logger from '@/lib/logger';
 import { privy } from '@/lib/privy';
 import { userCreateRateLimiter } from '@/lib/ratelimit';
 import { checkAndApplyRateLimitPages } from '@/lib/rateLimiterService';
+import { validateEmailWithZeroBounce } from '@/lib/zerobounce';
 import { prisma } from '@/prisma';
 import { PrismaClientKnownRequestError } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
+import { isBlockedDisposableEmail } from '@/features/auth/utils/disposableEmail';
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
 
 interface CreateUserResponse {
@@ -87,6 +89,13 @@ export default async function createUser(
       });
     }
 
+    if (isBlockedDisposableEmail(normalizedEmail)) {
+      logger.warn(`Blocked disposable email during user creation`);
+      return res.status(403).json({
+        error: 'Please use a permanent email address to create an account.',
+      });
+    }
+
     const existingUserByPrivyDid = await prisma.user.findUnique({
       where: { privyDid },
       select: { id: true, email: true },
@@ -124,6 +133,26 @@ export default async function createUser(
         error:
           'User with this email already exists with different authentication method',
       });
+    }
+
+    if (
+      process.env.NODE_ENV === 'production' ||
+      process.env.VERCEL_ENV === 'production'
+    ) {
+      try {
+        const isValidEmail = await validateEmailWithZeroBounce(normalizedEmail);
+        if (!isValidEmail) {
+          logger.warn(`Email reputation check rejected a new account`);
+          return res.status(403).json({
+            error: 'Please use a valid permanent email address.',
+          });
+        }
+      } catch {
+        logger.error('Email reputation provider unavailable during signup');
+        return res.status(503).json({
+          error: 'Email verification is temporarily unavailable.',
+        });
+      }
     }
 
     try {

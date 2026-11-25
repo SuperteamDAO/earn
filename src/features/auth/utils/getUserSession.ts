@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
+import { isBlockedDisposableEmail } from './disposableEmail';
 import { getPrivyToken } from './getPrivyToken';
 
 type SessionResponse = {
@@ -37,7 +38,7 @@ export async function getUserSession(
 
     const user = await prisma.user.findUnique({
       where: { privyDid },
-      select: { id: true, isBlocked: true },
+      select: { id: true, email: true, isBlocked: true },
     });
 
     logger.info(
@@ -55,6 +56,15 @@ export async function getUserSession(
 
     if (user.isBlocked) {
       logger.warn(`Blocked user attempted access: ${user.id}`);
+      return {
+        status: 403,
+        error: 'User is blocked',
+        data: null,
+      };
+    }
+
+    if (isBlockedDisposableEmail(user.email)) {
+      logger.warn(`Disposable-email account attempted access: ${user.id}`);
       return {
         status: 403,
         error: 'User is blocked',
