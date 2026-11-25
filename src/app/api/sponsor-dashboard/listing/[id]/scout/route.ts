@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
+import { parseSkillEntries, type SkillEntry } from '@/interface/skills';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 import { Decimal } from '@/prisma/internal/prismaNamespace';
@@ -10,7 +11,7 @@ import { safeStringify } from '@/utils/safeStringify';
 import { validateSession } from '@/features/auth/utils/getSponsorSession';
 import { scoutUserSelect } from '@/features/sponsor-dashboard/constants/scouts';
 
-function flattenSubSkills(skillsArray: any[]): string[] {
+function flattenSubSkills(skillsArray: SkillEntry[]): string[] {
   const flattenedSubSkills: string[] = [];
 
   for (const skillObj of skillsArray) {
@@ -20,7 +21,7 @@ function flattenSubSkills(skillsArray: any[]): string[] {
   return flattenedSubSkills;
 }
 
-function flattenSkills(skillsArray: any[]): string[] {
+function flattenSkills(skillsArray: SkillEntry[]): string[] {
   const flattenedSubSkills: string[] = [];
 
   for (const skillObj of skillsArray) {
@@ -78,7 +79,17 @@ export async function GET(
       );
     }
 
-    if ((scoutBounty.skills as any)?.[0].subskills === null) {
+    // Legacy rows store `subskills: null` on the first entry when no skills were set.
+    const rawSkills = Array.isArray(scoutBounty.skills)
+      ? scoutBounty.skills
+      : [];
+    const firstSkill = rawSkills[0];
+    if (
+      !firstSkill ||
+      (typeof firstSkill === 'object' &&
+        'subskills' in firstSkill &&
+        firstSkill.subskills === null)
+    ) {
       logger.warn('Bounty has no skills');
       return NextResponse.json(
         { error: 'Bounty has No skills' },
@@ -86,10 +97,9 @@ export async function GET(
       );
     }
 
-    const subskills = flattenSubSkills(scoutBounty.skills as any);
-    const devSkills = filterInDevSkills(
-      flattenSkills(scoutBounty.skills as any),
-    );
+    const skillEntries = parseSkillEntries(scoutBounty.skills);
+    const subskills = flattenSubSkills(skillEntries);
+    const devSkills = filterInDevSkills(flattenSkills(skillEntries));
     const region = scoutBounty.region.toString();
     const insertQueryParams: unknown[] = [];
     const bindParam = (value: unknown) => {
@@ -141,6 +151,16 @@ export async function GET(
         );
         return NextResponse.json(prevScouts, { status: 200 });
       }
+    }
+
+    // An empty match set would build an invalid query after the delete below,
+    // leaving the listing with no scouts.
+    if (subskills.length === 0 && devSkills.length === 0) {
+      logger.warn('Bounty has no skills that scouts can match');
+      return NextResponse.json(
+        { error: 'Bounty has No skills' },
+        { status: 404 },
+      );
     }
 
     if (prevScouts.length > 0) {
@@ -627,7 +647,7 @@ END)
 
     logger.info(`Successfully generated scouts for bounty ID: ${id}`);
     return NextResponse.json(scouts, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while generating scouts for bounty with id=${id}: ${safeStringify(error)}`,
     );

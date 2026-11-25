@@ -96,7 +96,7 @@ export async function POST(request: Request) {
         system:
           'You generate concise, compelling listing titles for provided listing description. Follow the prompt rules and strictly satisfy the response schema.',
         prompt,
-        schema: responseSchema as any,
+        schema: responseSchema,
         abortSignal: AbortSignal.timeout(AI_GENERATION_TIMEOUT_MS),
       });
       return object;

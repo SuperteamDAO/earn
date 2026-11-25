@@ -53,7 +53,7 @@ export default async function comment(
       result,
       validUsernames,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       `Error occurred while fetching comments for listingId=${refId}: ${safeStringify(error)}`,
     );

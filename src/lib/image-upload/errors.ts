@@ -1,5 +1,16 @@
 import type { ImageErrorCode } from './types';
 
+// The Cloudinary SDK rejects with plain objects, not Errors, and nests the
+// status under `error` for some API calls.
+export function isCloudinaryNotFound(error: unknown): boolean {
+  if (typeof error !== 'object' || error === null) return false;
+  const { http_code, error: inner } = error as {
+    http_code?: unknown;
+    error?: { http_code?: unknown };
+  };
+  return http_code === 404 || inner?.http_code === 404;
+}
+
 export class ImageUploadError extends Error {
   public readonly code: ImageErrorCode;
 

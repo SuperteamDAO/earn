@@ -44,7 +44,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       logger.warn(`Invite acceptance failed: ${result.message}`);
       res.status(400).json({ error: result.message });
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`Error in invite acceptance: ${safeStringify(error)}`);
     res.status(500).json({ error: 'Internal server error' });
   }

@@ -93,8 +93,11 @@ async function handler(req: NextApiRequestWithAgent, res: NextApiResponse) {
     }
 
     return res.status(200).json(result);
-  } catch (error: any) {
-    const statusCode = error.message?.includes('Validation') ? 400 : 403;
+  } catch (error) {
+    const statusCode =
+      error instanceof Error && error.message.includes('Validation')
+        ? 400
+        : 403;
     logger.error(
       `[AgentSubmission] Agent ${agentId} unable to submit: ${safeStringify(error)}`,
     );
