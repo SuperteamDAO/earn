@@ -4,6 +4,7 @@ import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
 import { type NextApiRequestWithUser } from '../types';
+import { isBlockedDisposableEmail } from './disposableEmail';
 import { getPrivyToken } from './getPrivyToken';
 
 type Handler = (
@@ -22,7 +23,7 @@ export const withAuth = (handler: Handler): NextApiHandler => {
 
     const user = await prisma.user.findUnique({
       where: { privyDid },
-      select: { id: true, isBlocked: true },
+      select: { id: true, email: true, isBlocked: true },
     });
 
     if (!user?.id) {
@@ -32,6 +33,11 @@ export const withAuth = (handler: Handler): NextApiHandler => {
 
     if (user.isBlocked) {
       logger.warn(`Blocked user attempted access: ${user.id}`);
+      return res.status(403).json({ error: 'User is blocked' });
+    }
+
+    if (isBlockedDisposableEmail(user.email)) {
+      logger.warn(`Disposable-email account attempted access: ${user.id}`);
       return res.status(403).json({ error: 'User is blocked' });
     }
 

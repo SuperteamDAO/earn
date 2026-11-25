@@ -10,6 +10,8 @@ import {
 import { checkAndApplyRateLimitPages } from '@/lib/rateLimiterService';
 import { validateEmailWithZeroBounce } from '@/lib/zerobounce';
 
+import { isBlockedDisposableEmail } from '@/features/auth/utils/disposableEmail';
+
 const emailValidateSchema = z.object({
   email: z.string().trim().toLowerCase().max(254).email(),
 });
@@ -37,6 +39,10 @@ export default async function handler(
     return res.status(400).json({ message: 'A valid email is required' });
   }
   const { email } = parsed.data;
+
+  if (isBlockedDisposableEmail(email)) {
+    return res.status(200).json({ isValid: false });
+  }
 
   // adding this to eliminate the need for OSS contributors to set up zerobounce themselves
   const isDev = process.env.VERCEL_ENV !== 'production';
