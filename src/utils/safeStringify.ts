@@ -16,17 +16,18 @@ export function safeStringify(obj: unknown) {
 }
 
 export function convertDatesToISO<TInput>(input: TInput): TInput {
-  const recur = (value: any): any => {
+  const recur = (value: unknown): unknown => {
     if (value instanceof Date) return value.toISOString();
     if (Array.isArray(value)) return value.map(recur);
     if (value && typeof value === 'object') {
-      const out: Record<string, any> = {};
-      for (const key of Object.keys(value)) {
-        out[key] = recur((value as any)[key]);
+      const out: Record<string, unknown> = {};
+      for (const [key, entry] of Object.entries(value)) {
+        out[key] = recur(entry);
       }
       return out;
     }
     return value;
   };
-  return recur(input);
+  // Dates become ISO strings at runtime; callers keep their input type.
+  return recur(input) as TInput;
 }
