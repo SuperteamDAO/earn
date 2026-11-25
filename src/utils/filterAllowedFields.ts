@@ -1,4 +1,4 @@
-export function filterAllowedFields<T extends { [key: string]: any }>(
+export function filterAllowedFields<T extends object>(
   body: T,
   allowedFields: (keyof T)[],
 ): Partial<T> {
