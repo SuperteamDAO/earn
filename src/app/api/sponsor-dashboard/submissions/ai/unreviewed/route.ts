@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(notReviewedByAI, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`Error occurred while retrieving unreviewed submissions`, {
       id,
     });

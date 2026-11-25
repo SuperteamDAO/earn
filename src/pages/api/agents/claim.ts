@@ -138,7 +138,7 @@ async function handler(req: NextApiRequestWithUser, res: NextApiResponse) {
       linkedSubmissions: result.updatedSubmissions.count,
       agentUsername: agent.user.username,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[AgentClaim] Failed to claim agent', safeStringify(error));
 
     if (error instanceof z.ZodError) {

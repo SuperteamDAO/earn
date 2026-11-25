@@ -40,7 +40,7 @@ export default async function handler(
         photo: inviter.photo,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('referral.verify error', error);
     return res.status(500).json({ valid: false, reason: 'ERROR' });
   }
