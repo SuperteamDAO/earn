@@ -24,7 +24,7 @@ export const agentRegisterRateLimiter = new Ratelimit({
 
 export const userCreateRateLimiter = new Ratelimit({
   redis: redis,
-  limiter: Ratelimit.fixedWindow(60, '1 h'),
+  limiter: Ratelimit.fixedWindow(5, '1 h'),
   analytics: true,
   prefix: 'ratelimit:user_create',
 });
