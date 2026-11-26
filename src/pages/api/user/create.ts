@@ -9,8 +9,8 @@ import { prisma } from '@/prisma';
 import { PrismaClientKnownRequestError } from '@/prisma/internal/prismaNamespace';
 import { safeStringify } from '@/utils/safeStringify';
 
-import { isBlockedDisposableEmail } from '@/features/auth/utils/disposableEmail';
 import { getPrivyToken } from '@/features/auth/utils/getPrivyToken';
+import { matchKnownAccountAbuse } from '@/features/auth/utils/knownAccountAbuse';
 
 interface CreateUserResponse {
   message: string;
@@ -89,8 +89,11 @@ export default async function createUser(
       });
     }
 
-    if (isBlockedDisposableEmail(normalizedEmail)) {
-      logger.warn(`Blocked disposable email during user creation`);
+    const abuseMatch = matchKnownAccountAbuse({ email: normalizedEmail });
+    if (abuseMatch) {
+      logger.warn(
+        `Blocked known account-abuse fingerprint during user creation: ${abuseMatch.field}`,
+      );
       return res.status(403).json({
         error: 'Please use a permanent email address to create an account.',
       });

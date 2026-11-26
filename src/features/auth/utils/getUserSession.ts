@@ -4,8 +4,8 @@ import { cookies } from 'next/headers';
 import logger from '@/lib/logger';
 import { prisma } from '@/prisma';
 
-import { isBlockedDisposableEmail } from './disposableEmail';
 import { getPrivyToken } from './getPrivyToken';
+import { matchKnownAccountAbuse } from './knownAccountAbuse';
 
 type SessionResponse = {
   status: number;
@@ -38,7 +38,17 @@ export async function getUserSession(
 
     const user = await prisma.user.findUnique({
       where: { privyDid },
-      select: { id: true, email: true, isBlocked: true },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        firstName: true,
+        lastName: true,
+        twitter: true,
+        telegram: true,
+        discord: true,
+        isBlocked: true,
+      },
     });
 
     logger.info(
@@ -63,8 +73,11 @@ export async function getUserSession(
       };
     }
 
-    if (isBlockedDisposableEmail(user.email)) {
-      logger.warn(`Disposable-email account attempted access: ${user.id}`);
+    const abuseMatch = matchKnownAccountAbuse(user);
+    if (abuseMatch) {
+      logger.warn(
+        `Known account-abuse fingerprint attempted access: ${user.id}; field: ${abuseMatch.field}`,
+      );
       return {
         status: 403,
         error: 'User is blocked',
