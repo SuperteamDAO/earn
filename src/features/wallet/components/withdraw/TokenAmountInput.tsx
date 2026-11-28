@@ -12,7 +12,7 @@ import {
 import { useTokenByMintAddress } from '@/constants/tokenList';
 
 import type { TokenAsset } from '../../types/TokenAsset';
-import { DECIMAL_AMOUNT_REGEX } from '../../utils/withdrawFormSchema';
+import { normalizeAmountInput } from '../../utils/withdrawFormSchema';
 
 interface TokenAmountInputProps {
   tokens: TokenAsset[];
@@ -121,10 +121,12 @@ export const TokenAmountInput = ({
         <Input
           value={amount}
           onChange={(e) => {
-            // a comma is rejected, not stripped: on a comma-decimal keypad '1,5' means 1.5
-            const raw = e.target.value.trim();
-            if (!DECIMAL_AMOUNT_REGEX.test(raw)) return;
-            onAmountChange(clampToDecimals(raw, getMaxDecimals()));
+            // Plain decimals pass through. en-US grouped pastes like '1,234.56'
+            // become '1234.56'. Ambiguous commas ('1,5') are rejected, not
+            // stripped — on a comma-decimal keypad that would mean 1.5, not 15.
+            const normalized = normalizeAmountInput(e.target.value);
+            if (normalized === null) return;
+            onAmountChange(clampToDecimals(normalized, getMaxDecimals()));
           }}
           className="rounded-l-none border-0 pr-4 text-right focus-visible:ring-transparent"
           placeholder="0.00"
