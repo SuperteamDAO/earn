@@ -12,6 +12,7 @@ import {
 import { useTokenByMintAddress } from '@/constants/tokenList';
 
 import type { TokenAsset } from '../../types/TokenAsset';
+import { normalizeAmountInput } from '../../utils/withdrawFormSchema';
 
 interface TokenAmountInputProps {
   tokens: TokenAsset[];
@@ -32,12 +33,6 @@ export const TokenAmountInput = ({
 }: TokenAmountInputProps) => {
   const tokenMetadata = useTokenByMintAddress(selectedToken?.tokenAddress);
 
-  const handleMaxClick = () => {
-    if (selectedToken) {
-      onAmountChange(selectedToken.amount.toString());
-    }
-  };
-
   const clampToDecimals = (value: string, maxDecimals: number): string => {
     if (!value) return value;
     const dotIndex = value.indexOf('.');
@@ -50,6 +45,20 @@ export const TokenAmountInput = ({
 
   const getMaxDecimals = (): number => {
     return tokenMetadata?.decimals ?? 9;
+  };
+
+  // Number#toString uses exponent notation below 1e-6, which the amount pattern rejects
+  const toDecimalString = (value: number, maxDecimals: number): string => {
+    const plain = value.toString().includes('e')
+      ? value.toFixed(maxDecimals)
+      : value.toString();
+    return clampToDecimals(plain, maxDecimals);
+  };
+
+  const handleMaxClick = () => {
+    if (selectedToken) {
+      onAmountChange(toDecimalString(selectedToken.amount, getMaxDecimals()));
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -112,25 +121,17 @@ export const TokenAmountInput = ({
         <Input
           value={amount}
           onChange={(e) => {
-            const raw = e.target.value;
-            const maxDecimals = getMaxDecimals();
-            const clamped = clampToDecimals(raw, maxDecimals);
-            onAmountChange(clamped);
+            // Plain decimals pass through. en-US grouped pastes like '1,234.56'
+            // become '1234.56'. Ambiguous commas ('1,5') are rejected, not
+            // stripped — on a comma-decimal keypad that would mean 1.5, not 15.
+            const normalized = normalizeAmountInput(e.target.value);
+            if (normalized === null) return;
+            onAmountChange(clampToDecimals(normalized, getMaxDecimals()));
           }}
           className="rounded-l-none border-0 pr-4 text-right focus-visible:ring-transparent"
           placeholder="0.00"
           inputMode="decimal"
           min="0"
-          onKeyDown={(e) => {
-            if (
-              !/[0-9]|\.|\.|\Backspace|Tab|\Delete|ArrowLeft|ArrowRight/.test(
-                e.key,
-              ) ||
-              (e.key === '.' && e.currentTarget.value.includes('.'))
-            ) {
-              e.preventDefault();
-            }
-          }}
         />
       </div>
     </>
